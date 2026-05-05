@@ -1,31 +1,51 @@
-<footer class="footer footer-center p-4 bg-base-300 text-base-content mt-10">
-  <aside>
-    <p>Copyright © <%= new Date().getFullYear() %> - NutriTrack (Graduation Project)</p>
-  </aside>
+<!-- nt-toast container -->
+<div id="nt-toast" class="nt-toast" role="alert" aria-live="polite">
+  <span id="nt-toast-icon">✅</span>
+  <span id="nt-toast-msg"></span>
+</div>
+
+<footer class="mt-12 py-6 text-center border-t border-gray-100 hidden md:block">
+  <p class="text-xs text-gray-400">
+    © <%= new Date().getFullYear() %> NutriTrack — Đồ Án Tốt Nghiệp &nbsp;·&nbsp;
+    <span style="color:#16a34a;font-weight:600">Made with ❤️</span>
+  </p>
 </footer>
 
 <script>
-    function showLoading() {
-        const div = document.createElement('div');
-        div.id = 'global-loading';
-        div.className = 'fixed inset-0 bg-black/20 z-50 flex items-center justify-center backdrop-blur-sm';
-        div.innerHTML = '<span class="loading loading-spinner loading-lg text-success"></span>';
-        document.body.appendChild(div);
-    }
-    function hideLoading() {
-        const div = document.getElementById('global-loading');
-        if (div) div.remove();
-    }
-    
-    // Auto dismiss alerts
+// ── Loading overlay ──────────────────────────────────────────────
+function showLoading() {
+    if (document.getElementById('global-loading')) return;
+    const div = document.createElement('div');
+    div.id = 'global-loading';
+    div.innerHTML = '<div class="spinner"></div>';
+    document.body.appendChild(div);
+}
+function hideLoading() {
+    const el = document.getElementById('global-loading');
+    if (el) el.remove();
+}
+
+// ── Toast notification (dùng hệ thống mới) ──────────────────────
+function showToast(msg, type = 'success') {
+    const icons = { success:'✅', error:'❌', warning:'⚠️', info:'ℹ️' };
+    const toast  = document.getElementById('nt-toast');
+    document.getElementById('nt-toast-icon').textContent = icons[type] || '✅';
+    document.getElementById('nt-toast-msg').textContent  = msg;
+    toast.className = `nt-toast ${type}`;
+    setTimeout(() => toast.classList.add('show'), 10);
     setTimeout(() => {
-        const alerts = document.querySelectorAll('.alert-auto-dismiss');
-        alerts.forEach(alert => {
-            alert.style.transition = 'opacity 0.5s ease';
-            alert.style.opacity = '0';
-            setTimeout(() => alert.remove(), 500);
-        });
-    }, 4000);
+        toast.classList.remove('show');
+    }, 3500);
+}
+
+// ── Auto dismiss alerts ──────────────────────────────────────────
+setTimeout(() => {
+    document.querySelectorAll('.alert-auto-dismiss').forEach(el => {
+        el.style.transition = 'opacity 0.5s ease';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+    });
+}, 4000);
 </script>
 </body>
 </html>

@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= typeof title !== 'undefined' ? title + ' | NutriTrack' : 'NutriTrack' %></title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.0/dist/full.css" rel="stylesheet" type="text/css" />
-    <!-- Pin Tailwind v3.4.x — tương thích với DaisyUI v3 (v4 đổi nhiều syntax) -->
+    <meta name="description" content="NutriTrack - Hệ thống quản lý dinh dưỡng cá nhân hóa. Theo dõi calo, macros và cân nặng mỗi ngày.">
+
+    <!-- DaisyUI + Tailwind -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.0/dist/full.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS (Google Font + animations) -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* Override DaisyUI body bg với gradient đẹp hơn */
+        body { background: linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 40%,#f0f9ff 100%) !important; }
+    </style>
 </head>
-<body class="bg-base-200 min-h-screen">
+<body class="min-h-screen">

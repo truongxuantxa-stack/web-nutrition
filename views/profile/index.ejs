@@ -1,191 +1,211 @@
 <%- include('../partials/header', { title: title }) %>
 <%- include('../partials/navbar') %>
 
-<div class="container mx-auto px-4 max-w-3xl py-8">
+<main class="container mx-auto px-4 max-w-3xl py-6">
 
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">👤 Hồ Sơ Cá Nhân</h1>
-        <p class="text-gray-500 text-sm mt-1">Cập nhật thông tin sức khỏe để tính toán dinh dưỡng chính xác hơn.</p>
+  <!-- ── Page Header ────────────────────────────────────────── -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-black text-gray-800 flex items-center gap-2">👤 Hồ Sơ Cá Nhân</h1>
+    <p class="text-sm text-gray-500 mt-0.5 font-medium">Cập nhật thông tin sức khỏe để tính toán dinh dưỡng chính xác hơn.</p>
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────────── -->
+  <% if (success) { %>
+  <div class="flex items-center gap-3 p-4 rounded-2xl mb-5 alert-auto-dismiss"
+       style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac">
+    <span class="text-xl">✅</span>
+    <p class="font-bold text-green-700"><%= success %></p>
+  </div>
+  <% } %>
+  <% if (error) { %>
+  <div class="flex items-center gap-3 p-4 rounded-2xl mb-5" style="background:#fff1f2;border:1.5px solid #fca5a5">
+    <span class="text-xl">❌</span>
+    <p class="font-bold text-red-600"><%= error %></p>
+  </div>
+  <% } %>
+
+  <!-- ── Profile Card ───────────────────────────────────────── -->
+  <div class="nt-card p-6 md:p-8">
+
+    <!-- Avatar banner -->
+    <div class="flex items-center gap-4 mb-7 pb-6 border-b border-gray-100">
+      <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg flex-shrink-0"
+           style="background:linear-gradient(135deg,#16a34a,#059669);box-shadow:0 8px 24px rgba(22,163,74,0.3)">
+        <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
+      </div>
+      <div>
+        <p class="text-xl font-black text-gray-800"><%= user.fullName %></p>
+        <p class="text-sm text-gray-500 font-medium"><%= user.email %></p>
+        <span class="pill pill-green mt-1.5 inline-flex font-bold">✅ Đã xác thực</span>
+      </div>
     </div>
 
-    <!-- Alert thành công -->
-    <% if (success) { %>
-    <div class="alert alert-success mb-6 rounded-xl" id="successAlert">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-        <span><%= success %></span>
-    </div>
-    <% } %>
+    <form action="/ho-so" method="POST" id="profileForm">
 
-    <!-- Alert lỗi -->
-    <% if (error) { %>
-    <div class="alert alert-error mb-6 rounded-xl" id="errorAlert">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.538-1.333-3.308 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
-        <span><%= error %></span>
-    </div>
-    <% } %>
+      <!-- Thông tin cơ bản -->
+      <div class="mb-6">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-black"
+               style="background:linear-gradient(135deg,#16a34a,#059669)">1</div>
+          <p class="section-title">Thông Tin Cơ Bản</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-xs font-bold text-gray-600 mb-1.5" for="fullName">
+              Họ và tên <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="fullName" name="fullName"
+                   class="nt-input" value="<%= user.fullName %>" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1.5" for="gender">Giới tính</label>
+            <select id="gender" name="gender" class="nt-select w-full">
+              <option value="">-- Chọn --</option>
+              <option value="male"   <%= user.gender==='male'   ?'selected':'' %>>👨 Nam</option>
+              <option value="female" <%= user.gender==='female' ?'selected':'' %>>👩 Nữ</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1.5" for="birthDate">Ngày sinh</label>
+            <input type="date" id="birthDate" name="birthDate"
+                   class="nt-input"
+                   value="<%= user.birthDate ? user.birthDate.toString().split('T')[0] : '' %>"
+                   max="<%= new Date().toISOString().split('T')[0] %>">
+          </div>
+        </div>
+      </div>
 
-    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+      <div class="border-t border-gray-100 mb-6"></div>
 
-        <!-- Avatar + tên -->
-        <div class="flex items-center gap-4 mb-8 pb-6 border-b border-gray-100">
-            <div class="avatar placeholder">
-                <div class="bg-success text-white rounded-full w-16 h-16 text-2xl font-bold flex items-center justify-center">
-                    <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
-                </div>
+      <!-- Chỉ số thể chất -->
+      <div class="mb-6">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-black"
+               style="background:linear-gradient(135deg,#3b82f6,#2563eb)">2</div>
+          <p class="section-title">📏 Chỉ Số Thể Chất</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1.5" for="height">Chiều cao</label>
+            <div class="relative">
+              <input type="number" id="height" name="height"
+                     class="nt-input pr-10" placeholder="170"
+                     min="50" max="300" step="0.1" value="<%= user.height||'' %>">
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-black">cm</span>
             </div>
-            <div>
-                <div class="text-xl font-bold text-gray-800"><%= user.fullName %></div>
-                <div class="text-gray-500 text-sm"><%= user.email %></div>
-                <div class="badge badge-success badge-sm mt-1">Đã xác thực</div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1.5" for="weight">Cân nặng</label>
+            <div class="relative">
+              <input type="number" id="weight" name="weight"
+                     class="nt-input pr-10" placeholder="65"
+                     min="10" max="500" step="0.1" value="<%= user.weight||'' %>">
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-black">kg</span>
             </div>
+          </div>
         </div>
 
-        <!-- Form -->
-        <form action="/ho-so" method="POST" id="profileForm">
-
-            <!-- Thông tin cơ bản -->
-            <h2 class="text-base font-semibold text-gray-700 mb-4">Thông Tin Cơ Bản</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-
-                <div class="form-control md:col-span-2">
-                    <label class="label" for="fullName">
-                        <span class="label-text font-medium">Họ và tên <span class="text-error">*</span></span>
-                    </label>
-                    <input type="text" id="fullName" name="fullName"
-                           class="input input-bordered focus:input-success w-full"
-                           value="<%= user.fullName %>" required />
-                </div>
-
-                <div class="form-control">
-                    <label class="label" for="gender">
-                        <span class="label-text font-medium">Giới tính</span>
-                    </label>
-                    <select id="gender" name="gender" class="select select-bordered focus:select-success w-full">
-                        <option value="">-- Chọn --</option>
-                        <option value="male" <%= user.gender === 'male' ? 'selected' : '' %>>👨 Nam</option>
-                        <option value="female" <%= user.gender === 'female' ? 'selected' : '' %>>👩 Nữ</option>
-                    </select>
-                </div>
-
-                <div class="form-control">
-                    <label class="label" for="birthDate">
-                        <span class="label-text font-medium">Ngày sinh</span>
-                    </label>
-                    <input type="date" id="birthDate" name="birthDate"
-                           class="input input-bordered focus:input-success w-full"
-                           value="<%= user.birthDate ? user.birthDate.toString().split('T')[0] : '' %>"
-                           max="<%= new Date().toISOString().split('T')[0] %>" />
-                </div>
-
+        <!-- BMI preview -->
+        <div id="bmiPreview" class="hidden mt-3 p-3.5 rounded-xl text-sm font-semibold transition-all"
+             style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-600 font-medium">BMI ước tính:</span>
+            <div class="text-right">
+              <span id="bmiValue" class="text-green-700 font-black text-xl"></span>
+              <span id="bmiLabel" class="block text-xs text-green-600 font-bold"></span>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div class="divider"></div>
+      <div class="border-t border-gray-100 mb-6"></div>
 
-            <!-- Chỉ số thể chất -->
-            <h2 class="text-base font-semibold text-gray-700 mb-4">Chỉ Số Thể Chất</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <!-- Mức hoạt động & Mục tiêu -->
+      <div class="mb-8">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-black"
+               style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">3</div>
+          <p class="section-title">🎯 Mức Hoạt Động & Mục Tiêu</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1.5" for="activityLevel">Mức hoạt động thể chất</label>
+            <select id="activityLevel" name="activityLevel" class="nt-select w-full">
+              <option value="">-- Chọn --</option>
+              <option value="sedentary"   <%= user.activityLevel==='sedentary'  ?'selected':'' %>>🪑 Ít vận động (×1.2)</option>
+              <option value="light"       <%= user.activityLevel==='light'      ?'selected':'' %>>🚶 Vận động nhẹ (×1.375)</option>
+              <option value="moderate"    <%= user.activityLevel==='moderate'   ?'selected':'' %>>🏃 Vận động vừa (×1.55)</option>
+              <option value="active"      <%= user.activityLevel==='active'     ?'selected':'' %>>🏋️ Vận động nhiều (×1.725)</option>
+              <option value="very_active" <%= user.activityLevel==='very_active'?'selected':'' %>>⚡ Rất nhiều (×1.9)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1.5" for="goal">Mục tiêu sức khỏe</label>
+            <select id="goal" name="goal" class="nt-select w-full">
+              <option value="">-- Chọn --</option>
+              <option value="lose_weight"     <%= user.goal==='lose_weight'    ?'selected':'' %>>🔥 Giảm cân</option>
+              <option value="maintain_weight" <%= user.goal==='maintain_weight'?'selected':'' %>>⚖️ Duy trì cân nặng</option>
+              <option value="gain_weight"     <%= user.goal==='gain_weight'    ?'selected':'' %>>💪 Tăng cơ / Tăng cân</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-                <div class="form-control">
-                    <label class="label" for="height">
-                        <span class="label-text font-medium">Chiều cao</span>
-                    </label>
-                    <label class="input input-bordered focus-within:input-success flex items-center gap-2">
-                        <input type="number" id="height" name="height"
-                               class="grow" placeholder="170"
-                               min="50" max="300" step="0.1"
-                               value="<%= user.height || '' %>" />
-                        <span class="text-gray-400 text-sm font-medium">cm</span>
-                    </label>
-                </div>
+      <!-- Actions -->
+      <div class="flex items-center justify-between gap-3 flex-wrap pt-2 border-t border-gray-100">
+        <a href="/dashboard" class="px-4 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 border border-gray-200 transition-all flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          Quay lại
+        </a>
+        <button type="submit" id="saveBtn" class="btn-primary-green px-8 py-2.5 text-sm">
+          💾 Lưu thay đổi
+        </button>
+      </div>
 
-                <div class="form-control">
-                    <label class="label" for="weight">
-                        <span class="label-text font-medium">Cân nặng</span>
-                    </label>
-                    <label class="input input-bordered focus-within:input-success flex items-center gap-2">
-                        <input type="number" id="weight" name="weight"
-                               class="grow" placeholder="65"
-                               min="10" max="500" step="0.1"
-                               value="<%= user.weight || '' %>" />
-                        <span class="text-gray-400 text-sm font-medium">kg</span>
-                    </label>
-                </div>
+    </form>
+  </div>
 
-            </div>
-
-            <div class="divider"></div>
-
-            <!-- Mức hoạt động & Mục tiêu -->
-            <h2 class="text-base font-semibold text-gray-700 mb-4">Mức Hoạt Động & Mục Tiêu</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-
-                <div class="form-control">
-                    <label class="label" for="activityLevel">
-                        <span class="label-text font-medium">Mức hoạt động thể chất</span>
-                    </label>
-                    <select id="activityLevel" name="activityLevel" class="select select-bordered focus:select-success w-full">
-                        <option value="">-- Chọn --</option>
-                        <option value="sedentary"   <%= user.activityLevel === 'sedentary'   ? 'selected' : '' %>>🪑 Ít vận động (×1.2)</option>
-                        <option value="light"       <%= user.activityLevel === 'light'       ? 'selected' : '' %>>🚶 Vận động nhẹ (×1.375)</option>
-                        <option value="moderate"    <%= user.activityLevel === 'moderate'    ? 'selected' : '' %>>🏃 Vận động vừa (×1.55)</option>
-                        <option value="active"      <%= user.activityLevel === 'active'      ? 'selected' : '' %>>🏋️ Vận động nhiều (×1.725)</option>
-                        <option value="very_active" <%= user.activityLevel === 'very_active' ? 'selected' : '' %>>⚡ Rất nhiều (×1.9)</option>
-                    </select>
-                </div>
-
-                <div class="form-control">
-                    <label class="label" for="goal">
-                        <span class="label-text font-medium">Mục tiêu sức khỏe</span>
-                    </label>
-                    <select id="goal" name="goal" class="select select-bordered focus:select-success w-full">
-                        <option value="">-- Chọn --</option>
-                        <option value="lose_weight"     <%= user.goal === 'lose_weight'     ? 'selected' : '' %>>🔥 Giảm cân</option>
-                        <option value="maintain_weight" <%= user.goal === 'maintain_weight' ? 'selected' : '' %>>⚖️ Duy trì cân nặng</option>
-                        <option value="gain_weight"     <%= user.goal === 'gain_weight'     ? 'selected' : '' %>>💪 Tăng cơ / Tăng cân</option>
-                    </select>
-                </div>
-
-            </div>
-
-            <!-- Actions -->
-            <div class="flex items-center justify-between gap-4 flex-wrap">
-                <a href="/dashboard" class="btn btn-ghost btn-sm">← Quay lại</a>
-                <button type="submit" id="saveBtn" class="btn btn-success text-white px-8">
-                    💾 Lưu thay đổi
-                </button>
-            </div>
-
-        </form>
-    </div>
-</div>
+</main>
 
 <script>
-(function () {
-    const form    = document.getElementById('profileForm');
-    const saveBtn = document.getElementById('saveBtn');
+const hInput = document.getElementById('height');
+const wInput = document.getElementById('weight');
+const bmiDiv = document.getElementById('bmiPreview');
+const bmiVal = document.getElementById('bmiValue');
+const bmiLbl = document.getElementById('bmiLabel');
 
-    form.addEventListener('submit', () => {
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> Đang lưu...';
-        showLoading();
-    });
+const bmiCategories = [
+  { max: 18.5, label: 'Thiếu cân', color: '#d97706' },
+  { max: 25.0, label: 'Bình thường ✅', color: '#16a34a' },
+  { max: 30.0, label: 'Thừa cân', color: '#f59e0b' },
+  { max: Infinity, label: 'Béo phì', color: '#ef4444' },
+];
 
-    // Auto-dismiss alerts
-    ['successAlert', 'errorAlert'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            setTimeout(() => {
-                el.style.opacity = '0';
-                el.style.transition = 'opacity 0.5s';
-                setTimeout(() => el.remove(), 500);
-            }, 4000);
-        }
-    });
-})();
+function updateBMI() {
+  const h = parseFloat(hInput.value);
+  const w = parseFloat(wInput.value);
+  if (h > 50 && w > 10) {
+    const bmi = Math.round((w / Math.pow(h/100, 2)) * 10) / 10;
+    const cat = bmiCategories.find(c => bmi < c.max);
+    bmiVal.textContent = bmi;
+    bmiVal.style.color = cat.color;
+    bmiLbl.textContent = cat.label;
+    bmiLbl.style.color = cat.color;
+    bmiDiv.classList.remove('hidden');
+  } else {
+    bmiDiv.classList.add('hidden');
+  }
+}
+hInput.addEventListener('input', updateBMI);
+wInput.addEventListener('input', updateBMI);
+updateBMI();
+
+document.getElementById('profileForm').addEventListener('submit', () => {
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang lưu...';
+  showLoading();
+});
 </script>
 
 <%- include('../partials/footer') %>
