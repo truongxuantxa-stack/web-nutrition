@@ -58,25 +58,26 @@ const DiaryEntry = sequelize.define('DiaryEntry', {
         },
     },
     // Lưu snapshot dinh dưỡng tại thời điểm ghi để tránh thay đổi nếu Food bị sửa
+    // allowNull: false + defaultValue: 0 → không cho phép thiếu dữ liệu dinh dưỡng
     caloriesSnapshot: {
         type: DataTypes.FLOAT,
-        allowNull: true,
-        defaultValue: null,
+        allowNull: false,
+        defaultValue: 0,
     },
     proteinSnapshot: {
         type: DataTypes.FLOAT,
-        allowNull: true,
-        defaultValue: null,
+        allowNull: false,
+        defaultValue: 0,
     },
     carbsSnapshot: {
         type: DataTypes.FLOAT,
-        allowNull: true,
-        defaultValue: null,
+        allowNull: false,
+        defaultValue: 0,
     },
     fatSnapshot: {
         type: DataTypes.FLOAT,
-        allowNull: true,
-        defaultValue: null,
+        allowNull: false,
+        defaultValue: 0,
     },
     note: {
         // Ghi chú tùy ý của người dùng

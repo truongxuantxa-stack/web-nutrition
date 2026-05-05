@@ -254,6 +254,13 @@ exports.updateProfile = async (req, res) => {
         return renderError('Cân nặng không hợp lệ (10 - 500 kg).');
     }
 
+    // Cảnh báo nếu user xóa các field cần thiết để tính BMR (không chặn, nhưng cảnh báo)
+    const warningFields = [];
+    if (!gender)    warningFields.push('giới tính');
+    if (!birthDate) warningFields.push('ngày sinh');
+    if (!heightNum) warningFields.push('chiều cao');
+    if (!weightNum) warningFields.push('cân nặng');
+
     try {
         await req.user.update({
             fullName: fullName.trim(),
@@ -265,12 +272,17 @@ exports.updateProfile = async (req, res) => {
             goal: goal || null,
         });
 
+        // Tạo message: nếu có field bị bỏ trống, thêm warning
+        const successMsg = warningFields.length > 0
+            ? `Cập nhật thành công! ⚠️ Thiếu ${warningFields.join(', ')} — chỉ số BMR/TDEE sẽ không tính được.`
+            : 'Cập nhật hồ sơ thành công!';
+
         res.render('profile/index', {
             title: 'Hồ Sơ Cá Nhân',
             user: req.user,
             activePage: 'profile',
             error: null,
-            success: 'Cập nhật hồ sơ thành công!',
+            success: successMsg,
         });
     } catch (err) {
         console.error('Update profile error:', err);

@@ -24,13 +24,29 @@
         </button>
     </div>
 
-    <!-- ── Alert thành công / lỗi ─────────────────────────────────────────────── -->
+    <!-- ── Alert thành công / lỗi ───────────────────────────────────────────────── -->
     <% if (success) { %>
     <div class="alert alert-success mb-4 alert-auto-dismiss shadow-sm">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <span>✅ Đã lưu cân nặng hôm nay thành công!</span>
+    </div>
+    <% } %>
+
+    <!-- Hiển thị lỗi từ query string (redirect từ weight.controller.js) -->
+    <% const errorCode = typeof error !== 'undefined' ? error : null; %>
+    <% if (errorCode) { %>
+    <% const errorMessages = {
+        missing        : 'Vui lòng nhập đầy đủ cân nặng và ngày.',
+        invalid_weight : 'Cân nặng không hợp lệ (phải từ 10 – 500 kg).',
+        server         : 'Đã có lỗi xảy ra, vui lòng thử lại.',
+    }; %>
+    <div class="alert alert-error mb-4 shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span><%= errorMessages[errorCode] || 'Có lỗi xảy ra.' %></span>
     </div>
     <% } %>
 

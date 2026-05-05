@@ -59,7 +59,7 @@ exports.getWeightPage = async (req, res) => {
             chartData    : JSON.stringify(chartData),
             stats,
             trend,
-            error        : null,
+            error        : req.query.error || null,   // nhận error code từ redirect
             success      : req.query.success || null,
         });
     } catch (err) {

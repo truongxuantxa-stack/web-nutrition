@@ -11,7 +11,12 @@
  * @returns {number} Tuổi (năm)
  */
 const calculateAge = (birthDate) => {
-    const birth = new Date(birthDate);
+    // Thêm 'T00:00:00' để parse theo local timezone, tránh lệch ngày ở UTC+7
+    // VD: new Date('2000-01-15') → UTC midnight, có thể bị lùi 1 ngày trước 7h sáng VN
+    const dateStr = typeof birthDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(birthDate)
+        ? birthDate + 'T00:00:00'
+        : birthDate;
+    const birth = new Date(dateStr);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
     const m = today.getMonth() - birth.getMonth();

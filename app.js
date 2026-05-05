@@ -24,10 +24,16 @@ app.use((req, res) => {
     res.status(404).render('404', { title: 'Không tìm thấy trang' });
 });
 
-// ─── Error Handler ──────────────────────────────────────────
+// ─── Error Handler ──────────────────────────────────────────────
+// Render HTML page thay vì trả JSON (app này là EJS web, không phải pure API)
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ message: 'Lỗi máy chủ nội bộ', error: err.message });
+    // Nếu là AJAX/API request (Accept: application/json) → trả JSON
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(500).json({ success: false, message: 'Lỗi máy chủ nội bộ.' });
+    }
+    // Ngược lại → render HTML error page
+    res.status(500).render('404', { title: 'Lỗi Hệ Thống' });
 });
 
 // ─── Start Server ───────────────────────────────────────────
