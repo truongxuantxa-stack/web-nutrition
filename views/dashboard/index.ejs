@@ -107,15 +107,15 @@
                   fill="none" stroke="#f1f5f9" stroke-width="3.5"/>
             <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
-                  stroke="<%= calorieProgress >= 100 ? '#ef4444' : '#16a34a' %>"
+                  stroke="<%= safeCalorieProgress >= 100 ? '#ef4444' : '#16a34a' %>"
                   stroke-width="3.5"
-                  stroke-dasharray="<%= Math.min(calorieProgress, 100) %>, 100"
+                  stroke-dasharray="<%= Math.min(safeCalorieProgress, 100) %>, 100"
                   stroke-linecap="round"
                   style="filter:drop-shadow(0 0 4px rgba(22,163,74,0.4))"/>
           </svg>
           <div class="absolute inset-0 flex flex-col items-center justify-center">
-            <span class="text-xl font-black <%= calorieProgress >= 100 ? 'text-red-500' : 'text-green-600' %>">
-              <%= calorieProgress %>%
+            <span class="text-xl font-black <%= safeCalorieProgress >= 100 ? 'text-red-500' : 'text-green-600' %>">
+              <%= safeCalorieProgress %>%
             </span>
             <span class="text-xs text-gray-400 font-semibold">hôm nay</span>
           </div>
@@ -214,6 +214,13 @@
   </div>
 
   <!-- ── Weight Chart ───────────────────────────────────────── -->
+  <%
+    // [QA-FIX] Parse một lần duy nhất, dùng chung cho HTML và JS chart
+    // Tránh parse 2 lần gây double error nếu JSON bị malformed
+    let wData = [];
+    try { wData = JSON.parse(weightChartData); } catch(e) { wData = []; }
+    const safeCalorieProgress = isNaN(calorieProgress) ? 0 : Math.max(0, calorieProgress);
+  %>
   <div class="nt-card p-5 mb-4">
     <div class="flex items-center justify-between mb-4">
       <p class="section-title">📈 Cân nặng gần đây</p>
@@ -222,7 +229,6 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
-    <% const wData = JSON.parse(weightChartData); %>
     <% if (wData.length >= 2) { %>
       <div class="relative h-40">
         <canvas id="weightMiniChart"></canvas>
@@ -304,18 +310,21 @@ new Chart(macroCtx, {
 });
 <% } %>
 
-<% const wChartData = JSON.parse(weightChartData); %>
-<% if (wChartData.length >= 2) { %>
+<%
+  // [QA-FIX] wData đã được parse ở trên (try/catch), dùng lại trực tiếp
+  // KHÔNG parse lại lần 2 để tránh lỗi nếu JSON malformed
+%>
+<% if (wData.length >= 2) { %>
 const wCtx = document.getElementById('weightMiniChart').getContext('2d');
 new Chart(wCtx, {
   type: 'line',
   data: {
-    labels: <%- JSON.stringify(wChartData.map(d => {
+    labels: <%- JSON.stringify(wData.map(d => {
       const dt = new Date(d.date);
       return String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0');
     })) %>,
     datasets: [{
-      data: <%- JSON.stringify(wChartData.map(d => d.weight)) %>,
+      data: <%- JSON.stringify(wData.map(d => d.weight)) %>,
       borderColor: '#16a34a',
       backgroundColor: (ctx) => {
         const g = ctx.chart.ctx.createLinearGradient(0,0,0,ctx.chart.height);

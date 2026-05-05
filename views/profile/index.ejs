@@ -200,7 +200,22 @@ hInput.addEventListener('input', updateBMI);
 wInput.addEventListener('input', updateBMI);
 updateBMI();
 
-document.getElementById('profileForm').addEventListener('submit', () => {
+document.getElementById('profileForm').addEventListener('submit', (e) => {
+  const h = parseFloat(document.getElementById('height').value);
+  const w = parseFloat(document.getElementById('weight').value);
+
+  // [QA-FIX] Client-side guard: chặn giá trị không hợp lệ
+  if (document.getElementById('height').value && (isNaN(h) || h < 50 || h > 300)) {
+    e.preventDefault();
+    showToast('Chiều cao không hợp lệ (50–300 cm).', 'warning');
+    return;
+  }
+  if (document.getElementById('weight').value && (isNaN(w) || w < 10 || w > 500)) {
+    e.preventDefault();
+    showToast('Cân nặng không hợp lệ (10–500 kg).', 'warning');
+    return;
+  }
+
   const btn = document.getElementById('saveBtn');
   btn.disabled = true;
   btn.textContent = '⏳ Đang lưu...';

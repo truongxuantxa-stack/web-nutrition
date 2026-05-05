@@ -28,7 +28,7 @@
   <% } %>
   <% const errorCode = typeof error !== 'undefined' ? error : null; %>
   <% if (errorCode) { %>
-  <% const errMsgs = { missing:'Vui lòng nhập đầy đủ cân nặng và ngày.', invalid_weight:'Cân nặng không hợp lệ (10–500 kg).', server:'Đã có lỗi xảy ra, vui lòng thử lại.' }; %>
+  <% const errMsgs = { missing:'Vui lòng nhập đầy đủ cân nặng và ngày.', invalid_weight:'Cân nặng không hợp lệ (10–500 kg).', future_date:'Không thể ghi cân nặng cho ngày trong tương lai.', server:'Đã có lỗi xảy ra, vui lòng thử lại.' }; %>
   <div class="flex items-center gap-3 p-4 rounded-2xl mb-4" style="background:#fff1f2;border:1.5px solid #fca5a5">
     <span class="text-xl">❌</span>
     <p class="font-bold text-red-600"><%= errMsgs[errorCode]||'Có lỗi xảy ra.' %></p>
@@ -178,8 +178,8 @@
       <div>
         <label class="block text-xs font-bold text-gray-600 mb-1">Ngày đo</label>
         <input type="date" name="date"
-               value="<%= new Date().toISOString().split('T')[0] %>"
-               max="<%= new Date().toISOString().split('T')[0] %>"
+               value="<%= todayLocal %>"
+               max="<%= todayLocal %>"
                class="nt-input" required>
       </div>
       <div>

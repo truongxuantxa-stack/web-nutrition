@@ -59,7 +59,8 @@ exports.getWeightPage = async (req, res) => {
             chartData    : JSON.stringify(chartData),
             stats,
             trend,
-            error        : req.query.error || null,   // nhận error code từ redirect
+            todayLocal   : toLocalDateStr(new Date()),   // [QA-FIX] Tránh UTC timezone bug
+            error        : req.query.error || null,
             success      : req.query.success || null,
         });
     } catch (err) {
@@ -69,6 +70,14 @@ exports.getWeightPage = async (req, res) => {
 };
 
 // ─── POST /can-nang/them ───────────────────────────────────────────────────────
+
+// ─── Helper: lấy ngày hôm nay theo local timezone ─────────────────────────
+const toLocalDateStr = (d) => {
+    const year  = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day   = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
 
 exports.addWeight = async (req, res) => {
     const { weight, date, note } = req.body;
@@ -82,6 +91,12 @@ exports.addWeight = async (req, res) => {
         const weightNum = parseFloat(weight);
         if (isNaN(weightNum) || weightNum < 10 || weightNum > 500) {
             return res.redirect('/can-nang?error=invalid_weight');
+        }
+
+        // [QA-FIX] Không cho phép ghi cân nặng cho ngày tương lai
+        const today = toLocalDateStr(new Date());
+        if (date > today) {
+            return res.redirect('/can-nang?error=future_date');
         }
 
         // [D1 FIX] Dùng findOrCreate để tránh race condition

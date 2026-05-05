@@ -63,7 +63,8 @@ exports.getDiary = async (req, res) => {
         const macroProgress   = getMacroProgress(consumed, metrics.macros);
 
         // Tính tổng calo theo từng bữa để hiển thị
-        const mealCalories = {};
+        // [QA-FIX] Khởi tạo đủ 4 key với default = 0, tránh undefined khi bữa chưa có món
+        const mealCalories = { sang: 0, trua: 0, toi: 0, phu: 0 };
         Object.keys(mealGroups).forEach(meal => {
             mealCalories[meal] = Math.round(
                 sumNutritionFromEntries(mealGroups[meal]).calories
