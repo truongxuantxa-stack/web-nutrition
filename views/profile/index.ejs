@@ -171,7 +171,7 @@
     form.addEventListener('submit', () => {
         saveBtn.disabled = true;
         saveBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> Đang lưu...';
-        document.getElementById('loadingOverlay').classList.add('active');
+        showLoading();
     });
 
     // Auto-dismiss alerts

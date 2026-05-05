@@ -13,7 +13,7 @@
             </div>
             <% } %>
 
-            <form action="/auth/register" method="POST">
+            <form action="/dang-ky" method="POST">
                 <div class="form-control mb-4">
                     <label class="label"><span class="label-text">Họ và tên</span></label>
                     <input type="text" name="fullName" placeholder="Nguyễn Văn A" class="input input-bordered w-full" required autofocus />
@@ -29,6 +29,11 @@
                     <input type="password" name="password" placeholder="••••••••" class="input input-bordered w-full" required minlength="6" />
                 </div>
 
+                <div class="form-control mb-4">
+                    <label class="label"><span class="label-text">Xác nhận mật khẩu</span></label>
+                    <input type="password" name="confirmPassword" placeholder="••••••••" class="input input-bordered w-full" required minlength="6" />
+                </div>
+
                 <div class="form-control mt-6">
                     <button type="submit" class="btn btn-success text-white w-full">Đăng Ký</button>
                 </div>
@@ -37,7 +42,7 @@
             <div class="divider">HOẶC</div>
 
             <p class="text-center text-sm">
-                Đã có tài khoản? <a href="/auth/login" class="link link-success">Đăng nhập</a>
+                Đã có tài khoản? <a href="/dang-nhap" class="link link-success">Đăng nhập</a>
             </p>
         </div>
     </div>
