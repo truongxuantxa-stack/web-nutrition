@@ -11,6 +11,43 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 - **Frontend:** EJS Template Engine, Tailwind CSS, DaisyUI.
 - **Libraries:** Chart.js (Biểu đồ), PDFKit (Xuất báo cáo), JWT (Auth).
 
+## Git & Version Control Workflow
+
+> ⚠️ Dự án đồ án 10 tín chỉ — Không có Git = Không có mạng lưới an toàn. Tuân thủ nghiêm ngặt.
+
+### 1. Snapshot Before Major Changes
+Trước khi thực hiện bất kỳ thay đổi lớn nào (refactor UI, thay đổi logic tính toán, cập nhật schema DB), AI **bắt buộc phải nhắc** người dùng lưu snapshot:
+```bash
+git add .
+git commit -m "Snapshot: mô tả trạng thái ổn định hiện tại"
+```
+
+### 2. Branching Strategy
+Khi thử nghiệm giao diện mới (lấy cảm hứng từ Godly, các web dinh dưỡng...), tạo nhánh riêng để không ảnh hưởng `master`:
+```bash
+git checkout -b ui/ten-phong-cach   # ví dụ: ui/olive-dark, ui/bento-grid
+git checkout master                  # quay về nhánh chính khi cần
+```
+
+### 3. Recovery Plan
+Nếu kết quả sau chỉnh sửa bị lỗi hoặc xấu, dùng ngay một trong hai lệnh:
+```bash
+git restore .          # Hủy toàn bộ thay đổi chưa commit (an toàn hơn)
+git reset --hard HEAD  # Reset cứng về commit gần nhất (mạnh hơn)
+```
+
+### 4. Commit Message Convention
+Viết commit message **tiếng Việt có dấu**, rõ ràng, theo định dạng:
+```
+<Hành động>: <Mô tả ngắn gọn>
+
+Ví dụ:
+✅ "Hoàn thiện logic tính TDEE và Macros"
+✅ "Cập nhật giao diện Dashboard màu Olive"
+✅ "Fix lỗi route đăng nhập /dang-nhap"
+❌ "update" / "fix" / "wip"
+```
+
 ## Project Structure
 - `/controllers`: Xử lý logic nghiệp vụ.
 - `/models`: Định nghĩa Schema Sequelize (MySQL).
