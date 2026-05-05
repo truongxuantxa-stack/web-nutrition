@@ -2,7 +2,9 @@
 <%- include('../partials/navbar') %>
 
 <main class="container mx-auto px-4 max-w-5xl py-6">
-
+  <%
+    const safeCalorieProgress = isNaN(calorieProgress) ? 0 : Math.max(0, calorieProgress);
+  %>
   <!-- ── Welcome Hero Banner ──────────────────────────────── -->
   <div class="hero-banner mb-6">
     <div class="relative z-10 flex items-center justify-between flex-wrap gap-3">
@@ -219,7 +221,6 @@
     // Tránh parse 2 lần gây double error nếu JSON bị malformed
     let wData = [];
     try { wData = JSON.parse(weightChartData); } catch(e) { wData = []; }
-    const safeCalorieProgress = isNaN(calorieProgress) ? 0 : Math.max(0, calorieProgress);
   %>
   <div class="nt-card p-5 mb-4">
     <div class="flex items-center justify-between mb-4">
