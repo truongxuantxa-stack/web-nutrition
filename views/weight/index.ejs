@@ -1,0 +1,359 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     views/weight/index.ejs — Theo Dõi Cân Nặng
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<main class="container mx-auto px-4 max-w-5xl py-6 pb-28 md:pb-10">
+
+    <!-- ── Header ─────────────────────────────────────────────────────────────── -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-success flex items-center gap-2">
+                ⚖️ Theo Dõi Cân Nặng
+            </h1>
+            <p class="text-sm text-base-content/60 mt-0.5">Ghi lại hành trình sức khỏe của bạn</p>
+        </div>
+        <button onclick="document.getElementById('addWeightModal').showModal()"
+                class="btn btn-success btn-sm text-white gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Ghi hôm nay
+        </button>
+    </div>
+
+    <!-- ── Alert thành công / lỗi ─────────────────────────────────────────────── -->
+    <% if (success) { %>
+    <div class="alert alert-success mb-4 alert-auto-dismiss shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span>✅ Đã lưu cân nặng hôm nay thành công!</span>
+    </div>
+    <% } %>
+
+    <!-- ── Cards thống kê ─────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <!-- Cân nặng hiện tại -->
+        <div class="card bg-white shadow-sm border border-base-200 card-hover">
+            <div class="card-body p-4">
+                <p class="text-xs text-base-content/50 font-medium uppercase tracking-wide">Hiện tại</p>
+                <p class="text-2xl font-bold text-success">
+                    <%= currentWeight ? currentWeight + ' kg' : '–' %>
+                </p>
+                <p class="text-xs text-base-content/40">Cân nặng mới nhất</p>
+            </div>
+        </div>
+
+        <!-- BMI -->
+        <div class="card bg-white shadow-sm border border-base-200 card-hover">
+            <div class="card-body p-4">
+                <p class="text-xs text-base-content/50 font-medium uppercase tracking-wide">BMI</p>
+                <p class="text-2xl font-bold
+                    <%= bmiClass.color === 'green' ? 'text-success' :
+                        bmiClass.color === 'blue'  ? 'text-info' :
+                        bmiClass.color === 'yellow'? 'text-warning' : 'text-error' %>">
+                    <%= currentBMI || '–' %>
+                </p>
+                <p class="text-xs" style="
+                    color: <%= bmiClass.color === 'green' ? '#16a34a' :
+                               bmiClass.color === 'blue'  ? '#0891b2' :
+                               bmiClass.color === 'yellow'? '#d97706' : '#dc2626' %>;">
+                    <%= bmiClass.label %>
+                </p>
+            </div>
+        </div>
+
+        <!-- Xu hướng 30 ngày -->
+        <div class="card bg-white shadow-sm border border-base-200 card-hover">
+            <div class="card-body p-4">
+                <p class="text-xs text-base-content/50 font-medium uppercase tracking-wide">30 ngày</p>
+                <% if (trend) { %>
+                    <p class="text-2xl font-bold <%= trend.direction === 'down' ? 'text-success' : trend.direction === 'up' ? 'text-error' : 'text-info' %>">
+                        <%= trend.direction === 'down' ? '▼' : trend.direction === 'up' ? '▲' : '→' %>
+                        <%= Math.abs(trend.diff) %> kg
+                    </p>
+                    <p class="text-xs text-base-content/40">
+                        <%= trend.direction === 'down' ? 'Giảm' : trend.direction === 'up' ? 'Tăng' : 'Không đổi' %>
+                    </p>
+                <% } else { %>
+                    <p class="text-2xl font-bold text-base-content/30">–</p>
+                    <p class="text-xs text-base-content/40">Chưa đủ dữ liệu</p>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Mục tiêu cân nặng (dựa trên goal) -->
+        <div class="card bg-white shadow-sm border border-base-200 card-hover">
+            <div class="card-body p-4">
+                <p class="text-xs text-base-content/50 font-medium uppercase tracking-wide">Mục tiêu</p>
+                <p class="text-sm font-semibold mt-1">
+                    <% if (user.goal === 'lose_weight') { %>
+                        <span class="text-success">📉 Giảm cân</span>
+                    <% } else if (user.goal === 'gain_weight') { %>
+                        <span class="text-warning">📈 Tăng cân</span>
+                    <% } else { %>
+                        <span class="text-info">⚖️ Duy trì</span>
+                    <% } %>
+                </p>
+                <% if (stats) { %>
+                <p class="text-xs text-base-content/40 mt-1">TB: <%= stats.avg %> kg</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Biểu đồ cân nặng ──────────────────────────────────────────────────── -->
+    <% if (logs.length > 1) { %>
+    <div class="card bg-white shadow-sm border border-base-200 mb-6">
+        <div class="card-body p-4">
+            <h3 class="font-semibold text-base-content/80 mb-4">📈 Biểu đồ cân nặng (90 ngày gần nhất)</h3>
+            <div class="relative h-56">
+                <canvas id="weightChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <% } else { %>
+    <div class="card bg-base-200/50 border border-dashed border-base-300 mb-6">
+        <div class="card-body text-center py-8">
+            <p class="text-4xl mb-2">📊</p>
+            <p class="font-medium text-base-content/60">Cần ít nhất 2 lần đo để hiển thị biểu đồ</p>
+            <p class="text-sm text-base-content/40">Hãy ghi nhận cân nặng mỗi ngày để theo dõi tiến trình!</p>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- ── Lịch sử cân nặng ──────────────────────────────────────────────────── -->
+    <div class="card bg-white shadow-sm border border-base-200">
+        <div class="card-body p-4">
+            <h3 class="font-semibold text-base-content/80 mb-3">
+                📋 Lịch sử gần nhất
+                <span class="badge badge-ghost badge-sm ml-1"><%= logs.length %> lần đo</span>
+            </h3>
+
+            <% if (logs.length === 0) { %>
+            <div class="text-center py-8 text-base-content/30">
+                <p class="text-4xl mb-2">⚖️</p>
+                <p>Chưa có dữ liệu cân nặng nào.</p>
+                <p class="text-sm mt-1">Bấm "Ghi hôm nay" để bắt đầu theo dõi!</p>
+            </div>
+            <% } else { %>
+            <div class="overflow-x-auto">
+                <table class="table table-sm w-full">
+                    <thead>
+                        <tr class="text-base-content/50 text-xs uppercase">
+                            <th>Ngày</th>
+                            <th class="text-right">Cân nặng</th>
+                            <th class="text-right">BMI</th>
+                            <th>Thay đổi</th>
+                            <th>Ghi chú</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% logs.forEach((log, idx) => {
+                            const bmi = user.height ? Math.round((log.weight / Math.pow(user.height/100, 2)) * 10) / 10 : null;
+                            const prev = logs[idx + 1];
+                            const diff = prev ? Math.round((log.weight - prev.weight) * 10) / 10 : null;
+                        %>
+                        <tr class="hover:bg-base-50 group" id="wlog-<%= log.id %>">
+                            <td class="font-medium text-sm">
+                                <%= new Date(log.date).toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' }) %>
+                            </td>
+                            <td class="text-right font-bold text-success"><%= log.weight %> kg</td>
+                            <td class="text-right text-sm text-base-content/60"><%= bmi || '–' %></td>
+                            <td>
+                                <% if (diff !== null) { %>
+                                    <span class="text-xs font-medium <%= diff < 0 ? 'text-success' : diff > 0 ? 'text-error' : 'text-base-content/40' %>">
+                                        <%= diff < 0 ? '▼' : diff > 0 ? '▲' : '→' %>
+                                        <%= Math.abs(diff) %> kg
+                                    </span>
+                                <% } else { %>
+                                    <span class="text-xs text-base-content/30">–</span>
+                                <% } %>
+                            </td>
+                            <td class="text-sm text-base-content/60 max-w-[150px] truncate">
+                                <%= log.note || '' %>
+                            </td>
+                            <td>
+                                <button onclick="deleteWeightLog(<%= log.id %>)"
+                                        class="btn btn-ghost btn-xs text-error opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Modal Ghi Cân Nặng
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<dialog id="addWeightModal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box max-w-sm">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-3 top-3">✕</button>
+        </form>
+        <h3 class="font-bold text-lg text-success mb-4">⚖️ Ghi Cân Nặng Hôm Nay</h3>
+
+        <form action="/can-nang/them" method="POST" class="space-y-4">
+            <div class="form-control">
+                <label class="label"><span class="label-text font-medium">Ngày đo</span></label>
+                <input type="date" name="date"
+                       value="<%= new Date().toISOString().split('T')[0] %>"
+                       max="<%= new Date().toISOString().split('T')[0] %>"
+                       class="input input-bordered" required>
+            </div>
+
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text font-medium">Cân nặng (kg)</span>
+                </label>
+                <input type="number" name="weight"
+                       value="<%= currentWeight || '' %>"
+                       placeholder="Ví dụ: 65.5"
+                       min="10" max="500" step="0.1"
+                       class="input input-bordered text-xl font-bold"
+                       required autofocus>
+                <% if (user.height) { %>
+                <label class="label">
+                    <span class="label-text-alt text-base-content/50">
+                        Chiều cao của bạn: <%= user.height %> cm
+                    </span>
+                </label>
+                <% } %>
+            </div>
+
+            <div class="form-control">
+                <label class="label"><span class="label-text font-medium">Ghi chú (tùy chọn)</span></label>
+                <input type="text" name="note"
+                       placeholder="Ví dụ: sau bữa sáng, buổi sáng thức dậy..."
+                       class="input input-bordered input-sm">
+            </div>
+
+            <div class="modal-action">
+                <button type="button" onclick="document.getElementById('addWeightModal').close()"
+                        class="btn btn-ghost btn-sm">Hủy</button>
+                <button type="submit" class="btn btn-success btn-sm text-white">
+                    💾 Lưu lại
+                </button>
+            </div>
+        </form>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>đóng</button></form>
+</dialog>
+
+<!-- Toast -->
+<div id="toast" class="toast toast-top toast-end z-50 hidden">
+    <div id="toastAlert" class="alert shadow-lg">
+        <span id="toastMsg"></span>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     JavaScript — Biểu đồ + Xóa log
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<script>
+    // ── Biểu đồ Chart.js ─────────────────────────────────────────────────────
+    <% if (logs.length > 1) { %>
+    const chartRawData = <%- chartData %>;
+    const labels  = chartRawData.map(d => {
+        const dt = new Date(d.date);
+        return dt.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+    });
+    const weights = chartRawData.map(d => d.weight);
+
+    const ctx = document.getElementById('weightChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Cân nặng (kg)',
+                data: weights,
+                borderColor: '#16a34a',
+                backgroundColor: 'rgba(22, 163, 74, 0.08)',
+                borderWidth: 2.5,
+                pointBackgroundColor: '#16a34a',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true,
+                tension: 0.4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` ${ctx.parsed.y} kg`
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    grid: { color: 'rgba(0,0,0,0.04)' },
+                    ticks: {
+                        callback: v => v + ' kg',
+                        font: { size: 11 }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 11 } }
+                }
+            }
+        }
+    });
+    <% } %>
+
+    // ── Xóa log cân nặng ─────────────────────────────────────────────────────
+    async function deleteWeightLog(id) {
+        if (!confirm('Bạn có chắc muốn xóa bản ghi này không?')) return;
+
+        try {
+            showLoading();
+            const res  = await fetch(`/can-nang/xoa/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            hideLoading();
+
+            if (data.success) {
+                const el = document.getElementById(`wlog-${id}`);
+                if (el) {
+                    el.style.transition = 'opacity 0.3s ease';
+                    el.style.opacity = '0';
+                    setTimeout(() => { el.remove(); location.reload(); }, 350);
+                }
+            } else {
+                showToast(data.message || 'Có lỗi xảy ra.', 'error');
+            }
+        } catch (err) {
+            hideLoading();
+            showToast('Lỗi kết nối.', 'error');
+        }
+    }
+
+    // ── Toast notification ────────────────────────────────────────────────────
+    function showToast(msg, type = 'info') {
+        const toast = document.getElementById('toast');
+        const alert = document.getElementById('toastAlert');
+        document.getElementById('toastMsg').textContent = msg;
+        alert.className = `alert alert-${type} shadow-lg`;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3500);
+    }
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,191 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="container mx-auto px-4 max-w-3xl py-8">
+
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">👤 Hồ Sơ Cá Nhân</h1>
+        <p class="text-gray-500 text-sm mt-1">Cập nhật thông tin sức khỏe để tính toán dinh dưỡng chính xác hơn.</p>
+    </div>
+
+    <!-- Alert thành công -->
+    <% if (success) { %>
+    <div class="alert alert-success mb-6 rounded-xl" id="successAlert">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <span><%= success %></span>
+    </div>
+    <% } %>
+
+    <!-- Alert lỗi -->
+    <% if (error) { %>
+    <div class="alert alert-error mb-6 rounded-xl" id="errorAlert">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.538-1.333-3.308 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <span><%= error %></span>
+    </div>
+    <% } %>
+
+    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+
+        <!-- Avatar + tên -->
+        <div class="flex items-center gap-4 mb-8 pb-6 border-b border-gray-100">
+            <div class="avatar placeholder">
+                <div class="bg-success text-white rounded-full w-16 h-16 text-2xl font-bold flex items-center justify-center">
+                    <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
+                </div>
+            </div>
+            <div>
+                <div class="text-xl font-bold text-gray-800"><%= user.fullName %></div>
+                <div class="text-gray-500 text-sm"><%= user.email %></div>
+                <div class="badge badge-success badge-sm mt-1">Đã xác thực</div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form action="/ho-so" method="POST" id="profileForm">
+
+            <!-- Thông tin cơ bản -->
+            <h2 class="text-base font-semibold text-gray-700 mb-4">Thông Tin Cơ Bản</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+                <div class="form-control md:col-span-2">
+                    <label class="label" for="fullName">
+                        <span class="label-text font-medium">Họ và tên <span class="text-error">*</span></span>
+                    </label>
+                    <input type="text" id="fullName" name="fullName"
+                           class="input input-bordered focus:input-success w-full"
+                           value="<%= user.fullName %>" required />
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="gender">
+                        <span class="label-text font-medium">Giới tính</span>
+                    </label>
+                    <select id="gender" name="gender" class="select select-bordered focus:select-success w-full">
+                        <option value="">-- Chọn --</option>
+                        <option value="male" <%= user.gender === 'male' ? 'selected' : '' %>>👨 Nam</option>
+                        <option value="female" <%= user.gender === 'female' ? 'selected' : '' %>>👩 Nữ</option>
+                    </select>
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="birthDate">
+                        <span class="label-text font-medium">Ngày sinh</span>
+                    </label>
+                    <input type="date" id="birthDate" name="birthDate"
+                           class="input input-bordered focus:input-success w-full"
+                           value="<%= user.birthDate ? user.birthDate.toString().split('T')[0] : '' %>"
+                           max="<%= new Date().toISOString().split('T')[0] %>" />
+                </div>
+
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Chỉ số thể chất -->
+            <h2 class="text-base font-semibold text-gray-700 mb-4">Chỉ Số Thể Chất</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+                <div class="form-control">
+                    <label class="label" for="height">
+                        <span class="label-text font-medium">Chiều cao</span>
+                    </label>
+                    <label class="input input-bordered focus-within:input-success flex items-center gap-2">
+                        <input type="number" id="height" name="height"
+                               class="grow" placeholder="170"
+                               min="50" max="300" step="0.1"
+                               value="<%= user.height || '' %>" />
+                        <span class="text-gray-400 text-sm font-medium">cm</span>
+                    </label>
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="weight">
+                        <span class="label-text font-medium">Cân nặng</span>
+                    </label>
+                    <label class="input input-bordered focus-within:input-success flex items-center gap-2">
+                        <input type="number" id="weight" name="weight"
+                               class="grow" placeholder="65"
+                               min="10" max="500" step="0.1"
+                               value="<%= user.weight || '' %>" />
+                        <span class="text-gray-400 text-sm font-medium">kg</span>
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Mức hoạt động & Mục tiêu -->
+            <h2 class="text-base font-semibold text-gray-700 mb-4">Mức Hoạt Động & Mục Tiêu</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+
+                <div class="form-control">
+                    <label class="label" for="activityLevel">
+                        <span class="label-text font-medium">Mức hoạt động thể chất</span>
+                    </label>
+                    <select id="activityLevel" name="activityLevel" class="select select-bordered focus:select-success w-full">
+                        <option value="">-- Chọn --</option>
+                        <option value="sedentary"   <%= user.activityLevel === 'sedentary'   ? 'selected' : '' %>>🪑 Ít vận động (×1.2)</option>
+                        <option value="light"       <%= user.activityLevel === 'light'       ? 'selected' : '' %>>🚶 Vận động nhẹ (×1.375)</option>
+                        <option value="moderate"    <%= user.activityLevel === 'moderate'    ? 'selected' : '' %>>🏃 Vận động vừa (×1.55)</option>
+                        <option value="active"      <%= user.activityLevel === 'active'      ? 'selected' : '' %>>🏋️ Vận động nhiều (×1.725)</option>
+                        <option value="very_active" <%= user.activityLevel === 'very_active' ? 'selected' : '' %>>⚡ Rất nhiều (×1.9)</option>
+                    </select>
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="goal">
+                        <span class="label-text font-medium">Mục tiêu sức khỏe</span>
+                    </label>
+                    <select id="goal" name="goal" class="select select-bordered focus:select-success w-full">
+                        <option value="">-- Chọn --</option>
+                        <option value="lose_weight"     <%= user.goal === 'lose_weight'     ? 'selected' : '' %>>🔥 Giảm cân</option>
+                        <option value="maintain_weight" <%= user.goal === 'maintain_weight' ? 'selected' : '' %>>⚖️ Duy trì cân nặng</option>
+                        <option value="gain_weight"     <%= user.goal === 'gain_weight'     ? 'selected' : '' %>>💪 Tăng cơ / Tăng cân</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+                <a href="/dashboard" class="btn btn-ghost btn-sm">← Quay lại</a>
+                <button type="submit" id="saveBtn" class="btn btn-success text-white px-8">
+                    💾 Lưu thay đổi
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+    const form    = document.getElementById('profileForm');
+    const saveBtn = document.getElementById('saveBtn');
+
+    form.addEventListener('submit', () => {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> Đang lưu...';
+        document.getElementById('loadingOverlay').classList.add('active');
+    });
+
+    // Auto-dismiss alerts
+    ['successAlert', 'errorAlert'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity 0.5s';
+                setTimeout(() => el.remove(), 500);
+            }, 4000);
+        }
+    });
+})();
+</script>
+
+<%- include('../partials/footer') %>

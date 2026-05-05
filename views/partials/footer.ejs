@@ -1,0 +1,31 @@
+<footer class="footer footer-center p-4 bg-base-300 text-base-content mt-10">
+  <aside>
+    <p>Copyright © <%= new Date().getFullYear() %> - NutriTrack (Graduation Project)</p>
+  </aside>
+</footer>
+
+<script>
+    function showLoading() {
+        const div = document.createElement('div');
+        div.id = 'global-loading';
+        div.className = 'fixed inset-0 bg-black/20 z-50 flex items-center justify-center backdrop-blur-sm';
+        div.innerHTML = '<span class="loading loading-spinner loading-lg text-success"></span>';
+        document.body.appendChild(div);
+    }
+    function hideLoading() {
+        const div = document.getElementById('global-loading');
+        if (div) div.remove();
+    }
+    
+    // Auto dismiss alerts
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert-auto-dismiss');
+        alerts.forEach(alert => {
+            alert.style.transition = 'opacity 0.5s ease';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 500);
+        });
+    }, 4000);
+</script>
+</body>
+</html>

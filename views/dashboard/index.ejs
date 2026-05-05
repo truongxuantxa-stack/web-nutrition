@@ -1,0 +1,341 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     views/dashboard/index.ejs — Tổng quan Dinh Dưỡng
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<main class="container mx-auto px-4 max-w-5xl py-6 pb-28 md:pb-10">
+
+    <!-- ── Welcome Banner ────────────────────────────────────────────────────── -->
+    <div class="bg-gradient-to-r from-success to-emerald-600 rounded-2xl p-5 mb-6 text-white shadow-lg">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+                <h1 class="text-xl font-bold">Xin chào, <%= user.fullName %> 👋</h1>
+                <p class="opacity-80 text-sm mt-0.5">
+                    <%= new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' }) %>
+                </p>
+            </div>
+            <div class="flex gap-2">
+                <a href="/nhat-ky?date=<%= today %>" class="btn btn-sm bg-white/20 border-white/30 text-white hover:bg-white/30">
+                    📔 Ghi nhật ký
+                </a>
+                <a href="/can-nang" class="btn btn-sm bg-white/20 border-white/30 text-white hover:bg-white/30">
+                    ⚖️ Cân nặng
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Cards chỉ số cơ thể ────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+
+        <!-- BMI -->
+        <div class="card bg-white shadow-sm border border-base-200 card-hover">
+            <div class="card-body p-4">
+                <p class="text-xs text-base-content/50 font-medium uppercase tracking-wide">BMI</p>
+                <% if (metrics.bmi) { %>
+                <p class="text-2xl font-bold
+                    <%= metrics.bmiClass.color === 'green'  ? 'text-success' :
+                        metrics.bmiClass.color === 'blue'   ? 'text-info'    :
+                        metrics.bmiClass.color === 'yellow' ? 'text-warning' : 'text-error' %>">
+                    <%= metrics.bmi %>
+                </p>
+                <p class="text-xs font-medium
+                    <%= metrics.bmiClass.color === 'green'  ? 'text-success' :
+                        metrics.bmiClass.color === 'blue'   ? 'text-info'    :
+                        metrics.bmiClass.color === 'yellow' ? 'text-warning' : 'text-error' %>">
+                    <%= metrics.bmiClass.label %>
+                </p>
+                <% } else { %>
+                <p class="text-2xl font-bold text-base-content/20">–</p>
+                <p class="text-xs text-base-content/40">Chưa đủ dữ liệu</p>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- BMR -->
+        <div class="card bg-white shadow-sm border border-base-200 card-hover">
+            <div class="card-body p-4">
+                <p class="text-xs text-base-content/50 font-medium uppercase tracking-wide">BMR</p>
+                <p class="text-2xl font-bold text-primary"><%= metrics.bmr || '–' %></p>
+                <p class="text-xs text-base-content/40">kcal/ngày (nghỉ ngơi)</p>
+            </div>
+        </div>
+
+        <!-- TDEE -->
+        <div class="card bg-white shadow-sm border border-base-200 card-hover">
+            <div class="card-body p-4">
+                <p class="text-xs text-base-content/50 font-medium uppercase tracking-wide">TDEE</p>
+                <p class="text-2xl font-bold text-secondary"><%= metrics.tdee || '–' %></p>
+                <p class="text-xs text-base-content/40">kcal/ngày (hoạt động)</p>
+            </div>
+        </div>
+
+        <!-- Mục tiêu calo -->
+        <div class="card bg-white shadow-sm border border-base-200 card-hover">
+            <div class="card-body p-4">
+                <p class="text-xs text-base-content/50 font-medium uppercase tracking-wide">Mục tiêu</p>
+                <p class="text-2xl font-bold text-success"><%= metrics.targetCalories || '–' %></p>
+                <p class="text-xs text-base-content/40">
+                    <% if (user.goal === 'lose_weight') { %>📉 Giảm cân (-500)<% } %>
+                    <% if (user.goal === 'maintain_weight') { %>⚖️ Duy trì<% } %>
+                    <% if (user.goal === 'gain_weight') { %>📈 Tăng cân (+300)<% } %>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Layout 2 cột ────────────────────────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-5 mb-5">
+
+        <!-- CỘT TRÁI: Calo hôm nay -->
+        <div class="card bg-white shadow-sm border border-base-200">
+            <div class="card-body p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-base-content/80">🔥 Calo hôm nay</h3>
+                    <a href="/nhat-ky?date=<%= today %>" class="text-xs text-success hover:underline">Xem nhật ký →</a>
+                </div>
+
+                <!-- Vòng tròn tiến độ -->
+                <div class="flex items-center gap-5">
+                    <div class="relative w-28 h-28 flex-shrink-0">
+                        <svg class="w-28 h-28 -rotate-90" viewBox="0 0 36 36">
+                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none" stroke="#e5e7eb" stroke-width="3"/>
+                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none" stroke="#16a34a" stroke-width="3"
+                                stroke-dasharray="<%= calorieProgress %>, 100"
+                                stroke-linecap="round"/>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span class="text-xl font-bold text-success"><%= calorieProgress %>%</span>
+                            <span class="text-xs text-base-content/40">hôm nay</span>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-base-content/60">Đã nạp</span>
+                            <span class="font-bold text-success"><%= consumed.calories %> kcal</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-base-content/60">Mục tiêu</span>
+                            <span class="font-medium"><%= metrics.targetCalories || '–' %> kcal</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-base-content/60">Còn lại</span>
+                            <% const remaining = (metrics.targetCalories || 0) - consumed.calories; %>
+                            <span class="font-medium <%= remaining < 0 ? 'text-error' : 'text-warning' %>">
+                                <%= remaining >= 0 ? remaining : 0 %> kcal
+                            </span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-base-content/60">Số bữa</span>
+                            <span class="font-medium"><%= mealCount %> món</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Macros progress bars -->
+                <% if (metrics.macros && metrics.targetCalories) { %>
+                <div class="mt-4 space-y-2">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-blue-600 font-medium">🥩 Protein</span>
+                            <span class="text-base-content/50"><%= consumed.protein %>/<%= metrics.macros.protein %>g</span>
+                        </div>
+                        <progress class="progress progress-info w-full h-2" value="<%= macroProgress.protein %>" max="100"></progress>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-amber-600 font-medium">🍚 Carbs</span>
+                            <span class="text-base-content/50"><%= consumed.carbs %>/<%= metrics.macros.carbs %>g</span>
+                        </div>
+                        <progress class="progress progress-warning w-full h-2" value="<%= macroProgress.carbs %>" max="100"></progress>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-rose-600 font-medium">🥑 Fat</span>
+                            <span class="text-base-content/50"><%= consumed.fat %>/<%= metrics.macros.fat %>g</span>
+                        </div>
+                        <progress class="progress progress-error w-full h-2" value="<%= macroProgress.fat %>" max="100"></progress>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: Biểu đồ Doughnut Macros -->
+        <div class="card bg-white shadow-sm border border-base-200">
+            <div class="card-body p-4">
+                <h3 class="font-semibold text-base-content/80 mb-3">🍽️ Phân bổ Macros mục tiêu</h3>
+                <% if (metrics.macros && metrics.targetCalories) { %>
+                <div class="relative h-44">
+                    <canvas id="macroChart"></canvas>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mt-3 text-center">
+                    <div class="bg-blue-50 rounded-lg p-2">
+                        <p class="text-xs text-blue-600 font-medium">Protein</p>
+                        <p class="font-bold text-blue-700"><%= metrics.macros.protein %>g</p>
+                        <p class="text-xs text-base-content/40">30%</p>
+                    </div>
+                    <div class="bg-amber-50 rounded-lg p-2">
+                        <p class="text-xs text-amber-600 font-medium">Carbs</p>
+                        <p class="font-bold text-amber-700"><%= metrics.macros.carbs %>g</p>
+                        <p class="text-xs text-base-content/40">40%</p>
+                    </div>
+                    <div class="bg-rose-50 rounded-lg p-2">
+                        <p class="text-xs text-rose-600 font-medium">Fat</p>
+                        <p class="font-bold text-rose-700"><%= metrics.macros.fat %>g</p>
+                        <p class="text-xs text-base-content/40">30%</p>
+                    </div>
+                </div>
+                <% } else { %>
+                <div class="flex flex-col items-center justify-center h-44 text-base-content/30">
+                    <p class="text-3xl mb-2">📊</p>
+                    <p class="text-sm">Cập nhật hồ sơ để xem biểu đồ</p>
+                    <a href="/ho-so" class="btn btn-success btn-xs text-white mt-2">Cập nhật ngay</a>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Biểu đồ cân nặng (mini) ──────────────────────────────────────────── -->
+    <div class="card bg-white shadow-sm border border-base-200 mb-5">
+        <div class="card-body p-4">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-base-content/80">📈 Cân nặng gần đây</h3>
+                <a href="/can-nang" class="text-xs text-success hover:underline">Xem chi tiết →</a>
+            </div>
+            <% const wData = JSON.parse(weightChartData); %>
+            <% if (wData.length >= 2) { %>
+            <div class="relative h-36">
+                <canvas id="weightMiniChart"></canvas>
+            </div>
+            <% } else { %>
+            <div class="text-center py-6 text-base-content/30">
+                <p class="text-2xl mb-1">⚖️</p>
+                <p class="text-sm">Chưa có dữ liệu cân nặng.</p>
+                <a href="/can-nang" class="btn btn-outline btn-success btn-xs mt-2">Ghi cân nặng</a>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- ── Truy cập nhanh ─────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <a href="/nhat-ky?date=<%= today %>"
+           class="card bg-gradient-to-br from-green-50 to-emerald-100 border border-green-200 shadow-sm card-hover text-center p-4 cursor-pointer">
+            <p class="text-2xl mb-1">📔</p>
+            <p class="font-semibold text-sm text-success">Nhật ký ăn</p>
+            <p class="text-xs text-base-content/50">Thêm món ăn</p>
+        </a>
+        <a href="/can-nang"
+           class="card bg-gradient-to-br from-blue-50 to-sky-100 border border-blue-200 shadow-sm card-hover text-center p-4 cursor-pointer">
+            <p class="text-2xl mb-1">⚖️</p>
+            <p class="font-semibold text-sm text-blue-600">Cân nặng</p>
+            <p class="text-xs text-base-content/50">Ghi lại hôm nay</p>
+        </a>
+        <a href="/ho-so"
+           class="card bg-gradient-to-br from-purple-50 to-violet-100 border border-purple-200 shadow-sm card-hover text-center p-4 cursor-pointer">
+            <p class="text-2xl mb-1">👤</p>
+            <p class="font-semibold text-sm text-purple-600">Hồ sơ</p>
+            <p class="text-xs text-base-content/50">Cập nhật thông tin</p>
+        </a>
+        <a href="/nhat-ky"
+           class="card bg-gradient-to-br from-amber-50 to-yellow-100 border border-amber-200 shadow-sm card-hover text-center p-4 cursor-pointer">
+            <p class="text-2xl mb-1">💡</p>
+            <p class="font-semibold text-sm text-amber-600">Gợi ý</p>
+            <p class="text-xs text-base-content/50">Xem thực đơn</p>
+        </a>
+    </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     JavaScript — Charts
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<script>
+<% if (metrics.macros && metrics.targetCalories) { %>
+// ── Doughnut Chart: Macros Mục Tiêu ───────────────────────────────────────────
+const macroCtx = document.getElementById('macroChart').getContext('2d');
+new Chart(macroCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Protein', 'Carbs', 'Fat'],
+        datasets: [{
+            data: [
+                <%= metrics.macros.protein %>,
+                <%= metrics.macros.carbs %>,
+                <%= metrics.macros.fat %>
+            ],
+            backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444'],
+            borderColor    : ['#eff6ff', '#fffbeb', '#fff1f2'],
+            borderWidth    : 3,
+            hoverOffset    : 6,
+        }]
+    },
+    options: {
+        responsive    : true,
+        maintainAspectRatio: false,
+        cutout        : '68%',
+        plugins       : {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: ctx => ` ${ctx.label}: ${ctx.parsed}g`
+                }
+            }
+        }
+    }
+});
+<% } %>
+
+<% const wChartData = JSON.parse(weightChartData); %>
+<% if (wChartData.length >= 2) { %>
+// ── Line Chart Mini: Cân nặng ─────────────────────────────────────────────────
+const wCtx = document.getElementById('weightMiniChart').getContext('2d');
+new Chart(wCtx, {
+    type: 'line',
+    data: {
+        labels: <%- JSON.stringify(wChartData.map(d => {
+            const dt = new Date(d.date);
+            return (dt.getDate()).toString().padStart(2,'0') + '/' + (dt.getMonth()+1).toString().padStart(2,'0');
+        })) %>,
+        datasets: [{
+            label     : 'kg',
+            data      : <%- JSON.stringify(wChartData.map(d => d.weight)) %>,
+            borderColor: '#16a34a',
+            backgroundColor: 'rgba(22,163,74,0.08)',
+            borderWidth: 2,
+            pointRadius: 4,
+            pointBackgroundColor: '#16a34a',
+            fill: true,
+            tension: 0.4,
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} kg` } }
+        },
+        scales: {
+            y: {
+                grid : { color: 'rgba(0,0,0,0.04)' },
+                ticks: { callback: v => v + ' kg', font: { size: 10 } }
+            },
+            x: {
+                grid : { display: false },
+                ticks: { font: { size: 10 } }
+            }
+        }
+    }
+});
+<% } %>
+</script>
+
+<%- include('../partials/footer') %>
