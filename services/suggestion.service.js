@@ -79,8 +79,9 @@ const getSuggestions = async (targetCalories, consumed, category = null) => {
     const remainTotal    = remainProtein + remainCarbs + remainFat || 1; // tránh chia 0
 
     try {
-        // Lấy danh sách món ăn phù hợp
+        // Lấy danh sách món ăn phù hợp (chỉ các món được phép gợi ý)
         const whereClause = {
+            isSuggestable: true,
             calories: {
                 [Op.gt]: 0,
                 [Op.lte]: remainingCalories * 1.3, // Cho phép vượt nhẹ 30%
@@ -167,10 +168,108 @@ const getMacroProgress = (consumed, targets) => {
     };
 };
 
+/**
+ * Phân tích và đưa ra các cảnh báo về sức khỏe/dinh dưỡng dựa trên tiến độ.
+ * @param {Object} consumed - { calories, protein, carbs, fat }
+ * @param {Object} metrics  - { targetCalories, macros: { protein, carbs, fat } }
+ * @returns {Array} Mảng các cảnh báo { type: string, icon: string, message: string }
+ */
+const getHealthInsights = (consumed, metrics, mealGroups = {}) => {
+    const insights = [];
+    if (!metrics.targetCalories) return insights;
+
+    const calPct = (consumed.calories / metrics.targetCalories) * 100;
+
+    // 1. Cảnh báo Calo
+    if (calPct > 110) {
+        insights.push({
+            type: 'error',
+            icon: '⚠️',
+            message: `Bạn đã nạp vượt ${Math.round(calPct - 100)}% mục tiêu calo. Hãy chú ý vận động để tiêu bớt năng lượng nhé!`
+        });
+    } else if (calPct > 100) {
+        insights.push({
+            type: 'warning',
+            icon: '⚡',
+            message: 'Đã đạt mục tiêu calo. Bạn nên hạn chế ăn thêm các món giàu năng lượng trong phần còn lại của ngày.'
+        });
+    }
+
+    // 2. Cảnh báo mất cân bằng Macro (chỉ phân tích khi đã nạp > 40% calo)
+    if (calPct > 40) {
+        const pPct = (consumed.protein / (metrics.macros.protein || 1)) * 100;
+        const cPct = (consumed.carbs / (metrics.macros.carbs || 1)) * 100;
+        const fPct = (consumed.fat / (metrics.macros.fat || 1)) * 100;
+
+        // Cảnh báo thiếu hụt tương đối (so với tiến độ calo)
+        if (cPct < calPct * 0.6) {
+            insights.push({
+                type: 'warning',
+                icon: '🍚',
+                message: 'Lượng tinh bột (Carbs) đang hơi thấp. Bạn có thể cảm thấy mệt mỏi hoặc thiếu năng lượng, hãy bổ sung thêm nhé.'
+            });
+        }
+        if (pPct < calPct * 0.6) {
+            insights.push({
+                type: 'warning',
+                icon: '🥩',
+                message: 'Tỷ lệ chất đạm đang thấp. Đạm giúp no lâu và duy trì cơ bắp, hãy ưu tiên thịt nạc hoặc đậu.'
+            });
+        }
+        // Cảnh báo dư thừa tương đối
+        if (fPct > calPct * 1.5) {
+            insights.push({
+                type: 'warning',
+                icon: '🥑',
+                message: 'Tỷ lệ chất béo đang khá cao. Bạn nên chọn các món luộc, hấp thay vì chiên xào cho bữa tiếp theo.'
+            });
+        }
+    }
+
+    // 3. Cảnh báo Cân bằng Bữa ăn (Áp dụng riêng cho Nguyên liệu thô)
+    const mealNames = { sang: 'Bữa sáng', trua: 'Bữa trưa', toi: 'Bữa tối', phu: 'Bữa phụ' };
+    
+    Object.entries(mealGroups).forEach(([mealKey, entries]) => {
+        // Lọc ra các món thô trong bữa ăn hiện tại
+        const rawFoods = entries.filter(e => e.food && e.food.foodType === 'raw');
+        
+        // Chỉ kích hoạt cảnh báo nếu bữa ăn CÓ thực phẩm thô
+        if (rawFoods.length > 0) {
+            const categories = new Set(rawFoods.map(e => e.food.category));
+            const mealName = mealNames[mealKey];
+            
+            if (!categories.has('carb')) {
+                insights.push({
+                    type: 'warning',
+                    icon: '🌽',
+                    message: `${mealName} dùng thực phẩm thô nhưng đang thiếu nhóm Tinh bột/Chất xơ (Carb). Hãy bổ sung gạo lứt, khoai lang hoặc rau xanh nhé!`
+                });
+            }
+            if (!categories.has('protein')) {
+                insights.push({
+                    type: 'warning',
+                    icon: '🍗',
+                    message: `${mealName} dùng thực phẩm thô đang thiếu nhóm Đạm (Protein). Đừng quên bổ sung thịt, cá, trứng hoặc đậu!`
+                });
+            }
+            if (!categories.has('fat')) {
+                insights.push({
+                    type: 'warning',
+                    icon: '🥜',
+                    message: `${mealName} dùng thực phẩm thô đang thiếu nhóm Chất béo tốt (Fat). Một chút bơ, hạt dinh dưỡng hoặc dầu olive sẽ giúp bạn hấp thụ vitamin tốt hơn!`
+                });
+            }
+        }
+    });
+
+    return insights;
+};
+
 module.exports = {
     sumNutritionFromEntries,
     groupEntriesByMeal,
     getSuggestions,
     getCalorieProgress,
     getMacroProgress,
+    getHealthInsights,
 };

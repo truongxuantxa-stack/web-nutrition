@@ -64,7 +64,7 @@ const Food = sequelize.define('Food', {
         },
     },
     category: {
-        // Phân loại món ăn
+        // Phân loại món ăn theo nhóm thực phẩm
         type: DataTypes.ENUM(
             'com',          // Cơm & Xôi
             'pho_bun',      // Phở, Bún, Mì
@@ -73,13 +73,36 @@ const Food = sequelize.define('Food', {
             'thit_ca',      // Thịt & Cá
             'do_uong',      // Đồ uống
             'trai_cay',     // Trái cây
+            'protein',      // Nguyên liệu thô (Đạm)
+            'carb',         // Nguyên liệu thô (Tinh bột)
+            'fat',          // Nguyên liệu thô (Béo)
+            'fiber',        // Nguyên liệu thô (Chất xơ / Rau củ)
+            'vitamin',      // Nguyên liệu thô (Vitamin & Khoáng chất)
             'khac'          // Khác
         ),
         allowNull: false,
         defaultValue: 'khac',
     },
+    foodType: {
+        // Loại thực phẩm: 'raw' = nguyên liệu thô (tính/100g), 'dish' = món ăn chế biến (tính/phần ăn)
+        type: DataTypes.ENUM('raw', 'dish'),
+        allowNull: false,
+        defaultValue: 'dish',
+    },
+    isSuggestable: {
+        // true = thuật toán gợi ý có thể đề xuất món này; false = nguyên liệu thô/gia vị, không gợi ý
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
     description: {
         type: DataTypes.TEXT,
+        allowNull: true,
+        defaultValue: null,
+    },
+    imageUrl: {
+        // Đường dẫn hình ảnh món ăn
+        type: DataTypes.STRING(500),
         allowNull: true,
         defaultValue: null,
     },
@@ -89,6 +112,8 @@ const Food = sequelize.define('Food', {
     indexes: [
         { fields: ['name'] },
         { fields: ['category'] },
+        { fields: ['foodType'] },
+        { fields: ['isSuggestable'] },
     ],
 });
 

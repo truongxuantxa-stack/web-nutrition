@@ -86,6 +86,21 @@
   </div>
   <% } %>
 
+  <!-- ── Health Insights & Warnings ────────────────────────── -->
+  <% if (healthInsights && healthInsights.length > 0) { %>
+  <div class="mb-5 space-y-2">
+    <% healthInsights.forEach(insight => { %>
+      <div class="nt-card p-3 flex items-center gap-3 border-l-4 shadow-sm animate-in fade-in slide-in-from-left-4 duration-500
+                  <%= insight.type === 'error' ? 'border-red-500 bg-red-50' : 'border-amber-400 bg-amber-50' %>">
+        <span class="text-xl"><%= insight.icon %></span>
+        <p class="text-sm font-bold <%= insight.type === 'error' ? 'text-red-700' : 'text-amber-700' %>">
+          <%= insight.message %>
+        </p>
+      </div>
+    <% }); %>
+  </div>
+  <% } %>
+
   <!-- ── Meal Cards Grid ────────────────────────────────────── -->
   <% const mealConfig = [
     { key:'sang', label:'Bữa Sáng', icon:'🌅', accent:'#d97706', bg:'linear-gradient(135deg,#fffbeb,#fef3c7)', border:'#fde68a' },
@@ -196,22 +211,32 @@
       Thêm Món Ăn
     </h3>
 
-    <!-- Search row -->
-    <div class="flex gap-2 mb-3">
+    <div class="flex flex-col sm:flex-row gap-2 mb-3">
       <input type="text" id="searchFoodInput" placeholder="Tìm tên món (cơm, phở, thịt...)"
              class="nt-input flex-1 text-sm" oninput="debounceSearch(this.value)" autocomplete="off">
-      <select id="categoryFilter" class="nt-select text-sm w-28"
-              onchange="debounceSearch(document.getElementById('searchFoodInput').value)">
-        <option value="">Tất cả</option>
-        <option value="com">Cơm & Xôi</option>
-        <option value="pho_bun">Phở, Bún</option>
-        <option value="banh">Bánh</option>
-        <option value="rau_cu">Rau củ</option>
-        <option value="thit_ca">Thịt & Cá</option>
-        <option value="do_uong">Đồ uống</option>
-        <option value="trai_cay">Trái cây</option>
-        <option value="khac">Khác</option>
-      </select>
+      <div class="flex gap-2">
+        <select id="categoryFilter" class="nt-select text-sm w-40"
+                onchange="debounceSearch(document.getElementById('searchFoodInput').value)">
+          <option value="">Nhóm: Tất cả</option>
+          <optgroup label="Nguyên liệu thô">
+            <option value="protein">Đạm (Protein)</option>
+            <option value="carb">Tinh bột (Carb)</option>
+            <option value="fat">Chất béo (Fat)</option>
+            <option value="fiber">Chất xơ / Rau củ (Fiber)</option>
+            <option value="vitamin">Vitamin / Trái cây</option>
+          </optgroup>
+          <optgroup label="Món chế biến">
+            <option value="com">Cơm & Xôi</option>
+            <option value="pho_bun">Phở, Bún</option>
+            <option value="banh">Bánh</option>
+            <option value="rau_cu">Rau củ</option>
+            <option value="thit_ca">Thịt & Cá</option>
+            <option value="do_uong">Đồ uống</option>
+            <option value="trai_cay">Trái cây</option>
+            <option value="khac">Khác</option>
+          </optgroup>
+        </select>
+      </div>
     </div>
 
     <!-- Results -->
@@ -318,10 +343,14 @@ function renderSearchResults(foods) {
   }
   list.innerHTML = foods.map(f => {
     const safe = JSON.stringify(f).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
+    const badgeHtml = f.foodType === 'raw' 
+      ? '<span class="ml-2 text-[10px] px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700">Thô</span>'
+      : '<span class="ml-2 text-[10px] px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-700">Chế biến</span>';
+    
     return `<button type="button" class="w-full text-left px-4 py-2.5 hover:bg-green-50 transition-colors border-b border-gray-50 last:border-0"
               data-food='${safe.replace(/'/g,"\\u0027")}' onclick="selectFood(JSON.parse(this.dataset.food))">
-      <p class="font-bold text-sm text-gray-800">${f.name.replace(/</g,'&lt;')}</p>
-      <p class="text-xs text-gray-400">${f.calories} kcal / ${f.unit} · P:${f.protein}g C:${f.carbs}g F:${f.fat}g</p>
+      <p class="font-bold text-sm text-gray-800 flex items-center">${f.name.replace(/</g,'&lt;')} ${badgeHtml}</p>
+      <p class="text-xs text-gray-400 mt-0.5">${f.calories} kcal / ${f.unit} · P:${f.protein}g C:${f.carbs}g F:${f.fat}g</p>
     </button>`;
   }).join('');
   wrap.classList.remove('hidden');

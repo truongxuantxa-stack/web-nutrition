@@ -13,6 +13,7 @@ const {
     getSuggestions,
     getCalorieProgress,
     getMacroProgress,
+    getHealthInsights,
 } = require('../services/suggestion.service');
 const { Op } = require('sequelize');
 
@@ -61,6 +62,7 @@ exports.getDiary = async (req, res) => {
         // Tiến độ calo và macro
         const calorieProgress = getCalorieProgress(consumed.calories, metrics.targetCalories);
         const macroProgress   = getMacroProgress(consumed, metrics.macros);
+        const healthInsights  = getHealthInsights(consumed, metrics, mealGroups);
 
         // Tính tổng calo theo từng bữa để hiển thị
         // [QA-FIX] Khởi tạo đủ 4 key với default = 0, tránh undefined khi bữa chưa có món
@@ -89,6 +91,7 @@ exports.getDiary = async (req, res) => {
             suggestions,
             calorieProgress,
             macroProgress,
+            healthInsights,
             error  : null,
             success: null,
         });
@@ -226,6 +229,7 @@ exports.searchFood = async (req, res) => {
     try {
         const q        = req.query.q ? req.query.q.trim() : '';
         const category = req.query.category || null;
+        const foodType = req.query.foodType || null;
         const limit    = parseInt(req.query.limit) || 10;
 
         const whereClause = {};
@@ -235,12 +239,15 @@ exports.searchFood = async (req, res) => {
         if (category) {
             whereClause.category = category;
         }
+        if (foodType) {
+            whereClause.foodType = foodType;
+        }
 
         const foods = await Food.findAll({
             where: whereClause,
             limit: Math.min(limit, 50),
             order: [['name', 'ASC']],
-            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'unit', 'category'],
+            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'unit', 'category', 'foodType'],
         });
 
         return res.json({ success: true, foods });

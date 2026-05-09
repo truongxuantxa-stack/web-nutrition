@@ -76,8 +76,42 @@ Ví dụ:
 ## Critical Instructions for AI
 1. **Database:** Khi tạo Model, luôn bao gồm `createdAt` và `updatedAt`.
 2. **UI/UX:** Giao diện phải Responsive. Sử dụng biểu đồ tròn cho Macros và biểu đồ đường cho cân nặng.
-3. **Logic Gợi ý:** Thuật toán gợi ý món ăn phải dựa trên số Calo còn thiếu ($TDEE - \text{Calo đã nạp}$).
+3. **Logic Gợi ý:** Thuật toán gợi ý món ăn phải dựa trên số Calo còn thiếu ($TDEE - \text{Calo đã nạp}$) và TUYỆT ĐỐI chỉ gợi ý thức ăn chín/món ăn hoàn chỉnh (`foodType: 'dish'`), không gợi ý nguyên liệu thô (`raw`).
 4. **Security:** Kiểm tra JWT middleware cho tất cả các route cần đăng nhập.
+5. **Dữ liệu Thực phẩm (Food):** Phải luôn phân định rõ `foodType` là `'raw'` (nguyên liệu thô - tính trên 100g/quả) hay `'dish'` (món ăn chế biến - tính trên 1 bát/đĩa/suất). Đồng thời sử dụng trường `isSuggestable` (Boolean: true cho dish, false cho raw) để hỗ trợ thuật toán gợi ý. Thuật toán `getSuggestions` BẮT BUỘC phải filter theo `isSuggestable: true`.
+6. **Documentation (Cập nhật tài liệu):** AI BẮT BUỘC phải tự động cập nhật file `claude.md` (đặc biệt là phần Changelog) sau mỗi lần hoàn thành một tính năng, thay đổi cấu trúc DB hoặc hoàn tất một tiến trình lớn để đảm bảo mọi thay đổi luôn được track lại.
+
+## Behavioral Guidelines (AI Rules)
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+
+### 1. Think Before Coding
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them - don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+### 2. Simplicity First
+**Minimum code that solves the problem. Nothing speculative.**
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+
+### 3. Surgical Changes
+**Touch only what you must. Clean up only your own mess.**
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it - don't delete it.
+- Remove imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code unless asked.
+
+### 4. Goal-Driven Execution
+**Define success criteria. Loop until verified.**
+- Transform tasks into verifiable goals (e.g., "Write tests for invalid inputs, then make them pass").
+- For multi-step tasks, state a brief plan and verify each step.
 
 ## Development Commands
 - `npm install`: Cài đặt thư viện.
@@ -112,7 +146,7 @@ Mục tiêu: 4 Model sync vào MySQL, có dữ liệu mẫu.
 
 
 
-ModelCác trường chínhUserfullName, email, password, gender, birthDate, height, weight, activityLevel, goalFoodname, calories, protein, carbs, fat, unitDiaryEntryuserId, foodId, amount, mealType, dateWeightLoguserId, weight, date
+ModelCác trường chínhUserfullName, email, password, gender, birthDate, height, weight, activityLevel, goalFoodname, calories, protein, carbs, fat, unit, foodType ('raw'|'dish'), isSuggestable (boolean)DiaryEntryuserId, foodId, amount, mealType, dateWeightLoguserId, weight, date
 
 ⚠️ Mỗi model bắt buộc có createdAt & updatedAt
 
@@ -152,15 +186,15 @@ Mục tiêu: Các công thức hoạt động đúng, nhật ký ăn uống ghi 
 
 4B — Nhật Ký Ăn Uống
 
- controllers/diary.controller.js — getDiary, addEntry, deleteEntry
+ controllers/diary.controller.js — getDiary, addEntry, deleteEntry, searchFood (hỗ trợ filter foodType)
 
- views/diary/index.ejs — nhóm theo bữa Sáng/Trưa/Tối/Phụ
+ views/diary/index.ejs — nhóm theo bữa Sáng/Trưa/Tối/Phụ, Modal tìm kiếm có badge Raw/Dish và Dropdown filter loại.
 
 4C — Gợi Ý Món Ăn
 
  services/suggestion.service.js:Tính remainingCalories = TDEE - Calo đã nạp
 
-Lọc Food phù hợp → sắp xếp theo macro balance → top 5
+Lọc Food phù hợp (Bắt buộc dùng `isSuggestable: true` để tránh gợi ý đồ sống) → sắp xếp theo macro balance → top 5
 
 4D — Theo Dõi Cân Nặng
 
@@ -176,7 +210,7 @@ Mục tiêu: Dashboard đẹp, responsive, có biểu đồ động.
 
 📈 Biểu đồ đường (Chart.js Line): Lịch sử cân nặng 30 ngày
 
- Nhật ký: Date picker, modal tìm kiếm món (AJAX)
+ Nhật ký: Date picker, modal tìm kiếm món (AJAX) có phân loại Raw/Dish trực quan
 
  Hồ sơ: Form cập nhật thông tin, chọn mục tiêu
 
@@ -209,3 +243,7 @@ Phase 1 → Phase 2 → Phase 3 → Phase 4A → Phase 4B
 ↓
 
 Phase 6 ← Phase 5 ← Phase 4C + 4D
+
+## Changelog
+- **[Core DB & Logic Upgrade]**: Hoàn thiện cấu trúc bảng Thực phẩm với 5 nhóm nguyên liệu thô (Đạm, Tinh bột, Béo, Chất xơ, Vitamin). Mở rộng dữ liệu lên 125+ món ăn chuẩn hóa (seeders/foods.js).
+- **[UI & Insight System]**: Tối ưu hóa giao diện tìm kiếm món ăn (optgroup) và triển khai thành công thuật toán cảnh báo cân bằng dinh dưỡng (Health Insights) dựa trên cửa sổ trượt dữ liệu.
