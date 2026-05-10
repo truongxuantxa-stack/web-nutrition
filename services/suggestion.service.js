@@ -32,17 +32,27 @@ const FAMILIAR_RAW_NAMES = [
 const sumNutritionFromEntries = (entries) => {
     return entries.reduce((acc, entry) => {
         // Ưu tiên snapshot (bảo toàn dữ liệu lịch sử)
-        const cal  = entry.caloriesSnapshot ?? (entry.food ? entry.food.calories * entry.amount : 0);
-        const prot = entry.proteinSnapshot  ?? (entry.food ? entry.food.protein  * entry.amount : 0);
-        const carb = entry.carbsSnapshot    ?? (entry.food ? entry.food.carbs    * entry.amount : 0);
-        const fat  = entry.fatSnapshot      ?? (entry.food ? entry.food.fat      * entry.amount : 0);
+        const cal    = entry.caloriesSnapshot ?? (entry.food ? entry.food.calories * entry.amount : 0);
+        const prot   = entry.proteinSnapshot  ?? (entry.food ? entry.food.protein  * entry.amount : 0);
+        const carb   = entry.carbsSnapshot    ?? (entry.food ? entry.food.carbs    * entry.amount : 0);
+        const fat    = entry.fatSnapshot      ?? (entry.food ? entry.food.fat      * entry.amount : 0);
 
         acc.calories += cal;
         acc.protein  += prot;
         acc.carbs    += carb;
         acc.fat      += fat;
+
+        // Fiber / Sugar / Sodium: chỉ cộng nếu có dữ liệu (null = chưa có số liệu)
+        const fiberVal  = entry.fiberSnapshot  ?? (entry.food?.fiber  != null ? entry.food.fiber  * entry.amount : null);
+        const sugarVal  = entry.sugarSnapshot  ?? (entry.food?.sugar  != null ? entry.food.sugar  * entry.amount : null);
+        const sodiumVal = entry.sodiumSnapshot ?? (entry.food?.sodium != null ? entry.food.sodium * entry.amount : null);
+
+        if (fiberVal  != null) acc.fiber  = (acc.fiber  ?? 0) + fiberVal;
+        if (sugarVal  != null) acc.sugar  = (acc.sugar  ?? 0) + sugarVal;
+        if (sodiumVal != null) acc.sodium = (acc.sodium ?? 0) + sodiumVal;
+
         return acc;
-    }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
+    }, { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: null, sugar: null, sodium: null });
 };
 
 /**

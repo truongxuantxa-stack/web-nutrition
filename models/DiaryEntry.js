@@ -79,6 +79,24 @@ const DiaryEntry = sequelize.define('DiaryEntry', {
         allowNull: false,
         defaultValue: 0,
     },
+    fiberSnapshot: {
+        // Chất xơ (g) — snapshot tại thời điểm ghi nhật ký
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
+    sugarSnapshot: {
+        // Đường tổng (g) — snapshot tại thời điểm ghi nhật ký
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
+    sodiumSnapshot: {
+        // Natri (mg) — snapshot tại thời điểm ghi nhật ký
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
     note: {
         // Ghi chú tùy ý của người dùng
         type: DataTypes.STRING(255),

@@ -54,6 +54,33 @@ const Food = sequelize.define('Food', {
             min: { args: [0], msg: 'Fat không thể âm.' },
         },
     },
+    fiber: {
+        // Chất xơ (g) trên 1 đơn vị — quan trọng cho hệ tiêu hóa
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [0], msg: 'Fiber không thể âm.' },
+        },
+    },
+    sugar: {
+        // Đường tổng (g) trên 1 đơn vị — giúp kiểm soát nguy cơ tiểu đường
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [0], msg: 'Sugar không thể âm.' },
+        },
+    },
+    sodium: {
+        // Natri/Muối (mg) trên 1 đơn vị — quan trọng cho người có vấn đề huyết áp
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [0], msg: 'Sodium không thể âm.' },
+        },
+    },
     unit: {
         // Đơn vị tính (ví dụ: "100g", "1 tô", "1 bát", "1 ly")
         type: DataTypes.STRING(50),

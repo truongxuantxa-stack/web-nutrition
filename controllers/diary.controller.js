@@ -112,6 +112,9 @@ exports.getDiary = async (req, res) => {
                 protein : Math.round(consumed.protein),
                 carbs   : Math.round(consumed.carbs),
                 fat     : Math.round(consumed.fat),
+                fiber   : consumed.fiber  != null ? Math.round(consumed.fiber  * 10) / 10 : null,
+                sugar   : consumed.sugar  != null ? Math.round(consumed.sugar  * 10) / 10 : null,
+                sodium  : consumed.sodium != null ? Math.round(consumed.sodium * 10) / 10 : null,
             },
             totalBurned,
             effectiveTarget,
@@ -183,6 +186,9 @@ exports.addEntry = async (req, res) => {
             proteinSnapshot  : Math.round(food.protein  * amountNum * 10) / 10,
             carbsSnapshot    : Math.round(food.carbs    * amountNum * 10) / 10,
             fatSnapshot      : Math.round(food.fat      * amountNum * 10) / 10,
+            fiberSnapshot    : food.fiber  != null ? Math.round(food.fiber  * amountNum * 10) / 10 : null,
+            sugarSnapshot    : food.sugar  != null ? Math.round(food.sugar  * amountNum * 10) / 10 : null,
+            sodiumSnapshot   : food.sodium != null ? Math.round(food.sodium * amountNum * 10) / 10 : null,
             note             : note ? note.trim() : null,
         });
 
@@ -199,6 +205,9 @@ exports.addEntry = async (req, res) => {
                 proteinSnapshot : entry.proteinSnapshot,
                 carbsSnapshot   : entry.carbsSnapshot,
                 fatSnapshot     : entry.fatSnapshot,
+                fiberSnapshot   : entry.fiberSnapshot,
+                sugarSnapshot   : entry.sugarSnapshot,
+                sodiumSnapshot  : entry.sodiumSnapshot,
                 note            : entry.note,
             },
         });
@@ -275,7 +284,7 @@ exports.searchFood = async (req, res) => {
             where: whereClause,
             limit: Math.min(limit, 50),
             order: [['name', 'ASC']],
-            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'unit', 'category', 'foodType'],
+            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'unit', 'category', 'foodType'],
         });
 
         return res.json({ success: true, foods });
