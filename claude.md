@@ -176,3 +176,9 @@ Phase 1 → Phase 2 → Phase 3 → Phase 4A → Phase 4B
 
 Phase 6 ← Phase 5 ← Phase 4C + 4D
 
+## Changelog
+- **[2026-05-10] Cập nhật hệ thống vi chất:**
+  - Thêm cột `fiber`, `sugar`, `sodium` vào model `Food` và `DiaryEntry`.
+  - Viết scripts xử lý migration dữ liệu cũ.
+  - Cập nhật giao diện `views/diary/index.ejs` để hiển thị Dashboard vi chất (badges và progress bar).
+  - Cập nhật `suggestion.service.js` và `diary.controller.js` để tính toán chính xác tổng lượng vi chất theo thời gian thực.
