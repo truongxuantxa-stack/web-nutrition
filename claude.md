@@ -247,3 +247,4 @@ Phase 6 ← Phase 5 ← Phase 4C + 4D
 ## Changelog
 - **[Core DB & Logic Upgrade]**: Hoàn thiện cấu trúc bảng Thực phẩm với 5 nhóm nguyên liệu thô (Đạm, Tinh bột, Béo, Chất xơ, Vitamin). Mở rộng dữ liệu lên 125+ món ăn chuẩn hóa (seeders/foods.js).
 - **[UI & Insight System]**: Tối ưu hóa giao diện tìm kiếm món ăn (optgroup) và triển khai thành công thuật toán cảnh báo cân bằng dinh dưỡng (Health Insights) dựa trên cửa sổ trượt dữ liệu.
+- **[Food DB Expansion v2 - 2026-05-10]**: Mở rộng database thực phẩm lên ~290 items (+150 mới). Bổ sung: 32 nguyên liệu thô (protein, carb, fiber, vitamin, fat), 80 món chế biến healthy, 38 đồ uống (nước ép, sinh tố, sữa Milo, trà, cà phê, smoothie). Thêm mảng `beverages` vào seeder.
