@@ -21,12 +21,7 @@ const ExerciseLog = sequelize.define('ExerciseLog', {
         type: DataTypes.STRING(50),
         allowNull: false,
     },
-    intensity: {
-        // Cường độ luyện tập
-        type: DataTypes.ENUM('low', 'moderate', 'high', 'very_high'),
-        allowNull: false,
-        defaultValue: 'moderate',
-    },
+
     duration: {
         // Thời gian luyện tập (phút)
         type: DataTypes.INTEGER.UNSIGNED,

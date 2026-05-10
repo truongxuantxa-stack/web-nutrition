@@ -117,12 +117,7 @@ const MET_TABLE = {
     },
 };
 
-const INTENSITY_LABELS = {
-    low      : 'Nhẹ nhàng',
-    moderate : 'Vừa phải',
-    high     : 'Cao',
-    very_high: 'Rất cao',
-};
+
 
 // ─── Lấy danh sách môn thể thao (dùng cho dropdown UI) ───────────────────────
 const getSupportedSports = () => {
@@ -161,6 +156,6 @@ module.exports = {
     calculateExerciseCalories,
     calculateExerciseCaloriesDefault,
     getSportInfo,
-    INTENSITY_LABELS,
+
     MET_TABLE,
 };

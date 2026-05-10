@@ -10,7 +10,6 @@ const {
     calculateExerciseCalories,
     getSupportedSports,
     getSportInfo,
-    INTENSITY_LABELS,
 } = require('../services/exercise.service');
 
 // ─── Helper: format ngày YYYY-MM-DD theo local timezone ──────────────────────
@@ -49,8 +48,6 @@ exports.getExercise = async (req, res) => {
                 sport         : log.sport,
                 sportLabel    : info.label,
                 sportIcon     : info.icon,
-                intensity     : log.intensity,
-                intensityLabel: INTENSITY_LABELS[log.intensity] || log.intensity,
                 duration      : log.duration,
                 caloriesBurned: log.caloriesBurned,
                 date          : log.date,
@@ -68,7 +65,7 @@ exports.getExercise = async (req, res) => {
             logs         : logsWithInfo,
             totalBurned,
             sports       : getSupportedSports(),
-            intensityLabels: INTENSITY_LABELS,
+
             error        : null,
             success      : null,
         });
@@ -111,7 +108,7 @@ exports.addExercise = async (req, res) => {
         const log = await ExerciseLog.create({
             userId: user.id,
             sport,
-            intensity: 'moderate',
+
             duration: durationNum,
             caloriesBurned,
             date: entryDate,
