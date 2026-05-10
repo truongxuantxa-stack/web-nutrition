@@ -90,6 +90,70 @@
   </div>
   <% } %>
 
+  <!-- ── Vi chất (Fiber / Sugar / Sodium) ──────────────────────── -->
+  <% const hasMicro = consumed.fiber != null || consumed.sugar != null || consumed.sodium != null; %>
+  <% if (hasMicro) { %>
+  <div class="nt-card p-4 mb-5">
+    <p class="section-title mb-4">🔬 Vi chất hôm nay</p>
+    <div class="grid grid-cols-3 gap-3">
+
+      <!-- Fiber -->
+      <% if (consumed.fiber != null) { %>
+      <div class="rounded-xl p-3 text-center" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac">
+        <p class="text-xs font-bold text-gray-500 mb-1">🌿 Chất xơ</p>
+        <p class="text-xl font-black text-green-600" id="microFiber"><%= consumed.fiber %>g</p>
+        <p class="text-[10px] text-gray-400 mt-0.5">Khuyến nghị: 25–38g</p>
+        <% const fiberPct = Math.min(100, Math.round((consumed.fiber / 30) * 100)); %>
+        <div class="macro-bar-track mt-2"><div class="macro-bar-fill bg-green-400" style="width:<%= fiberPct %>%"></div></div>
+        <p class="text-xs text-green-500 font-bold mt-1"><%= fiberPct %>%</p>
+      </div>
+      <% } else { %>
+      <div class="rounded-xl p-3 text-center border border-dashed border-gray-200 opacity-50">
+        <p class="text-xs font-bold text-gray-400 mb-1">🌿 Chất xơ</p>
+        <p class="text-sm text-gray-300">Chưa có dữ liệu</p>
+      </div>
+      <% } %>
+
+      <!-- Sugar -->
+      <% if (consumed.sugar != null) { %>
+      <% const sugarWarn = consumed.sugar > 25; %>
+      <div class="rounded-xl p-3 text-center" style="background:<%= sugarWarn ? 'linear-gradient(135deg,#fff7ed,#ffedd5)' : 'linear-gradient(135deg,#fefce8,#fef9c3)' %>;border:1.5px solid <%= sugarWarn ? '#fed7aa' : '#fde68a' %>">
+        <p class="text-xs font-bold text-gray-500 mb-1">🍬 Đường</p>
+        <p class="text-xl font-black <%= sugarWarn ? 'text-orange-500' : 'text-amber-500' %>" id="microSugar"><%= consumed.sugar %>g</p>
+        <p class="text-[10px] text-gray-400 mt-0.5">Giới hạn: &lt;25g/ngày</p>
+        <% const sugarPct = Math.min(100, Math.round((consumed.sugar / 25) * 100)); %>
+        <div class="macro-bar-track mt-2"><div class="macro-bar-fill <%= sugarWarn ? 'bg-orange-400' : 'bg-amber-400' %>" style="width:<%= sugarPct %>%"></div></div>
+        <p class="text-xs <%= sugarWarn ? 'text-orange-500' : 'text-amber-500' %> font-bold mt-1"><%= sugarPct %>%<%= sugarWarn ? ' ⚠️' : '' %></p>
+      </div>
+      <% } else { %>
+      <div class="rounded-xl p-3 text-center border border-dashed border-gray-200 opacity-50">
+        <p class="text-xs font-bold text-gray-400 mb-1">🍬 Đường</p>
+        <p class="text-sm text-gray-300">Chưa có dữ liệu</p>
+      </div>
+      <% } %>
+
+      <!-- Sodium -->
+      <% if (consumed.sodium != null) { %>
+      <% const sodiumWarn = consumed.sodium > 1500; %>
+      <div class="rounded-xl p-3 text-center" style="background:<%= sodiumWarn ? 'linear-gradient(135deg,#fff1f2,#ffe4e6)' : 'linear-gradient(135deg,#eff6ff,#dbeafe)' %>;border:1.5px solid <%= sodiumWarn ? '#fca5a5' : '#93c5fd' %>">
+        <p class="text-xs font-bold text-gray-500 mb-1">🧂 Natri</p>
+        <p class="text-xl font-black <%= sodiumWarn ? 'text-red-500' : 'text-blue-500' %>" id="microSodium"><%= consumed.sodium %>mg</p>
+        <p class="text-[10px] text-gray-400 mt-0.5">Giới hạn: &lt;2000mg/ngày</p>
+        <% const sodiumPct = Math.min(100, Math.round((consumed.sodium / 2000) * 100)); %>
+        <div class="macro-bar-track mt-2"><div class="macro-bar-fill <%= sodiumWarn ? 'bg-red-400' : 'bg-blue-400' %>" style="width:<%= sodiumPct %>%"></div></div>
+        <p class="text-xs <%= sodiumWarn ? 'text-red-500' : 'text-blue-500' %> font-bold mt-1"><%= sodiumPct %>%<%= sodiumWarn ? ' ⚠️' : '' %></p>
+      </div>
+      <% } else { %>
+      <div class="rounded-xl p-3 text-center border border-dashed border-gray-200 opacity-50">
+        <p class="text-xs font-bold text-gray-400 mb-1">🧂 Natri</p>
+        <p class="text-sm text-gray-300">Chưa có dữ liệu</p>
+      </div>
+      <% } %>
+
+    </div>
+  </div>
+  <% } %>
+
   <!-- ── Health Insights & Warnings ────────────────────────── -->
   <% if (healthInsights && healthInsights.length > 0) { %>
   <div class="mb-5 space-y-2">
@@ -152,6 +216,8 @@
               <span class="pill pill-blue">P:<%= Math.round(entry.proteinSnapshot||0) %>g</span>
               <span class="pill pill-amber">C:<%= Math.round(entry.carbsSnapshot||0) %>g</span>
               <span class="pill pill-rose">F:<%= Math.round(entry.fatSnapshot||0) %>g</span>
+              <% if (entry.fiberSnapshot != null) { %><span class="pill" style="background:#dcfce7;color:#15803d">Xơ:<%= Math.round(entry.fiberSnapshot*10)/10 %>g</span><% } %>
+              <% if (entry.sugarSnapshot != null) { %><span class="pill" style="background:#fef9c3;color:#a16207">Đ:<%= Math.round(entry.sugarSnapshot*10)/10 %>g</span><% } %>
             </div>
           </div>
           <button onclick="deleteEntry(<%= entry.id %>)" class="del-btn ml-2 p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-all">
@@ -328,7 +394,7 @@ function renderSearchResults(foods) {
     return `<button type="button" class="w-full text-left px-4 py-2.5 hover:bg-green-50 transition-colors border-b border-gray-50 last:border-0"
               data-food='${safe.replace(/'/g,"\\u0027")}' onclick="selectFood(JSON.parse(this.dataset.food))">
       <p class="font-bold text-sm text-gray-800 flex items-center">${f.name.replace(/</g,'&lt;')} ${badgeHtml}</p>
-      <p class="text-xs text-gray-400 mt-0.5">${f.calories} kcal / ${f.unit} · P:${f.protein}g C:${f.carbs}g F:${f.fat}g</p>
+      <p class="text-xs text-gray-400 mt-0.5">${f.calories} kcal / ${f.unit} · P:${f.protein}g C:${f.carbs}g F:${f.fat}g${f.fiber!=null?' · Xơ:'+f.fiber+'g':''}${f.sugar!=null?' · Đường:'+f.sugar+'g':''}</p>
     </button>`;
   }).join('');
   wrap.classList.remove('hidden');
@@ -340,8 +406,13 @@ function selectFood(food) {
   document.getElementById('searchFoodInput').value = food.name;
   document.getElementById('searchResults').classList.add('hidden');
   document.getElementById('selectedFoodName').textContent = food.name;
+  const microParts = [];
+  if (food.fiber  != null) microParts.push(`Xơ: ${food.fiber}g`);
+  if (food.sugar  != null) microParts.push(`Đường: ${food.sugar}g`);
+  if (food.sodium != null) microParts.push(`Natri: ${food.sodium}mg`);
   document.getElementById('selectedFoodMacros').textContent =
-    `${food.calories} kcal / ${food.unit} · Protein: ${food.protein}g · Carbs: ${food.carbs}g · Fat: ${food.fat}g`;
+    `${food.calories} kcal / ${food.unit} · P: ${food.protein}g · C: ${food.carbs}g · F: ${food.fat}g` +
+    (microParts.length ? ' · ' + microParts.join(' · ') : '');
   document.getElementById('selectedFoodPreview').classList.remove('hidden');
   updateCaloriePreview();
   document.getElementById('foodAmount').focus();
