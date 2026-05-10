@@ -6,8 +6,22 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const { Food } = require('../models');
-const { calculateMacros } = require('./nutrition.service');
+const { calculateMacros, getMealTargets } = require('./nutrition.service');
 const { Op } = require('sequelize');
+
+// Danh sách các nguyên liệu thô quen thuộc với người Việt Nam để ưu tiên gợi ý
+const FAMILIAR_RAW_NAMES = [
+    // Protein
+    'Ức gà (Thô)', 'Thịt lợn thăn (Nạc)', 'Thịt bò thăn (Thô)', 'Cá lóc (Thô)', 'Tôm tươi (Thô)', 'Đậu phụ (Thô)', 'Trứng cút (Thô)', 'Cá diêu hồng (Thô)', 'Thịt vịt (Nạc)', 'Cá basa', 'Trứng gà (Thô)',
+    // Carb
+    'Cơm trắng (Thô/Chín)', 'Khoai lang (Thô)', 'Ngô ngọt (Bắp)', 'Gạo lứt (Thô)', 'Bún khô (Thô)', 'Khoai tây (Thô)', 'Sắn (Khoai mì)',
+    // Fiber
+    'Rau muống', 'Rau cải chíp', 'Rau ngót', 'Dưa chuột', 'Cà chua', 'Giá đỗ', 'Bí xanh (Bí đao)', 'Cà rốt', 'Bông cải xanh (Thô)', 'Rau dền', 'Rau mồng tơi', 'Bầu', 'Su hào',
+    // Vitamin
+    'Chuối (Thô)', 'Xoài (Chín)', 'Thanh long', 'Ổi', 'Dưa hấu', 'Cam (Thô)', 'Đu đủ (Chín)', 'Dứa (Thơm)', 'Quýt (Thô)',
+    // Fat
+    'Đậu phộng (Lạc thô)', 'Vừng (Mè)', 'Quả Bơ (Thô)', 'Dầu Olive (Thô)', 'Dầu lạc'
+];
 
 /**
  * Tính tổng dinh dưỡng từ danh sách DiaryEntry trong ngày.
@@ -170,15 +184,21 @@ const getMacroProgress = (consumed, targets) => {
 
 /**
  * Phân tích và đưa ra các cảnh báo về sức khỏe/dinh dưỡng dựa trên tiến độ.
- * @param {Object} consumed - { calories, protein, carbs, fat }
- * @param {Object} metrics  - { targetCalories, macros: { protein, carbs, fat } }
- * @returns {Array} Mảng các cảnh báo { type: string, icon: string, message: string }
+ * @param {Object} consumed         - { calories, protein, carbs, fat }
+ * @param {Object} metrics          - { targetCalories, macros: { protein, carbs, fat } }
+ * @param {Object} mealGroups       - { sang: [], trua: [], ... }
+ * @param {number} [effectiveTarget]- Mục tiêu calo thực tế sau khi tính cả luyện tập
+ * @param {Object} [effectiveMacros]- { protein, carbs, fat } đã scale theo effectiveTarget
+ * @returns {Array} Mảng các cảnh báo { type, icon, message }
  */
-const getHealthInsights = (consumed, metrics, mealGroups = {}) => {
+const getHealthInsights = (consumed, metrics, mealGroups = {}, effectiveTarget = null, effectiveMacros = null) => {
     const insights = [];
-    if (!metrics.targetCalories) return insights;
+    // Dùng effectiveTarget nếu có, fallback về metrics.targetCalories
+    const targetCal = effectiveTarget || metrics.targetCalories;
+    const macros    = effectiveMacros  || metrics.macros;
+    if (!targetCal) return insights;
 
-    const calPct = (consumed.calories / metrics.targetCalories) * 100;
+    const calPct = (consumed.calories / targetCal) * 100;
 
     // 1. Cảnh báo Calo
     if (calPct > 110) {
@@ -197,9 +217,9 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}) => {
 
     // 2. Cảnh báo mất cân bằng Macro (chỉ phân tích khi đã nạp > 40% calo)
     if (calPct > 40) {
-        const pPct = (consumed.protein / (metrics.macros.protein || 1)) * 100;
-        const cPct = (consumed.carbs / (metrics.macros.carbs || 1)) * 100;
-        const fPct = (consumed.fat / (metrics.macros.fat || 1)) * 100;
+        const pPct = (consumed.protein / (macros.protein || 1)) * 100;
+        const cPct = (consumed.carbs   / (macros.carbs   || 1)) * 100;
+        const fPct = (consumed.fat     / (macros.fat     || 1)) * 100;
 
         // Cảnh báo thiếu hụt tương đối (so với tiến độ calo)
         if (cPct < calPct * 0.6) {
@@ -265,10 +285,108 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}) => {
     return insights;
 };
 
+
+/**
+ * Gợi ý món ăn theo target dinh dưỡng từng bữa.
+ *
+ * Chiến lược:
+ * - dishSuggestions  : Top 5 món chế biến (foodType='dish', isSuggestable=true) gần nhất với remaining macro của bữa
+ * - rawSuggestions   : Top 3 nguyên liệu thô mỗi nhóm (protein/carb/fat/fiber/vitamin) để người dùng tự nấu
+ *
+ * @param {string} mealType       - 'sang'|'trua'|'toi'|'phu'
+ * @param {Object} mealTarget     - { calories, protein, carbs, fat } — target của bữa đó
+ * @param {Object} mealConsumed   - { calories, protein, carbs, fat } — đã ăn trong bữa đó
+ * @returns {Promise<Object>} { mealType, target, consumed, remaining, dishSuggestions, rawGroups }
+ */
+const getMealSuggestions = async (mealType, mealTarget, mealConsumed) => {
+    const remaining = {
+        calories: Math.max(0, mealTarget.calories - mealConsumed.calories),
+        protein : Math.max(0, mealTarget.protein  - mealConsumed.protein),
+        carbs   : Math.max(0, mealTarget.carbs    - mealConsumed.carbs),
+        fat     : Math.max(0, mealTarget.fat      - mealConsumed.fat),
+    };
+
+    try {
+        // ── 1. Dish suggestions (món ăn chế biến) ────────────────────────────
+        const dishes = remaining.calories > 50
+            ? await Food.findAll({
+                where: {
+                    isSuggestable: true,
+                    foodType     : 'dish',
+                    calories     : { [Op.gt]: 0, [Op.lte]: remaining.calories * 1.4 },
+                },
+                limit: 80,
+            })
+            : [];
+
+        const scoredDishes = dishes.map(food => {
+            // Điểm = 100 - tổng sai lệch macro có trọng số (protein 40%, carbs 35%, fat 25%)
+            const rp = remaining.protein + 0.1;
+            const rc = remaining.carbs   + 0.1;
+            const rf = remaining.fat     + 0.1;
+            const score = 100
+                - (Math.abs(food.protein - remaining.protein) / rp) * 40
+                - (Math.abs(food.carbs   - remaining.carbs)   / rc) * 35
+                - (Math.abs(food.fat     - remaining.fat)     / rf) * 25;
+            return { food, score: Math.round(score * 10) / 10 };
+        });
+        scoredDishes.sort((a, b) => b.score - a.score);
+        const dishSuggestions = scoredDishes.slice(0, 5);
+
+        // ── 2. Raw food suggestions (tự nấu) ─────────────────────────────────
+        // Ưu tiên lấy các nguyên liệu quen thuộc trước
+        const RAW_CATEGORIES = ['protein', 'carb', 'fat', 'fiber', 'vitamin'];
+        const rawGroups = {};
+
+        await Promise.all(RAW_CATEGORIES.map(async (cat) => {
+            // Thử lấy các món quen thuộc trong category này
+            let rawFoods = await Food.findAll({
+                where: { 
+                    foodType: 'raw', 
+                    category: cat,
+                    name: { [Op.in]: FAMILIAR_RAW_NAMES }
+                },
+                limit : 3,
+                order : [['calories', 'ASC']],
+            });
+
+            // Nếu không đủ 3 món quen thuộc, lấy thêm các món khác làm fallback
+            if (rawFoods.length < 3) {
+                const existingIds = rawFoods.map(f => f.id);
+                const otherRaw = await Food.findAll({
+                    where: {
+                        foodType: 'raw',
+                        category: cat,
+                        id: { [Op.notIn]: existingIds.length ? existingIds : [0] }
+                    },
+                    limit: 3 - rawFoods.length,
+                    order: [['calories', 'ASC']],
+                });
+                rawFoods = [...rawFoods, ...otherRaw];
+            }
+
+            if (rawFoods.length > 0) rawGroups[cat] = rawFoods;
+        }));
+
+        return {
+            mealType,
+            target   : mealTarget,
+            consumed : mealConsumed,
+            remaining,
+            dishSuggestions,
+            rawGroups,
+        };
+    } catch (err) {
+        console.error('getMealSuggestions error:', err);
+        return { mealType, target: mealTarget, consumed: mealConsumed, remaining, dishSuggestions: [], rawGroups: {} };
+    }
+};
+
 module.exports = {
     sumNutritionFromEntries,
     groupEntriesByMeal,
     getSuggestions,
+    getMealSuggestions,
     getCalorieProgress,
     getMacroProgress,
     getHealthInsights,

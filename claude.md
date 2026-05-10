@@ -2,7 +2,7 @@
 
 ## Project Overview
 Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt nghiệp (Graduation Project).
-- **Mục tiêu:** Tính toán chỉ số cơ thể, theo dõi nhật ký ăn uống và gợi ý thực đơn thông minh.
+- **Mục tiêu:** Tính toán chỉ số cơ thể (BMI/BMR/TDEE), theo dõi nhật ký ăn uống hàng ngày và tra cứu giá trị dinh dưỡng từ thư viện thực phẩm phong phú.
 - **Vibe:** Giao diện hiện đại, tối giản (Green/Health vibe), phản hồi nhanh.
 
 ## Tech Stack
@@ -10,44 +10,6 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 - **Database:** MySQL với Sequelize ORM.
 - **Frontend:** EJS Template Engine, Tailwind CSS, DaisyUI.
 - **Libraries:** Chart.js (Biểu đồ), PDFKit (Xuất báo cáo), JWT (Auth).
-
-## Git & Version Control Workflow
-
-> ⚠️ Dự án đồ án 10 tín chỉ — Không có Git = Không có mạng lưới an toàn. Tuân thủ nghiêm ngặt.
-
-### 1. Snapshot Before Major Changes
-Trước khi thực hiện bất kỳ thay đổi lớn nào (refactor UI, thay đổi logic tính toán, cập nhật schema DB), AI **bắt buộc phải nhắc** người dùng lưu snapshot:
-```bash
-git add .
-git commit -m "Snapshot: mô tả trạng thái ổn định hiện tại"
-```
-
-### 2. Branching Strategy
-Khi thử nghiệm giao diện mới (lấy cảm hứng từ Godly, các web dinh dưỡng...), tạo nhánh riêng để không ảnh hưởng `master`:
-```bash
-git checkout -b ui/ten-phong-cach   # ví dụ: ui/olive-dark, ui/bento-grid
-git checkout master                  # quay về nhánh chính khi cần
-```
-
-### 3. Recovery Plan
-Nếu kết quả sau chỉnh sửa bị lỗi hoặc xấu, dùng ngay một trong hai lệnh:
-```bash
-git restore .          # Hủy toàn bộ thay đổi chưa commit (an toàn hơn)
-git reset --hard HEAD  # Reset cứng về commit gần nhất (mạnh hơn)
-```
-
-### 4. Commit Message Convention
-Viết commit message **tiếng Việt có dấu**, rõ ràng, theo định dạng:
-```
-<Hành động>: <Mô tả ngắn gọn>
-
-Ví dụ:
-✅ "Hoàn thiện logic tính TDEE và Macros"
-✅ "Cập nhật giao diện Dashboard màu Olive"
-✅ "Fix lỗi route đăng nhập /dang-nhap"
-❌ "update" / "fix" / "wip"
-```
-
 ## Project Structure
 - `/controllers`: Xử lý logic nghiệp vụ.
 - `/models`: Định nghĩa Schema Sequelize (MySQL).
@@ -76,42 +38,12 @@ Ví dụ:
 ## Critical Instructions for AI
 1. **Database:** Khi tạo Model, luôn bao gồm `createdAt` và `updatedAt`.
 2. **UI/UX:** Giao diện phải Responsive. Sử dụng biểu đồ tròn cho Macros và biểu đồ đường cho cân nặng.
-3. **Logic Gợi ý:** Thuật toán gợi ý món ăn phải dựa trên số Calo còn thiếu ($TDEE - \text{Calo đã nạp}$) và TUYỆT ĐỐI chỉ gợi ý thức ăn chín/món ăn hoàn chỉnh (`foodType: 'dish'`), không gợi ý nguyên liệu thô (`raw`).
+3. **Thư viện Thực phẩm (Food Database):** Ưu tiên mở rộng và chuẩn hóa dữ liệu thực phẩm. Phân định rõ `foodType` là `'raw'` (nguyên liệu thô, tính trên 100g) hay `'dish'` (món ăn chế biến, tính trên 1 suất). Dữ liệu phải sát với các món ăn hàng ngày của người Việt để phục vụ tra cứu chính xác.
 4. **Security:** Kiểm tra JWT middleware cho tất cả các route cần đăng nhập.
-5. **Dữ liệu Thực phẩm (Food):** Phải luôn phân định rõ `foodType` là `'raw'` (nguyên liệu thô - tính trên 100g/quả) hay `'dish'` (món ăn chế biến - tính trên 1 bát/đĩa/suất). Đồng thời sử dụng trường `isSuggestable` (Boolean: true cho dish, false cho raw) để hỗ trợ thuật toán gợi ý. Thuật toán `getSuggestions` BẮT BUỘC phải filter theo `isSuggestable: true`.
+5. **Triết lý UX (Quan trọng):** Không áp đặt kế hoạch ăn uống theo từng bữa hay gợi ý món tự động. Người dùng là người có kiến thức về dinh dưỡng — chỉ cần cung cấp dữ liệu chính xác (tổng calo, macro cả ngày) và để họ tự quyết định.
 6. **Documentation (Cập nhật tài liệu):** AI BẮT BUỘC phải tự động cập nhật file `claude.md` (đặc biệt là phần Changelog) sau mỗi lần hoàn thành một tính năng, thay đổi cấu trúc DB hoặc hoàn tất một tiến trình lớn để đảm bảo mọi thay đổi luôn được track lại.
 
-## Behavioral Guidelines (AI Rules)
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
-### 1. Think Before Coding
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
-
-### 2. Simplicity First
-**Minimum code that solves the problem. Nothing speculative.**
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-### 3. Surgical Changes
-**Touch only what you must. Clean up only your own mess.**
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-### 4. Goal-Driven Execution
-**Define success criteria. Loop until verified.**
-- Transform tasks into verifiable goals (e.g., "Write tests for invalid inputs, then make them pass").
-- For multi-step tasks, state a brief plan and verify each step.
 
 ## Development Commands
 - `npm install`: Cài đặt thư viện.
@@ -190,17 +122,17 @@ Mục tiêu: Các công thức hoạt động đúng, nhật ký ăn uống ghi 
 
  views/diary/index.ejs — nhóm theo bữa Sáng/Trưa/Tối/Phụ, Modal tìm kiếm có badge Raw/Dish và Dropdown filter loại.
 
-4C — Gợi Ý Món Ăn
+4C — Thư Viện Thực Phẩm
 
- services/suggestion.service.js:Tính remainingCalories = TDEE - Calo đã nạp
+ Duy trì và mở rộng seeders/foods.js với các món ăn thô và chín phổ biến Việt Nam.
 
-Lọc Food phù hợp (Bắt buộc dùng `isSuggestable: true` để tránh gợi ý đồ sống) → sắp xếp theo macro balance → top 5
+ Hỗ trợ tìm kiếm AJAX (GET /nhat-ky/tim-mon) với filter theo category và foodType.
 
 4D — Theo Dõi Cân Nặng
 
  CRUD WeightLog
 
-✅ Done khi: Nhập bữa sáng → calo đúng → gợi ý bữa tiếp hợp lý
+✅ Done khi: Nhập món ăn → calo/macro cập nhật đúng → người dùng tự điều chỉnh theo nhu cầu
 
 🎨 Phase 5 — Giao Diện (UI/UX)
 
@@ -244,7 +176,3 @@ Phase 1 → Phase 2 → Phase 3 → Phase 4A → Phase 4B
 
 Phase 6 ← Phase 5 ← Phase 4C + 4D
 
-## Changelog
-- **[Core DB & Logic Upgrade]**: Hoàn thiện cấu trúc bảng Thực phẩm với 5 nhóm nguyên liệu thô (Đạm, Tinh bột, Béo, Chất xơ, Vitamin). Mở rộng dữ liệu lên 125+ món ăn chuẩn hóa (seeders/foods.js).
-- **[UI & Insight System]**: Tối ưu hóa giao diện tìm kiếm món ăn (optgroup) và triển khai thành công thuật toán cảnh báo cân bằng dinh dưỡng (Health Insights) dựa trên cửa sổ trượt dữ liệu.
-- **[Food DB Expansion v2 - 2026-05-10]**: Mở rộng database thực phẩm lên ~290 items (+150 mới). Bổ sung: 32 nguyên liệu thô (protein, carb, fiber, vitamin, fat), 80 món chế biến healthy, 38 đồ uống (nước ép, sinh tố, sữa Milo, trà, cà phê, smoothie). Thêm mảng `beverages` vào seeder.

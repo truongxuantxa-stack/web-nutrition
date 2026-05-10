@@ -5,7 +5,7 @@
 // Tổng quan dinh dưỡng hàng ngày — được tách từ routes/index.js để dễ mở rộng
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const { DiaryEntry, Food, WeightLog } = require('../models');
+const { DiaryEntry, Food, WeightLog, ExerciseLog } = require('../models');
 const { calculateAllMetrics } = require('../services/nutrition.service');
 const {
     sumNutritionFromEntries,
@@ -47,6 +47,14 @@ exports.getDashboard = async (req, res) => {
         });
         const weightChartData = [...weightLogs].reverse().map(l => ({ date: l.date, weight: l.weight }));
 
+        // Tổng calo đốt hôm nay
+        const exerciseLogs = await ExerciseLog.findAll({
+            where: { userId: user.id, date: today },
+            attributes: ['caloriesBurned'],
+        });
+        const totalBurned   = Math.round(exerciseLogs.reduce((sum, l) => sum + l.caloriesBurned, 0));
+        const effectiveTarget = (metrics.targetCalories || 0) + totalBurned;
+
         res.render('dashboard/index', {
             title           : 'Tổng Quan',
             activePage      : 'dashboard',
@@ -59,7 +67,9 @@ exports.getDashboard = async (req, res) => {
                 carbs   : Math.round(consumed.carbs),
                 fat     : Math.round(consumed.fat),
             },
-            calorieProgress,
+            totalBurned,
+            effectiveTarget,
+            calorieProgress : getCalorieProgress(consumed.calories, effectiveTarget),
             macroProgress,
             weightChartData : JSON.stringify(weightChartData),
             mealCount       : todayEntries.length,

@@ -1,0 +1,260 @@
+<%- include('../partials/header', { title: 'Nhật Ký Luyện Tập' }) %>
+<%- include('../partials/navbar') %>
+
+<main class="container mx-auto px-4 max-w-5xl py-6">
+
+  <!-- ── Page Header ───────────────────────────────────────── -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-black text-gray-800 flex items-center gap-2">🔥 Nhật Ký Luyện Tập</h1>
+      <p class="text-sm text-gray-500 mt-0.5 font-medium">Ghi nhận hoạt động thể thao & calo đốt</p>
+    </div>
+    <button id="openAddExerciseBtn" onclick="document.getElementById('addExerciseModal').showModal()"
+            class="btn-primary-green flex items-center gap-1.5">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
+      Thêm hoạt động
+    </button>
+  </div>
+
+  <!-- ── Date Picker ───────────────────────────────────────── -->
+  <div class="flex items-center gap-3 mb-5">
+    <label class="text-xs font-black text-gray-500 uppercase tracking-widest">Ngày:</label>
+    <input type="date" id="datePicker" value="<%= date %>" max="<%= today %>"
+           class="nt-input text-sm font-semibold py-1.5 px-3 w-auto"
+           onchange="window.location.href='/luyen-tap?date='+this.value">
+  </div>
+
+  <!-- ── Summary Card ─────────────────────────────────────── -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+    <!-- Tổng calo đốt -->
+    <div class="stat-card rose md:col-span-1" style="background:linear-gradient(135deg,#fff1f2,#ffe4e6);border:1.5px solid #fca5a5">
+      <p class="stat-label">🔥 Tổng đốt hôm nay</p>
+      <p class="stat-value text-red-500 animated-num" id="totalBurnedDisplay"><%= totalBurned %></p>
+      <p class="stat-sub">kcal đã đốt</p>
+    </div>
+    <!-- Số buổi tập -->
+    <div class="stat-card amber">
+      <p class="stat-label">💪 Số buổi tập</p>
+      <p class="stat-value text-amber-600 animated-num"><%= logs.length %></p>
+      <p class="stat-sub">hoạt động</p>
+    </div>
+    <!-- Tổng thời gian -->
+    <div class="stat-card blue">
+      <p class="stat-label">⏱️ Thời gian</p>
+      <p class="stat-value text-blue-600 animated-num">
+        <%= logs.reduce((s, l) => s + l.duration, 0) %>
+      </p>
+      <p class="stat-sub">phút luyện tập</p>
+    </div>
+  </div>
+
+  <!-- ── Exercise Log List ─────────────────────────────────── -->
+  <div class="nt-card overflow-hidden">
+    <div class="p-4 border-b border-gray-50 flex items-center gap-3">
+      <p class="section-title">🏅 Hoạt động trong ngày</p>
+      <span class="pill pill-green font-black"><%= logs.length %> buổi</span>
+    </div>
+
+    <% if (logs.length === 0) { %>
+    <div class="text-center py-14 text-gray-300">
+      <div class="float-icon text-5xl mb-3">🏃</div>
+      <p class="font-bold text-gray-400 text-lg">Chưa có hoạt động nào.</p>
+      <p class="text-sm text-gray-400 mt-1">Bấm "Thêm hoạt động" để ghi nhận buổi tập!</p>
+      <button onclick="document.getElementById('addExerciseModal').showModal()"
+              class="mt-4 btn-primary-green mx-auto">
+        🔥 Ghi ngay
+      </button>
+    </div>
+    <% } else { %>
+    <div id="exerciseList" class="divide-y divide-gray-50">
+      <% logs.forEach(log => { %>
+      <div class="flex items-center gap-4 px-4 py-3 hover:bg-orange-50/30 transition-colors group" id="elog-<%= log.id %>">
+        <!-- Icon -->
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+             style="background:linear-gradient(135deg,#fff7ed,#fed7aa)">
+          <%= log.sportIcon %>
+        </div>
+        <!-- Info -->
+        <div class="flex-1 min-w-0">
+          <p class="font-black text-gray-800 text-sm"><%= log.sportLabel %></p>
+          <p class="text-xs text-gray-400 font-medium mt-0.5">
+            ⏱️ <%= log.duration %> phút
+          </p>
+        </div>
+        <!-- Calo -->
+        <div class="text-right flex-shrink-0">
+          <p class="font-black text-red-500 text-base">-<%= Math.round(log.caloriesBurned) %></p>
+          <p class="text-xs text-gray-400 font-medium">kcal đốt</p>
+        </div>
+        <!-- Xóa -->
+        <button onclick="deleteExerciseLog(<%= log.id %>)"
+                class="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-all opacity-0 group-hover:opacity-100 flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+        </button>
+      </div>
+      <% }); %>
+    </div>
+
+    <!-- Tổng kết cuối list -->
+    <div class="flex items-center justify-between px-4 py-3 border-t border-dashed border-orange-100"
+         style="background:linear-gradient(135deg,rgba(255,247,237,0.8),rgba(254,215,170,0.3))">
+      <span class="text-sm font-black text-gray-600">🔥 Tổng calo đã đốt</span>
+      <span class="text-lg font-black text-red-500" id="totalBurnedFooter">-<%= totalBurned %> kcal</span>
+    </div>
+    <% } %>
+  </div>
+
+</main>
+
+<!-- ── Modal Thêm Hoạt Động ──────────────────────────────────── -->
+<dialog id="addExerciseModal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box max-w-md rounded-2xl p-6">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-gray-400">✕</button>
+    </form>
+    <h3 class="font-black text-lg text-gray-800 mb-5 flex items-center gap-2">
+      <span class="w-8 h-8 rounded-xl flex items-center justify-center text-white"
+            style="background:linear-gradient(135deg,#f97316,#ef4444)">🔥</span>
+      Ghi Hoạt Động Thể Thao
+    </h3>
+
+    <!-- Preview calo -->
+    <div id="caloriePreview" class="hidden mb-4 p-3 rounded-xl text-center font-bold"
+         style="background:linear-gradient(135deg,#fff7ed,#fed7aa);border:1.5px solid #fb923c">
+      <span class="text-orange-500 text-sm">Ước tính đốt:</span>
+      <span id="previewNum" class="text-orange-600 text-2xl font-black ml-2">0</span>
+      <span class="text-orange-500 text-sm"> kcal</span>
+    </div>
+
+    <div class="space-y-4">
+      <!-- Môn thể thao -->
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">Môn thể thao</label>
+        <select id="sportSelect" name="sport" class="nt-input" required onchange="updatePreview()">
+          <option value="">-- Chọn môn --</option>
+          <% sports.forEach(s => { %>
+          <option value="<%= s.key %>" data-met="<%= s.defaultMet %>">
+            <%= s.icon %> <%= s.label %>
+          </option>
+          <% }); %>
+        </select>
+      </div>
+
+      <!-- Thời gian -->
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">Số phút</label>
+        <input type="number" id="durationInput" name="duration"
+               placeholder="Ví dụ: 30" min="1" max="600"
+               class="nt-input text-xl font-black" required onchange="updatePreview()" oninput="updatePreview()">
+      </div>
+
+      <!-- Ngày -->
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">Ngày</label>
+        <input type="date" id="exerciseDateInput" name="date"
+               value="<%= date %>" max="<%= today %>" class="nt-input">
+      </div>
+
+      <!-- Thông tin cân nặng -->
+      <p class="text-xs text-gray-400 font-medium -mt-2">
+        💡 Cân nặng tính toán: <strong class="text-gray-600"><%= user.weight || 60 %> kg</strong>
+        · Calo ước tính theo chỉ số MET chuẩn của từng môn.
+      </p>
+
+      <div class="flex gap-2 pt-1">
+        <button type="button" onclick="document.getElementById('addExerciseModal').close()"
+                class="flex-1 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 border border-gray-200 transition-all">Hủy</button>
+        <button type="button" id="saveExerciseBtn"
+                onclick="saveExercise()"
+                class="flex-1 py-2.5 rounded-xl text-sm font-black text-white transition-all active:scale-95"
+                style="background:linear-gradient(135deg,#f97316,#ef4444);box-shadow:0 4px 12px rgba(249,115,22,0.3)">
+          🔥 Lưu lại
+        </button>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>đóng</button></form>
+</dialog>
+
+<script>
+// ── MET mặc định mỗi môn (đồng bộ exercise.service.js) ───────────────────────
+const MET_DEFAULT = <%- JSON.stringify(
+  sports.reduce((acc, s) => { acc[s.key] = s.defaultMet; return acc; }, {})
+) %>;
+
+const userWeight = <%= user.weight || 60 %>;
+
+function updatePreview() {
+  const sel      = document.getElementById('sportSelect');
+  const sport    = sel.value;
+  const met      = parseFloat(sel.selectedOptions[0]?.dataset.met) || 0;
+  const duration = parseFloat(document.getElementById('durationInput').value) || 0;
+  const preview  = document.getElementById('caloriePreview');
+  const num      = document.getElementById('previewNum');
+
+  if (sport && met && duration > 0) {
+    num.textContent = Math.round(met * userWeight * (duration / 60));
+    preview.classList.remove('hidden');
+  } else {
+    preview.classList.add('hidden');
+  }
+}
+
+async function saveExercise() {
+  const sport    = document.getElementById('sportSelect').value;
+  const duration = document.getElementById('durationInput').value;
+  const date     = document.getElementById('exerciseDateInput').value;
+
+  if (!sport || !duration) {
+    showToast('Vui lòng chọn môn và nhập số phút.', 'error');
+    return;
+  }
+
+  try {
+    showLoading();
+    const res  = await fetch('/luyen-tap/them', {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify({ sport, duration, date }),
+    });
+    const data = await res.json();
+    hideLoading();
+
+    if (data.success) {
+      document.getElementById('addExerciseModal').close();
+      showToast(data.message, 'success');
+      setTimeout(() => location.reload(), 700);
+    } else {
+      showToast(data.message || 'Lỗi.', 'error');
+    }
+  } catch (e) {
+    hideLoading();
+    showToast('Lỗi kết nối.', 'error');
+  }
+}
+
+async function deleteExerciseLog(id) {
+  if (!confirm('Bạn có chắc muốn xóa hoạt động này không?')) return;
+  try {
+    showLoading();
+    const res  = await fetch(`/luyen-tap/xoa/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    hideLoading();
+    if (data.success) {
+      const el = document.getElementById(`elog-${id}`);
+      if (el) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(20px)';
+        el.style.transition = 'all 0.3s';
+        setTimeout(() => { el.remove(); location.reload(); }, 350);
+      }
+    } else { showToast(data.message || 'Lỗi.', 'error'); }
+  } catch (e) { hideLoading(); showToast('Lỗi kết nối.', 'error'); }
+}
+</script>
+
+<%- include('../partials/footer') %>

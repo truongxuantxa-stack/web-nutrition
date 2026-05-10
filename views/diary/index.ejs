@@ -27,60 +27,64 @@
   <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
     <div class="stat-card green">
       <p class="stat-label">Đã nạp</p>
-      <p class="stat-value text-green-600 animated-num"><%= consumed.calories %></p>
+      <p class="stat-value text-green-600 animated-num" id="statConsumed"><%= consumed.calories %></p>
       <p class="stat-sub">kcal</p>
     </div>
     <div class="stat-card blue">
       <p class="stat-label">Mục tiêu</p>
-      <p class="stat-value text-blue-600 animated-num"><%= metrics.targetCalories || '–' %></p>
-      <p class="stat-sub">kcal / ngày</p>
+      <p class="stat-value text-blue-600 animated-num"><%= effectiveTarget || metrics.targetCalories || '–' %></p>
+      <p class="stat-sub">
+        kcal / ngày<% if (totalBurned > 0) { %>
+        <span class="text-orange-500 font-bold"> (+<%= totalBurned %> đốt)</span>
+        <% } %>
+      </p>
     </div>
     <div class="stat-card amber">
       <p class="stat-label">Còn lại</p>
-      <% const remaining = (metrics.targetCalories || 0) - consumed.calories; %>
-      <p class="stat-value <%= remaining < 0 ? 'text-red-500' : 'text-amber-600' %> animated-num">
+      <% const remaining = (effectiveTarget || metrics.targetCalories || 0) - consumed.calories; %>
+      <p class="stat-value text-amber-600 animated-num" id="statRemaining">
         <%= remaining >= 0 ? remaining : 0 %>
       </p>
       <p class="stat-sub">kcal</p>
     </div>
-    <div class="stat-card <%= calorieProgress >= 100 ? 'rose' : 'green' %>">
+    <div class="stat-card green" id="statProgressCard">
       <p class="stat-label">Tiến độ</p>
-      <p class="stat-value <%= calorieProgress >= 100 ? 'text-red-500' : 'text-green-600' %> animated-num"><%= calorieProgress %>%</p>
+      <p class="stat-value text-green-600 animated-num" id="statProgress"><%= calorieProgress %>%</p>
       <div class="macro-bar-track mt-1.5">
-        <div class="macro-bar-fill <%= calorieProgress >= 100 ? 'bg-red-400' : 'bg-green-500' %>"
+        <div class="macro-bar-fill bg-green-500" id="statProgressBar"
              style="width:<%= Math.min(calorieProgress,100) %>%"></div>
       </div>
     </div>
   </div>
 
   <!-- ── Macro Bars ─────────────────────────────────────────── -->
-  <% if (metrics.macros && metrics.targetCalories) { %>
+  <% if (metrics.macros && effectiveTarget) { %>
   <div class="nt-card p-4 mb-5">
     <p class="section-title mb-4">⚡ Phân bổ Macros hôm nay</p>
     <div class="grid grid-cols-3 gap-4">
       <div>
         <div class="flex justify-between text-xs mb-1.5">
           <span class="font-bold text-blue-600">🥩 Protein</span>
-          <span class="text-gray-400 font-semibold"><%= consumed.protein %>/<%= metrics.macros.protein %>g</span>
+          <span class="text-gray-400 font-semibold" id="macroProteinLabel"><%= consumed.protein %>/<%= (effectiveMacros || metrics.macros).protein %>g</span>
         </div>
-        <div class="macro-bar-track"><div class="macro-bar-fill bg-blue-500" style="width:<%= macroProgress.protein %>%"></div></div>
-        <p class="text-xs text-blue-400 mt-1 font-bold"><%= macroProgress.protein %>%</p>
+        <div class="macro-bar-track"><div class="macro-bar-fill bg-blue-500" id="macroProteinBar" style="width:<%= macroProgress.protein %>%"></div></div>
+        <p class="text-xs text-blue-400 mt-1 font-bold" id="macroProteinPct"><%= macroProgress.protein %>%</p>
       </div>
       <div>
         <div class="flex justify-between text-xs mb-1.5">
           <span class="font-bold text-amber-600">🍚 Carbs</span>
-          <span class="text-gray-400 font-semibold"><%= consumed.carbs %>/<%= metrics.macros.carbs %>g</span>
+          <span class="text-gray-400 font-semibold" id="macroCarbsLabel"><%= consumed.carbs %>/<%= (effectiveMacros || metrics.macros).carbs %>g</span>
         </div>
-        <div class="macro-bar-track"><div class="macro-bar-fill bg-amber-400" style="width:<%= macroProgress.carbs %>%"></div></div>
-        <p class="text-xs text-amber-400 mt-1 font-bold"><%= macroProgress.carbs %>%</p>
+        <div class="macro-bar-track"><div class="macro-bar-fill bg-amber-400" id="macroCarbsBar" style="width:<%= macroProgress.carbs %>%"></div></div>
+        <p class="text-xs text-amber-400 mt-1 font-bold" id="macroCarbsPct"><%= macroProgress.carbs %>%</p>
       </div>
       <div>
         <div class="flex justify-between text-xs mb-1.5">
           <span class="font-bold text-rose-600">🥑 Fat</span>
-          <span class="text-gray-400 font-semibold"><%= consumed.fat %>/<%= metrics.macros.fat %>g</span>
+          <span class="text-gray-400 font-semibold" id="macroFatLabel"><%= consumed.fat %>/<%= (effectiveMacros || metrics.macros).fat %>g</span>
         </div>
-        <div class="macro-bar-track"><div class="macro-bar-fill bg-rose-400" style="width:<%= macroProgress.fat %>%"></div></div>
-        <p class="text-xs text-rose-400 mt-1 font-bold"><%= macroProgress.fat %>%</p>
+        <div class="macro-bar-track"><div class="macro-bar-fill bg-rose-400" id="macroFatBar" style="width:<%= macroProgress.fat %>%"></div></div>
+        <p class="text-xs text-rose-400 mt-1 font-bold" id="macroFatPct"><%= macroProgress.fat %>%</p>
       </div>
     </div>
   </div>
@@ -117,7 +121,7 @@
           <span class="text-2xl"><%= meal.icon %></span>
           <div>
             <h3 class="font-black text-sm text-gray-800"><%= meal.label %></h3>
-            <p class="text-xs font-bold" style="color:<%= meal.accent %>"><%= mealCalories[meal.key] %> kcal</p>
+            <p class="text-xs font-bold" style="color:<%= meal.accent %>" id="mealCal-<%= meal.key %>">Đã nạp: <%= mealCalories[meal.key] %> kcal</p>
           </div>
         </div>
         <button onclick="openAddModal('<%= meal.key %>')"
@@ -132,7 +136,12 @@
       <!-- Food rows -->
       <% if (mealGroups[meal.key] && mealGroups[meal.key].length > 0) { %>
         <% mealGroups[meal.key].forEach(entry => { %>
-        <div class="food-row" id="entry-<%= entry.id %>">
+        <div class="food-row" id="entry-<%= entry.id %>"
+             data-meal="<%= meal.key %>"
+             data-calories="<%= entry.caloriesSnapshot||0 %>"
+             data-protein="<%= entry.proteinSnapshot||0 %>"
+             data-carbs="<%= entry.carbsSnapshot||0 %>"
+             data-fat="<%= entry.fatSnapshot||0 %>">
           <div class="flex-1 min-w-0">
             <p class="text-sm font-bold text-gray-800 truncate">
               <%= entry.food ? entry.food.name : 'Món không xác định' %>
@@ -164,38 +173,7 @@
     <% }); %>
   </div>
 
-  <!-- ── Gợi ý món ──────────────────────────────────────────── -->
-  <% if (suggestions && suggestions.length > 0) { %>
-  <div class="nt-card p-5 mb-4" style="background:linear-gradient(135deg,rgba(240,253,244,0.9),rgba(236,253,245,0.9))">
-    <div class="flex items-center gap-2 mb-4 flex-wrap">
-      <p class="section-title">💡 Gợi ý bữa tiếp theo</p>
-      <span class="pill pill-green font-black"><%= (metrics.targetCalories||0) - consumed.calories %> kcal còn lại</span>
-    </div>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      <% suggestions.forEach(s => { %>
-      <div class="suggestion-card"
-           onclick="quickAdd(<%= JSON.stringify({id:s.food.id,name:s.food.name,calories:s.food.calories,unit:s.food.unit,protein:s.food.protein,carbs:s.food.carbs,fat:s.food.fat}).replace(/"/g,'&quot;') %>)">
-        <p class="font-black text-sm text-gray-800 truncate"><%= s.food.name %></p>
-        <p class="text-xs text-gray-500 mt-0.5"><strong class="text-green-600"><%= s.food.calories %></strong> kcal / <%= s.food.unit %></p>
-        <div class="flex gap-1 flex-wrap mt-1.5">
-          <span class="pill pill-blue">P:<%= s.food.protein %>g</span>
-          <span class="pill pill-amber">C:<%= s.food.carbs %>g</span>
-          <span class="pill pill-rose">F:<%= s.food.fat %>g</span>
-        </div>
-        <p class="text-xs text-green-600 font-bold mt-1.5">Còn sau: <%= s.remainingAfter %> kcal</p>
-      </div>
-      <% }); %>
-    </div>
-  </div>
-  <% } else if (consumed.calories > 0 && calorieProgress >= 100) { %>
-  <div class="nt-card p-4 mb-4 flex items-center gap-3" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac">
-    <span class="text-3xl float-icon">🎉</span>
-    <div>
-      <p class="font-black text-green-700">Xuất sắc! Bạn đã đạt mục tiêu calo hôm nay!</p>
-      <p class="text-xs text-green-600 mt-0.5 font-medium">Hãy duy trì thói quen tốt này nhé!</p>
-    </div>
-  </div>
-  <% } %>
+  <!-- Gỡ bỏ phần Kế hoạch dinh dưỡng theo bữa theo yêu cầu: Đơn giản hóa trải nghiệm -->
 
 </main>
 
@@ -399,17 +377,117 @@ async function submitAddFood() {
   } catch(e) { hideLoading(); showToast('Lỗi kết nối.','error'); }
 }
 
+// ── Các hằng số dinh dưỡng (được ghi vào DOM bởi EJS) ──────────────────────
+const EFFECTIVE_TARGET = <%= effectiveTarget || metrics.targetCalories || 0 %>;
+const MACRO_TARGET = {
+  protein: <%= (effectiveMacros || metrics.macros) ? (effectiveMacros || metrics.macros).protein : 0 %>,
+  carbs:   <%= (effectiveMacros || metrics.macros) ? (effectiveMacros || metrics.macros).carbs   : 0 %>,
+  fat:     <%= (effectiveMacros || metrics.macros) ? (effectiveMacros || metrics.macros).fat     : 0 %>,
+};
+// Trạng thái hiện tại (mutable)
+let _consumed = {
+  calories: <%= consumed.calories %>,
+  protein:  <%= consumed.protein %>,
+  carbs:    <%= consumed.carbs %>,
+  fat:      <%= consumed.fat %>,
+};
+// Calories theo bữa
+const _mealCal = {
+  sang: <%= mealCalories.sang %>,
+  trua: <%= mealCalories.trua %>,
+  toi:  <%= mealCalories.toi %>,
+  phu:  <%= mealCalories.phu %>,
+};
+
+function _updateStatsUI() {
+  const cal = Math.round(_consumed.calories);
+  const rem = Math.max(0, EFFECTIVE_TARGET - cal);
+  const pct = EFFECTIVE_TARGET > 0 ? Math.min(100, Math.round(cal / EFFECTIVE_TARGET * 100)) : 0;
+
+  // Stat cards
+  const scEl = document.getElementById('statConsumed');
+  if (scEl) scEl.textContent = cal;
+  const srEl = document.getElementById('statRemaining');
+  if (srEl) srEl.textContent = rem;
+  const spEl = document.getElementById('statProgress');
+  if (spEl) spEl.textContent = pct + '%';
+  const spbEl = document.getElementById('statProgressBar');
+  if (spbEl) spbEl.style.width = pct + '%';
+
+  // Macro bars
+  const p = Math.round(_consumed.protein);
+  const c = Math.round(_consumed.carbs);
+  const f = Math.round(_consumed.fat);
+  const pPct = MACRO_TARGET.protein > 0 ? Math.min(100, Math.round(p / MACRO_TARGET.protein * 100)) : 0;
+  const cPct = MACRO_TARGET.carbs   > 0 ? Math.min(100, Math.round(c / MACRO_TARGET.carbs   * 100)) : 0;
+  const fPct = MACRO_TARGET.fat     > 0 ? Math.min(100, Math.round(f / MACRO_TARGET.fat     * 100)) : 0;
+
+  const pLbl = document.getElementById('macroProteinLabel');
+  if (pLbl) pLbl.textContent = `${p}/${MACRO_TARGET.protein}g`;
+  const pBar = document.getElementById('macroProteinBar');
+  if (pBar) pBar.style.width = pPct + '%';
+  const pPctEl = document.getElementById('macroProteinPct');
+  if (pPctEl) pPctEl.textContent = pPct + '%';
+
+  const cLbl = document.getElementById('macroCarbsLabel');
+  if (cLbl) cLbl.textContent = `${c}/${MACRO_TARGET.carbs}g`;
+  const cBar = document.getElementById('macroCarbsBar');
+  if (cBar) cBar.style.width = cPct + '%';
+  const cPctEl = document.getElementById('macroCarbsPct');
+  if (cPctEl) cPctEl.textContent = cPct + '%';
+
+  const fLbl = document.getElementById('macroFatLabel');
+  if (fLbl) fLbl.textContent = `${f}/${MACRO_TARGET.fat}g`;
+  const fBar = document.getElementById('macroFatBar');
+  if (fBar) fBar.style.width = fPct + '%';
+  const fPctEl = document.getElementById('macroFatPct');
+  if (fPctEl) fPctEl.textContent = fPct + '%';
+}
+
 async function deleteEntry(id) {
   if (!confirm('Bạn có chắc muốn xóa mục này không?')) return;
+  const el = document.getElementById(`entry-${id}`);
+  // Đọc snapshot từ data attributes trước khi remove
+  const delCal  = parseFloat(el ? el.dataset.calories : 0) || 0;
+  const delPro  = parseFloat(el ? el.dataset.protein  : 0) || 0;
+  const delCarb = parseFloat(el ? el.dataset.carbs    : 0) || 0;
+  const delFat  = parseFloat(el ? el.dataset.fat      : 0) || 0;
+  const mealKey = el ? el.dataset.meal : null;
   try {
     showLoading();
     const res  = await fetch(`/nhat-ky/xoa/${id}`, {method:'DELETE'});
     const data = await res.json();
     hideLoading();
     if (data.success) {
-      const el = document.getElementById(`entry-${id}`);
-      if (el) { el.style.opacity='0'; el.style.transform='translateX(20px)'; el.style.transition='all 0.3s'; setTimeout(()=>{el.remove();location.reload();},350); }
-      showToast(data.message,'success');
+      // 1. Animate + remove DOM
+      if (el) {
+        el.style.transition = 'all 0.3s ease';
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(20px)';
+        el.style.maxHeight = el.offsetHeight + 'px';
+        setTimeout(() => {
+          el.style.maxHeight = '0';
+          el.style.overflow = 'hidden';
+          el.style.margin = '0';
+          el.style.padding = '0';
+          setTimeout(() => el.remove(), 200);
+        }, 250);
+      }
+      // 2. Cập nhật state
+      _consumed.calories -= delCal;
+      _consumed.protein  -= delPro;
+      _consumed.carbs    -= delCarb;
+      _consumed.fat      -= delFat;
+      if (mealKey && _mealCal[mealKey] !== undefined) {
+        _mealCal[mealKey] = Math.max(0, _mealCal[mealKey] - delCal);
+        const mhEl = document.getElementById(`mealCal-${mealKey}`);
+        if (mhEl) {
+          mhEl.textContent = `Đã nạp: ${Math.round(_mealCal[mealKey])} kcal`;
+        }
+      }
+      // 3. Cập nhật stat cards + macro bars
+      _updateStatsUI();
+      showToast(data.message, 'success');
     } else { showToast(data.message||'Lỗi.','error'); }
   } catch(e) { hideLoading(); showToast('Lỗi kết nối.','error'); }
 }

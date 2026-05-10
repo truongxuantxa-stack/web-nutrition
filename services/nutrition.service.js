@@ -153,6 +153,95 @@ const calculateMacros = (targetCalories) => {
 };
 
 /**
+ * Phân bổ target dinh dưỡng theo từng bữa ăn trong ngày.
+ * Trọng số mặc định: Sáng 25%, Trưa 40%, Tối 30%, Phụ 5%.
+ *
+ * @param {number} targetCalories - Tổng calo mục tiêu/ngày
+ * @returns {Object} { sang, trua, toi, phu } — mỗi key là { calories, protein, carbs, fat }
+ */
+const getMealTargets = (targetCalories) => {
+    if (!targetCalories) {
+        const zero = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+        return { sang: zero, trua: zero, toi: zero, phu: zero };
+    }
+    const weights = { sang: 0.25, trua: 0.40, toi: 0.30, phu: 0.05 };
+    const result  = {};
+    Object.entries(weights).forEach(([meal, w]) => {
+        const cal = Math.round(targetCalories * w);
+        const macros = calculateMacros(cal);
+        result[meal] = { calories: cal, ...macros };
+    });
+    return result;
+};
+
+/**
+ * Scale macros tỉ lệ thuận theo effectiveTarget (sau khi cộng calo đốt từ luyện tập).
+ * @param {Object} macros         - { protein, carbs, fat } gốc từ calculateMacros(targetCalories)
+ * @param {number} targetCalories - Mục tiêu calo gốc (TDEE-based)
+ * @param {number} effectiveTarget- Mục tiêu calo thực tế (TDEE + burned)
+ * @returns {{ protein, carbs, fat }}
+ */
+const calculateEffectiveMacros = (macros, targetCalories, effectiveTarget) => {
+    if (!macros || !targetCalories || targetCalories === 0) return macros;
+    if (effectiveTarget === targetCalories) return macros;
+    const ratio = effectiveTarget / targetCalories;
+    return {
+        protein: Math.round(macros.protein * ratio),
+        carbs:   Math.round(macros.carbs   * ratio),
+        fat:     Math.round(macros.fat     * ratio),
+    };
+};
+
+/**
+ * Phân bổ target dinh dưỡng động theo từng bữa — Phương án B.
+ *
+ * Logic:
+ * - Bữa đã có món ăn: dùng phần % cố định của effectiveTarget làm tham chiếu.
+ * - Bữa chưa có món:  chia đều "ngân sách còn lại" (remaining) theo trọng số tương đối.
+ *
+ * @param {number} effectiveTarget  - Mục tiêu calo thực tế (TDEE + burned)
+ * @param {Object} mealConsumedMap  - { sang, trua, toi, phu } — { calories, protein, carbs, fat }
+ * @returns {Object} { sang, trua, toi, phu } — mỗi key là { calories, protein, carbs, fat }
+ */
+const getDynamicMealTargets = (effectiveTarget, mealConsumedMap) => {
+    const WEIGHTS = { sang: 0.25, trua: 0.40, toi: 0.30, phu: 0.05 };
+    const MEALS   = ['sang', 'trua', 'toi', 'phu'];
+
+    if (!effectiveTarget) {
+        const zero = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+        return { sang: zero, trua: zero, toi: zero, phu: zero };
+    }
+
+    // Tổng calo đã nạp toàn ngày
+    const totalConsumed = MEALS.reduce(
+        (s, m) => s + (mealConsumedMap[m]?.calories || 0), 0
+    );
+    const remaining = Math.max(effectiveTarget - totalConsumed, 0);
+
+    // Xác định bữa "đã có món" vs "chưa có món"
+    const hasFood       = (m) => (mealConsumedMap[m]?.calories || 0) > 0;
+    const futureMeals   = MEALS.filter(m => !hasFood(m));
+    const unusedWeight  = futureMeals.reduce((s, m) => s + WEIGHTS[m], 0);
+
+    const targets = {};
+    MEALS.forEach(m => {
+        let cal;
+        if (hasFood(m)) {
+            // Bữa đã ăn → dùng phần % cố định của effectiveTarget làm tham chiếu lịch sử
+            cal = Math.round(effectiveTarget * WEIGHTS[m]);
+        } else if (unusedWeight > 0) {
+            // Bữa chưa ăn → chia ngân sách còn lại theo trọng số tương đối
+            cal = Math.round((WEIGHTS[m] / unusedWeight) * remaining);
+        } else {
+            cal = 0;
+        }
+        const macros = calculateMacros(cal);
+        targets[m]   = { calories: cal, ...macros };
+    });
+    return targets;
+};
+
+/**
  * Hàm tổng hợp: Tính toán tất cả chỉ số dinh dưỡng cho một user.
  *
  * @param {Object} user - Đối tượng user Sequelize
@@ -195,6 +284,9 @@ module.exports = {
     calculateTDEE,
     adjustCaloriesForGoal,
     calculateMacros,
+    getMealTargets,
+    getDynamicMealTargets,
+    calculateEffectiveMacros,
     calculateAllMetrics,
     ACTIVITY_FACTORS,
     ACTIVITY_LABELS,

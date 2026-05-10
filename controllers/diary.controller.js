@@ -6,15 +6,22 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const { DiaryEntry, Food } = require('../models');
-const { calculateAllMetrics } = require('../services/nutrition.service');
+const {
+    calculateAllMetrics,
+    getMealTargets,
+    getDynamicMealTargets,
+    calculateEffectiveMacros,
+} = require('../services/nutrition.service');
 const {
     sumNutritionFromEntries,
     groupEntriesByMeal,
     getSuggestions,
+    getMealSuggestions,
     getCalorieProgress,
     getMacroProgress,
     getHealthInsights,
 } = require('../services/suggestion.service');
+const { getTotalBurnedByDate } = require('./exercise.controller');
 const { Op } = require('sequelize');
 
 // ─── Helper: Format ngày YYYY-MM-DD theo local timezone ──────────────────────
@@ -51,18 +58,33 @@ exports.getDiary = async (req, res) => {
         });
 
         // Nhóm theo bữa + tính tổng dinh dưỡng
-        const mealGroups = groupEntriesByMeal(entries);
-        const consumed   = sumNutritionFromEntries(entries);
+        const mealGroups  = groupEntriesByMeal(entries);
+        const consumed    = sumNutritionFromEntries(entries);
 
-        // Gợi ý món ăn dựa trên calo còn thiếu
-        const suggestions = metrics.targetCalories
-            ? await getSuggestions(metrics.targetCalories, consumed)
-            : [];
+        // ── Tính effectiveTarget trước tiên ─────────────────────────────────
+        // effectiveTarget = Mục tiêu TDEE + Calo đốt từ luyện tập (Phương án B)
+        const totalBurned     = await getTotalBurnedByDate(user.id, date);
+        const effectiveTarget = (metrics.targetCalories || 0) + totalBurned;
 
-        // Tiến độ calo và macro
-        const calorieProgress = getCalorieProgress(consumed.calories, metrics.targetCalories);
-        const macroProgress   = getMacroProgress(consumed, metrics.macros);
-        const healthInsights  = getHealthInsights(consumed, metrics, mealGroups);
+        // ── Macro hiệu quả (scale tỷ lệ thuận theo effectiveTarget) ─────────
+        const effectiveMacros = calculateEffectiveMacros(
+            metrics.macros, metrics.targetCalories, effectiveTarget
+        );
+
+        const mealTargets = getMealTargets(metrics.targetCalories);
+        
+        // Gỡ bỏ gợi ý theo bữa theo yêu cầu của người dùng.
+        const mealSuggestionsMap = {}; 
+        const dynamicMealTargets = {}; 
+        
+        // Giữ backward compat (gợi ý cũ toàn ngày - có thể gỡ sau nếu không dùng)
+        const suggestions = []; 
+
+
+        // ── Tiến độ & Health Insights (dùng effectiveTarget + effectiveMacros) ─
+        const calorieProgress = getCalorieProgress(consumed.calories, effectiveTarget);
+        const macroProgress   = getMacroProgress(consumed, effectiveMacros || metrics.macros);
+        const healthInsights  = getHealthInsights(consumed, metrics, mealGroups, effectiveTarget, effectiveMacros);
 
         // Tính tổng calo theo từng bữa để hiển thị
         // [QA-FIX] Khởi tạo đủ 4 key với default = 0, tránh undefined khi bữa chưa có món
@@ -82,12 +104,18 @@ exports.getDiary = async (req, res) => {
             entries,
             mealGroups,
             mealCalories,
+            mealTargets,
+            dynamicMealTargets,
+            mealSuggestionsMap,
             consumed : {
                 calories: Math.round(consumed.calories),
                 protein : Math.round(consumed.protein),
                 carbs   : Math.round(consumed.carbs),
                 fat     : Math.round(consumed.fat),
             },
+            totalBurned,
+            effectiveTarget,
+            effectiveMacros,
             suggestions,
             calorieProgress,
             macroProgress,

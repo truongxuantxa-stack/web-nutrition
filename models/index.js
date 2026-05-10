@@ -3,10 +3,11 @@
 const sequelize = require('../config/database');
 
 // ── Import Models ─────────────────────────────────────────────────────────────
-const User       = require('./User');
-const Food       = require('./Food');
-const DiaryEntry = require('./DiaryEntry');
-const WeightLog  = require('./WeightLog');
+const User        = require('./User');
+const Food        = require('./Food');
+const DiaryEntry  = require('./DiaryEntry');
+const WeightLog   = require('./WeightLog');
+const ExerciseLog = require('./ExerciseLog');
 
 // ── Associations ──────────────────────────────────────────────────────────────
 
@@ -25,6 +26,10 @@ DiaryEntry.belongsTo(Food, { foreignKey: 'foodId', as: 'food' });
 User.hasMany(WeightLog, { foreignKey: 'userId', as: 'weightLogs', onDelete: 'CASCADE', hooks: true });
 WeightLog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+// User <-> ExerciseLog (1 user có nhiều log luyện tập)
+User.hasMany(ExerciseLog, { foreignKey: 'userId', as: 'exerciseLogs', onDelete: 'CASCADE', hooks: true });
+ExerciseLog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
 // ── Sync & Export ─────────────────────────────────────────────────────────────
 module.exports = {
     sequelize,
@@ -32,4 +37,5 @@ module.exports = {
     Food,
     DiaryEntry,
     WeightLog,
+    ExerciseLog,
 };

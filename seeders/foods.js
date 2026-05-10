@@ -263,7 +263,81 @@ const dishes = [
     { name: 'Hủ Tiếu Nam Vang', calories: 480, protein: 20, carbs: 58, fat: 18, unit: 'bát', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
     { name: 'Cơm Chiên Dương Châu', calories: 550, protein: 15, carbs: 65, fat: 24, unit: 'đĩa', category: 'com', foodType: 'dish', isSuggestable: true },
     { name: 'Gỏi Cuốn Chay', calories: 50, protein: 2, carbs: 10, fat: 0.5, unit: 'cái', category: 'rau_cu', foodType: 'dish', isSuggestable: true },
-    { name: 'Salad Kale Hạt Quinoa', calories: 260, protein: 10, carbs: 28, fat: 12, unit: 'đĩa', category: 'rau_cu', foodType: 'dish', isSuggestable: true }
+    { name: 'Salad Kale Hạt Quinoa', calories: 260, protein: 10, carbs: 28, fat: 12, unit: 'đĩa', category: 'rau_cu', foodType: 'dish', isSuggestable: true },
+
+    // === BỮA SÁNG ĐƯỜNG PHỐ ===
+    { name: 'Bánh Mì Thịt Nguội', calories: 420, protein: 16, carbs: 50, fat: 16, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Mì Ốp La', calories: 380, protein: 14, carbs: 42, fat: 17, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Mì Chảo (Hết thứ)', calories: 650, protein: 28, carbs: 55, fat: 32, unit: 'suất', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Xôi Gà', calories: 480, protein: 22, carbs: 70, fat: 12, unit: 'suất', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Xôi Đậu Xanh', calories: 380, protein: 10, carbs: 72, fat: 6, unit: 'gói', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Xôi Lạc', calories: 420, protein: 14, carbs: 68, fat: 12, unit: 'gói', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Xôi Ngô Mỡ Hành', calories: 450, protein: 9, carbs: 78, fat: 14, unit: 'gói', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Cháo Đậu Xanh', calories: 180, protein: 7, carbs: 35, fat: 1, unit: 'bát', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Cháo Thịt Bằm', calories: 220, protein: 14, carbs: 30, fat: 6, unit: 'bát', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Giò', calories: 320, protein: 10, carbs: 48, fat: 10, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Bao Thịt', calories: 280, protein: 12, carbs: 40, fat: 8, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Bao Chay', calories: 200, protein: 6, carbs: 38, fat: 3, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Ướt Chả Lụa', calories: 280, protein: 12, carbs: 42, fat: 7, unit: 'đĩa', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Hủ Tiếu Khô Thịt', calories: 490, protein: 22, carbs: 60, fat: 18, unit: 'đĩa', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
+    { name: 'Mì Khô Xá Xíu', calories: 520, protein: 20, carbs: 65, fat: 20, unit: 'đĩa', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
+    { name: 'Bún Bò Nam Bộ', calories: 480, protein: 24, carbs: 58, fat: 16, unit: 'bát', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
+
+    // === CƠM VĂN PHÒNG / CƠM BÌNH DÂN ===
+    { name: 'Cơm Sườn Cải', calories: 520, protein: 22, carbs: 68, fat: 18, unit: 'đĩa', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Cơm Gà Chiên Nước Mắm', calories: 580, protein: 28, carbs: 65, fat: 22, unit: 'đĩa', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Cơm Bò Kho', calories: 550, protein: 26, carbs: 62, fat: 22, unit: 'đĩa', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Cơm Canh Chua Cá', calories: 490, protein: 22, carbs: 60, fat: 16, unit: 'suất', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Cơm Thịt Kho Tiêu', calories: 530, protein: 24, carbs: 62, fat: 20, unit: 'đĩa', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Cơm Cá Kho Tộ', calories: 510, protein: 25, carbs: 60, fat: 18, unit: 'đĩa', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Cơm Trắng + Rau Xào', calories: 320, protein: 6, carbs: 60, fat: 8, unit: 'suất', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Cơm Đùi Gà Nướng', calories: 560, protein: 30, carbs: 62, fat: 20, unit: 'đĩa', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Cơm Chả Trứng', calories: 500, protein: 20, carbs: 65, fat: 18, unit: 'đĩa', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Bún Bò Xào Sả', calories: 440, protein: 22, carbs: 52, fat: 16, unit: 'đĩa', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
+    { name: 'Canh Chua Tôm', calories: 120, protein: 10, carbs: 10, fat: 4, unit: 'bát', category: 'rau_cu', foodType: 'dish', isSuggestable: true },
+    { name: 'Đậu Phụ Sốt Thịt Bằm', calories: 240, protein: 18, carbs: 8, fat: 15, unit: 'suất', category: 'thit_ca', foodType: 'dish', isSuggestable: true },
+    { name: 'Rau Cải Luộc Chấm Mắm', calories: 50, protein: 2, carbs: 5, fat: 2, unit: 'đĩa', category: 'rau_cu', foodType: 'dish', isSuggestable: true },
+
+    // === ĂN VẶT / BỮA PHỤ ===
+    { name: 'Bánh Tráng Nướng Phomai', calories: 280, protein: 8, carbs: 38, fat: 11, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Tráng Trộn', calories: 250, protein: 6, carbs: 42, fat: 7, unit: 'gói', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Khoai Lang Lắc Phô Mai', calories: 220, protein: 4, carbs: 38, fat: 7, unit: 'suất', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Ngô Luộc', calories: 150, protein: 5, carbs: 32, fat: 2, unit: 'bắp', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Khoai Lang Luộc', calories: 130, protein: 2, carbs: 30, fat: 0.1, unit: 'củ 150g', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Chuối Lán', calories: 120, protein: 1.5, carbs: 28, fat: 0.3, unit: 'quả', category: 'trai_cay', foodType: 'dish', isSuggestable: true },
+    { name: 'Ổi Xanh Chấm Muối Ớt', calories: 80, protein: 2, carbs: 18, fat: 0.5, unit: 'suất', category: 'trai_cay', foodType: 'dish', isSuggestable: true },
+    { name: 'Chè Đậu Xanh', calories: 200, protein: 5, carbs: 40, fat: 2, unit: 'ly', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Chè Ba Màu', calories: 280, protein: 5, carbs: 55, fat: 5, unit: 'ly', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Chè Bưởi Sương Sáo', calories: 180, protein: 1, carbs: 44, fat: 1, unit: 'ly', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Sữa Chua Nếp Cẩm', calories: 220, protein: 5, carbs: 40, fat: 4, unit: 'ly', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Hạt Điều Rang Muối', calories: 165, protein: 5, carbs: 9, fat: 13, unit: 'gói 30g', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Trái Cây Dầm', calories: 150, protein: 1, carbs: 35, fat: 0.5, unit: 'ly', category: 'trai_cay', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Flan', calories: 120, protein: 4, carbs: 18, fat: 4, unit: 'cái', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Sữa Chua Hoa Quả', calories: 130, protein: 5, carbs: 22, fat: 3, unit: 'hộp 100g', category: 'khac', foodType: 'dish', isSuggestable: true },
+
+    // === MÓN MIỀN TRUNG / MIỀN NAM ===
+    { name: 'Bún Thái Hải Sản', calories: 420, protein: 22, carbs: 55, fat: 12, unit: 'bát', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Xèo Tôm Thịt', calories: 350, protein: 14, carbs: 35, fat: 18, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Mì Quảng Gà', calories: 480, protein: 22, carbs: 55, fat: 18, unit: 'bát', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
+    { name: 'Cao Lầu Hội An', calories: 520, protein: 20, carbs: 62, fat: 20, unit: 'bát', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
+    { name: 'Bún Kèn Phú Quốc', calories: 450, protein: 20, carbs: 54, fat: 16, unit: 'bát', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
+    { name: 'Cơm Niêu Sài Gòn', calories: 580, protein: 24, carbs: 72, fat: 20, unit: 'suất', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Lẩu Mắm', calories: 350, protein: 18, carbs: 25, fat: 18, unit: 'suất', category: 'khac', foodType: 'dish', isSuggestable: true },
+
+    // === MÓN LẨU / NƯỚNG ===
+    { name: 'Lẩu Thái Hải Sản', calories: 300, protein: 20, carbs: 22, fat: 14, unit: 'suất', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Lẩu Gà Lá Giang', calories: 280, protein: 22, carbs: 18, fat: 12, unit: 'suất', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Thịt Nướng BBQ Mỡ Hành', calories: 380, protein: 28, carbs: 5, fat: 28, unit: 'suất', category: 'thit_ca', foodType: 'dish', isSuggestable: true },
+    { name: 'Gà Nướng Muối Ớt', calories: 300, protein: 28, carbs: 5, fat: 18, unit: 'suất', category: 'thit_ca', foodType: 'dish', isSuggestable: true },
+    { name: 'Sườn Nướng Mật Ong', calories: 420, protein: 22, carbs: 18, fat: 28, unit: 'suất', category: 'thit_ca', foodType: 'dish', isSuggestable: true },
+
+    // === MÓN CHAY ===
+    { name: 'Cơm Chay Thập Cẩm', calories: 420, protein: 12, carbs: 65, fat: 12, unit: 'đĩa', category: 'com', foodType: 'dish', isSuggestable: true },
+    { name: 'Bún Chay Sốt Nấm', calories: 320, protein: 8, carbs: 58, fat: 6, unit: 'bát', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Mì Chay', calories: 280, protein: 8, carbs: 48, fat: 6, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Đậu Hũ Kho Sả Ớt', calories: 200, protein: 14, carbs: 8, fat: 12, unit: 'suất', category: 'rau_cu', foodType: 'dish', isSuggestable: true },
+    { name: 'Canh Rau Củ Chay', calories: 80, protein: 3, carbs: 14, fat: 1.5, unit: 'bát', category: 'rau_cu', foodType: 'dish', isSuggestable: true },
+    { name: 'Nấm Xào Rau Củ', calories: 140, protein: 5, carbs: 12, fat: 8, unit: 'đĩa', category: 'rau_cu', foodType: 'dish', isSuggestable: true },
 ];
 
 const beverages = [

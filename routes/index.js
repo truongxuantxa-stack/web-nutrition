@@ -17,10 +17,12 @@ router.use('/', authRoutes);
 const dashboardController = require('../controllers/dashboard.controller');
 router.get('/dashboard', requireAuth, requireOnboarded, dashboardController.getDashboard);
 
-// ─── Phase 4: Diary & Weight routes (cần đăng nhập + onboarded) ─────────────
-const diaryRoutes  = require('./diary.routes');
-const weightRoutes = require('./weight.routes');
+// ─── Phase 4: Diary, Weight & Exercise routes (cần đăng nhập + onboarded) ────
+const diaryRoutes    = require('./diary.routes');
+const weightRoutes   = require('./weight.routes');
+const exerciseRoutes = require('./exercise.routes');
 router.use('/', requireAuth, requireOnboarded, diaryRoutes);
 router.use('/', requireAuth, requireOnboarded, weightRoutes);
+router.use('/', requireAuth, requireOnboarded, exerciseRoutes);
 
 module.exports = router;
