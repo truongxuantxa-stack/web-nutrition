@@ -180,6 +180,7 @@ Phase 6 ← Phase 5 ← Phase 4C + 4D
 
 ## Nhật ký thay đổi (Changelog)
 
+- [feat] **Date Navigation Upgrade (Điều hướng Ngày chuyên nghiệp):** Thay thế date picker auto-submit bằng cụm navigator `[ ‹ ] [ date 📅 ] [ › ] [ Hôm nay ]` cho cả trang **Nhật ký ăn uống** và **Nhật ký luyện tập**. Nút `›` bị disabled khi xem hôm nay (không cho xem tương lai). Nút "Hôm nay" ẩn khi đang ở ngày hiện tại. Tất cả tiêu đề ("Macros hôm nay", "Vi chất hôm nay", "Nước uống hôm nay", "Tổng đốt hôm nay") đổi thành chữ động — hiển thị "ngày DD/MM" khi xem ngày khác.
 - [feat] **Water Tracking (Theo dõi Nước uống):** Model `WaterLog` mới + trường `waterGoal` trong User (tính tự động `weight × 35ml`). Water Tracker Card tích hợp trong Nhật ký: progress circle, quick-add buttons (250/350/500ml + tùy chỉnh), log chi tiết theo giờ, AJAX không reload, modal sửa mục tiêu. Dashboard widget hiển thị tổng nước + mini progress bar. API: `POST /nuoc/them`, `DELETE /nuoc/xoa/:id`, `PUT /nuoc/muc-tieu`.
 - [feat] **Custom Food (Tự Tạo Món):** Người dùng có thể tạo/sửa/xóa món ăn riêng (private, chỉ chủ sở hữu thấy). Soft delete bảo tồn lịch sử nhật ký. Badge `🔧 Tự tạo` (violet) xuất hiện trong kết quả tìm kiếm. Trang riêng `/nhat-ky/mon-cua-toi` + phím tắt trên header nhật ký.
 - [feat] Tối ưu hóa UI Nhật ký ăn uống: Thêm món ăn không cần reload lại trang (AJAX update).

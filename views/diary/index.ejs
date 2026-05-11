@@ -1,5 +1,23 @@
 <%- include('../partials/header', { title: 'Nhật Ký Ăn Uống' }) %>
 <%- include('../partials/navbar') %>
+<%
+  // ── Dynamic date label ────────────────────────────────────────────────────
+  const _todayStr = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  })();
+  const _isToday   = date === _todayStr;
+  const _dateParts = date.split('-'); // [YYYY, MM, DD]
+  const _dateLabel = _isToday ? 'hôm nay' : `ngày ${_dateParts[2]}/${_dateParts[1]}`;
+  // Prev / Next dates
+  const _currDate  = new Date(`${date}T00:00:00`);
+  const _prevDate  = new Date(_currDate); _prevDate.setDate(_currDate.getDate() - 1);
+  const _nextDate  = new Date(_currDate); _nextDate.setDate(_currDate.getDate() + 1);
+  const _fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const _prevStr   = _fmt(_prevDate);
+  const _nextStr   = _fmt(_nextDate);
+  const _canGoNext = _nextStr <= _todayStr;
+%>
 
 <main class="container mx-auto px-4 max-w-5xl py-6">
 
@@ -17,16 +35,42 @@
          class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold text-violet-600 hover:bg-violet-50 transition-all border-2 border-violet-200 hover:border-violet-400">
         🔧 Món của tôi
       </a>
-      <!-- Date Picker -->
-      <form method="GET" action="/nhat-ky" class="flex items-center gap-2">
-        <input type="date" name="date" id="dateInput" value="<%= date %>"
-               max="<%= (d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`)(new Date()) %>"
-               class="nt-input !w-auto text-sm font-semibold" onchange="this.form.submit()">
-        <button type="button" onclick="goToToday()"
-                class="px-3 py-2 rounded-xl text-sm font-bold text-green-600 hover:bg-green-50 transition-all border-2 border-green-200 hover:border-green-400">
+      <!-- Date Navigator -->
+      <div class="flex items-center gap-1.5" id="dateNavigator">
+        <!-- Prev -->
+        <a href="/nhat-ky?date=<%= _prevStr %>"
+           class="w-9 h-9 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-500 hover:border-green-400 hover:text-green-600 hover:bg-green-50 transition-all font-bold text-base"
+           title="Ngày trước">
+          ‹
+        </a>
+        <!-- Date input — nhập tự do, nhấn Enter hoặc nút → để chuyển -->
+        <form method="GET" action="/nhat-ky" id="dateNavForm" class="flex items-center gap-1">
+          <input type="date" name="date" id="dateInput" value="<%= date %>"
+                 max="<%= _todayStr %>"
+                 class="nt-input !w-auto text-sm font-semibold px-3"
+                 onkeydown="if(event.key==='Enter'){this.form.submit()}">
+          <button type="submit"
+                  class="w-8 h-8 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-500 hover:border-green-400 hover:text-green-600 hover:bg-green-50 transition-all text-base font-bold"
+                  title="Chuyển đến ngày này">→</button>
+        </form>
+        <!-- Next -->
+        <% if (_canGoNext) { %>
+        <a href="/nhat-ky?date=<%= _nextStr %>"
+           class="w-9 h-9 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-500 hover:border-green-400 hover:text-green-600 hover:bg-green-50 transition-all font-bold text-base"
+           title="Ngày sau">
+          ›
+        </a>
+        <% } else { %>
+        <span class="w-9 h-9 flex items-center justify-center rounded-xl border-2 border-gray-100 text-gray-300 cursor-not-allowed font-bold text-base" title="Không thể xem tương lai">›</span>
+        <% } %>
+        <!-- Hôm nay (ẩn nếu đang xem hôm nay) -->
+        <% if (!_isToday) { %>
+        <a href="/nhat-ky?date=<%= _todayStr %>"
+           class="px-3 py-2 rounded-xl text-sm font-bold text-green-600 hover:bg-green-50 transition-all border-2 border-green-200 hover:border-green-400 whitespace-nowrap">
           Hôm nay
-        </button>
-      </form>
+        </a>
+        <% } %>
+      </div>
     </div>
   </div>
 
@@ -67,7 +111,7 @@
   <!-- ── Macro Bars ─────────────────────────────────────────── -->
   <% if (metrics.macros && effectiveTarget) { %>
   <div class="nt-card p-4 mb-5">
-    <p class="section-title mb-4">⚡ Phân bổ Macros hôm nay</p>
+    <p class="section-title mb-4">⚡ Phân bổ Macros <%= _dateLabel %></p>
     <div class="grid grid-cols-3 gap-4">
       <div>
         <div class="flex justify-between text-xs mb-1.5">
@@ -101,7 +145,7 @@
   <% const hasMicro = consumed.fiber != null || consumed.sugar != null || consumed.sodium != null; %>
   <% if (hasMicro) { %>
   <div class="nt-card p-4 mb-5">
-    <p class="section-title mb-4">🔬 Vi chất hôm nay</p>
+    <p class="section-title mb-4">🔬 Vi chất <%= _dateLabel %></p>
     <div class="grid grid-cols-3 gap-3">
 
       <!-- Fiber -->
@@ -171,7 +215,7 @@
   %>
   <div class="nt-card p-4 mb-5" id="waterCard">
     <div class="flex items-center justify-between mb-3">
-      <p class="section-title">💧 Nước uống hôm nay</p>
+      <p class="section-title">💧 Nước uống <%= _dateLabel %></p>
       <button onclick="openEditWaterGoal()"
               class="text-xs font-bold text-blue-500 hover:text-blue-700 flex items-center gap-1 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -248,7 +292,7 @@
       </div>
       <% }); } else { %>
       <div class="text-center py-3" id="waterEmptyState">
-        <p class="text-xs text-gray-300">💧 Chưa có lượng nước nào được ghi hôm nay</p>
+        <p class="text-xs text-gray-300">💧 Chưa có lượng nước nào được ghi <%= _dateLabel %></p>
       </div>
       <% } %>
     </div>
@@ -451,11 +495,7 @@
 const CURRENT_DATE = '<%= date %>';
 let selectedFood = null, searchTimer = null;
 
-function goToToday() {
-  const d = new Date();
-  const t = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  window.location.href = '/nhat-ky?date=' + t;
-}
+// goToToday() đã được thay bằng thẻ <a> trong HTML (không cần JS nữa)
 
 function openAddModal(mealType) {
   selectedFood = null;
