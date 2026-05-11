@@ -41,7 +41,7 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 3. **Thư viện Thực phẩm (Food Database):** Ưu tiên mở rộng và chuẩn hóa dữ liệu thực phẩm. Phân định rõ `foodType` là `'raw'` (nguyên liệu thô, tính trên 100g) hay `'dish'` (món ăn chế biến, tính trên 1 suất). Dữ liệu phải sát với các món ăn hàng ngày của người Việt để phục vụ tra cứu chính xác.
 4. **Security:** Kiểm tra JWT middleware cho tất cả các route cần đăng nhập.
 5. **Triết lý UX (Quan trọng):** Không áp đặt kế hoạch ăn uống theo từng bữa hay gợi ý món tự động. Người dùng là người có kiến thức về dinh dưỡng — chỉ cần cung cấp dữ liệu chính xác (tổng calo, macro cả ngày) và để họ tự quyết định.
-6. **Documentation (Cập nhật tài liệu):** AI BẮT BUỘC phải tự động cập nhật file `claude.md` (đặc biệt là phần Changelog) sau mỗi lần hoàn thành một tính năng, thay đổi cấu trúc DB hoặc hoàn tất một tiến trình lớn để đảm bảo mọi thay đổi luôn được track lại.
+6. **Documentation & Sync (Tài liệu & Đồng bộ):** AI BẮT BUỘC phải tự động cập nhật file `claude.md` (đặc biệt là phần Changelog) và cung cấp lệnh `git push` sau mỗi lần hoàn thành một tính năng, thay đổi cấu trúc DB hoặc hoàn tất một tiến trình lớn để đảm bảo an toàn dữ liệu trên đám mây.
 
 
 
@@ -186,5 +186,5 @@ Phase 6 ← Phase 5 ← Phase 4C + 4D
 - [feat] Tối ưu hóa UI Nhật ký ăn uống: Thêm món ăn không cần reload lại trang (AJAX update).
 - [fix] Xóa bỏ hoàn toàn trường `intensity` (cường độ) khỏi Model và Logic luyện tập để đồng nhất với giao diện.
 - [refactor] Xóa bỏ thuật toán gợi ý món ăn tự động (`getSuggestions`, `getMealSuggestions`) để tối ưu hóa hệ thống và tập trung vào triết lý "Hardcore Tracking" (tự quyết định dinh dưỡng).
-
+- [refactor] Dọn dẹp dead code: xóa hoàn toàn hàm phân bổ target động theo bữa (`getDynamicMealTargets`) khỏi service và controller để đồng nhất với cơ chế phân bổ tĩnh.
 

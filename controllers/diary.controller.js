@@ -9,7 +9,6 @@ const { DiaryEntry, Food } = require('../models');
 const {
     calculateAllMetrics,
     getMealTargets,
-    getDynamicMealTargets,
     calculateEffectiveMacros,
     calculateWaterGoal,
 } = require('../services/nutrition.service');
