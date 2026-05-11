@@ -51,9 +51,11 @@ exports.getDiary = async (req, res) => {
         const metrics = calculateAllMetrics(user);
 
         // Lấy tất cả entries trong ngày, kèm thông tin Food
+        // [QA-FIX] Thêm paranoid: false để load được cả món đã bị Soft Delete
+        // Nếu không có, entry.food = null → EJS crash khi gọi entry.food.name
         const entries = await DiaryEntry.findAll({
             where: { userId: user.id, date },
-            include: [{ model: Food, as: 'food' }],
+            include: [{ model: Food, as: 'food', paranoid: false }],
             order: [['createdAt', 'ASC']],
         });
 
@@ -320,15 +322,34 @@ exports.createCustomFood = async (req, res) => {
         const proNum  = parseFloat(protein);
         const carbNum = parseFloat(carbs);
         const fatNum  = parseFloat(fat);
+
+        // [QA-FIX] Kiểm tra NaN, số âm và giá trị tối đa thực tế
         if (isNaN(calNum)  || calNum  < 0) return res.status(400).json({ success: false, message: 'Calories không hợp lệ.' });
         if (isNaN(proNum)  || proNum  < 0) return res.status(400).json({ success: false, message: 'Protein không hợp lệ.' });
         if (isNaN(carbNum) || carbNum < 0) return res.status(400).json({ success: false, message: 'Carbs không hợp lệ.' });
         if (isNaN(fatNum)  || fatNum  < 0) return res.status(400).json({ success: false, message: 'Fat không hợp lệ.' });
+        if (calNum  > 9999) return res.status(400).json({ success: false, message: 'Calories tối đa 9999 kcal.' });
+        if (proNum  > 999)  return res.status(400).json({ success: false, message: 'Protein tối đa 999g.' });
+        if (carbNum > 999)  return res.status(400).json({ success: false, message: 'Carbs tối đa 999g.' });
+        if (fatNum  > 999)  return res.status(400).json({ success: false, message: 'Fat tối đa 999g.' });
+
+        // [QA-FIX] Business logic: tổng Protein + Carbs + Fat không được vượt 999g (thực tế)
+        if (proNum + carbNum + fatNum > 999) {
+            return res.status(400).json({
+                success: false,
+                message: `Tổng Protein + Carbs + Fat = ${(proNum + carbNum + fatNum).toFixed(1)}g — vượt giới hạn thực tế (999g).`,
+            });
+        }
 
         // Vi chất (tuỳ chọn)
         const fiberNum  = (fiber  !== '' && fiber  != null) ? parseFloat(fiber)  : null;
         const sugarNum  = (sugar  !== '' && sugar  != null) ? parseFloat(sugar)  : null;
         const sodiumNum = (sodium !== '' && sodium != null) ? parseFloat(sodium) : null;
+
+        // [QA-FIX] Validate vi chất (nếu có nhập) — không cho số âm
+        if (fiberNum  != null && (isNaN(fiberNum)  || fiberNum  < 0)) return res.status(400).json({ success: false, message: 'Chất xơ không hợp lệ.' });
+        if (sugarNum  != null && (isNaN(sugarNum)  || sugarNum  < 0)) return res.status(400).json({ success: false, message: 'Đường không hợp lệ.' });
+        if (sodiumNum != null && (isNaN(sodiumNum) || sodiumNum < 0)) return res.status(400).json({ success: false, message: 'Natri không hợp lệ.' });
 
         const food = await Food.create({
             userId      : req.user.id,
@@ -419,28 +440,62 @@ exports.updateCustomFood = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Tên món ăn không được để trống.' });
         }
 
+        // [QA-FIX] Dùng explicit validation thay vì parseFloat() || 0
+        // parseFloat("-5") || 0 = -5 (số âm lọt qua), parseFloat("0") || 0 = 0 (OK)
+        const calNum  = parseFloat(calories);
+        const proNum  = parseFloat(protein);
+        const carbNum = parseFloat(carbs);
+        const fatNum  = parseFloat(fat);
+        if (isNaN(calNum)  || calNum  < 0) return res.status(400).json({ success: false, message: 'Calories không hợp lệ.' });
+        if (isNaN(proNum)  || proNum  < 0) return res.status(400).json({ success: false, message: 'Protein không hợp lệ.' });
+        if (isNaN(carbNum) || carbNum < 0) return res.status(400).json({ success: false, message: 'Carbs không hợp lệ.' });
+        if (isNaN(fatNum)  || fatNum  < 0) return res.status(400).json({ success: false, message: 'Fat không hợp lệ.' });
+        if (calNum  > 9999) return res.status(400).json({ success: false, message: 'Calories tối đa 9999 kcal.' });
+        if (proNum  > 999)  return res.status(400).json({ success: false, message: 'Protein tối đa 999g.' });
+        if (carbNum > 999)  return res.status(400).json({ success: false, message: 'Carbs tối đa 999g.' });
+        if (fatNum  > 999)  return res.status(400).json({ success: false, message: 'Fat tối đa 999g.' });
+
+        // [QA-FIX] Business logic: tổng macro không vượt 999g
+        if (proNum + carbNum + fatNum > 999) {
+            return res.status(400).json({
+                success: false,
+                message: `Tổng Protein + Carbs + Fat = ${(proNum + carbNum + fatNum).toFixed(1)}g — vượt giới hạn thực tế (999g).`,
+            });
+        }
+
+        const fiberNum  = (fiber  !== '' && fiber  != null) ? parseFloat(fiber)  : null;
+        const sugarNum  = (sugar  !== '' && sugar  != null) ? parseFloat(sugar)  : null;
+        const sodiumNum = (sodium !== '' && sodium != null) ? parseFloat(sodium) : null;
+        if (fiberNum  != null && (isNaN(fiberNum)  || fiberNum  < 0)) return res.status(400).json({ success: false, message: 'Chất xơ không hợp lệ.' });
+        if (sugarNum  != null && (isNaN(sugarNum)  || sugarNum  < 0)) return res.status(400).json({ success: false, message: 'Đường không hợp lệ.' });
+        if (sodiumNum != null && (isNaN(sodiumNum) || sodiumNum < 0)) return res.status(400).json({ success: false, message: 'Natri không hợp lệ.' });
+
+        const updatedName = name.trim();
         await food.update({
-            name        : name.trim(),
-            calories    : parseFloat(calories) || 0,
-            protein     : parseFloat(protein)  || 0,
-            carbs       : parseFloat(carbs)    || 0,
-            fat         : parseFloat(fat)      || 0,
-            fiber       : (fiber  !== '' && fiber  != null) ? parseFloat(fiber)  : null,
-            sugar       : (sugar  !== '' && sugar  != null) ? parseFloat(sugar)  : null,
-            sodium      : (sodium !== '' && sodium != null) ? parseFloat(sodium) : null,
+            name        : updatedName,
+            calories    : calNum,
+            protein     : proNum,
+            carbs       : carbNum,
+            fat         : fatNum,
+            fiber       : fiberNum,
+            sugar       : sugarNum,
+            sodium      : sodiumNum,
             unit        : unit && unit.trim() ? unit.trim() : food.unit,
             category    : category || food.category,
             foodType    : foodType || food.foodType,
         });
 
+        // [QA-FIX] Dùng updatedName thay vì food.name (giá trị cũ trước khi update)
         return res.json({
             success: true,
-            message: `Đã cập nhật món “${food.name}” thành công!`,
+            message: `Đã cập nhật món “${updatedName}” thành công!`,
             food   : {
-                id: food.id, name: food.name, calories: food.calories,
-                protein: food.protein, carbs: food.carbs, fat: food.fat,
-                fiber: food.fiber, sugar: food.sugar, sodium: food.sodium,
-                unit: food.unit, category: food.category, foodType: food.foodType,
+                id: food.id, name: updatedName, calories: calNum,
+                protein: proNum, carbs: carbNum, fat: fatNum,
+                fiber: fiberNum, sugar: sugarNum, sodium: sodiumNum,
+                unit: unit && unit.trim() ? unit.trim() : food.unit,
+                category: category || food.category,
+                foodType: foodType || food.foodType,
             },
         });
     } catch (err) {
