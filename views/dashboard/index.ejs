@@ -254,7 +254,7 @@
   </div>
 
   <!-- ── Quick Access Bento ─────────────────────────────────── -->
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
     <a href="/nhat-ky?date=<%= today %>"
        class="nt-card p-4 text-center cursor-pointer block card-hover"
        style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac">
@@ -276,12 +276,17 @@
       <p class="font-black text-sm text-purple-700">Hồ sơ</p>
       <p class="text-xs text-purple-500 mt-0.5 font-semibold">Cập nhật thông tin</p>
     </a>
-    <a href="/nhat-ky"
+    <a href="/nhat-ky?date=<%= today %>#waterCard"
        class="nt-card p-4 text-center cursor-pointer block card-hover"
-       style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#fcd34d">
-      <p class="text-2xl mb-1.5 float-icon" style="animation-delay:0.9s">💡</p>
-      <p class="font-black text-sm text-amber-700">Gợi ý</p>
-      <p class="text-xs text-amber-500 mt-0.5 font-semibold">Xem thực đơn</p>
+       style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-color:#7dd3fc">
+      <p class="text-2xl mb-1.5 float-icon" style="animation-delay:0.9s">💧</p>
+      <p class="font-black text-sm text-sky-700">Nước uống</p>
+      <% const _dwPct = waterGoal > 0 ? Math.min(100, Math.round(waterTotal / waterGoal * 100)) : 0; %>
+      <p class="text-xs text-sky-500 mt-0.5 font-semibold"><%= waterTotal %>/<%= waterGoal || '?' %> ml</p>
+      <div class="mt-1.5 h-1.5 rounded-full bg-sky-100 overflow-hidden">
+        <div class="h-full rounded-full transition-all"
+             style="width:<%= _dwPct %>%;background:<%= _dwPct >= 100 ? '#16a34a' : '#0ea5e9' %>"></div>
+      </div>
     </a>
   </div>
 

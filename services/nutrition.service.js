@@ -276,6 +276,20 @@ const calculateAllMetrics = (user) => {
     };
 };
 
+/**
+ * Tính mục tiêu nước uống mỗi ngày dựa trên cân nặng.
+ * Công thức y khoa cơ bản: weight (kg) × 35 ml
+ *
+ * VD: 45kg → 1575ml | 70kg → 2450ml | 80kg → 2800ml
+ *
+ * @param {number} weight - Cân nặng (kg)
+ * @returns {number|null} Lượng nước mục tiêu (ml), null nếu chưa có cân nặng
+ */
+const calculateWaterGoal = (weight) => {
+    if (!weight || weight <= 0) return null;
+    return Math.round(weight * 35);
+};
+
 module.exports = {
     calculateAge,
     calculateBMI,
@@ -288,6 +302,7 @@ module.exports = {
     getDynamicMealTargets,
     calculateEffectiveMacros,
     calculateAllMetrics,
+    calculateWaterGoal,
     ACTIVITY_FACTORS,
     ACTIVITY_LABELS,
 };

@@ -161,7 +161,101 @@
   </div>
   <% } %>
 
+  <!-- ── Water Tracker Card ────────────────────────────────── -->
+  <%
+    const _wGoal    = waterGoal || 0;
+    const _wTotal   = waterTotal || 0;
+    const _wPct     = _wGoal > 0 ? Math.min(100, Math.round(_wTotal / _wGoal * 100)) : 0;
+    const _wRemain  = _wGoal > 0 ? Math.max(0, _wGoal - _wTotal) : null;
+    const _wGoalSrc = user.waterGoal ? 'tùy chỉnh' : (user.weight ? `${user.weight}kg × 35ml` : null);
+  %>
+  <div class="nt-card p-4 mb-5" id="waterCard">
+    <div class="flex items-center justify-between mb-3">
+      <p class="section-title">💧 Nước uống hôm nay</p>
+      <button onclick="openEditWaterGoal()"
+              class="text-xs font-bold text-blue-500 hover:text-blue-700 flex items-center gap-1 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        Sửa mục tiêu
+      </button>
+    </div>
+
+    <!-- Progress Row -->
+    <div class="flex items-center gap-4 mb-4">
+      <div class="relative flex-shrink-0 w-20 h-20">
+        <svg class="w-20 h-20 progress-ring" style="transform:rotate(-90deg)" viewBox="0 0 36 36">
+          <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none" stroke="#e0f2fe" stroke-width="3.5"/>
+          <path id="waterCircle"
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="<%= _wPct >= 100 ? '#16a34a' : '#0ea5e9' %>"
+                stroke-width="3.5"
+                stroke-dasharray="<%= _wPct %>, 100"
+                stroke-linecap="round"
+                style="filter:drop-shadow(0 0 4px rgba(14,165,233,0.4));transition:stroke-dasharray 0.5s ease"/>
+        </svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <span class="text-base font-black text-sky-600" id="waterPct"><%= _wPct %>%</span>
+        </div>
+      </div>
+      <div class="flex-1">
+        <p class="text-2xl font-black text-sky-700"><span id="waterTotalDisplay"><%= _wTotal %></span> <span class="text-sm font-semibold text-sky-400">ml</span></p>
+        <% if (_wGoal > 0) { %>
+        <p class="text-xs text-gray-400 font-medium mt-0.5">
+          Mục tiêu: <strong class="text-sky-600" id="waterGoalDisplay"><%= _wGoal %></strong> ml
+          <% if (_wGoalSrc) { %><span class="text-gray-300"> · (<%= _wGoalSrc %>)</span><% } %>
+        </p>
+        <p class="text-xs font-bold mt-0.5" id="waterRemainText">
+          <% if (_wRemain > 0) { %><span class="text-sky-500">Còn thiếu: <%= _wRemain %> ml</span>
+          <% } else { %><span class="text-green-600">✅ Đã đủ mục tiêu!</span><% } %>
+        </p>
+        <% } else { %>
+        <p class="text-xs text-gray-400 mt-0.5">Cập nhật cân nặng trong <a href="/ho-so" class="text-blue-500 font-bold hover:underline">hồ sơ</a> để có mục tiêu cá nhân</p>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Quick Add Buttons -->
+    <div class="flex flex-wrap gap-2 mb-3">
+      <button onclick="quickAddWater(250)" class="water-quick-btn">+250ml <span class="opacity-60 text-[10px]">ly</span></button>
+      <button onclick="quickAddWater(350)" class="water-quick-btn">+350ml <span class="opacity-60 text-[10px]">lon</span></button>
+      <button onclick="quickAddWater(500)" class="water-quick-btn">+500ml <span class="opacity-60 text-[10px]">chai</span></button>
+      <div class="flex items-center gap-1.5 flex-1 min-w-[160px]">
+        <input type="number" id="customWaterInput" placeholder="Nhập ml tùy chỉnh"
+               min="1" max="5000" step="10"
+               class="nt-input text-xs py-1.5 flex-1">
+        <button onclick="quickAddWater(null)"
+                class="px-3 py-1.5 rounded-lg text-xs font-black text-white transition-all active:scale-95"
+                style="background:linear-gradient(135deg,#0284c7,#0369a1)">Thêm</button>
+      </div>
+    </div>
+
+    <!-- Log chi tiết -->
+    <div id="waterLogList" class="space-y-1 max-h-44 overflow-y-auto">
+      <% if (waterLogs && waterLogs.length > 0) {
+           waterLogs.forEach(log => {
+             const t = new Date(log.createdAt);
+             const hh = String(t.getHours()).padStart(2,'0');
+             const mm = String(t.getMinutes()).padStart(2,'0');
+      %>
+      <div class="water-log-row flex items-center gap-2 px-3 py-1.5 rounded-xl" id="wlog-<%= log.id %>">
+        <span class="text-xs font-bold text-sky-500 w-10 flex-shrink-0"><%= hh %>:<%= mm %></span>
+        <span class="text-xs font-black text-sky-800 w-14 flex-shrink-0">+<%= log.amount %>ml</span>
+        <span class="text-xs text-gray-400 flex-1 truncate"><%= log.note || 'Nước lọc' %></span>
+        <button onclick="deleteWaterLog(<%= log.id %>)" class="text-red-300 hover:text-red-500 transition-colors flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <% }); } else { %>
+      <div class="text-center py-3" id="waterEmptyState">
+        <p class="text-xs text-gray-300">💧 Chưa có lượng nước nào được ghi hôm nay</p>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
   <!-- ── Health Insights & Warnings ────────────────────────── -->
+
   <% if (healthInsights && healthInsights.length > 0) { %>
   <div class="mb-5 space-y-2">
     <% healthInsights.forEach(insight => { %>
@@ -651,6 +745,251 @@ async function deleteEntry(id) {
       showToast(data.message, 'success');
     } else { showToast(data.message||'Lỗi.','error'); }
   } catch(e) { hideLoading(); showToast('Lỗi kết nối.','error'); }
+}
+</script>
+
+<!-- ═══ Modal Sửa Mục Tiêu Nước ══════════════════════════════════════════ -->
+<dialog id="editWaterGoalModal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box max-w-sm rounded-2xl p-6">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-gray-400">✕</button>
+    </form>
+    <h3 class="font-black text-lg text-gray-800 mb-1 flex items-center gap-2">
+      <span class="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm"
+            style="background:linear-gradient(135deg,#0284c7,#0369a1)">💧</span>
+      Sửa Mục Tiêu Nước
+    </h3>
+    <p class="text-xs text-gray-400 mb-4">Mặc định tính theo cân nặng × 35ml. Bạn có thể tùy chỉnh theo nhu cầu cá nhân.</p>
+    <div>
+      <label class="block text-xs font-bold text-gray-600 mb-1">Mục tiêu (ml/ngày)</label>
+      <input type="number" id="newWaterGoalInput" min="500" max="10000" step="50"
+             class="nt-input text-sm w-full" placeholder="VD: 2000 (tối thiểu 500ml)">
+    </div>
+    <div class="flex gap-2 pt-3">
+      <button type="button" onclick="document.getElementById('editWaterGoalModal').close()"
+              class="flex-1 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all border border-gray-200">Hủy</button>
+      <button type="button" onclick="saveWaterGoal()"
+              class="flex-1 py-2.5 rounded-xl text-sm font-black text-white transition-all active:scale-95"
+              style="background:linear-gradient(135deg,#0284c7,#0369a1);box-shadow:0 4px 12px rgba(2,132,199,0.3)">
+        💾 Lưu mục tiêu
+      </button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>đóng</button></form>
+</dialog>
+
+<style>
+.water-quick-btn {
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(14,165,233,0.3);
+}
+.water-quick-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.water-quick-btn:active { transform: scale(0.95); }
+.water-log-row {
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border: 1px solid #bae6fd;
+  transition: all 0.2s ease;
+}
+.water-log-row:hover { border-color: #7dd3fc; }
+</style>
+
+<script>
+// ── Water Tracker State ────────────────────────────────────────────────────────
+let _waterTotal   = <%= waterTotal || 0 %>;
+let _waterGoal    = <%= waterGoal || 0 %>;
+let _isAddingWater = false; // [QA-FIX] Anti-spam flag: chặn spam click
+
+// [QA-FIX] Escape HTML để chống XSS khi inject dữ liệu user vào innerHTML
+function _escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function _updateWaterUI(newTotal) {
+  _waterTotal = newTotal;
+  const pct    = _waterGoal > 0 ? Math.min(100, Math.round(newTotal / _waterGoal * 100)) : 0;
+  const remain = _waterGoal > 0 ? Math.max(0, _waterGoal - newTotal) : null;
+
+  const totalEl = document.getElementById('waterTotalDisplay');
+  if (totalEl) totalEl.textContent = newTotal;
+
+  const pctEl = document.getElementById('waterPct');
+  if (pctEl) pctEl.textContent = pct + '%';
+
+  const circle = document.getElementById('waterCircle');
+  if (circle) {
+    circle.setAttribute('stroke-dasharray', `${pct}, 100`);
+    circle.setAttribute('stroke', pct >= 100 ? '#16a34a' : '#0ea5e9');
+  }
+
+  const remainEl = document.getElementById('waterRemainText');
+  if (remainEl && _waterGoal > 0) {
+    remainEl.innerHTML = remain > 0
+      ? `<span class="text-sky-500">Còn thiếu: ${remain} ml</span>`
+      : `<span class="text-green-600">✅ Đã đủ mục tiêu!</span>`;
+  }
+}
+
+// [QA-FIX] Helper: enable/disable tất cả water buttons khi đang request
+function _setWaterBtns(disabled) {
+  document.querySelectorAll('.water-quick-btn').forEach(btn => {
+    btn.disabled = disabled;
+    btn.style.opacity = disabled ? '0.5' : '1';
+    btn.style.cursor  = disabled ? 'not-allowed' : 'pointer';
+  });
+  const customBtn = document.querySelector('#customWaterInput + button, .water-quick-btn:last-of-type');
+}
+
+// ── Quick Add Water ────────────────────────────────────────────────────────────
+async function quickAddWater(preset) {
+  // [QA-FIX] Chặn spam click: nếu đang có request đang chạy thì bỏ qua
+  if (_isAddingWater) { showToast('Đang xử lý, vui lòng chờ...', 'warning'); return; }
+
+  let amount = preset;
+  if (amount === null) {
+    const input = document.getElementById('customWaterInput');
+    amount = parseInt(input ? input.value : 0);
+    if (!amount || amount <= 0) { showToast('Vui lòng nhập lượng nước hợp lệ.', 'warning'); return; }
+    if (amount > 5000)          { showToast('Lượng nước tối đa 5000 ml.', 'warning'); return; }
+  }
+  try {
+    _isAddingWater = true;  // [QA-FIX] Lock
+    _setWaterBtns(true);    // [QA-FIX] Disable tất cả nút water
+    showLoading();
+    const res  = await fetch('/nuoc/them', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, date: CURRENT_DATE }),
+    });
+    const data = await res.json();
+    hideLoading();
+    if (data.success) {
+      _updateWaterUI(data.todayTotal);
+      _appendWaterLog(data.waterLog);
+      showToast(data.message, 'success');
+      const inp = document.getElementById('customWaterInput');
+      if (inp) inp.value = '';
+    } else { showToast(data.message || 'Có lỗi xảy ra.', 'error'); }
+  } catch(e) { hideLoading(); showToast('Lỗi kết nối.', 'error'); }
+  finally {
+    _isAddingWater = false; // [QA-FIX] Unlock dù thành công hay lỗi
+    _setWaterBtns(false);   // [QA-FIX] Re-enable buttons
+  }
+}
+
+// ── Append water log entry to DOM ─────────────────────────────────────────────
+function _appendWaterLog(log) {
+  const list = document.getElementById('waterLogList');
+  if (!list) return;
+
+  // Xóa empty state nếu có
+  const empty = document.getElementById('waterEmptyState');
+  if (empty) empty.remove();
+
+  const t  = new Date(log.createdAt);
+  const hh = String(t.getHours()).padStart(2, '0');
+  const mm = String(t.getMinutes()).padStart(2, '0');
+
+  const row = document.createElement('div');
+  row.className = 'water-log-row flex items-center gap-2 px-3 py-1.5 rounded-xl';
+  row.id = `wlog-${log.id}`;
+  row.style.opacity = '0';
+  row.style.transform = 'translateY(-8px)';
+  // [QA-FIX] Dùng _escHtml() cho log.note để chống XSS khi inject vào innerHTML
+  row.innerHTML = `
+    <span class="text-xs font-bold text-sky-500 w-10 flex-shrink-0">${hh}:${mm}</span>
+    <span class="text-xs font-black text-sky-800 w-14 flex-shrink-0">+${log.amount}ml</span>
+    <span class="text-xs text-gray-400 flex-1 truncate">${_escHtml(log.note) || 'Nước lọc'}</span>
+    <button onclick="deleteWaterLog(${Number(log.id)})" class="text-red-300 hover:text-red-500 transition-colors flex-shrink-0">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  `;
+  list.appendChild(row);
+  void row.offsetWidth;
+  row.style.transition = 'all 0.3s ease';
+  row.style.opacity = '1';
+  row.style.transform = 'translateY(0)';
+}
+
+// ── Delete water log ───────────────────────────────────────────────────────────
+async function deleteWaterLog(id) {
+  const el = document.getElementById(`wlog-${id}`);
+  try {
+    showLoading();
+    const res  = await fetch(`/nuoc/xoa/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    hideLoading();
+    if (data.success) {
+      if (el) {
+        el.style.transition = 'all 0.25s ease';
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(20px)';
+        setTimeout(() => el.remove(), 250);
+      }
+      _updateWaterUI(data.todayTotal);
+      // Nếu log list rỗng → show empty state
+      setTimeout(() => {
+        const list = document.getElementById('waterLogList');
+        if (list && list.querySelectorAll('.water-log-row').length === 0) {
+          list.innerHTML = `<div class="text-center py-3" id="waterEmptyState">
+            <p class="text-xs text-gray-300">💧 Chưa có lượng nước nào được ghi hôm nay</p>
+          </div>`;
+        }
+      }, 300);
+      showToast(data.message, 'success');
+    } else { showToast(data.message || 'Lỗi.', 'error'); }
+  } catch(e) { hideLoading(); showToast('Lỗi kết nối.', 'error'); }
+}
+
+// ── Edit Water Goal ────────────────────────────────────────────────────────────
+function openEditWaterGoal() {
+  const input = document.getElementById('newWaterGoalInput');
+  if (input) input.value = _waterGoal || '';
+  document.getElementById('editWaterGoalModal').showModal();
+  setTimeout(() => { if (input) input.focus(); }, 100);
+}
+
+async function saveWaterGoal() {
+  const val = parseInt(document.getElementById('newWaterGoalInput').value);
+  if (!val || val < 500 || val > 10000) {
+    showToast('Mục tiêu nước phải từ 500 ml đến 10000 ml.', 'warning'); // [QA-FIX] sync với backend
+    return;
+  }
+  try {
+    showLoading();
+    const res  = await fetch('/nuoc/muc-tieu', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ waterGoal: val }),
+    });
+    const data = await res.json();
+    hideLoading();
+    if (data.success) {
+      _waterGoal = data.newGoal;
+      const goalEl = document.getElementById('waterGoalDisplay');
+      if (goalEl) goalEl.textContent = data.newGoal;
+      // [QA-FIX] Cập nhật label nguồn sang "tùy chỉnh" sau khi user ghi đè
+      const srcEl = goalEl ? goalEl.nextElementSibling : null;
+      if (srcEl && srcEl.tagName === 'SPAN') srcEl.textContent = ' · (tùy chỉnh)';
+      _updateWaterUI(_waterTotal);
+      document.getElementById('editWaterGoalModal').close();
+      showToast(data.message, 'success');
+    } else { showToast(data.message || 'Lỗi.', 'error'); }
+  } catch(e) { hideLoading(); showToast('Lỗi kết nối.', 'error'); }
 }
 </script>
 

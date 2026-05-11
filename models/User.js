@@ -94,6 +94,20 @@ const User = sequelize.define('User', {
         allowNull: false,
         defaultValue: false,
     },
+    waterGoal: {
+        // Mục tiêu nước uống mỗi ngày (ml)
+        // Tính theo công thức: weight (kg) × 35 ml (y khoa cơ bản)
+        // VD: 45kg → 1575ml | 70kg → 2450ml | 80kg → 2800ml
+        // Giá trị null = chưa thiết lập (user chưa có cân nặng)
+        // User có thể ghi đè qua API PUT /nuoc/muc-tieu
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [100],  msg: 'Mục tiêu nước tối thiểu 100 ml.' },
+            max: { args: [10000], msg: 'Mục tiêu nước tối đa 10000 ml.' },
+        },
+    },
     avatarUrl: {
         type: DataTypes.STRING(500),
         allowNull: true,

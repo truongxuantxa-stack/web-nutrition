@@ -1,8 +1,9 @@
 'use strict';
 
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const jwt    = require('jsonwebtoken');
 const { User } = require('../models');
+const { calculateWaterGoal } = require('../services/nutrition.service');
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -198,11 +199,13 @@ exports.saveOnboarding = async (req, res) => {
         await req.user.update({
             gender,
             birthDate,
-            height: heightNum,
-            weight: weightNum,
+            height    : heightNum,
+            weight    : weightNum,
             activityLevel,
             goal,
             isOnboarded: true,
+            // Tự động tính mục tiêu nước từ cân nặng (weight × 35ml)
+            waterGoal : calculateWaterGoal(weightNum),
         });
 
         res.redirect('/dashboard');
@@ -263,13 +266,16 @@ exports.updateProfile = async (req, res) => {
 
     try {
         await req.user.update({
-            fullName: fullName.trim(),
-            gender: gender || null,
-            birthDate: birthDate || null,
-            height: heightNum,
-            weight: weightNum,
-            activityLevel: activityLevel || null,
-            goal: goal || null,
+            fullName      : fullName.trim(),
+            gender        : gender || null,
+            birthDate     : birthDate || null,
+            height        : heightNum,
+            weight        : weightNum,
+            activityLevel : activityLevel || null,
+            goal          : goal || null,
+            // Nếu user cập nhật cân nặng mới → tính lại waterGoal tự động
+            // User có thể ghi đè bất cứ lúc nào qua PUT /nuoc/muc-tieu
+            ...(weightNum ? { waterGoal: calculateWaterGoal(weightNum) } : {}),
         });
 
         // Tạo message: nếu có field bị bỏ trống, thêm warning

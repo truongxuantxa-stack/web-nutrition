@@ -11,6 +11,7 @@ const {
     getMealTargets,
     getDynamicMealTargets,
     calculateEffectiveMacros,
+    calculateWaterGoal,
 } = require('../services/nutrition.service');
 const {
     sumNutritionFromEntries,
@@ -19,7 +20,8 @@ const {
     getMacroProgress,
     getHealthInsights,
 } = require('../services/suggestion.service');
-const { getTotalBurnedByDate } = require('./exercise.controller');
+const { getTotalBurnedByDate }    = require('./exercise.controller');
+const { getWaterByDate }          = require('./water.controller');
 const { Op } = require('sequelize');
 
 // ─── Helper: Format ngày YYYY-MM-DD theo local timezone ──────────────────────
@@ -86,6 +88,11 @@ exports.getDiary = async (req, res) => {
             );
         });
 
+        // ── Dữ liệu nước uống hôm nay ────────────────────────────────────────
+        const { total: waterTotal, logs: waterLogs } = await getWaterByDate(user.id, date);
+        // Mục tiêu nước: user.waterGoal (ghi đè) ưu tiên hơn tính từ cân nặng
+        const waterGoal = user.waterGoal || calculateWaterGoal(user.weight);
+
         res.render('diary/index', {
             title    : 'Nhật Ký Ăn Uống',
             activePage: 'diary',
@@ -111,6 +118,10 @@ exports.getDiary = async (req, res) => {
             calorieProgress,
             macroProgress,
             healthInsights,
+            // ─ Water data ─
+            waterTotal,
+            waterLogs,
+            waterGoal,
             error  : null,
             success: null,
         });

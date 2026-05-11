@@ -6,12 +6,13 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const { DiaryEntry, Food, WeightLog, ExerciseLog } = require('../models');
-const { calculateAllMetrics } = require('../services/nutrition.service');
+const { calculateAllMetrics, calculateWaterGoal } = require('../services/nutrition.service');
 const {
     sumNutritionFromEntries,
     getCalorieProgress,
     getMacroProgress,
 } = require('../services/suggestion.service');
+const { getWaterByDate } = require('./water.controller');
 
 // ─── Helper: format ngày YYYY-MM-DD theo local timezone ──────────────────────
 const toLocalDateString = (d) => {
@@ -52,8 +53,12 @@ exports.getDashboard = async (req, res) => {
             where: { userId: user.id, date: today },
             attributes: ['caloriesBurned'],
         });
-        const totalBurned   = Math.round(exerciseLogs.reduce((sum, l) => sum + l.caloriesBurned, 0));
+        const totalBurned     = Math.round(exerciseLogs.reduce((sum, l) => sum + l.caloriesBurned, 0));
         const effectiveTarget = (metrics.targetCalories || 0) + totalBurned;
+
+        // Nước uống hôm nay
+        const { total: waterTotal } = await getWaterByDate(user.id, today);
+        const waterGoal = user.waterGoal || calculateWaterGoal(user.weight);
 
         res.render('dashboard/index', {
             title           : 'Tổng Quan',
@@ -73,6 +78,9 @@ exports.getDashboard = async (req, res) => {
             macroProgress,
             weightChartData : JSON.stringify(weightChartData),
             mealCount       : todayEntries.length,
+            // ─ Water ─
+            waterTotal,
+            waterGoal,
         });
     } catch (err) {
         console.error('Dashboard error:', err);
