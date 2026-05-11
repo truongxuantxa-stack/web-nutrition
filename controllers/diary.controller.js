@@ -15,8 +15,6 @@ const {
 const {
     sumNutritionFromEntries,
     groupEntriesByMeal,
-    getSuggestions,
-    getMealSuggestions,
     getCalorieProgress,
     getMacroProgress,
     getHealthInsights,
@@ -72,13 +70,6 @@ exports.getDiary = async (req, res) => {
         );
 
         const mealTargets = getMealTargets(metrics.targetCalories);
-        
-        // Gỡ bỏ gợi ý theo bữa theo yêu cầu của người dùng.
-        const mealSuggestionsMap = {}; 
-        const dynamicMealTargets = {}; 
-        
-        // Giữ backward compat (gợi ý cũ toàn ngày - có thể gỡ sau nếu không dùng)
-        const suggestions = []; 
 
 
         // ── Tiến độ & Health Insights (dùng effectiveTarget + effectiveMacros) ─
@@ -105,8 +96,6 @@ exports.getDiary = async (req, res) => {
             mealGroups,
             mealCalories,
             mealTargets,
-            dynamicMealTargets,
-            mealSuggestionsMap,
             consumed : {
                 calories: Math.round(consumed.calories),
                 protein : Math.round(consumed.protein),
@@ -119,7 +108,6 @@ exports.getDiary = async (req, res) => {
             totalBurned,
             effectiveTarget,
             effectiveMacros,
-            suggestions,
             calorieProgress,
             macroProgress,
             healthInsights,
@@ -269,7 +257,13 @@ exports.searchFood = async (req, res) => {
         const foodType = req.query.foodType || null;
         const limit    = parseInt(req.query.limit) || 10;
 
-        const whereClause = {};
+        const whereClause = {
+            // Hiển thị: food hệ thống (isCustom=false) + custom food của chính user
+            [Op.or]: [
+                { isCustom: false },
+                { userId: req.user.id },
+            ],
+        };
         if (q) {
             whereClause.name = { [Op.like]: `%${q}%` };
         }
@@ -283,13 +277,188 @@ exports.searchFood = async (req, res) => {
         const foods = await Food.findAll({
             where: whereClause,
             limit: Math.min(limit, 50),
-            order: [['name', 'ASC']],
-            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'unit', 'category', 'foodType'],
+            order: [
+                ['isCustom', 'DESC'], // Custom food của user hiển lên trước
+                ['name', 'ASC'],
+            ],
+            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'unit', 'category', 'foodType', 'isCustom'],
         });
 
         return res.json({ success: true, foods });
     } catch (err) {
         console.error('searchFood error:', err);
         return res.status(500).json({ success: false, message: 'Lỗi tìm kiếm.' });
+    }
+};
+
+// ─── POST /nhat-ky/tao-mon ───────────────────────────────────────────────────────────────
+
+exports.createCustomFood = async (req, res) => {
+    try {
+        const {
+            name, calories, protein, carbs, fat,
+            fiber, sugar, sodium,
+            unit, category, foodType,
+        } = req.body;
+
+        // Validate bắt buộc
+        if (!name || name.trim() === '') {
+            return res.status(400).json({ success: false, message: 'Tên món ăn không được để trống.' });
+        }
+        const calNum  = parseFloat(calories);
+        const proNum  = parseFloat(protein);
+        const carbNum = parseFloat(carbs);
+        const fatNum  = parseFloat(fat);
+        if (isNaN(calNum)  || calNum  < 0) return res.status(400).json({ success: false, message: 'Calories không hợp lệ.' });
+        if (isNaN(proNum)  || proNum  < 0) return res.status(400).json({ success: false, message: 'Protein không hợp lệ.' });
+        if (isNaN(carbNum) || carbNum < 0) return res.status(400).json({ success: false, message: 'Carbs không hợp lệ.' });
+        if (isNaN(fatNum)  || fatNum  < 0) return res.status(400).json({ success: false, message: 'Fat không hợp lệ.' });
+
+        // Vi chất (tuỳ chọn)
+        const fiberNum  = (fiber  !== '' && fiber  != null) ? parseFloat(fiber)  : null;
+        const sugarNum  = (sugar  !== '' && sugar  != null) ? parseFloat(sugar)  : null;
+        const sodiumNum = (sodium !== '' && sodium != null) ? parseFloat(sodium) : null;
+
+        const food = await Food.create({
+            userId      : req.user.id,
+            isCustom    : true,
+            name        : name.trim(),
+            calories    : calNum,
+            protein     : proNum,
+            carbs       : carbNum,
+            fat         : fatNum,
+            fiber       : fiberNum,
+            sugar       : sugarNum,
+            sodium      : sodiumNum,
+            unit        : unit && unit.trim() ? unit.trim() : '1 suất',
+            category    : category || 'khac',
+            foodType    : foodType || 'dish',
+            isSuggestable: false, // Custom food không bao giờ được gợi ý tự động
+        });
+
+        return res.json({
+            success : true,
+            message : `Đã tạo món “${food.name}” thành công!`,
+            food    : {
+                id       : food.id,
+                name     : food.name,
+                calories : food.calories,
+                protein  : food.protein,
+                carbs    : food.carbs,
+                fat      : food.fat,
+                fiber    : food.fiber,
+                sugar    : food.sugar,
+                sodium   : food.sodium,
+                unit     : food.unit,
+                category : food.category,
+                foodType : food.foodType,
+                isCustom : food.isCustom,
+            },
+        });
+    } catch (err) {
+        console.error('createCustomFood error:', err);
+        if (err.name === 'SequelizeValidationError') {
+            return res.status(400).json({ success: false, message: err.errors[0].message });
+        }
+        return res.status(500).json({ success: false, message: 'Đã có lỗi xảy ra. Vui lòng thử lại.' });
+    }
+};
+
+// ─── GET /nhat-ky/mon-cua-toi ────────────────────────────────────────────────────────────
+
+exports.getMyCustomFoods = async (req, res) => {
+    try {
+        const foods = await Food.findAll({
+            where: { userId: req.user.id, isCustom: true },
+            order: [['createdAt', 'DESC']],
+            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'unit', 'category', 'foodType', 'isCustom', 'createdAt'],
+        });
+
+        // Render trang quản lý hoặc trả JSON (trước mắt là trang render)
+        res.render('diary/my-foods', {
+            title    : 'Món Ăn Của Tôi',
+            activePage: 'diary',
+            user     : req.user,
+            foods,
+        });
+    } catch (err) {
+        console.error('getMyCustomFoods error:', err);
+        res.status(500).render('404', { title: 'Lỗi hệ thống' });
+    }
+};
+
+// ─── PUT /nhat-ky/sua-mon/:id ──────────────────────────────────────────────────────────────
+
+exports.updateCustomFood = async (req, res) => {
+    try {
+        const food = await Food.findOne({
+            where: { id: req.params.id, userId: req.user.id, isCustom: true },
+        });
+        if (!food) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy món ăn hoặc bạn không có quyền sửa.' });
+        }
+
+        const {
+            name, calories, protein, carbs, fat,
+            fiber, sugar, sodium,
+            unit, category, foodType,
+        } = req.body;
+
+        if (!name || name.trim() === '') {
+            return res.status(400).json({ success: false, message: 'Tên món ăn không được để trống.' });
+        }
+
+        await food.update({
+            name        : name.trim(),
+            calories    : parseFloat(calories) || 0,
+            protein     : parseFloat(protein)  || 0,
+            carbs       : parseFloat(carbs)    || 0,
+            fat         : parseFloat(fat)      || 0,
+            fiber       : (fiber  !== '' && fiber  != null) ? parseFloat(fiber)  : null,
+            sugar       : (sugar  !== '' && sugar  != null) ? parseFloat(sugar)  : null,
+            sodium      : (sodium !== '' && sodium != null) ? parseFloat(sodium) : null,
+            unit        : unit && unit.trim() ? unit.trim() : food.unit,
+            category    : category || food.category,
+            foodType    : foodType || food.foodType,
+        });
+
+        return res.json({
+            success: true,
+            message: `Đã cập nhật món “${food.name}” thành công!`,
+            food   : {
+                id: food.id, name: food.name, calories: food.calories,
+                protein: food.protein, carbs: food.carbs, fat: food.fat,
+                fiber: food.fiber, sugar: food.sugar, sodium: food.sodium,
+                unit: food.unit, category: food.category, foodType: food.foodType,
+            },
+        });
+    } catch (err) {
+        console.error('updateCustomFood error:', err);
+        return res.status(500).json({ success: false, message: 'Đã có lỗi xảy ra.' });
+    }
+};
+
+// ─── DELETE /nhat-ky/xoa-mon/:id (SOFT DELETE) ─────────────────────────────────────────
+
+exports.deleteCustomFood = async (req, res) => {
+    try {
+        const food = await Food.findOne({
+            where: { id: req.params.id, userId: req.user.id, isCustom: true },
+        });
+        if (!food) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy món ăn hoặc bạn không có quyền xóa.' });
+        }
+
+        // Soft delete: Sequelize paranoid=true sẽ set deletedAt, không DELETE thật
+        // DiaryEntry vẫn giữ snapshot → lịch sử không bị mất
+        await food.destroy();
+
+        return res.json({
+            success: true,
+            message: `Đã xóa món “${food.name}”. Lịch sử nhật ký cũ vẫn được bảo tồn.`,
+        });
+    } catch (err) {
+        console.error('deleteCustomFood error:', err);
+        return res.status(500).json({ success: false, message: 'Đã có lỗi xảy ra.' });
     }
 };

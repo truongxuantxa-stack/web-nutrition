@@ -180,5 +180,8 @@ Phase 6 ← Phase 5 ← Phase 4C + 4D
 
 ## Nhật ký thay đổi (Changelog)
 
+- [feat] **Custom Food (Tự Tạo Món):** Người dùng có thể tạo/sửa/xóa món ăn riêng (private, chỉ chủ sở hữu thấy). Soft delete bảo tồn lịch sử nhật ký. Badge `🔧 Tự tạo` (violet) xuất hiện trong kết quả tìm kiếm. Trang riêng `/nhat-ky/mon-cua-toi` + phím tắt trên header nhật ký.
 - [feat] Tối ưu hóa UI Nhật ký ăn uống: Thêm món ăn không cần reload lại trang (AJAX update).
 - [fix] Xóa bỏ hoàn toàn trường `intensity` (cường độ) khỏi Model và Logic luyện tập để đồng nhất với giao diện.
+- [refactor] Xóa bỏ thuật toán gợi ý món ăn tự động (`getSuggestions`, `getMealSuggestions`) để tối ưu hóa hệ thống và tập trung vào triết lý "Hardcore Tracking" (tự quyết định dinh dưỡng).
+

@@ -16,6 +16,11 @@ const ExerciseLog = require('./ExerciseLog');
 User.hasMany(DiaryEntry, { foreignKey: 'userId', as: 'diaryEntries', onDelete: 'CASCADE', hooks: true });
 DiaryEntry.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+// User <-> Food  (1 user có thể tạo nhiều custom food)
+// onDelete: 'CASCADE' → xóa user thì xóa toàn bộ custom food của họ
+User.hasMany(Food, { foreignKey: 'userId', as: 'customFoods', onDelete: 'CASCADE', hooks: true });
+Food.belongsTo(User, { foreignKey: 'userId', as: 'creator' });
+
 // Food <-> DiaryEntry  (1 món ăn xuất hiện trong nhiều nhật ký)
 // onDelete: 'RESTRICT' → không cho xóa Food nếu vẫn còn DiaryEntry tham chiếu
 Food.hasMany(DiaryEntry, { foreignKey: 'foodId', as: 'diaryEntries', onDelete: 'RESTRICT' });

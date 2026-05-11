@@ -11,16 +11,23 @@
       </h1>
       <p class="text-sm text-gray-500 mt-0.5 font-medium">Theo dõi từng bữa ăn trong ngày</p>
     </div>
-    <!-- Date Picker -->
-    <form method="GET" action="/nhat-ky" class="flex items-center gap-2">
-      <input type="date" name="date" id="dateInput" value="<%= date %>"
-             max="<%= (d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`)(new Date()) %>"
-             class="nt-input !w-auto text-sm font-semibold" onchange="this.form.submit()">
-      <button type="button" onclick="goToToday()"
-              class="px-3 py-2 rounded-xl text-sm font-bold text-green-600 hover:bg-green-50 transition-all border-2 border-green-200 hover:border-green-400">
-        Hôm nay
-      </button>
-    </form>
+    <div class="flex items-center gap-2 flex-wrap">
+      <!-- Phím tắt: Món của tôi -->
+      <a href="/nhat-ky/mon-cua-toi"
+         class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold text-violet-600 hover:bg-violet-50 transition-all border-2 border-violet-200 hover:border-violet-400">
+        🔧 Món của tôi
+      </a>
+      <!-- Date Picker -->
+      <form method="GET" action="/nhat-ky" class="flex items-center gap-2">
+        <input type="date" name="date" id="dateInput" value="<%= date %>"
+               max="<%= (d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`)(new Date()) %>"
+               class="nt-input !w-auto text-sm font-semibold" onchange="this.form.submit()">
+        <button type="button" onclick="goToToday()"
+                class="px-3 py-2 rounded-xl text-sm font-bold text-green-600 hover:bg-green-50 transition-all border-2 border-green-200 hover:border-green-400">
+          Hôm nay
+        </button>
+      </form>
+    </div>
   </div>
 
   <!-- ── Stat Cards ─────────────────────────────────────────── -->
@@ -283,6 +290,14 @@
       </div>
     </div>
 
+    <!-- Gợi ý tạo món mới nếu không tìm thấy -->
+    <div class="mb-2">
+      <a href="/nhat-ky/mon-cua-toi"
+         class="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-violet-600 hover:bg-violet-50 transition-all border border-dashed border-violet-200 hover:border-violet-400">
+        🔧 Không tìm thấy? Tự tạo món ăn mới
+      </a>
+    </div>
+
     <!-- Results -->
     <div id="searchResults" class="hidden max-h-48 overflow-y-auto rounded-xl border border-gray-100 mb-3 shadow-sm">
       <div id="searchResultsList"></div>
@@ -387,9 +402,14 @@ function renderSearchResults(foods) {
   }
   list.innerHTML = foods.map(f => {
     const safe = JSON.stringify(f).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
-    const badgeHtml = f.foodType === 'raw' 
-      ? '<span class="ml-2 text-[10px] px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700">Thô</span>'
-      : '<span class="ml-2 text-[10px] px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-700">Chế biến</span>';
+    let badgeHtml;
+    if (f.isCustom) {
+      badgeHtml = '<span class="ml-2 text-[10px] px-1.5 py-0.5 rounded-md bg-violet-100 text-violet-700">🔧 Tự tạo</span>';
+    } else if (f.foodType === 'raw') {
+      badgeHtml = '<span class="ml-2 text-[10px] px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700">Thô</span>';
+    } else {
+      badgeHtml = '<span class="ml-2 text-[10px] px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-700">Chế biến</span>';
+    }
     
     return `<button type="button" class="w-full text-left px-4 py-2.5 hover:bg-green-50 transition-colors border-b border-gray-50 last:border-0"
               data-food='${safe.replace(/'/g,"\\u0027")}' onclick="selectFood(JSON.parse(this.dataset.food))">

@@ -4,6 +4,25 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Food = sequelize.define('Food', {
+    // --- Custom Food Fields ---
+    userId: {
+        // null = Món hệ thống (seed), có giá trị = Món do user tự tạo
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: true,
+        defaultValue: null,
+        references: {
+            model: 'users',
+            key: 'id',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    },
+    isCustom: {
+        // true = user tự tạo, false = food hệ thống
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
     id: {
         type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
@@ -136,11 +155,14 @@ const Food = sequelize.define('Food', {
 }, {
     tableName: 'foods',
     timestamps: true,
+    paranoid: true,  // Bật soft delete: Sequelize sẽ dùng deletedAt thay vì DELETE thật
     indexes: [
         { fields: ['name'] },
         { fields: ['category'] },
         { fields: ['foodType'] },
         { fields: ['isSuggestable'] },
+        { fields: ['userId'] },
+        { fields: ['isCustom'] },
     ],
 });
 
