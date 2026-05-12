@@ -74,15 +74,20 @@ Mục tiêu: Server Express chạy được, kết nối MySQL thành công.
 
 🗄️ Phase 2 — Database & Models (Sequelize)
 
-Mục tiêu: 4 Model sync vào MySQL, có dữ liệu mẫu.
+Mục tiêu: 6 Model sync vào MySQL, có dữ liệu mẫu.
 
-
-
-ModelCác trường chínhUserfullName, email, password, gender, birthDate, height, weight, activityLevel, goalFoodname, calories, protein, carbs, fat, unit, foodType ('raw'|'dish'), isSuggestable (boolean)DiaryEntryuserId, foodId, amount, mealType, dateWeightLoguserId, weight, date
+| Model | Các trường chính |
+| :--- | :--- |
+| **User** | fullName, email, password, gender, birthDate, height, weight, activityLevel, goal, waterGoal |
+| **Food** | name, calories, protein, carbs, fat, unit, foodType ('raw'\|'dish'), isSuggestable (boolean) |
+| **DiaryEntry** | userId, foodId, amount, mealType, date |
+| **WeightLog** | userId, weight, date |
+| **WaterLog** | userId, amount, date, note |
+| **ExerciseLog** | userId, sport, duration, caloriesBurned, date |
 
 ⚠️ Mỗi model bắt buộc có createdAt & updatedAt
 
- Tạo 4 models với associations (hasMany, belongsTo)
+ Tạo 6 models với associations (hasMany, belongsTo)
 
  seeders/foods.js — ~50 món ăn phổ biến Việt Nam
 
@@ -132,7 +137,15 @@ Mục tiêu: Các công thức hoạt động đúng, nhật ký ăn uống ghi 
 
  CRUD WeightLog
 
-✅ Done khi: Nhập món ăn → calo/macro cập nhật đúng → người dùng tự điều chỉnh theo nhu cầu
+4E — Theo Dõi Nước Uống
+ 
+ CRUD WaterLog, tính toán mục tiêu nước uống tự động. Cập nhật AJAX không tải lại trang.
+
+4F — Nhật Ký Luyện Tập
+
+ CRUD ExerciseLog, tự động tính toán calories tiêu thụ dựa trên môn thể thao và thời gian.
+
+✅ Done khi: Nhập món ăn, nước uống, bài tập → calo/macro/nước cập nhật đúng → người dùng tự điều chỉnh theo nhu cầu
 
 🎨 Phase 5 — Giao Diện (UI/UX)
 
@@ -186,5 +199,5 @@ Phase 6 ← Phase 5 ← Phase 4C + 4D
 - [feat] Tối ưu hóa UI Nhật ký ăn uống: Thêm món ăn không cần reload lại trang (AJAX update).
 - [fix] Xóa bỏ hoàn toàn trường `intensity` (cường độ) khỏi Model và Logic luyện tập để đồng nhất với giao diện.
 - [refactor] Xóa bỏ thuật toán gợi ý món ăn tự động (`getSuggestions`, `getMealSuggestions`) để tối ưu hóa hệ thống và tập trung vào triết lý "Hardcore Tracking" (tự quyết định dinh dưỡng).
-- [refactor] Dọn dẹp dead code: xóa hoàn toàn hàm phân bổ target động theo bữa (`getDynamicMealTargets`) khỏi service và controller để đồng nhất với cơ chế phân bổ tĩnh.
-
+- [refactor] Dọn dẹp dead code: xóa hoàn toàn hàm phân bổ target động theo bữa (getDynamicMealTargets) khỏi service và controller để đồng nhất với cơ chế phân bổ tĩnh.
+- [docs] **Project Report:** Tạo file báo cáo tiến độ đồ án tổng quát (`Bao_Cao_Tien_Do.md`) phục vụ nộp giáo viên hướng dẫn, cập nhật tiến độ 6 Phase và các tính năng cốt lõi (Water tracking, Exercise tracking).
