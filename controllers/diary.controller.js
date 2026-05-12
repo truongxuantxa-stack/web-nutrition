@@ -8,7 +8,6 @@
 const { DiaryEntry, Food } = require('../models');
 const {
     calculateAllMetrics,
-    getMealTargets,
     calculateEffectiveMacros,
     calculateWaterGoal,
 } = require('../services/nutrition.service');
@@ -72,7 +71,6 @@ exports.getDiary = async (req, res) => {
             metrics.macros, metrics.targetCalories, effectiveTarget
         );
 
-        const mealTargets = getMealTargets(metrics.targetCalories);
 
 
         // ── Tiến độ & Health Insights (dùng effectiveTarget + effectiveMacros) ─
@@ -103,7 +101,6 @@ exports.getDiary = async (req, res) => {
             entries,
             mealGroups,
             mealCalories,
-            mealTargets,
             consumed : {
                 calories: Math.round(consumed.calories),
                 protein : Math.round(consumed.protein),
@@ -267,7 +264,7 @@ exports.searchFood = async (req, res) => {
         const q        = req.query.q ? req.query.q.trim() : '';
         const category = req.query.category || null;
         const foodType = req.query.foodType || null;
-        const limit    = parseInt(req.query.limit) || 10;
+        const limit    = parseInt(req.query.limit) || 100;
 
         const whereClause = {
             // Hiển thị: food hệ thống (isCustom=false) + custom food của chính user
@@ -288,7 +285,7 @@ exports.searchFood = async (req, res) => {
 
         const foods = await Food.findAll({
             where: whereClause,
-            limit: Math.min(limit, 50),
+            limit: Math.min(limit, 100),
             order: [
                 ['isCustom', 'DESC'], // Custom food của user hiển lên trước
                 ['name', 'ASC'],

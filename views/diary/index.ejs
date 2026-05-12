@@ -521,7 +521,7 @@ function debounceSearch(q) {
 async function searchFood(query) {
   const category = document.getElementById('categoryFilter').value;
   try {
-    const res  = await fetch('/nhat-ky/tim-mon?' + new URLSearchParams({q:query,category,limit:15}));
+    const res  = await fetch('/nhat-ky/tim-mon?' + new URLSearchParams({q:query,category,limit:100}));
     const data = await res.json();
     renderSearchResults(data.foods || []);
   } catch(e) { console.error(e); }

@@ -6,7 +6,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const { Food } = require('../models');
-const { calculateMacros, getMealTargets } = require('./nutrition.service');
+const { calculateMacros } = require('./nutrition.service');
 const { Op } = require('sequelize');
 
 // Các gợi ý món ăn tự động đã được gỡ bỏ để tối ưu hệ thống và đúng với triết lý "Hardcore Tracking" của dự án.

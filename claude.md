@@ -200,4 +200,6 @@ Phase 6 ← Phase 5 ← Phase 4C + 4D
 - [fix] Xóa bỏ hoàn toàn trường `intensity` (cường độ) khỏi Model và Logic luyện tập để đồng nhất với giao diện.
 - [refactor] Xóa bỏ thuật toán gợi ý món ăn tự động (`getSuggestions`, `getMealSuggestions`) để tối ưu hóa hệ thống và tập trung vào triết lý "Hardcore Tracking" (tự quyết định dinh dưỡng).
 - [refactor] Dọn dẹp dead code: xóa hoàn toàn hàm phân bổ target động theo bữa (getDynamicMealTargets) khỏi service và controller để đồng nhất với cơ chế phân bổ tĩnh.
-- [docs] **Project Report:** Tạo file báo cáo tiến độ đồ án tổng quát (`Bao_Cao_Tien_Do.md`) phục vụ nộp giáo viên hướng dẫn, cập nhật tiến độ 6 Phase và các tính năng cốt lõi (Water tracking, Exercise tracking).
+- [fix] Tăng giới hạn tìm kiếm món ăn (`limit`) từ 15 lên 100 ở cả Frontend và Backend để hiển thị đầy đủ danh sách món ăn khi người dùng lọc theo danh mục, tránh lỗi món ăn bị ẩn.
+- [feat] Bổ sung "Trứng gà (Thô)" và "Trứng vịt (Thô)" vào danh sách nguyên liệu hệ thống (`seeders/foods.js`) thuộc nhóm Đạm (Protein).
+

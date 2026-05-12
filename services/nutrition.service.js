@@ -152,27 +152,7 @@ const calculateMacros = (targetCalories) => {
     };
 };
 
-/**
- * Phân bổ target dinh dưỡng theo từng bữa ăn trong ngày.
- * Trọng số mặc định: Sáng 25%, Trưa 40%, Tối 30%, Phụ 5%.
- *
- * @param {number} targetCalories - Tổng calo mục tiêu/ngày
- * @returns {Object} { sang, trua, toi, phu } — mỗi key là { calories, protein, carbs, fat }
- */
-const getMealTargets = (targetCalories) => {
-    if (!targetCalories) {
-        const zero = { calories: 0, protein: 0, carbs: 0, fat: 0 };
-        return { sang: zero, trua: zero, toi: zero, phu: zero };
-    }
-    const weights = { sang: 0.25, trua: 0.40, toi: 0.30, phu: 0.05 };
-    const result  = {};
-    Object.entries(weights).forEach(([meal, w]) => {
-        const cal = Math.round(targetCalories * w);
-        const macros = calculateMacros(cal);
-        result[meal] = { calories: cal, ...macros };
-    });
-    return result;
-};
+
 
 /**
  * Scale macros tỉ lệ thuận theo effectiveTarget (sau khi cộng calo đốt từ luyện tập).
@@ -249,7 +229,6 @@ module.exports = {
     calculateTDEE,
     adjustCaloriesForGoal,
     calculateMacros,
-    getMealTargets,
     calculateEffectiveMacros,
     calculateAllMetrics,
     calculateWaterGoal,

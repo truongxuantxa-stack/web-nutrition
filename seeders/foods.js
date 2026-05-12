@@ -37,6 +37,8 @@ const rawFoods = [
     { name: 'Hến', calories: 45, protein: 4.5, carbs: 5.1, fat: 0.6, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
     { name: 'Đậu hũ non (Thô)', calories: 61, protein: 6, carbs: 1.5, fat: 3.5, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
     { name: 'Trứng cút (Thô)', calories: 158, protein: 13, carbs: 0.4, fat: 11, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
+    { name: 'Trứng gà (Thô)', calories: 155, protein: 13, carbs: 1.1, fat: 11, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
+    { name: 'Trứng vịt (Thô)', calories: 185, protein: 12.8, carbs: 1.5, fat: 13.8, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
 
     // 2. Nhóm Carb (Tinh bột chậm & Tinh bột nhanh) -> category: 'carb'
     { name: 'Cơm trắng (Thô/Chín)', calories: 130, protein: 2.7, carbs: 28, fat: 0.3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
