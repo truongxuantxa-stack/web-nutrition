@@ -35,8 +35,17 @@ AI cần tự hỏi: "Task vừa rồi thay đổi phần nào?"
   - AJAX cập nhật (ví dụ: vòng tròn nước, thêm món) có bị reload trang toàn bộ không? (Vi phạm triết lý app).
 
 ### Bước 3: Báo cáo & Khắc phục (Report & Fix)
-- Nếu mọi thứ Pass: AI cung cấp lệnh `git commit`.
 - Nếu có lỗi: AI tự động phân tích và đề xuất hướng sửa ngay trong phản hồi.
+- Nếu mọi thứ Pass: Chuyển sang Bước 4 để Review code.
+
+### Bước 4: Code Review & Tối ưu (Checklist trước khi Git Push)
+Tránh tâm lý "Để sau dọn cũng được" (Later never comes). Bắt buộc dọn dẹp và tối ưu xong mới được phép cung cấp lệnh `git commit`.
+
+AI và người dùng cần rà soát 4 tiêu chí sau:
+1. **Sự đơn giản (Simplicity Check):** Đoạn code này có thể viết ngắn gọn hơn không? Có lạm dụng cấu trúc phức tạp không?
+2. **Kiểm soát thư viện (Dependency Discipline):** Có thêm thư viện ngoài (npm package) cho một việc có thể giải quyết bằng code thuần không? (Mỗi thư viện là một gánh nặng, ưu tiên Vanilla JS/CSS).
+3. **Dọn rác (Dead Code Hygiene):** Có để lại hàm, biến không dùng (`_unused`), dòng comment nháp hay `console.log()` nào không? Nếu có, liệt kê ra và xin phép xóa.
+4. **Phạm vi tác động (Surgical Changes):** Thay đổi có nhỏ gọn, tập trung vào đúng vấn đề không? Có vô tình làm hỏng logic hay xóa nhầm comment cũ ở file khác không?
 
 ---
 **💡 Nguyên tắc cốt lõi:**
