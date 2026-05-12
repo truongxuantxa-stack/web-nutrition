@@ -51,13 +51,15 @@ Dự án được chia thành 6 giai đoạn phát triển (Phases). Hiện tạ
 - ⏳ **Giai đoạn 6: Xuất Báo cáo & Hoàn thiện cuối cùng (Đang triển khai - 0%)**
   - Module kết xuất file PDF thống kê tuần/tháng.
 
-## 5. NHỮNG TÍNH NĂNG KỸ THUẬT NỔI BẬT ĐÃ ÁP DỤNG
-1. **Module Water Tracking (Theo dõi nước uống):** Tự động tính chỉ tiêu nước (`cân nặng x 35ml`), ghi nhận thao tác bằng các nút thêm nhanh (Quick-add buttons) thông qua API không đồng bộ.
-2. **AJAX & Giao diện động:** Thay vì submit form truyền thống, hệ thống xử lý thao tác thêm/xóa dữ liệu ẩn dưới nền, cung cấp trải nghiệm hiện đại (Real-time update UI).
-3. **Cơ chế Soft-Delete:** Đối với dữ liệu do người dùng tự tạo (Món ăn cá nhân), khi xóa hệ thống sẽ ẩn dữ liệu thay vì xóa cứng, nhằm bảo vệ lịch sử nhật ký ăn uống đã ghi trong quá khứ không bị lỗi.
+## 5. NHỮNG THUẬT TOÁN ĐƯỢC ÁP DỤNG TRONG HỆ THỐNG
+1. **Thuật toán Ước tính Năng lượng & Phân bổ Dinh dưỡng (Target Metrics Algorithm):** Thuật toán quyết định rẽ nhánh dựa trên thông số sinh học (giới tính, cân nặng, chiều cao, tuổi), ánh xạ mức độ hoạt động và phân rã mục tiêu calo thành tỷ lệ 3 đại dưỡng chất (Protein/Carb/Fat).
+2. **Thuật toán Scale Macros Động theo Luyện tập (Effective Macros Algorithm):** Thuật toán tỷ lệ thuận (Proportional Scaling) giúp tính toán lại lượng calo và tái cấu trúc tỷ lệ các dưỡng chất nạp thêm dựa trên lượng calo đốt cháy từ việc luyện tập, giúp bảo toàn mật độ dinh dưỡng (Nutrient Density).
+3. **Thuật toán Phân tích Sức khỏe & Cảnh báo Thông minh (Health Insights Algorithm):** Một hệ chuyên gia dựa trên luật (Rule-based Expert System) phân tích tiến độ calo nạp vào, tính toán sự mất cân bằng macro (Macro Balance) tại thời điểm thực, và quét qua thành phần món ăn thô để đưa ra cảnh báo thiếu hụt.
+4. **Thuật toán Tổng hợp & Snapshot Dinh dưỡng (Nutrition Aggregation Algorithm):** Thuật toán tính toán tổng hợp (Reduce) kết hợp cơ chế ưu tiên dữ liệu (Data Prioritization). Thuật toán kiểm tra và sử dụng trạng thái dữ liệu tại thời điểm ăn (snapshot) để tính toán tổng, nhằm bảo toàn tính toàn vẹn của lịch sử nhật ký.
+5. **Thuật toán Tìm kiếm & Xếp hạng Ưu tiên (Prioritized Search Algorithm):** Tự động xây dựng câu lệnh lọc (Dynamic Query Building) dựa trên danh mục/từ khóa, đồng thời thực thi thuật toán xếp hạng: ưu tiên đẩy các món ăn tùy chỉnh (Custom Foods) của người dùng lên trước các món mặc định của hệ thống.
 
 ## 6. KẾ HOẠCH CÔNG VIỆC SẮP TỚI (Sprint cuối)
-Để nghiệm thu và nộp sản phẩm hoàn chỉnh, các công việc trong 1-2 tuần tới bao gồm:
+Để nghiệm thu và nộp sản phẩm hoàn chỉnh, các công việc trong thời gian  tới bao gồm:
 1. Xây dựng module `utils/pdf.util.js` sử dụng thư viện PDFKit hỗ trợ font Unicode Tiếng Việt.
 2. Hoàn thiện tính năng tải Báo Cáo Thống Kê dạng PDF cho người dùng.
 3. Rà soát lỗi (End-to-end QA Testing) trên các tình huống ngoại lệ (edge cases).
