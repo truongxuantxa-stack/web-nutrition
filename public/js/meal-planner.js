@@ -242,11 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="text-xs text-gray-400 font-medium">${cal.toFixed(0)} kcal</div>
                         </div>
                         <!-- Nút Đổi món -->
-                        ${f.category !== 'fiber' ? `
                         <button class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-green-600 hover:border-green-300 transition-colors" title="Đổi nguyên liệu khác" onclick="window.openSwapModal(${f.id}, '${f.category}', '${f.name.replace(/'/g, "\\'")}')">
                             <i class="fa-solid fa-rotate"></i>
                         </button>
-                        ` : ''}
                     </div>
                 </div>
             `;
