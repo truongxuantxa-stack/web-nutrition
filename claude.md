@@ -202,4 +202,5 @@ Phase 6 ← Phase 5 ← Phase 4C + 4D
 - [refactor] Dọn dẹp dead code: xóa hoàn toàn hàm phân bổ target động theo bữa (getDynamicMealTargets) khỏi service và controller để đồng nhất với cơ chế phân bổ tĩnh.
 - [fix] Tăng giới hạn tìm kiếm món ăn (`limit`) từ 15 lên 100 ở cả Frontend và Backend để hiển thị đầy đủ danh sách món ăn khi người dùng lọc theo danh mục, tránh lỗi món ăn bị ẩn.
 - [feat] Bổ sung "Trứng gà (Thô)" và "Trứng vịt (Thô)" vào danh sách nguyên liệu hệ thống (`seeders/foods.js`) thuộc nhóm Đạm (Protein).
+- [feat] **Custom Macros Planner:** Người dùng có thể tự điều chỉnh tỷ lệ Protein/Carbs/Fat (tổng = 100%). Giao diện dùng number input + nút [−/+] + 5 preset nhanh (Mặc định/Tăng cơ/Giảm mỡ/Keto/Low-fat). Hệ thống hiển thị preview gram real-time. User cũ (null) fallback về 30/40/30 tự động. Dashboard hiển thị % động và badge "Tùy chỉnh/Mặc định" có link đến hồ sơ. API: `PUT /ho-so/macros`. Files: `models/User.js` (đã có từ trước), `services/nutrition.service.js`, `controllers/auth.controller.js`, `routes/auth.routes.js`, `views/profile/index.ejs`, `views/dashboard/index.ejs`.
 

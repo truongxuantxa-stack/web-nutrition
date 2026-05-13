@@ -3,7 +3,7 @@
 const bcrypt = require('bcryptjs');
 const jwt    = require('jsonwebtoken');
 const { User } = require('../models');
-const { calculateWaterGoal } = require('../services/nutrition.service');
+const { calculateWaterGoal, calculateAllMetrics } = require('../services/nutrition.service');
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -221,9 +221,11 @@ exports.saveOnboarding = async (req, res) => {
 // ─── GET /ho-so ───────────────────────────────────────────────────────────────
 
 exports.showProfile = (req, res) => {
+    const metrics = calculateAllMetrics(req.user);
     res.render('profile/index', {
         title: 'Hồ Sơ Cá Nhân',
         user: req.user,
+        metrics,
         activePage: 'profile',
         error: null,
         success: null,
@@ -231,6 +233,36 @@ exports.showProfile = (req, res) => {
 };
 
 // ─── PUT /ho-so ───────────────────────────────────────────────────────────────
+
+// ─── PUT /ho-so/macros ────────────────────────────────────────────────────────
+
+exports.updateMacros = async (req, res) => {
+    try {
+        const { macroProtein, macroCarbs, macroFat } = req.body;
+        const p = parseInt(macroProtein);
+        const c = parseInt(macroCarbs);
+        const f = parseInt(macroFat);
+
+        // Validate: tổng phải = 100
+        if (isNaN(p) || isNaN(c) || isNaN(f) || p + c + f !== 100) {
+            return res.status(400).json({ success: false, message: 'Tổng tỷ lệ Protein + Carbs + Fat phải bằng 100%.' });
+        }
+        // Validate: từng giá trị hợp lệ (min 5%)
+        if ([p, c, f].some(v => v < 5)) {
+            return res.status(400).json({ success: false, message: 'Mỗi macro phải tối thiểu 5%.' });
+        }
+        // Validate: max theo từng loại
+        if (p > 70 || f > 70 || c > 80) {
+            return res.status(400).json({ success: false, message: 'Protein/Fat tối đa 70%, Carbs tối đa 80%.' });
+        }
+
+        await req.user.update({ macroProtein: p, macroCarbs: c, macroFat: f });
+        return res.json({ success: true, message: 'Đã cập nhật tỷ lệ Macro thành công!' });
+    } catch (err) {
+        console.error('Update macros error:', err);
+        return res.status(500).json({ success: false, message: 'Lỗi server, vui lòng thử lại.' });
+    }
+};
 
 exports.updateProfile = async (req, res) => {
     const { fullName, gender, birthDate, height, weight, activityLevel, goal } = req.body;

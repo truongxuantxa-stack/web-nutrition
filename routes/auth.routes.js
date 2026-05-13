@@ -40,4 +40,7 @@ router.get('/ho-so', requireAuth, requireOnboarded, authController.showProfile);
 // POST /ho-so (dùng POST vì form HTML không hỗ trợ PUT)
 router.post('/ho-so', requireAuth, requireOnboarded, authController.updateProfile);
 
+// PUT /ho-so/macros (lưu tỷ lệ macro tùy chỉnh — AJAX)
+router.put('/ho-so/macros', requireAuth, requireOnboarded, authController.updateMacros);
+
 module.exports = router;

@@ -113,6 +113,39 @@ const User = sequelize.define('User', {
         allowNull: true,
         defaultValue: null,
     },
+    macroProtein: {
+        // Tỷ lệ Protein (%) do user tự chỉnh.
+        // null = chưa thiết lập → service fallback về mặc định 30%
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [5],  msg: 'Protein tối thiểu 5%.' },
+            max: { args: [70], msg: 'Protein tối đa 70%.' },
+        },
+    },
+    macroCarbs: {
+        // Tỷ lệ Carbs (%) do user tự chỉnh.
+        // null = chưa thiết lập → service fallback về mặc định 40%
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [5],  msg: 'Carbs tối thiểu 5%.' },
+            max: { args: [80], msg: 'Carbs tối đa 80%.' },
+        },
+    },
+    macroFat: {
+        // Tỷ lệ Fat (%) do user tự chỉnh.
+        // null = chưa thiết lập → service fallback về mặc định 30%
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [5],  msg: 'Fat tối thiểu 5%.' },
+            max: { args: [70], msg: 'Fat tối đa 70%.' },
+        },
+    },
 }, {
     tableName: 'users',
     timestamps: true,

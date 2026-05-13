@@ -165,6 +165,82 @@
     </form>
   </div>
 
+  <!-- ── Custom Macros Planner ─────────────────────────── -->
+  <div class="nt-card p-6 md:p-8 mt-5" id="macroPlanner">
+
+    <div class="flex items-center gap-2 mb-1">
+      <div class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-black"
+           style="background:linear-gradient(135deg,#f59e0b,#d97706)">🎯</div>
+      <p class="section-title">Tỷ lệ Macro cá nhân</p>
+      <% if (user.macroProtein !== null) { %>
+      <span class="pill ml-auto" style="background:#fef9c3;color:#854d0e;border:1.5px solid #fde68a;font-size:11px">✏️ Tùy chỉnh</span>
+      <% } else { %>
+      <span class="pill ml-auto" style="background:#f1f5f9;color:#64748b;border:1.5px solid #e2e8f0;font-size:11px">Mặc định</span>
+      <% } %>
+    </div>
+    <p class="text-xs text-gray-400 font-medium mb-5">
+      ℹ️ Mục tiêu macro luôn hiển thị theo thiết lập mới nhất.
+    </p>
+
+    <!-- Preset buttons -->
+    <div class="flex flex-wrap gap-2 mb-5">
+      <span class="text-xs font-bold text-gray-500 self-center">Preset nhanh:</span>
+      <button type="button" onclick="applyPreset(30,40,30)" class="px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 hover:border-green-400 hover:bg-green-50 transition-all text-gray-600">🎯 Mặc định</button>
+      <button type="button" onclick="applyPreset(40,40,20)" class="px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-all text-gray-600">💪 Tăng cơ</button>
+      <button type="button" onclick="applyPreset(40,30,30)" class="px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 hover:border-orange-400 hover:bg-orange-50 transition-all text-gray-600">🔥 Giảm mỡ</button>
+      <button type="button" onclick="applyPreset(25,5,70)"  class="px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 hover:border-yellow-400 hover:bg-yellow-50 transition-all text-gray-600">🥑 Keto</button>
+      <button type="button" onclick="applyPreset(30,55,15)" class="px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 hover:border-purple-400 hover:bg-purple-50 transition-all text-gray-600">🏃 Low-fat</button>
+    </div>
+
+    <!-- Inputs -->
+    <div class="space-y-3 mb-4">
+      <!-- Protein -->
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-bold text-blue-600 w-16">🥩 Protein</span>
+        <button type="button" onclick="adjustMacro('mp',-1)" class="w-8 h-8 rounded-lg font-black text-gray-600 border border-gray-200 hover:bg-gray-100 transition-all flex-shrink-0">−</button>
+        <input type="number" id="mp" min="5" max="70" value="<%= user.macroProtein ?? 30 %>" class="nt-input text-center font-black text-blue-700" style="width:72px" oninput="updateSummary()">
+        <button type="button" onclick="adjustMacro('mp',1)"  class="w-8 h-8 rounded-lg font-black text-gray-600 border border-gray-200 hover:bg-gray-100 transition-all flex-shrink-0">+</button>
+        <span class="text-sm text-gray-400 font-semibold">%</span>
+        <% if (!user.macroProtein) { %><span class="text-xs text-gray-400 italic">(mặc định)</span><% } %>
+      </div>
+      <!-- Carbs -->
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-bold text-amber-600 w-16">🍚 Carbs</span>
+        <button type="button" onclick="adjustMacro('mc',-1)" class="w-8 h-8 rounded-lg font-black text-gray-600 border border-gray-200 hover:bg-gray-100 transition-all flex-shrink-0">−</button>
+        <input type="number" id="mc" min="5" max="80" value="<%= user.macroCarbs ?? 40 %>" class="nt-input text-center font-black text-amber-700" style="width:72px" oninput="updateSummary()">
+        <button type="button" onclick="adjustMacro('mc',1)"  class="w-8 h-8 rounded-lg font-black text-gray-600 border border-gray-200 hover:bg-gray-100 transition-all flex-shrink-0">+</button>
+        <span class="text-sm text-gray-400 font-semibold">%</span>
+        <% if (!user.macroCarbs) { %><span class="text-xs text-gray-400 italic">(mặc định)</span><% } %>
+      </div>
+      <!-- Fat -->
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-bold text-rose-600 w-16">🥑 Fat</span>
+        <button type="button" onclick="adjustMacro('mf',-1)" class="w-8 h-8 rounded-lg font-black text-gray-600 border border-gray-200 hover:bg-gray-100 transition-all flex-shrink-0">−</button>
+        <input type="number" id="mf" min="5" max="70" value="<%= user.macroFat ?? 30 %>" class="nt-input text-center font-black text-rose-700" style="width:72px" oninput="updateSummary()">
+        <button type="button" onclick="adjustMacro('mf',1)"  class="w-8 h-8 rounded-lg font-black text-gray-600 border border-gray-200 hover:bg-gray-100 transition-all flex-shrink-0">+</button>
+        <span class="text-sm text-gray-400 font-semibold">%</span>
+        <% if (!user.macroFat) { %><span class="text-xs text-gray-400 italic">(mặc định)</span><% } %>
+      </div>
+    </div>
+
+    <!-- Tổng + Preview -->
+    <div class="p-3.5 rounded-xl mb-4" id="macroSummaryBox"
+         style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <span class="text-sm font-bold text-gray-600">Tổng: <span id="macroTotal" class="text-lg font-black text-green-700">100%</span></span>
+        <span class="text-xs text-gray-500 font-medium" id="macroPreview"></span>
+      </div>
+    </div>
+
+    <!-- Save button -->
+    <div class="flex justify-end">
+      <button type="button" id="saveMacroBtn" onclick="saveMacros()"
+              class="btn-primary-green px-8 py-2.5 text-sm">
+        💾 Lưu tỷ lệ
+      </button>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -221,6 +297,91 @@ document.getElementById('profileForm').addEventListener('submit', (e) => {
   btn.textContent = '⏳ Đang lưu...';
   showLoading();
 });
+
+// ── Custom Macros Logic ──────────────────────────────────────
+// targetCalories từ server (null nếu chưa đủ dữ liệu)
+const _targetCal = <%= (typeof metrics !== 'undefined' && metrics && metrics.targetCalories) ? metrics.targetCalories : 'null' %>;
+
+function adjustMacro(id, delta) {
+  const el = document.getElementById(id);
+  const val = parseInt(el.value) || 0;
+  el.value = Math.min(parseInt(el.max), Math.max(parseInt(el.min), val + delta));
+  updateSummary();
+}
+
+function applyPreset(p, c, f) {
+  document.getElementById('mp').value = p;
+  document.getElementById('mc').value = c;
+  document.getElementById('mf').value = f;
+  updateSummary();
+}
+
+function updateSummary() {
+  const p = parseInt(document.getElementById('mp').value) || 0;
+  const c = parseInt(document.getElementById('mc').value) || 0;
+  const f = parseInt(document.getElementById('mf').value) || 0;
+  const total = p + c + f;
+  const totalEl = document.getElementById('macroTotal');
+  const boxEl   = document.getElementById('macroSummaryBox');
+  const saveBtn = document.getElementById('saveMacroBtn');
+  const previewEl = document.getElementById('macroPreview');
+
+  totalEl.textContent = total + '%';
+  if (total === 100) {
+    totalEl.style.color = '#16a34a';
+    boxEl.style.borderColor = '#86efac';
+    boxEl.style.background = 'linear-gradient(135deg,#f0fdf4,#dcfce7)';
+    saveBtn.disabled = false;
+    saveBtn.style.opacity = '1';
+    // Preview gram
+    if (_targetCal) {
+      const pg = Math.round((_targetCal * p / 100) / 4);
+      const cg = Math.round((_targetCal * c / 100) / 4);
+      const fg = Math.round((_targetCal * f / 100) / 9);
+      previewEl.textContent = `Preview: Protein ~${pg}g | Carbs ~${cg}g | Fat ~${fg}g`;
+    } else {
+      previewEl.textContent = '';
+    }
+  } else {
+    totalEl.style.color = '#ef4444';
+    boxEl.style.borderColor = '#fca5a5';
+    boxEl.style.background = 'linear-gradient(135deg,#fff1f2,#ffe4e6)';
+    saveBtn.disabled = true;
+    saveBtn.style.opacity = '0.5';
+    previewEl.textContent = `Tổng đang là ${total}% — cần đạt đúng 100%`;
+  }
+}
+updateSummary();
+
+async function saveMacros() {
+  const p = parseInt(document.getElementById('mp').value);
+  const c = parseInt(document.getElementById('mc').value);
+  const f = parseInt(document.getElementById('mf').value);
+  const btn = document.getElementById('saveMacroBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang lưu...';
+  try {
+    const res = await fetch('/ho-so/macros', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ macroProtein: p, macroCarbs: c, macroFat: f }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message, 'success');
+      // Reload để badge Tùy chỉnh/Mặc định cập nhật
+      setTimeout(() => location.reload(), 1200);
+    } else {
+      showToast(data.message, 'error');
+      btn.disabled = false;
+      btn.textContent = '💾 Lưu tỷ lệ';
+    }
+  } catch (e) {
+    showToast('Lỗi kết nối, vui lòng thử lại.', 'error');
+    btn.disabled = false;
+    btn.textContent = '💾 Lưu tỷ lệ';
+  }
+}
 </script>
 
 <%- include('../partials/footer') %>

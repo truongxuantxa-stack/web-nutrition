@@ -132,6 +132,12 @@ const adjustCaloriesForGoal = (tdee, goal) => {
 };
 
 /**
+ * Tỷ lệ Macro mặc định của hệ thống (%).
+ * Dùng làm fallback khi user chưa tự thiết lập.
+ */
+const MACRO_DEFAULTS = { protein: 30, carbs: 40, fat: 30 };
+
+/**
  * Tính phân bổ Macros dựa trên tổng calo mục tiêu.
  * Tỷ lệ mặc định: Protein 30%, Carbs 40%, Fat 30%
  *
@@ -141,14 +147,19 @@ const adjustCaloriesForGoal = (tdee, goal) => {
  * - 1g Fat     = 9 kcal
  *
  * @param {number} targetCalories - Tổng calo mục tiêu/ngày
+ * @param {Object} [ratios={}]    - { protein, carbs, fat } tỷ lệ % tùy chỉnh; null → dùng default
  * @returns {{ protein: number, carbs: number, fat: number }} Grams mỗi macro
  */
-const calculateMacros = (targetCalories) => {
+const calculateMacros = (targetCalories, ratios = {}) => {
     if (!targetCalories) return { protein: 0, carbs: 0, fat: 0 };
+    // null (user cũ chưa thiết lập) → fallback về MACRO_DEFAULTS
+    const p = (ratios.protein ?? MACRO_DEFAULTS.protein) / 100;
+    const c = (ratios.carbs   ?? MACRO_DEFAULTS.carbs)   / 100;
+    const f = (ratios.fat     ?? MACRO_DEFAULTS.fat)     / 100;
     return {
-        protein: Math.round((targetCalories * 0.30) / 4),  // 30% calo → grams
-        carbs:   Math.round((targetCalories * 0.40) / 4),  // 40% calo → grams
-        fat:     Math.round((targetCalories * 0.30) / 9),  // 30% calo → grams
+        protein: Math.round((targetCalories * p) / 4),
+        carbs:   Math.round((targetCalories * c) / 4),
+        fat:     Math.round((targetCalories * f) / 9),
     };
 };
 
@@ -184,8 +195,23 @@ const calculateAllMetrics = (user) => {
     const bmr       = calculateBMR(user);
     const tdee      = calculateTDEE(bmr, user.activityLevel);
     const targetCal = adjustCaloriesForGoal(tdee, user.goal);
-    const macros    = calculateMacros(targetCal);
     const age       = user.birthDate ? calculateAge(user.birthDate) : null;
+
+    // Đọc ratios từ user (null = user cũ chưa thiết lập → calculateMacros tự fallback)
+    const ratios = {
+        protein: user.macroProtein,
+        carbs:   user.macroCarbs,
+        fat:     user.macroFat,
+    };
+    const macros = calculateMacros(targetCal, ratios);
+
+    // Trả về ratios thực tế (đã resolve null → default) để UI hiển thị đúng
+    const macroRatios = {
+        protein: ratios.protein ?? MACRO_DEFAULTS.protein,
+        carbs:   ratios.carbs   ?? MACRO_DEFAULTS.carbs,
+        fat:     ratios.fat     ?? MACRO_DEFAULTS.fat,
+        isCustom: ratios.protein !== null,  // flag để UI biết user đã tùy chỉnh chưa
+    };
 
     return {
         age,
@@ -195,6 +221,7 @@ const calculateAllMetrics = (user) => {
         tdee,
         targetCalories: targetCal,
         macros,
+        macroRatios,
         activityLabel: ACTIVITY_LABELS[user.activityLevel] || null,
         goalAdjustment: (() => {
             switch (user.goal) {
@@ -234,4 +261,5 @@ module.exports = {
     calculateWaterGoal,
     ACTIVITY_FACTORS,
     ACTIVITY_LABELS,
+    MACRO_DEFAULTS,
 };
