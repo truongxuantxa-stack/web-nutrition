@@ -194,3 +194,40 @@ exports.swapIngredient = async (req, res) => {
         res.status(500).json({ success: false, message: error.message || 'Lỗi server khi swap nguyên liệu.' });
     }
 };
+
+// 6. GET /api/meal-planner/foods
+exports.getFoodsByRole = async (req, res) => {
+    try {
+        const { role } = req.query; // carb, protein, fat
+        if (!role) {
+            return res.status(400).json({ success: false, message: 'Thiếu tham số role.' });
+        }
+        
+        const foods = await Food.findAll({
+            where: { category: role, foodType: 'raw' },
+            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'unit']
+        });
+        
+        res.json({ success: true, data: foods });
+    } catch (error) {
+        console.error('Error getFoodsByRole:', error);
+        res.status(500).json({ success: false, message: 'Lỗi lấy danh sách món ăn.' });
+    }
+};
+
+// ============================================================================
+// UI RENDERING
+// ============================================================================
+
+exports.renderMealPlannerPage = async (req, res) => {
+    try {
+        res.render('meal-planner/index', {
+            title: 'Lập Kế Hoạch Bữa Ăn',
+            path: '/lap-ke-hoach',
+            user: req.user
+        });
+    } catch (error) {
+        console.error('Error rendering meal planner page:', error);
+        res.status(500).send('Lỗi server');
+    }
+};

@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resTotalFat = document.getElementById('resTotalFat');
     const warningContainer = document.getElementById('warningContainer');
     const foodListContainer = document.getElementById('foodListContainer');
+    const btnLogMeal = document.getElementById('btnLogMeal');
 
     // State
     let currentResultData = null; // Lưu mảng các món đang suggest
@@ -240,10 +241,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="font-black text-lg ${isNegative ? 'text-red-600' : 'text-gray-800'}">${g}g</div>
                             <div class="text-xs text-gray-400 font-medium">${cal.toFixed(0)} kcal</div>
                         </div>
-                        <!-- Nút Đổi món (Sẽ phát triển Modal trong tương lai) -->
-                        <button class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-green-600 hover:border-green-300 transition-colors" title="Đổi nguyên liệu khác" onclick="alert('Tính năng đổi nguyên liệu sẽ có trong phiên bản sau.')">
+                        <!-- Nút Đổi món -->
+                        ${f.category !== 'fiber' ? `
+                        <button class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-green-600 hover:border-green-300 transition-colors" title="Đổi nguyên liệu khác" onclick="window.openSwapModal(${f.id}, '${f.category}', '${f.name.replace(/'/g, "\\'")}')">
                             <i class="fa-solid fa-rotate"></i>
                         </button>
+                        ` : ''}
                     </div>
                 </div>
             `;
@@ -278,5 +281,128 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             warningContainer.classList.add('hidden');
         }
+    }
+
+    // ─── TÍNH NĂNG SMART SWAP ────────────────────────────────────────────────────
+    const swapModal = document.getElementById('swapModal');
+    const swapFoodName = document.getElementById('swapFoodName');
+    const swapFoodList = document.getElementById('swapFoodList');
+
+    window.openSwapModal = async function(currentFoodId, role, foodName) {
+        swapFoodName.textContent = foodName;
+        swapModal.showModal();
+        swapFoodList.innerHTML = '<div class="text-center py-4"><span class="loading loading-spinner"></span> Đang tải nguyên liệu...</div>';
+
+        try {
+            const { data } = await axios.get(`/api/meal-planner/foods?role=${role}`);
+            if(data.success && data.data) {
+                renderSwapList(data.data, currentFoodId, role);
+            }
+        } catch (error) {
+            swapFoodList.innerHTML = '<div class="text-red-500 text-center">Lỗi tải dữ liệu.</div>';
+        }
+    };
+
+    function renderSwapList(foods, currentFoodId, role) {
+        swapFoodList.innerHTML = '';
+        if(foods.length === 0) {
+            swapFoodList.innerHTML = '<div class="text-gray-500 text-center text-sm">Không tìm thấy món thay thế.</div>';
+            return;
+        }
+
+        foods.forEach(f => {
+            if (f.id === currentFoodId) return; // Không hiển thị món đang chọn
+
+            const html = `
+                <div class="flex items-center justify-between p-3 border border-gray-100 rounded-xl hover:bg-green-50 hover:border-green-200 transition-all cursor-pointer" onclick="window.submitSwap(${f.id}, '${role}')">
+                    <div>
+                        <div class="font-semibold text-gray-800 text-sm">${f.name}</div>
+                        <div class="text-xs text-gray-500">P:${f.protein}g | C:${f.carbs}g | F:${f.fat}g</div>
+                    </div>
+                    <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
+                        <i class="fa-solid fa-arrow-right-arrow-left text-xs"></i>
+                    </div>
+                </div>
+            `;
+            swapFoodList.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    window.submitSwap = async function(newFoodId, role) {
+        // Đóng modal
+        swapModal.close();
+        
+        // Show loading ở result panel
+        resultView.classList.add('opacity-50');
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+
+        try {
+            // currentResultData lưu mảng 4 items [{food:..., grams:...}]
+            const currentFoodIds = currentResultData.map(item => item.food.id);
+
+            const { data } = await axios.post('/api/meal-planner/swap', {
+                mealKey: currentMealKey,
+                currentFoodIds: currentFoodIds,
+                newFoodId: newFoodId,
+                slotRoleToSwap: role
+            });
+
+            if (data.success || (!data.success && data.data)) {
+                currentResultData = data.data; // Cập nhật state
+                renderResult(data.data, data.warnings || data.errors, data.success);
+            } else {
+                alert(data.message || (data.errors && data.errors[0]?.message) || 'Lỗi không xác định.');
+            }
+        } catch (error) {
+            const msg = error.response?.data?.message || 'Lỗi server / Mạng.';
+            alert(msg);
+        } finally {
+            resultView.classList.remove('opacity-50');
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+        }
+    };
+
+    // ─── LƯU VÀO NHẬT KÝ ─────────────────────────────────────────────────────────
+    if (btnLogMeal) {
+        btnLogMeal.addEventListener('click', async () => {
+            if (!currentResultData || currentResultData.length === 0) return;
+            
+            // Format ngày local (YYYY-MM-DD)
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const today = `${year}-${month}-${day}`;
+
+            const oldHtml = btnLogMeal.innerHTML;
+            btnLogMeal.innerHTML = '<span class="loading loading-spinner loading-xs"></span> Đang ghi nhật ký...';
+            btnLogMeal.disabled = true;
+
+            try {
+                // Tạo các mảng promise để POST song song
+                const requests = currentResultData.map(item => {
+                    const amountMultiplier = item.grams / 100; // API nhật ký yêu cầu amount là tỷ lệ so với 100g
+                    return axios.post('/nhat-ky/them', {
+                        foodId: item.food.id,
+                        amount: amountMultiplier,
+                        mealType: currentMealKey,
+                        date: today,
+                        note: 'Gợi ý từ Meal Planner'
+                    });
+                });
+
+                await Promise.all(requests);
+                
+                alert('Đã lưu thực đơn vào nhật ký hôm nay thành công!');
+                window.location.href = `/nhat-ky?date=${today}`;
+            } catch (error) {
+                console.error('Error logging to diary:', error);
+                alert('Có lỗi xảy ra khi ghi nhật ký. Vui lòng thử lại.');
+                btnLogMeal.innerHTML = oldHtml;
+                btnLogMeal.disabled = false;
+            }
+        });
     }
 });

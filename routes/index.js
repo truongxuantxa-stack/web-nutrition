@@ -28,6 +28,10 @@ router.use('/', requireAuth, requireOnboarded, diaryRoutes);
 router.use('/', requireAuth, requireOnboarded, weightRoutes);
 router.use('/', requireAuth, requireOnboarded, exerciseRoutes);
 router.use('/', requireAuth, requireOnboarded, waterRoutes);
+
+// ─── Meal Planner ────────────────────────────────────────────────────────────
+const mealPlannerController = require('../controllers/mealPlanner.controller');
+router.get('/lap-ke-hoach', requireAuth, requireOnboarded, mealPlannerController.renderMealPlannerPage);
 router.use('/api/meal-planner', requireAuth, requireOnboarded, mealPlannerRoutes);
 
 module.exports = router;

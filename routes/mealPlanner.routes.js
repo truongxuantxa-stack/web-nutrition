@@ -11,6 +11,7 @@ router.use(requireAuth);
 router.get('/config', mealPlannerController.getConfig);
 router.put('/config', mealPlannerController.updateConfig);
 router.get('/templates', mealPlannerController.getTemplates);
+router.get('/foods', mealPlannerController.getFoodsByRole); // Lấy list thức ăn để swap
 router.post('/generate', mealPlannerController.generateMeal);
 router.post('/swap', mealPlannerController.swapIngredient);
 
