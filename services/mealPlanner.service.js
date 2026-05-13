@@ -1,5 +1,8 @@
 'use strict';
 
+const { Op } = require('sequelize');
+const { Food } = require('../models');
+
 /**
  * ═══════════════════════════════════════════════════════════════════════════════
  * services/mealPlanner.service.js
@@ -35,6 +38,67 @@ const allocateMealTargets = (dailyTargetCal, dailyMacros, userMealConfig) => {
     }
 
     return mealTargets;
+};
+
+// ============================================================================
+// MODULE 2: TEMPLATE MATCHING
+// ============================================================================
+
+/**
+ * Chọn ngẫu nhiên một nguyên liệu thô theo role từ DB.
+ * Có thể loại trừ các món không mong muốn.
+ * @param {string} role - category của Food (carb, protein, fat, fiber)
+ * @param {Array} excludeIds - Danh sách id không muốn chọn
+ * @returns {Object} Food model (JSON)
+ */
+const pickRandomFoodByRole = async (role, excludeIds = []) => {
+    const whereClause = {
+        category: role,
+        foodType: 'raw'
+    };
+    if (excludeIds && excludeIds.length > 0) {
+        whereClause.id = { [Op.notIn]: excludeIds };
+    }
+
+    const candidates = await Food.findAll({ where: whereClause });
+    if (!candidates || candidates.length === 0) return null;
+
+    const randomIndex = Math.floor(Math.random() * candidates.length);
+    return candidates[randomIndex].toJSON();
+};
+
+/**
+ * Xây dựng tổ hợp nguyên liệu dựa trên template (Mảng 4 slot).
+ * @param {Object} template - MealTemplate { slots: [{role: 'carb'}, ...] }
+ * @param {Object} preferences - { carb: foodId, protein: foodId, exclude: [id1, id2] } (Để pin món hoặc loại trừ)
+ * @returns {Array} Mảng 4 Food object
+ */
+const pickIngredientsForTemplate = async (template, preferences = {}) => {
+    const result = [];
+    const excludeIds = preferences.exclude || [];
+
+    for (const slot of template.slots) {
+        const role = slot.role;
+        let pickedFood = null;
+
+        // Nếu user đã ghim cứng 1 món cho slot này
+        if (preferences[role]) {
+            pickedFood = await Food.findByPk(preferences[role]);
+            if (pickedFood) pickedFood = pickedFood.toJSON();
+        }
+
+        // Nếu không có ghim hoặc tìm không thấy -> random
+        if (!pickedFood) {
+            pickedFood = await pickRandomFoodByRole(role, excludeIds);
+        }
+
+        if (!pickedFood) {
+            throw new Error(`Không thể tìm thấy nguyên liệu phù hợp cho nhóm: ${role}`);
+        }
+        
+        result.push(pickedFood);
+    }
+    return result;
 };
 
 // ============================================================================
@@ -214,9 +278,74 @@ const validateSolution = (results) => {
     };
 };
 
+// ============================================================================
+// ORCHESTRATOR: KẾT NỐI CHUỖI M1 -> M2 -> M3 -> M4
+// ============================================================================
+
+/**
+ * Hàm sinh tổ hợp bữa ăn hoàn chỉnh, có cơ chế Retry nếu vi phạm Edge Cases
+ * @param {Object} template - Khuôn mẫu MealTemplate
+ * @param {Object} target - { protein, carbs, fat } gam mục tiêu của bữa
+ * @param {Object} preferences - Tùy chọn (exclude, pin đồ ăn)
+ * @returns {Object} { success, data, errors/warnings }
+ */
+const generateMealPlan = async (template, target, preferences = {}) => {
+    const MAX_RETRIES = 5;
+    let bestResult = null;
+    let fewestErrorsCount = 999;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            // Bước 1: Pick ngẫu nhiên
+            const foods = await pickIngredientsForTemplate(template, preferences);
+            
+            // Bước 2: Chạy Core Math
+            const weights = calculateWeights(foods, target);
+            if (!weights) continue; // Ma trận suy biến -> thử lại
+            
+            // Bước 3: Phân tích kết quả
+            const validation = validateSolution(weights);
+            
+            // Nếu Pass hoàn toàn -> Trả về ngay lập tức
+            if (validation.isValid) {
+                return {
+                    success: true,
+                    data: weights,
+                    warnings: validation.errors // Những warning nhẹ (quá nhiều/ít)
+                };
+            }
+
+            // Nếu Failed: Lưu lại kết quả ít lỗi nhất để làm Fallback
+            const errorCount = validation.errors.filter(e => e.severity === 'error').length;
+            if (errorCount < fewestErrorsCount) {
+                fewestErrorsCount = errorCount;
+                bestResult = {
+                    success: false,
+                    data: weights,
+                    errors: validation.errors
+                };
+            }
+        } catch (error) {
+            console.error(`Attempt ${attempt} failed:`, error.message);
+        }
+    }
+
+    // Thất bại toàn tập sau MAX_RETRIES -> Trả về bestResult (kèm lỗi để UX render cảnh báo)
+    if (bestResult) {
+         return bestResult;
+    }
+    
+    return {
+        success: false,
+        errors: [{ type: 'FATAL', severity: 'error', message: 'Hệ thống không thể tạo tổ hợp nguyên liệu phù hợp với Macro này.' }]
+    };
+};
+
 module.exports = {
     allocateMealTargets,
+    pickIngredientsForTemplate,
     solveLinearSystem3x3,
     calculateWeights,
-    validateSolution
+    validateSolution,
+    generateMealPlan
 };
