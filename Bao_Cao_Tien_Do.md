@@ -58,7 +58,38 @@ Dự án được chia thành 6 giai đoạn phát triển (Phases). Hiện tạ
 4. **Thuật toán Tổng hợp & Snapshot Dinh dưỡng (Nutrition Aggregation Algorithm):** Thuật toán tính toán tổng hợp (Reduce) kết hợp cơ chế ưu tiên dữ liệu (Data Prioritization). Thuật toán kiểm tra và sử dụng trạng thái dữ liệu tại thời điểm ăn (snapshot) để tính toán tổng, nhằm bảo toàn tính toàn vẹn của lịch sử nhật ký.
 5. **Thuật toán Tìm kiếm & Xếp hạng Ưu tiên (Prioritized Search Algorithm):** Tự động xây dựng câu lệnh lọc (Dynamic Query Building) dựa trên danh mục/từ khóa, đồng thời thực thi thuật toán xếp hạng: ưu tiên đẩy các món ăn tùy chỉnh (Custom Foods) của người dùng lên trước các món mặc định của hệ thống.
 
-## 6. KẾ HOẠCH CÔNG VIỆC SẮP TỚI (Sprint cuối)
+## 6. CƠ SỞ LÝ THUYẾT & CÔNG THỨC ÁP DỤNG
+Dưới đây là các công thức toán học và sinh học cốt lõi được lập trình trong hệ thống:
+
+**1. Chỉ số cơ thể (Cơ bản):**
+- **BMI** = Cân nặng / (Chiều cao * Chiều cao) *(Lưu ý: Chiều cao tính bằng mét)*
+- **BMR (Nam)** = (10 * Cân nặng) + (6.25 * Chiều cao) - (5 * Tuổi) + 5
+- **BMR (Nữ)** = (10 * Cân nặng) + (6.25 * Chiều cao) - (5 * Tuổi) - 161
+- **TDEE** = BMR * Hệ số vận động (1.2 đến 1.9)
+
+**2. Mục tiêu dinh dưỡng (Ngày):**
+- **Calo Duy trì** = TDEE
+- **Calo Giảm cân** = TDEE - 500
+- **Calo Tăng cân** = TDEE + 500
+
+**3. Công thức chia Macros (Tỷ lệ 30% Đạm - 40% Tinh bột - 30% Béo):**
+- **Protein (g)** = (Tổng Calo * 0.3) / 4
+- **Carbs (g)** = (Tổng Calo * 0.4) / 4
+- **Fat (g)** = (Tổng Calo * 0.3) / 9
+
+**4. Công thức luyện tập & Nước:**
+- **Calo Đốt cháy** = MET * Cân nặng * Thời gian tập (giờ)
+- **Mục tiêu Nước (ml)** = Cân nặng * 35
+
+**5. Công thức tính toán lại khi có tập luyện (Scale):**
+- **Hệ số nhân thêm** = (Calo Mục tiêu + Calo Đốt từ tập luyện) / Calo Mục tiêu
+- **Macros Mới** = Macros Gốc * Hệ số nhân thêm
+
+**6. Công thức đo tiến độ:**
+- **% Hoàn thành** = (Đã nạp / Mục tiêu) * 100
+- **Tỷ lệ cân bằng dinh dưỡng (%)** = (Calo của từng nhóm chất / Tổng calo đã nạp) * 100
+
+## 7. KẾ HOẠCH CÔNG VIỆC SẮP TỚI (Sprint cuối)
 Để nghiệm thu và nộp sản phẩm hoàn chỉnh, các công việc trong thời gian  tới bao gồm:
 1. Xây dựng module `utils/pdf.util.js` sử dụng thư viện PDFKit hỗ trợ font Unicode Tiếng Việt.
 2. Hoàn thiện tính năng tải Báo Cáo Thống Kê dạng PDF cho người dùng.
@@ -66,6 +97,21 @@ Dự án được chia thành 6 giai đoạn phát triển (Phases). Hiện tạ
 4. Viết và chỉnh sửa Quyển Báo Cáo Đồ Án bản cứng.
 5. Nghiên cứu và phát triển tính năng **Tùy chỉnh tỷ lệ Macros (Custom Macros Planner)**: Cho phép người dùng linh hoạt điều chỉnh tỷ lệ phần trăm (Protein/Carbs/Fat) thay vì cố định, nâng tầm trải nghiệm cá nhân hóa.
 6. Cài đặt tính năng **Gom nhóm món ăn (Meal Builder / Combo)**: Giải quyết vấn đề nhập liệu lặp lại bằng cách cho phép người dùng gom nhiều nguyên liệu/món lẻ thành một công thức (Recipe) tự nấu dùng chung nhiều lần.
+
+## 8. HƯỚNG PHÁT TRIỂN & CÁC THUẬT TOÁN DỰ KIẾN (Future Scope)
+Để mở rộng hệ thống đạt tiêu chuẩn của các ứng dụng dinh dưỡng thương mại lớn, dự án có định hướng nghiên cứu và tích hợp thêm các thuật toán bậc cao sau:
+
+**1. Thuật toán Điều chỉnh TDEE Thích ứng (Adaptive TDEE Algorithm):**
+- **Vấn đề:** Các công thức tính BMR/TDEE tĩnh (như Mifflin-St Jeor) sẽ mất dần độ chính xác sau một thời gian do quá trình trao đổi chất của cơ thể chậm lại khi ăn kiêng (Metabolic Adaptation).
+- **Giải pháp thuật toán:** Thu thập dữ liệu theo thời gian thực gồm: (1) Lượng calo nạp vào trung bình tuần và (2) Dao động cân nặng trung bình tuần. Nếu cân nặng không thay đổi đúng với mục tiêu thâm hụt năng lượng, thuật toán sẽ tự động tính toán lại và hiệu chỉnh giảm TDEE thực tế xuống, giúp phá vỡ trạng thái "đứng cân" của người dùng.
+
+**2. Thuật toán Chấm điểm Chất lượng Bữa ăn (Meal Quality Scoring Algorithm):**
+- **Vấn đề:** Việc chỉ đạt đủ số lượng Calo/Macro là chưa đủ để phản ánh sức khỏe toàn diện. Nguồn gốc của lượng calo đó (từ thực phẩm sạch hay thức ăn nhanh) mới quyết định chất lượng dinh dưỡng.
+- **Giải pháp thuật toán:** Áp dụng logic đánh giá **Mật độ dinh dưỡng (Nutrient Density)**. Thuật toán sẽ quét qua các vi chất (Fiber, Sugar, Sodium) đã được lưu trữ trong Database. Dựa vào bộ luật tiêu chuẩn y tế, hệ thống sẽ chấm điểm xếp hạng (A, B, C, D) cho tổng thể các bữa ăn trong ngày. Ví dụ: Bữa ăn đủ Macro nhưng quá lượng đường và natri cho phép sẽ bị hạ điểm, giúp định hướng thói quen ăn uống lành mạnh hơn.
+
+**3. Tư duy Kiến trúc Tách biệt (Decoupling) giữa Dinh dưỡng và Tập luyện:**
+- **Hạn chế của hệ thống hiện tại:** Hiện tại, thuật toán của dự án đang tính toán theo hướng cộng dồn lượng calo đốt cháy từ tập luyện vào quỹ calo được phép nạp trong ngày (tương tự MyFitnessPal). Cách tiếp cận này bộc lộ điểm yếu thực tế: Dẫn đến hiện tượng tính trùng (Double-counting) do mức độ vận động đã được bao hàm trong hệ số tính TDEE ban đầu. Cùng với sai số ước tính lượng calo đốt từ bài tập có thể lên tới 40-90%, việc cho phép "ăn bù" sẽ phá hỏng hoàn toàn quá trình thâm hụt năng lượng.
+- **Hướng cải tiến (Triết lý Hardcore Tracking):** Trong tương lai, hệ thống sẽ được tái cấu trúc để tách biệt hoàn toàn hai module. Module tập luyện sẽ hoạt động độc lập chỉ với mục đích lưu lịch sử, đánh giá tiến độ sức mạnh và tạo động lực tâm lý. Quỹ calo ăn uống sẽ được "chốt" cố định theo TDEE mục tiêu ban đầu. Việc "cắt đứt" liên kết này giúp triệt tiêu hoàn toàn sai số và đưa hệ thống tiệm cận với tiêu chuẩn y khoa thể thao hiện đại.
 
 ---
 **Nhận xét chung của sinh viên:** 
