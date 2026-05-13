@@ -135,6 +135,12 @@ const Food = sequelize.define('Food', {
         allowNull: false,
         defaultValue: 'dish',
     },
+    proteinProfile: {
+        // Phân loại nguồn đạm (lean: nạc, moderate: vừa, fatty: mỡ)
+        type: DataTypes.ENUM('lean', 'moderate', 'fatty'),
+        allowNull: true,
+        defaultValue: null,
+    },
     isSuggestable: {
         // true = thuật toán gợi ý có thể đề xuất món này; false = nguyên liệu thô/gia vị, không gợi ý
         type: DataTypes.BOOLEAN,
