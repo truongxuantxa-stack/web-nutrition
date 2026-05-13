@@ -62,9 +62,9 @@ exports.getDiary = async (req, res) => {
         const consumed    = sumNutritionFromEntries(entries);
 
         // ── Tính effectiveTarget trước tiên ─────────────────────────────────
-        // effectiveTarget = Mục tiêu TDEE + Calo đốt từ luyện tập (Phương án B)
+        // Hardcore Tracking: KHÔNG cộng calo đốt từ luyện tập vào TDEE
         const totalBurned     = await getTotalBurnedByDate(user.id, date);
-        const effectiveTarget = (metrics.targetCalories || 0) + totalBurned;
+        const effectiveTarget = metrics.targetCalories || 0;
 
         // ── Macro hiệu quả (scale tỷ lệ thuận theo effectiveTarget) ─────────
         const effectiveMacros = calculateEffectiveMacros(

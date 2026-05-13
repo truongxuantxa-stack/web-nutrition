@@ -54,7 +54,7 @@ exports.getDashboard = async (req, res) => {
             attributes: ['caloriesBurned'],
         });
         const totalBurned     = Math.round(exerciseLogs.reduce((sum, l) => sum + l.caloriesBurned, 0));
-        const effectiveTarget = (metrics.targetCalories || 0) + totalBurned;
+        const effectiveTarget = metrics.targetCalories || 0; // Hardcore Tracking: Không cộng calo tập luyện
 
         // Nước uống hôm nay
         const { total: waterTotal } = await getWaterByDate(user.id, today);
