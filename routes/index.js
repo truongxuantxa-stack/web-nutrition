@@ -22,9 +22,12 @@ const diaryRoutes    = require('./diary.routes');
 const weightRoutes   = require('./weight.routes');
 const exerciseRoutes = require('./exercise.routes');
 const waterRoutes    = require('./water.routes');
+const mealPlannerRoutes = require('./mealPlanner.routes');
+
 router.use('/', requireAuth, requireOnboarded, diaryRoutes);
 router.use('/', requireAuth, requireOnboarded, weightRoutes);
 router.use('/', requireAuth, requireOnboarded, exerciseRoutes);
 router.use('/', requireAuth, requireOnboarded, waterRoutes);
+router.use('/api/meal-planner', requireAuth, requireOnboarded, mealPlannerRoutes);
 
 module.exports = router;
