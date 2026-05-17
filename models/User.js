@@ -146,6 +146,19 @@ const User = sequelize.define('User', {
             max: { args: [70], msg: 'Fat tối đa 70%.' },
         },
     },
+    adaptiveTDEE: {
+        // TDEE thích ứng mới nhất tính toán được
+        // null = chưa đủ dữ liệu để tính
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
+    useAdaptiveTDEE: {
+        // Cờ bật/tắt sử dụng TDEE thích ứng (mặc định bật)
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+    },
 }, {
     tableName: 'users',
     timestamps: true,

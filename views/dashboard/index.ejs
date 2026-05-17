@@ -69,10 +69,26 @@
     </div>
 
     <!-- TDEE -->
-    <div class="stat-card purple">
-      <p class="stat-label">TDEE</p>
+    <div class="stat-card purple relative">
+      <p class="stat-label flex items-center justify-between">
+        <span>TDEE</span>
+        <% if (metrics.isAdaptiveActive) { %>
+          <span class="text-[10px] font-bold bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded cursor-help flex items-center gap-0.5 border border-purple-200" title="Dựa trên dữ liệu ăn uống và cân nặng 4 tuần qua, cơ thể bạn đang tiêu hao mức calo khác dự kiến. Chúng tôi đã điều chỉnh tự động để giúp bạn tiếp tục đạt mục tiêu.">Thích ứng ⚡</span>
+        <% } else { %>
+          <span class="text-[10px] font-bold bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">Tĩnh</span>
+        <% } %>
+      </p>
       <p class="stat-value text-purple-600 animated-num"><%= metrics.tdee || '–' %></p>
-      <p class="stat-sub">kcal / ngày vận động</p>
+      <p class="stat-sub text-xs">
+        <% if (metrics.isAdaptiveActive && metrics.staticTDEE) { %>
+          <span class="line-through text-gray-400 mr-1"><%= metrics.staticTDEE %></span>
+          <span class="<%= metrics.tdee < metrics.staticTDEE ? 'text-red-500' : 'text-green-500' %> font-bold">
+            <%= metrics.tdee < metrics.staticTDEE ? 'giảm' : 'tăng' %> <%= Math.abs(metrics.staticTDEE - metrics.tdee) %> kcal
+          </span>
+        <% } else { %>
+          kcal / ngày vận động
+        <% } %>
+      </p>
     </div>
 
     <!-- Mục tiêu -->
@@ -393,6 +409,58 @@ new Chart(wCtx, {
   }
 });
 <% } %>
+</script>
+
+<!-- Script lấy thông báo Adaptive TDEE lần đầu và Lịch sử -->
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const res = await fetch('/api/adaptive-tdee/status');
+        const json = await res.json();
+        
+        if (json.success && json.data.isAdaptiveActive && json.data.latestLog) {
+            const log = json.data.latestLog;
+            // Kiểm tra xem log này có mới được tạo trong 2 ngày gần đây không
+            const logDate = new Date(log.weekStartDate);
+            const today = new Date();
+            const diffTime = Math.abs(today - logDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Dùng localStorage để chỉ hiển thị toast 1 lần
+            const toastKey = `adaptive_toast_shown_${log.weekStartDate}`;
+            
+            if (diffDays <= 3 && !localStorage.getItem(toastKey)) {
+                // Hiển thị Toast
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-purple-600 text-white px-5 py-3 rounded-xl shadow-lg z-50 flex items-start gap-3 max-w-sm transform transition-all translate-y-20 opacity-0';
+                toast.innerHTML = `
+                    <div class="text-2xl mt-0.5">🎉</div>
+                    <div>
+                        <h4 class="font-bold text-sm mb-1">Tối ưu hóa thông minh!</h4>
+                        <p class="text-xs text-purple-100">Hệ thống đã tự động tối ưu lượng calo dựa trên dữ liệu thực tế tuần qua của bạn.</p>
+                    </div>
+                    <button class="text-purple-300 hover:text-white" onclick="this.parentElement.remove()">✕</button>
+                `;
+                document.body.appendChild(toast);
+                
+                // Animate in
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-20', 'opacity-0');
+                }, 500);
+                
+                // Animate out sau 7s
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                    setTimeout(() => toast.remove(), 500);
+                }, 7000);
+                
+                localStorage.setItem(toastKey, 'true');
+            }
+        }
+    } catch (err) {
+        console.error('Lỗi khi fetch TDEE status:', err);
+    }
+});
 </script>
 
 <%- include('../partials/footer') %>

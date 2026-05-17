@@ -11,6 +11,7 @@ const ExerciseLog = require('./ExerciseLog');
 const WaterLog    = require('./WaterLog');
 const MealTemplate = require('./MealTemplate');
 const UserMealConfig = require('./UserMealConfig');
+const AdaptiveTDEELog = require('./AdaptiveTDEELog');
 
 // ── Associations ──────────────────────────────────────────────────────────────
 
@@ -46,6 +47,10 @@ WaterLog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 User.hasOne(UserMealConfig, { foreignKey: 'userId', as: 'mealConfig', onDelete: 'CASCADE', hooks: true });
 UserMealConfig.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+// User <-> AdaptiveTDEELog (1 user có nhiều log TDEE thích ứng)
+User.hasMany(AdaptiveTDEELog, { foreignKey: 'userId', as: 'adaptiveTDEELogs', onDelete: 'CASCADE', hooks: true });
+AdaptiveTDEELog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
 // ── Sync & Export ─────────────────────────────────────────────────────────────
 module.exports = {
     sequelize,
@@ -57,4 +62,5 @@ module.exports = {
     WaterLog,
     MealTemplate,
     UserMealConfig,
+    AdaptiveTDEELog,
 };

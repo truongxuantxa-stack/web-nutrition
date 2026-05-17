@@ -29,9 +29,12 @@ router.use('/', requireAuth, requireOnboarded, weightRoutes);
 router.use('/', requireAuth, requireOnboarded, exerciseRoutes);
 router.use('/', requireAuth, requireOnboarded, waterRoutes);
 
-// ─── Meal Planner ────────────────────────────────────────────────────────────
 const mealPlannerController = require('../controllers/mealPlanner.controller');
 router.get('/lap-ke-hoach', requireAuth, requireOnboarded, mealPlannerController.renderMealPlannerPage);
 router.use('/api/meal-planner', requireAuth, requireOnboarded, mealPlannerRoutes);
+
+// ─── Adaptive TDEE ───────────────────────────────────────────────────────────
+const adaptiveTDEERoutes = require('./adaptiveTDEE.routes');
+router.use('/api/adaptive-tdee', requireAuth, requireOnboarded, adaptiveTDEERoutes);
 
 module.exports = router;

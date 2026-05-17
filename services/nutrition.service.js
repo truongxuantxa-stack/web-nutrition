@@ -193,7 +193,12 @@ const calculateAllMetrics = (user) => {
     const bmi       = calculateBMI(user.weight, user.height);
     const bmiClass  = classifyBMI(bmi);
     const bmr       = calculateBMR(user);
-    const tdee      = calculateTDEE(bmr, user.activityLevel);
+    const staticTDEE = calculateTDEE(bmr, user.activityLevel);
+    
+    // Tích hợp Adaptive TDEE
+    const isAdaptiveActive = user.useAdaptiveTDEE && user.adaptiveTDEE !== null;
+    const tdee = isAdaptiveActive ? user.adaptiveTDEE : staticTDEE;
+    
     const targetCal = adjustCaloriesForGoal(tdee, user.goal);
     const age       = user.birthDate ? calculateAge(user.birthDate) : null;
 
@@ -219,6 +224,8 @@ const calculateAllMetrics = (user) => {
         bmiClass,
         bmr,
         tdee,
+        staticTDEE,
+        isAdaptiveActive,
         targetCalories: targetCal,
         macros,
         macroRatios,

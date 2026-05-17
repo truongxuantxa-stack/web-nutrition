@@ -49,6 +49,11 @@ app.listen(PORT, async () => {
         // sync({ alter: true }) để cập nhật schema mà không mất dữ liệu
         await sequelize.sync({ alter: true });
         console.log('✅ Database đã được đồng bộ!');
+
+        // Khởi động Cron Jobs
+        const adaptiveCron = require('./cron/adaptive.cron');
+        adaptiveCron.startCronJobs();
+        console.log('✅ Đã khởi động Cron Jobs (Adaptive TDEE)');
     } catch (error) {
         console.error('❌ Lỗi kết nối Database:', error.message);
     }

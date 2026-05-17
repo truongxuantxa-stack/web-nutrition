@@ -241,6 +241,47 @@
     </div>
   </div>
 
+  <!-- ── Cài Đặt Nâng Cao (Adaptive TDEE) ────────────────────── -->
+  <div class="nt-card p-6 md:p-8 mt-5">
+    <div class="flex items-center gap-2 mb-1">
+      <div class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-black"
+           style="background:linear-gradient(135deg,#6b7280,#374151)">⚙️</div>
+      <p class="section-title">Cài Đặt Nâng Cao</p>
+    </div>
+    <p class="text-xs text-gray-500 font-medium mb-5">
+      Các tính năng tự động hóa và thử nghiệm của hệ thống.
+    </p>
+
+    <div class="flex items-start justify-between p-4 rounded-xl mb-3" style="background:#f8fafc; border: 1px solid #e2e8f0;">
+      <div>
+        <h4 class="text-sm font-bold text-gray-800 mb-1 flex items-center gap-2">
+          Thuật toán TDEE Thích ứng
+          <span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-bold">Smart</span>
+        </h4>
+        <p class="text-xs text-gray-500 max-w-md leading-relaxed">
+          Tự động điều chỉnh mục tiêu calo dựa trên tốc độ thay đổi cân nặng thực tế thay vì dùng công thức tĩnh. Điều này giúp phá vỡ trạng thái "đứng cân" (Metabolic Adaptation).
+        </p>
+      </div>
+      <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-2">
+        <input type="checkbox" id="adaptiveToggle" class="sr-only peer" <%= user.useAdaptiveTDEE ? 'checked' : '' %> onchange="toggleAdaptiveTDEE(this)">
+        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+      </label>
+    </div>
+
+    <!-- Nút Bỏ qua tuần -->
+    <div class="flex items-center justify-between p-4 rounded-xl" style="background:#fffbeb; border: 1px solid #fde68a;">
+      <div>
+        <h4 class="text-sm font-bold text-amber-800 mb-1">Tạm dừng thuật toán (Tuần này)</h4>
+        <p class="text-xs text-amber-700 max-w-md leading-relaxed">
+          Nếu bạn đang ốm, đi du lịch, hoặc không thể ghi chép chính xác trong tuần này, hãy bấm "Bỏ qua" để hệ thống không sử dụng dữ liệu sai lệch để tính toán.
+        </p>
+      </div>
+      <button type="button" onclick="skipAdaptiveWeek(this)" class="px-4 py-2 bg-white text-amber-700 border border-amber-300 rounded-lg text-xs font-bold shadow-sm hover:bg-amber-50 transition-all flex-shrink-0 ml-3">
+        ⏭️ Bỏ qua tuần này
+      </button>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -380,6 +421,63 @@ async function saveMacros() {
     showToast('Lỗi kết nối, vui lòng thử lại.', 'error');
     btn.disabled = false;
     btn.textContent = '💾 Lưu tỷ lệ';
+  }
+}
+
+// ── Adaptive TDEE Toggle ──────────────────────────────────────
+async function toggleAdaptiveTDEE(checkbox) {
+  const isEnabled = checkbox.checked;
+  checkbox.disabled = true;
+  
+  try {
+    const res = await fetch('/api/adaptive-tdee/toggle', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ useAdaptiveTDEE: isEnabled }),
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      showToast(isEnabled ? 'Đã bật TDEE Thích ứng' : 'Đã tắt TDEE Thích ứng', 'success');
+    } else {
+      showToast('Có lỗi xảy ra', 'error');
+      checkbox.checked = !isEnabled; // revert
+    }
+  } catch (error) {
+    showToast('Lỗi kết nối', 'error');
+    checkbox.checked = !isEnabled; // revert
+  } finally {
+    checkbox.disabled = false;
+  }
+}
+
+async function skipAdaptiveWeek(btn) {
+  if (!confirm('Bạn có chắc chắn muốn bỏ qua dữ liệu tuần này? Hệ thống sẽ giữ nguyên TDEE cũ.')) return;
+  
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Đang xử lý...';
+  
+  try {
+    const res = await fetch('/api/adaptive-tdee/skip-week', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message, 'success');
+      btn.innerHTML = '✅ Đã bỏ qua';
+      btn.classList.replace('text-amber-700', 'text-gray-400');
+      btn.classList.replace('border-amber-300', 'border-gray-200');
+    } else {
+      showToast('Có lỗi xảy ra', 'error');
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+  } catch (error) {
+    showToast('Lỗi kết nối', 'error');
+    btn.innerHTML = originalText;
+    btn.disabled = false;
   }
 }
 </script>
