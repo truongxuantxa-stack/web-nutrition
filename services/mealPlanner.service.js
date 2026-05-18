@@ -51,7 +51,7 @@ const allocateMealTargets = (dailyTargetCal, dailyMacros, userMealConfig) => {
  * @param {Array} excludeIds - Danh sách id không muốn chọn
  * @returns {Object} Food model (JSON)
  */
-const pickRandomFoodByRole = async (role, excludeIds = []) => {
+const pickRandomFoodByRole = async (role, excludeIds = [], allowedTags = []) => {
     const whereClause = {
         category: role,
         foodType: 'raw'
@@ -63,8 +63,19 @@ const pickRandomFoodByRole = async (role, excludeIds = []) => {
     const candidates = await Food.findAll({ where: whereClause });
     if (!candidates || candidates.length === 0) return null;
 
-    const randomIndex = Math.floor(Math.random() * candidates.length);
-    return candidates[randomIndex].toJSON();
+    // Lọc theo tags nếu template có yêu cầu
+    let filtered = candidates;
+    if (allowedTags && allowedTags.length > 0) {
+        filtered = candidates.filter(f => {
+            const foodTags = f.tags || [];
+            return allowedTags.some(tag => foodTags.includes(tag));
+        });
+        // Fallback: nếu không có food nào khớp tag -> dùng toàn bộ pool
+        if (filtered.length === 0) filtered = candidates;
+    }
+
+    const randomIndex = Math.floor(Math.random() * filtered.length);
+    return filtered[randomIndex].toJSON();
 };
 
 /**
@@ -79,6 +90,7 @@ const pickIngredientsForTemplate = async (template, preferences = {}) => {
 
     for (const slot of template.slots) {
         const role = slot.role;
+        const allowedTags = slot.allowedTags || [];
         let pickedFood = null;
 
         // Nếu user đã ghim cứng 1 món cho slot này
@@ -89,7 +101,7 @@ const pickIngredientsForTemplate = async (template, preferences = {}) => {
 
         // Nếu không có ghim hoặc tìm không thấy -> random
         if (!pickedFood) {
-            pickedFood = await pickRandomFoodByRole(role, excludeIds);
+            pickedFood = await pickRandomFoodByRole(role, excludeIds, allowedTags);
         }
 
         if (!pickedFood) {

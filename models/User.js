@@ -159,6 +159,13 @@ const User = sequelize.define('User', {
         allowNull: false,
         defaultValue: true,
     },
+    allergies: {
+        // Mảng JSON lưu ID các Food mà user bị dị ứng
+        // VD: [3, 15, 22] → user dị ứng với Food ID 3, 15, 22
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: null,
+    },
 }, {
     tableName: 'users',
     timestamps: true,

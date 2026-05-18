@@ -141,6 +141,13 @@ const Food = sequelize.define('Food', {
         allowNull: true,
         defaultValue: null,
     },
+    tags: {
+        // Nhãn phân loại concept ẩm thực (dùng cho MealTemplate filtering)
+        // Ví dụ: ['traditional', 'healthy_bowl']
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: null,
+    },
     isSuggestable: {
         // true = thuật toán gợi ý có thể đề xuất món này; false = nguyên liệu thô/gia vị, không gợi ý
         type: DataTypes.BOOLEAN,

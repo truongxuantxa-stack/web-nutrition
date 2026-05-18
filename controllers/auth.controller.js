@@ -2,7 +2,7 @@
 
 const bcrypt = require('bcryptjs');
 const jwt    = require('jsonwebtoken');
-const { User } = require('../models');
+const { User, Food } = require('../models');
 const { calculateWaterGoal, calculateAllMetrics } = require('../services/nutrition.service');
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -328,5 +328,36 @@ exports.updateProfile = async (req, res) => {
             return renderError(err.errors[0].message);
         }
         renderError('Đã có lỗi xảy ra. Vui lòng thử lại.');
+    }
+};
+
+// ─── GET /api/user/allergies ─────────────────────────────────────────────────
+exports.getAllergies = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id);
+        const allergyIds = user.allergies || [];
+        if (allergyIds.length === 0) {
+            return res.json({ success: true, data: [] });
+        }
+        const foods = await Food.findAll({
+            where: { id: allergyIds },
+            attributes: ['id', 'name', 'category']
+        });
+        res.json({ success: true, data: foods });
+    } catch (error) {
+        console.error('Error getAllergies:', error);
+        res.status(500).json({ success: false, message: 'Lỗi server' });
+    }
+};
+
+// ─── PUT /api/user/allergies ─────────────────────────────────────────────────
+exports.updateAllergies = async (req, res) => {
+    try {
+        const { foodIds } = req.body;
+        await req.user.update({ allergies: foodIds || [] });
+        res.json({ success: true, message: 'Đã cập nhật danh sách dị ứng.' });
+    } catch (error) {
+        console.error('Error updateAllergies:', error);
+        res.status(500).json({ success: false, message: 'Lỗi server' });
     }
 };

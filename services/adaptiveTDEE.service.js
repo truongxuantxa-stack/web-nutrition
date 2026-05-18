@@ -46,32 +46,54 @@ const calculateWeeklyIntake = async (userId, weekStart, weekEnd) => {
  * 2. Calculate Smoothed Weight (EMA)
  */
 const calculateSmoothedWeight = async (userId, weekStart, weekEnd) => {
+    // Lùi lại 14 ngày trước ngày bắt đầu tuần để lấy dữ liệu "Warm-up" cho EMA
+    const startDate = new Date(weekStart);
+    startDate.setDate(startDate.getDate() - 14);
+    const warmUpStart = startDate.toISOString().split('T')[0];
+
     const logs = await WeightLog.findAll({
         where: {
             userId,
             date: {
-                [Op.gte]: weekStart,
+                [Op.gte]: warmUpStart,
                 [Op.lte]: weekEnd
             }
         },
         order: [['date', 'ASC']]
     });
 
-    if (logs.length < MIN_WEIGHT_LOGS) return null;
+    // Lọc riêng các log của tuần hiện tại để kiểm tra điều kiện số lượng tối thiểu
+    const currentWeekLogs = logs.filter(log => log.date >= weekStart && log.date <= weekEnd);
+    if (currentWeekLogs.length < MIN_WEIGHT_LOGS) return null;
 
     let ema = logs[0].weight;
-    const startWeight = ema;
-    
-    for (let i = 1; i < logs.length; i++) {
-        ema = (EMA_ALPHA * logs[i].weight) + ((1 - EMA_ALPHA) * ema);
+    let startWeight = null;
+    const targetStart = new Date(weekStart);
+
+    for (let i = 0; i < logs.length; i++) {
+        if (i > 0) {
+            ema = (EMA_ALPHA * logs[i].weight) + ((1 - EMA_ALPHA) * ema);
+        }
+        
+        // Khi bắt đầu chạm hoặc vượt qua ngày bắt đầu tuần hiện tại, ghi nhận startWeight từ EMA đã làm ấm
+        const logDate = new Date(logs[i].date);
+        if (logDate >= targetStart && startWeight === null) {
+            startWeight = ema;
+        }
     }
+
     const endWeight = ema;
+
+    // Trường hợp dự phòng nếu không tìm thấy startWeight do lệch múi giờ hoặc định dạng ngày
+    if (startWeight === null && currentWeekLogs.length > 0) {
+        startWeight = currentWeekLogs[0].weight;
+    }
 
     return {
         startWeight,
         endWeight,
         weightDelta: endWeight - startWeight,
-        logsCount: logs.length
+        logsCount: currentWeekLogs.length
     };
 };
 
@@ -182,8 +204,8 @@ const processWeeklyAdaptation = async (userId, weekStart, weekEnd) => {
 
     // Tính confidence
     let confidence = 'high';
-    if (daysLogged === 5) confidence = 'low';
-    if (daysLogged === 6) confidence = 'medium';
+    if (daysLogged <= 5) confidence = 'low';
+    else if (daysLogged === 6) confidence = 'medium';
 
     let savedLog;
     if (existingLog) {
@@ -221,10 +243,22 @@ const processWeeklyAdaptation = async (userId, weekStart, weekEnd) => {
         });
     }
 
-    // Cập nhật User
-    await user.update({
-        adaptiveTDEE: rollingTDEE
+    // Chỉ cập nhật User.adaptiveTDEE khi đã có ít nhất 2 tuần hợp lệ (applied/clamped) cùng mục tiêu
+    // savedLog đã được lưu ở trên, nên count này bao gồm cả tuần hiện tại.
+    // validWeeksCount >= 2 tức là tuần hiện tại là tuần thứ 2 trở lên của mục tiêu này.
+    const validWeeksCount = await AdaptiveTDEELog.count({
+        where: {
+            userId,
+            userGoal,
+            status: { [Op.in]: ['applied', 'clamped'] }
+        }
     });
+
+    if (validWeeksCount >= 2) {
+        await user.update({ adaptiveTDEE: rollingTDEE });
+    }
+    // Nếu validWeeksCount === 1 (tuần đầu tiên): log đã được lưu làm baseline,
+    // nhưng User.adaptiveTDEE vẫn giữ nguyên null → hệ thống dùng TDEE tĩnh.
 
     return savedLog;
 };

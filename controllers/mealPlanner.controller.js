@@ -114,8 +114,16 @@ exports.generateMeal = async (req, res) => {
 
         const mealTarget = await getMealTarget(userId, mealKey);
 
+        // Auto-inject allergies vào exclude list
+        const user = await User.findByPk(userId);
+        const allergyIds = user.allergies || [];
+        const mergedPreferences = {
+            ...preferences,
+            exclude: [...(preferences?.exclude || []), ...allergyIds]
+        };
+
         // Gọi Orchestrator M1->M4
-        const result = await mealPlannerService.generateMealPlan(template, mealTarget, preferences || {});
+        const result = await mealPlannerService.generateMealPlan(template, mealTarget, mergedPreferences);
 
         if (!result.success && result.errors.some(e => e.type === 'FATAL')) {
             return res.status(400).json(result);
@@ -198,16 +206,42 @@ exports.swapIngredient = async (req, res) => {
 // 6. GET /api/meal-planner/foods
 exports.getFoodsByRole = async (req, res) => {
     try {
-        const { role } = req.query; // carb, protein, fat
-        if (!role) {
-            return res.status(400).json({ success: false, message: 'Thiếu tham số role.' });
+        const { role, tags, excludeAllergies } = req.query; // carb, protein, fat
+        if (!role && role !== '') {
+            // we allow empty role to get all foods for profile search
         }
         
-        const foods = await Food.findAll({
-            where: { category: role, foodType: 'raw' },
-            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'unit']
+        let allergyIds = [];
+        if (excludeAllergies !== 'false') {
+            const user = await User.findByPk(req.user.id);
+            allergyIds = user.allergies || [];
+        }
+
+        const whereClause = { foodType: 'raw' };
+        if (role) {
+            whereClause.category = role;
+        }
+
+        if (allergyIds.length > 0) {
+            const { Op } = require('sequelize');
+            whereClause.id = { [Op.notIn]: allergyIds };
+        }
+
+        let foods = await Food.findAll({
+            where: whereClause,
+            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'unit', 'tags', 'category']
         });
         
+        // Lọc theo tags nếu có
+        if (tags) {
+            const tagList = tags.split(',');
+            const filtered = foods.filter(f => {
+                const foodTags = f.tags || [];
+                return tagList.some(tag => foodTags.includes(tag));
+            });
+            if (filtered.length > 0) foods = filtered;
+        }
+
         res.json({ success: true, data: foods });
     } catch (error) {
         console.error('Error getFoodsByRole:', error);

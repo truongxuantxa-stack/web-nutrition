@@ -28,7 +28,8 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 - [x] Phase 1-3: Khởi tạo, Database, Auth & Onboarding.
 - [x] Phase 4: Core Logic (Nhật ký ăn, uống, tập, cân nặng).
 - [x] Phase 5: Giao diện UI/UX & Thuật toán lõi (Meal Planner, Adaptive TDEE).
-- [ ] **Phase 6: Xuất Báo cáo PDF & Landing Page (Đang tập trung).**
+- [ ] **Phase 6: Xuất Báo cáo PDF 
+phase 7:Landing page
 
 ## 6. Changelog (Nhật ký thay đổi)
 - **[feat] Adaptive TDEE System:** Triển khai thuật toán chống thích ứng chuyển hóa (EMA filtering, ±30% Clamping, 4-week Rolling Average). Tích hợp Cron Job chạy mỗi tuần, cho phép user theo dõi lịch sử và chủ động Skip tuần. Đồng bộ huy hiệu cảnh báo (Badges) xuyên suốt Dashboard và Diary.

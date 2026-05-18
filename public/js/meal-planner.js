@@ -26,10 +26,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // State
     let currentResultData = null; // Lưu mảng các món đang suggest
     let currentMealKey = null;
+    let currentTemplate = null; // Lưu template đang dùng
+    let currentWarnings = [];
+    let pinnedFoods = {}; // { role: foodId }
 
     // ─── Khởi tạo ────────────────────────────────────────────────────────────────
     loadConfig();
     loadTemplates();
+    loadAllergies();
+
+    selectTemplate.addEventListener('change', () => { pinnedFoods = {}; currentWarnings = []; });
+    selectMealKey.addEventListener('change', () => { pinnedFoods = {}; currentWarnings = []; });
+
+    async function loadAllergies() {
+        try {
+            const { data } = await axios.get('/api/user/allergies');
+            if (data.success && data.data && data.data.length > 0) {
+                const banner = document.getElementById('allergyBanner');
+                const bannerText = document.getElementById('allergyBannerText');
+                if (banner && bannerText) {
+                    const names = data.data.map(f => f.name).join(', ');
+                    bannerText.textContent = `Đã kích hoạt lọc dị ứng: ${names}`;
+                    banner.classList.remove('hidden');
+                }
+            }
+        } catch (error) {
+            console.error('Lỗi tải danh sách dị ứng:', error);
+        }
+    }
 
     // ─── Cấu hình % Bữa Ăn ───────────────────────────────────────────────────────
     async function loadConfig() {
@@ -167,14 +191,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const { data } = await axios.post('/api/meal-planner/generate', {
                 mealKey,
                 templateId,
-                preferences: {} // Chưa áp dụng preferences ở phiên bản v1
+                preferences: { ...pinnedFoods }
             });
 
             if (data.success || (!data.success && data.data)) {
+                // Lưu template hiện tại để swap biết cần lọc theo tags nào
+                const templateRes = await axios.get('/api/meal-planner/templates');
+                currentTemplate = templateRes.data.data.find(t => t.id == templateId);
+
                 // Có dữ liệu data (kể cả khi warning hay error mảng)
                 currentResultData = data.data;
                 currentMealKey = mealKey;
-                renderResult(data.data, data.warnings || data.errors, data.success);
+                currentWarnings = data.warnings || data.errors || [];
+                renderResult(data.data, currentWarnings, data.success);
             } else {
                 showError(data.message || (data.errors && data.errors[0]?.message) || 'Lỗi không xác định.');
             }
@@ -215,6 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const isNegative = g < 0;
             const cardBg = isNegative ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-100 hover:border-green-200';
             
+            const isPinned = pinnedFoods[f.category] === f.id;
+
             // Lấy icon theo category
             let icon = 'fa-leaf text-green-500';
             if(f.category === 'protein') icon = 'fa-drumstick-bite text-red-500';
@@ -222,7 +253,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if(f.category === 'fat') icon = 'fa-droplet text-yellow-500';
 
             const html = `
-                <div class="flex items-center justify-between p-4 rounded-2xl border ${cardBg} transition-all group">
+                <div class="flex items-center justify-between p-4 rounded-2xl border ${cardBg} transition-all group relative">
+                    ${isPinned ? '<span class="absolute -top-3 -right-2 bg-amber-400 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md z-10">📌 Đã Ghim</span>' : ''}
                     <div class="flex items-center gap-4">
                         <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center border border-gray-100">
                             <i class="fa-solid ${icon}"></i>
@@ -245,11 +277,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-green-600 hover:border-green-300 transition-colors" title="Đổi nguyên liệu khác" onclick="window.openSwapModal(${f.id}, '${f.category}', '${f.name.replace(/'/g, "\\'")}')">
                             <i class="fa-solid fa-rotate"></i>
                         </button>
+                        <!-- Nút Ghim món -->
+                        <button class="w-8 h-8 rounded-full ${isPinned ? 'bg-amber-100 border-amber-400 text-amber-600' : 'bg-white border-gray-200 text-gray-400'} border flex items-center justify-center hover:text-amber-600 hover:border-amber-300 transition-colors"
+                                title="${isPinned ? 'Bỏ ghim' : 'Ghim nguyên liệu này'}"
+                                onclick="window.togglePin(${f.id}, '${f.category}')">
+                            <i class="fa-solid fa-thumbtack"></i>
+                        </button>
                     </div>
                 </div>
             `;
             foodListContainer.insertAdjacentHTML('beforeend', html);
         });
+
+        window.togglePin = function(foodId, role) {
+            if (pinnedFoods[role] === foodId) {
+                delete pinnedFoods[role];
+            } else {
+                pinnedFoods[role] = foodId;
+            }
+            renderResult(currentResultData, currentWarnings, true);
+        };
 
         // Cập nhật tổng
         resTotalCal.textContent = `${Math.round(tCal)} kcal`;
@@ -292,7 +339,15 @@ document.addEventListener('DOMContentLoaded', () => {
         swapFoodList.innerHTML = '<div class="text-center py-4"><span class="loading loading-spinner"></span> Đang tải nguyên liệu...</div>';
 
         try {
-            const { data } = await axios.get(`/api/meal-planner/foods?role=${role}`);
+            // Lấy allowedTags của slot tương ứng từ template hiện tại
+            let tagsParam = '';
+            if (currentTemplate && currentTemplate.slots) {
+                const slot = currentTemplate.slots.find(s => s.role === role);
+                if (slot && slot.allowedTags) {
+                    tagsParam = `&tags=${slot.allowedTags.join(',')}`;
+                }
+            }
+            const { data } = await axios.get(`/api/meal-planner/foods?role=${role}${tagsParam}`);
             if(data.success && data.data) {
                 renderSwapList(data.data, currentFoodId, role);
             }
@@ -348,7 +403,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.success || (!data.success && data.data)) {
                 currentResultData = data.data; // Cập nhật state
-                renderResult(data.data, data.warnings || data.errors, data.success);
+                currentWarnings = data.warnings || data.errors || [];
+                renderResult(data.data, currentWarnings, data.success);
             } else {
                 alert(data.message || (data.errors && data.errors[0]?.message) || 'Lỗi không xác định.');
             }

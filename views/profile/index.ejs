@@ -282,6 +282,38 @@
     </div>
   </div>
 
+  <!-- ── Quản Lý Dị Ứng (Allergies) ────────────────────────────── -->
+  <div class="nt-card p-6 md:p-8 mt-5">
+    <div class="flex items-center gap-2 mb-1">
+      <div class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-black"
+           style="background:linear-gradient(135deg,#f43f5e,#e11d48)">⚠️</div>
+      <p class="section-title">Thực Phẩm Dị Ứng</p>
+    </div>
+    <p class="text-xs text-gray-500 font-medium mb-5">
+      Các thực phẩm này sẽ tự động bị loại trừ khỏi các gợi ý bữa ăn.
+    </p>
+
+    <!-- Search Box -->
+    <div class="relative mb-4 z-50">
+      <input type="text" id="allergySearch" placeholder="🔍 Tìm kiếm nguyên liệu (VD: Tôm, Đậu phộng)..." 
+             class="nt-input w-full" oninput="debounceSearchAllergy(this.value)">
+      <div id="allergyDropdown" class="absolute z-50 w-full bg-white border border-gray-200 rounded-xl mt-1 shadow-lg hidden max-h-48 overflow-y-auto">
+        <!-- Results -->
+      </div>
+    </div>
+
+    <!-- Selected Allergies list -->
+    <div id="allergyList" class="flex flex-wrap gap-2 min-h-[40px] p-3 rounded-xl bg-gray-50 border border-gray-100">
+      <span class="text-sm text-gray-400 italic" id="emptyAllergyText">Đang tải danh sách...</span>
+    </div>
+
+    <div class="flex justify-end mt-4">
+      <button type="button" id="saveAllergyBtn" onclick="saveAllergies()" class="btn-primary-green px-8 py-2.5 text-sm hidden">
+        💾 Lưu dị ứng
+      </button>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -480,6 +512,125 @@ async function skipAdaptiveWeek(btn) {
     btn.disabled = false;
   }
 }
+
+// ── Allergy Management ────────────────────────────────────────
+let allergyFoods = [];
+let searchTimeout = null;
+
+async function loadAllergies() {
+  try {
+    const res = await fetch('/api/user/allergies');
+    const data = await res.json();
+    if (data.success) {
+      allergyFoods = data.data;
+      renderAllergies();
+    }
+  } catch(e) {
+    document.getElementById('emptyAllergyText').textContent = 'Lỗi tải dữ liệu dị ứng.';
+  }
+}
+
+function renderAllergies() {
+  const container = document.getElementById('allergyList');
+  if (allergyFoods.length === 0) {
+    container.innerHTML = '<span class="text-sm text-gray-400 italic" id="emptyAllergyText">Bạn chưa có thực phẩm dị ứng nào.</span>';
+  } else {
+    container.innerHTML = '';
+    allergyFoods.forEach(food => {
+      const tag = document.createElement('div');
+      tag.className = 'flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm font-bold';
+      tag.innerHTML = `
+        ${food.name}
+        <button type="button" class="text-red-400 hover:text-red-700" onclick="removeAllergy(${food.id})">✕</button>
+      `;
+      container.appendChild(tag);
+    });
+  }
+  document.getElementById('saveAllergyBtn').classList.remove('hidden');
+}
+
+function removeAllergy(id) {
+  allergyFoods = allergyFoods.filter(f => f.id !== id);
+  renderAllergies();
+}
+
+function addAllergy(id, name) {
+  if (!allergyFoods.find(f => f.id === id)) {
+    allergyFoods.push({ id, name });
+    renderAllergies();
+  }
+  document.getElementById('allergySearch').value = '';
+  document.getElementById('allergyDropdown').classList.add('hidden');
+}
+
+function debounceSearchAllergy(query) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => searchAllergyFood(query), 300);
+}
+
+async function searchAllergyFood(query) {
+  const dropdown = document.getElementById('allergyDropdown');
+  if (!query || query.length < 2) {
+    dropdown.classList.add('hidden');
+    return;
+  }
+  try {
+    const res = await fetch(`/api/meal-planner/foods?excludeAllergies=false`);
+    const data = await res.json();
+    if (data.success) {
+      const filtered = data.data.filter(f => f.name.toLowerCase().includes(query.toLowerCase())).slice(0, 5);
+      dropdown.innerHTML = '';
+      if (filtered.length > 0) {
+        filtered.forEach(f => {
+          const item = document.createElement('div');
+          item.className = 'px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm font-bold border-b border-gray-50 last:border-0';
+          item.textContent = f.name;
+          item.onclick = () => addAllergy(f.id, f.name);
+          dropdown.appendChild(item);
+        });
+      } else {
+        dropdown.innerHTML = '<div class="px-4 py-2 text-sm text-gray-500 italic">Không tìm thấy...</div>';
+      }
+      dropdown.classList.remove('hidden');
+    }
+  } catch(e) {
+    console.error('Lỗi tìm kiếm:', e);
+  }
+}
+
+async function saveAllergies() {
+  const btn = document.getElementById('saveAllergyBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang lưu...';
+  try {
+    const res = await fetch('/api/user/allergies', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ foodIds: allergyFoods.map(f => f.id) })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message, 'success');
+    } else {
+      showToast('Có lỗi xảy ra', 'error');
+    }
+  } catch(e) {
+    showToast('Lỗi kết nối', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '💾 Lưu dị ứng';
+  }
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', loadAllergies);
+
+// Hide dropdown on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#allergySearch') && !e.target.closest('#allergyDropdown')) {
+    document.getElementById('allergyDropdown').classList.add('hidden');
+  }
+});
 </script>
 
 <%- include('../partials/footer') %>

@@ -3,6 +3,86 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const { sequelize, Food } = require('../models');
 
+const tagMap = {
+    // --- Protein ---
+    'Ức gà (Thô)': ['traditional', 'healthy_bowl'],
+    'Thịt bò thăn (Thô)': ['traditional', 'healthy_bowl'],
+    'Cá hồi tươi (Thô)': ['healthy_bowl'],
+    'Cá rô phi (Thô)': ['traditional'],
+    'Tôm tươi (Thô)': ['traditional', 'healthy_bowl'],
+    'Lòng trắng trứng (Thô)': ['healthy_bowl'],
+    'Đậu phụ (Thô)': ['traditional', 'healthy_bowl'],
+    'Sữa chua Hy Lạp (Thô)': ['healthy_bowl'],
+    'Thịt đùi gà (Bỏ da)': ['traditional'],
+    'Thịt lợn thăn (Nạc)': ['traditional'],
+    'Bắp bò (Nạc)': ['traditional'],
+    'Cá ngừ đại dương': ['healthy_bowl'],
+    'Mực ống tươi': ['traditional'],
+    'Bạch tuộc': ['traditional'],
+    'Lòng đỏ trứng (Thô)': ['traditional'], // fallback if not in map is fine, but I can omit
+    'Đậu nành (Hạt khô)': ['healthy_bowl'],
+    'Phô mai tươi (Cottage Cheese)': ['healthy_bowl'],
+    'Thịt vịt (Nạc)': ['traditional'],
+    'Cá thu (Thô)': ['traditional'],
+    'Cá chép (Thô)': ['traditional'],
+    'Tôm sú (Thô)': ['traditional'],
+    'Sữa tươi không đường': ['healthy_bowl'],
+    'Cá basa': ['traditional'],
+    'Tempeh (Tương nén)': ['healthy_bowl'],
+    'Lươn (Thô)': ['traditional'],
+    'Ếch (Thô)': ['traditional'],
+    'Cá lóc (Thô)': ['traditional'],
+    'Cá diêu hồng (Thô)': ['traditional'],
+    'Đậu hũ non (Thô)': ['traditional', 'healthy_bowl'],
+    'Trứng gà (Thô)': ['traditional', 'healthy_bowl'],
+    'Trứng vịt (Thô)': ['traditional'],
+
+    // --- Carb ---
+    'Cơm trắng (Thô/Chín)': ['traditional'],
+    'Yến mạch khô (Thô)': ['healthy_bowl'],
+    'Gạo lứt (Thô)': ['healthy_bowl'],
+    'Khoai lang (Thô)': ['traditional', 'healthy_bowl'],
+    'Hạt Quinoa (Thô)': ['healthy_bowl'],
+    'Ngô ngọt (Bắp)': ['traditional', 'healthy_bowl'],
+    'Bí đỏ (Bí ngô)': ['traditional'],
+    'Đậu đỏ (Hạt khô)': ['traditional'],
+    'Đậu xanh (Hạt khô)': ['traditional'],
+    'Sắn (Khoai mì)': ['traditional'],
+    'Khoai tây (Thô)': ['traditional'],
+    'Khoai môn (Thô)': ['traditional'],
+    'Bún khô (Thô)': ['traditional'],
+    'Mì sợi khô (Thô)': ['traditional'],
+    'Bánh tráng (Thô)': ['traditional'],
+
+    // --- Fiber ---
+    'Bông cải xanh (Thô)': ['traditional', 'healthy_bowl'],
+    'Măng tây': ['traditional', 'healthy_bowl'],
+    'Rau cải chíp': ['traditional'],
+    'Rau muống': ['traditional'],
+    'Cải xoăn (Kale)': ['healthy_bowl'],
+    'Rau chân vịt (Spinach)': ['healthy_bowl'],
+    'Rau xà lách': ['traditional', 'healthy_bowl'],
+    'Ớt chuông': ['healthy_bowl'],
+    'Cà chua': ['traditional', 'healthy_bowl'],
+    'Dưa chuột': ['traditional', 'healthy_bowl'],
+    'Nấm kim châm': ['traditional', 'healthy_bowl'],
+    'Nấm đùi gà': ['traditional', 'healthy_bowl'],
+
+    // --- Fat ---
+    'Quả Bơ (Thô)': ['healthy_bowl'],
+    'Hạt Hạnh nhân (Thô)': ['healthy_bowl'],
+    'Hạt Chia (Thô)': ['healthy_bowl'],
+    'Dầu Olive (Thô)': ['traditional', 'healthy_bowl'],
+    'Hạt Óc chó': ['healthy_bowl'],
+    'Hạt Điều': ['healthy_bowl'],
+    'Hạt Bí': ['healthy_bowl'],
+    'Bơ đậu phộng (Nguyên chất)': ['healthy_bowl'],
+    'Dầu Dừa': ['traditional'],
+    'Vừng (Mè)': ['traditional'],
+    'Đậu phộng (Lạc thô)': ['traditional', 'healthy_bowl'],
+    'Mỡ heo (Thô)': ['traditional'],
+};
+
 const rawFoods = [
     // 1. Nhóm Protein (Chất đạm sạch) -> category: 'protein'
     { name: 'Ức gà (Thô)', calories: 165, protein: 31, carbs: 0, fat: 3.6, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
@@ -415,7 +495,7 @@ async function seedFoods() {
         await sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
 
         const now = new Date();
-        const allFoods = [...rawFoods, ...dishes, ...beverages].map((f) => ({
+        const allFoods = [...rawFoods.map(f => ({ ...f, tags: tagMap[f.name] || ['traditional'] })), ...dishes, ...beverages].map((f) => ({
             ...f,
             createdAt: now,
             updatedAt: now,

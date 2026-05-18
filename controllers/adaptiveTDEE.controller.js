@@ -129,6 +129,10 @@ exports.skipWeek = async (req, res) => {
         if (log) {
             await log.update({ status: 'skipped_by_user' });
         } else {
+            // Snapshot userGoal và staticTDEE tại thời điểm skip để lịch sử có thể truy vết
+            const user = await User.findByPk(userId);
+            const metrics = nutritionService.calculateAllMetrics(user);
+
             log = await AdaptiveTDEELog.create({
                 userId,
                 weekStartDate: currentWeekStart,
@@ -140,7 +144,9 @@ exports.skipWeek = async (req, res) => {
                 weightDelta: 0,
                 calculatedTDEE: 0,
                 rollingTDEE: 0,
-                staticTDEE: 0,
+                staticTDEE: metrics.staticTDEE || 0,
+                userGoal: user.goal,
+                targetCalories: metrics.targetCalories || 0,
                 status: 'skipped_by_user',
                 confidence: 'low'
             });

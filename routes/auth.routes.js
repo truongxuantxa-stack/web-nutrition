@@ -43,4 +43,11 @@ router.post('/ho-so', requireAuth, requireOnboarded, authController.updateProfil
 // PUT /ho-so/macros (lưu tỷ lệ macro tùy chỉnh — AJAX)
 router.put('/ho-so/macros', requireAuth, requireOnboarded, authController.updateMacros);
 
+// ─── API Dị Ứng (Allergies) ──────────────────────────────────────────────────
+// GET /api/user/allergies
+router.get('/api/user/allergies', requireAuth, authController.getAllergies);
+
+// PUT /api/user/allergies
+router.put('/api/user/allergies', requireAuth, authController.updateAllergies);
+
 module.exports = router;
