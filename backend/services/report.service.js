@@ -96,7 +96,7 @@ const getReportData = async (userId, range = 'week') => {
         AdaptiveTDEELog.findAll({
             where: { userId },
             order: [['weekStartDate', 'DESC']],
-            limit: 5,
+            limit: 6, // Lấy thêm 1 để có đủ sau khi loại tuần 1 baseline
         }),
     ]);
 
@@ -218,6 +218,14 @@ const getReportData = async (userId, range = 'week') => {
         goal:     GOAL_LABELS[user.goal] || 'Chưa cập nhật',
     };
 
+    // ── Lọc adaptive logs: bỏ tuần 1 baseline ───────────────────────────────
+    // Tuần 1 chỉ là điểm cơ sở, User.adaptiveTDEE chưa được cập nhật lúc đó.
+    // adaptiveLogs DESC nên phần tử cuối = tuần cũ nhất (= tuần 1 baseline).
+    const validLogs = adaptiveLogs.filter(l => ['applied', 'clamped'].includes(l.status));
+    const displayLogs = validLogs.length >= 2
+        ? validLogs.slice(0, validLogs.length - 1) // bỏ phần tử cuối = tuần 1
+        : [];
+
     return {
         user: userInfo,
         period: {
@@ -228,20 +236,25 @@ const getReportData = async (userId, range = 'week') => {
             rangeLabel: range === 'week' ? '7 ngày gần đây' : '30 ngày gần đây',
         },
         metrics: {
-            bmi:            metrics.bmi,
-            bmiClass:       metrics.bmiClass?.label || '–',
-            bmr:            metrics.bmr,
-            tdee:           metrics.tdee,
-            targetCalories: metrics.targetCalories,
-            macros:         metrics.macros,
-            macroRatios:    metrics.macroRatios,
+            bmi:             metrics.bmi,
+            bmiClass:        metrics.bmiClass?.label || '–',
+            bmr:             metrics.bmr,
+            tdee:            metrics.staticTDEE,        // TDEE tĩnh (Harris-Benedict) — không dùng adaptive
+            adaptiveTDEE:    user.adaptiveTDEE ? Math.round(user.adaptiveTDEE) : null,
+            useAdaptiveTDEE: user.useAdaptiveTDEE,
+            targetCalories:  metrics.targetCalories,
+            macros:          metrics.macros,
+            macroRatios:     metrics.macroRatios,
             waterGoal,
         },
         dailyLog,
         summary,
-        adaptiveTDEE: adaptiveLogs.map(l => ({
-            weekStart: l.weekStartDate,
-            tdee:      l.calculatedTDEE,
+        adaptiveTDEE: displayLogs.map(l => ({
+            weekStart:   l.weekStartDate,
+            weekEnd:     l.weekEndDate,
+            tdee:        l.calculatedTDEE,
+            rollingTDEE: l.rollingTDEE,
+            status:      l.status,
         })),
         isEmpty,
     };
