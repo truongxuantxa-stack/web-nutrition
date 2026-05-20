@@ -128,6 +128,13 @@ const getReportData = async (userId, range = 'week') => {
         waterByDate[key] += log.amount || 0;
     });
 
+    // ── Nhóm weight logs theo ngày ───────────────────────────────────────────
+    const weightByDate = {};
+    weightLogs.forEach(log => {
+        const key = log.date;
+        weightByDate[key] = log.weight; // Lấy cân nặng của ngày đó
+    });
+
     // ── Tổng hợp daily log (chỉ ngày CÓ diary) ──────────────────────────────
     const dailyLog = Object.entries(diaryByDate).map(([date, entries]) => {
         const nutrition = sumNutritionFromEntries(entries);
@@ -141,8 +148,10 @@ const getReportData = async (userId, range = 'week') => {
             protein:  Math.round(nutrition.protein),
             carbs:    Math.round(nutrition.carbs),
             fat:      Math.round(nutrition.fat),
+            fiber:    nutrition.fiber != null ? Math.round(nutrition.fiber) : null,
             water:    waterByDate[date] || 0,
             exerciseBurned: Math.round(exerciseByDate[date] || 0),
+            weight:   weightByDate[date] || null,
         };
     });
 
@@ -155,6 +164,7 @@ const getReportData = async (userId, range = 'week') => {
         avgProtein: 0,
         avgCarbs: 0,
         avgFat: 0,
+        avgFiber: 0,
         avgWater: 0,
         totalExerciseCalories: 0,
         calorieCompliance: 0, // % số ngày đạt ±10% target
@@ -169,6 +179,11 @@ const getReportData = async (userId, range = 'week') => {
         const totalProt = dailyLog.reduce((s, d) => s + d.protein, 0);
         const totalCarb = dailyLog.reduce((s, d) => s + d.carbs, 0);
         const totalFat  = dailyLog.reduce((s, d) => s + d.fat, 0);
+        
+        // Fiber: chỉ tính trung bình từ những ngày CÓ dữ liệu fiber
+        const daysWithFiber = dailyLog.filter(d => d.fiber != null);
+        const totalFiber = daysWithFiber.reduce((s, d) => s + d.fiber, 0);
+
         const totalWater = dailyLog.reduce((s, d) => s + d.water, 0);
         const totalExercise = dailyLog.reduce((s, d) => s + d.exerciseBurned, 0);
 
@@ -176,6 +191,7 @@ const getReportData = async (userId, range = 'week') => {
         summary.avgProtein  = Math.round(totalProt / daysWithData);
         summary.avgCarbs    = Math.round(totalCarb / daysWithData);
         summary.avgFat      = Math.round(totalFat / daysWithData);
+        summary.avgFiber    = daysWithFiber.length > 0 ? Math.round(totalFiber / daysWithFiber.length) : 0;
         summary.avgWater    = Math.round(totalWater / daysWithData);
         summary.totalExerciseCalories = Math.round(totalExercise);
 
