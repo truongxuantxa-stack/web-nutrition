@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectMealKey = document.getElementById('selectMealKey');
     const btnGenerate = document.getElementById('btnGenerate');
     const btnRetryGenerate = document.getElementById('btnRetryGenerate');
+
+    // Pin preset DOMs
+    const pinPresetSection = document.getElementById('pinPresetSection');
+    const pinSlotsContainer = document.getElementById('pinSlotsContainer');
+    const btnClearAllPins = document.getElementById('btnClearAllPins');
     
     const overlay = document.getElementById('loadingOverlay');
     const emptyState = document.getElementById('emptyState');
@@ -29,14 +34,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentTemplate = null; // Lưu template đang dùng
     let currentWarnings = [];
     let pinnedFoods = {}; // { role: foodId }
+    
+    // Cache for pin slot foods to prevent flickering on re-render
+    let templateFoodsCache = {}; // { templateId: { role: [foods] } }
 
     // ─── Khởi tạo ────────────────────────────────────────────────────────────────
     loadConfig();
     loadTemplates();
     loadAllergies();
 
-    selectTemplate.addEventListener('change', () => { pinnedFoods = {}; currentWarnings = []; });
-    selectMealKey.addEventListener('change', () => { pinnedFoods = {}; currentWarnings = []; });
+    selectTemplate.addEventListener('change', () => {
+        pinnedFoods = {};
+        currentWarnings = [];
+        renderPinSlots();
+    });
+    selectMealKey.addEventListener('change', () => { pinnedFoods = {}; currentWarnings = []; renderPinSlots(); });
 
     async function loadAllergies() {
         try {
@@ -161,12 +173,158 @@ document.addEventListener('DOMContentLoaded', () => {
                     opt.textContent = t.name;
                     selectTemplate.appendChild(opt);
                 });
+                // Render pin slots cho template mặc định đầu tiên
+                renderPinSlots();
             }
         } catch (error) {
             console.error('Lỗi tải template:', error);
             selectTemplate.innerHTML = '<option value="">Lỗi tải dữ liệu</option>';
         }
     }
+
+    // ─── Ghim Sẵn Nguyên Liệu ────────────────────────────────────────────────────
+    async function renderPinSlots() {
+        const templateId = selectTemplate.value;
+        if (!templateId) {
+            pinPresetSection.classList.add('hidden');
+            return;
+        }
+
+        // Lấy template hiện tại từ danh sách đã load
+        try {
+            const { data } = await axios.get('/api/meal-planner/templates');
+            const tpl = data.data && data.data.find(t => t.id == templateId);
+            if (!tpl || !tpl.slots || tpl.slots.length === 0) {
+                pinPresetSection.classList.add('hidden');
+                return;
+            }
+
+            currentTemplate = tpl;
+            pinPresetSection.classList.remove('hidden');
+
+            // Use cache if available
+            let results = [];
+            if (templateFoodsCache[templateId]) {
+                results = templateFoodsCache[templateId];
+            } else {
+                pinSlotsContainer.innerHTML = '<div class="text-xs text-gray-400 py-1"><span class="loading loading-spinner loading-xs"></span> Đang tải...</div>';
+                // Tải song song tất cả slot
+                const slotFoodPromises = tpl.slots.map(slot => {
+                    const tagsParam = slot.allowedTags && slot.allowedTags.length > 0
+                        ? `&tags=${slot.allowedTags.join(',')}`
+                        : '';
+                    return axios.get(`/api/meal-planner/foods?role=${slot.role}${tagsParam}`)
+                        .then(res => ({ slot, foods: res.data.success ? res.data.data : [] }))
+                        .catch(() => ({ slot, foods: [] }));
+                });
+
+                results = await Promise.all(slotFoodPromises);
+                templateFoodsCache[templateId] = results; // Save to cache
+            }
+
+            pinSlotsContainer.innerHTML = '';
+
+            const roleLabel = { protein: 'Protein', carb: 'Carb', fat: 'Chất béo', fiber: 'Rau/Fiber' };
+            const roleIcon = { protein: 'fa-drumstick-bite text-red-400', carb: 'fa-bowl-rice text-orange-400', fat: 'fa-droplet text-yellow-400', fiber: 'fa-leaf text-green-500' };
+
+            results.forEach(({ slot, foods }) => {
+                const label = roleLabel[slot.role] || slot.role;
+                const icon = roleIcon[slot.role] || 'fa-circle text-gray-400';
+                const pinnedId = pinnedFoods[slot.role];
+
+                const options = foods.map(f => {
+                    const sel = pinnedId === f.id ? 'selected' : '';
+                    return `<option value="${f.id}" ${sel}>${f.name}</option>`;
+                }).join('');
+
+                const pinned = pinnedId ? foods.find(f => f.id === pinnedId) : null;
+                const badgeHtml = pinned
+                    ? `<span class="text-[10px] bg-amber-100 text-amber-600 font-bold px-1.5 py-0.5 rounded-full ml-1 whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">📌 ${pinned.name}</span>`
+                    : '';
+
+                const html = `
+                    <div class="bg-gray-50 rounded-xl border border-gray-100 p-3">
+                        <div class="flex items-center gap-1.5 mb-1.5">
+                            <i class="fa-solid ${icon} text-xs"></i>
+                            <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">${label}</span>
+                            ${badgeHtml}
+                        </div>
+                        <div class="flex gap-2">
+                            <select class="flex-1 bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-green-500 transition-all pin-slot-select"
+                                    data-role="${slot.role}">
+                                <option value="">-- Ngẫu nhiên --</option>
+                                ${options}
+                            </select>
+                            <button type="button" class="px-2 py-1 rounded-lg text-xs font-bold transition-all pin-slot-btn ${pinnedId ? 'bg-amber-400 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-400 hover:border-amber-400 hover:text-amber-500'}"
+                                    data-role="${slot.role}" title="${pinnedId ? 'Bỏ ghim' : 'Ghim nguyên liệu này'}">
+                                <i class="fa-solid fa-thumbtack"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                pinSlotsContainer.insertAdjacentHTML('beforeend', html);
+            });
+
+            // Gắn event listeners
+            pinSlotsContainer.querySelectorAll('.pin-slot-select').forEach(select => {
+                select.addEventListener('change', () => {
+                    const role = select.dataset.role;
+                    const foodId = select.value ? Number(select.value) : null;
+                    if (foodId) {
+                        pinnedFoods[role] = foodId;
+                    } else {
+                        delete pinnedFoods[role];
+                    }
+                    updateClearAllBtnVisibility();
+                    renderPinSlots(); // Re-render using cache is fast and doesn't flicker significantly
+                    if (currentResultData) renderResult(currentResultData, currentWarnings, true);
+                });
+            });
+
+            pinSlotsContainer.querySelectorAll('.pin-slot-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const role = btn.dataset.role;
+                    
+                    if (pinnedFoods[role]) {
+                        // Bỏ ghim
+                        delete pinnedFoods[role];
+                    } else {
+                        // Nếu chưa ghim, lấy giá trị đang được chọn để ghim
+                        const select = pinSlotsContainer.querySelector(`.pin-slot-select[data-role="${role}"]`);
+                        const foodId = select && select.value ? Number(select.value) : null;
+                        if (foodId) {
+                            pinnedFoods[role] = foodId;
+                        } else {
+                            // Nếu select cũng trống, bỏ qua hoặc có thể random pin (nhưng tốt nhất là ko làm gì)
+                            return; 
+                        }
+                    }
+
+                    updateClearAllBtnVisibility();
+                    renderPinSlots();
+                    if (currentResultData) renderResult(currentResultData, currentWarnings, true);
+                });
+            });
+
+            updateClearAllBtnVisibility();
+        } catch (error) {
+            console.error('Lỗi render pin slots:', error);
+            pinPresetSection.classList.add('hidden');
+        }
+    }
+
+    function updateClearAllBtnVisibility() {
+        if (Object.keys(pinnedFoods).length > 0) {
+            btnClearAllPins.classList.remove('hidden');
+        } else {
+            btnClearAllPins.classList.add('hidden');
+        }
+    }
+
+    btnClearAllPins.addEventListener('click', () => {
+        pinnedFoods = {};
+        renderPinSlots();
+    });
 
     // ─── Sinh Bữa Ăn (Generate) ───────────────────────────────────────────────────
     btnGenerate.addEventListener('click', handleGenerate);
@@ -277,26 +435,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-green-600 hover:border-green-300 transition-colors" title="Đổi nguyên liệu khác" onclick="window.openSwapModal(${f.id}, '${f.category}', '${f.name.replace(/'/g, "\\'")}')">
                             <i class="fa-solid fa-rotate"></i>
                         </button>
-                        <!-- Nút Ghim món -->
-                        <button class="w-8 h-8 rounded-full ${isPinned ? 'bg-amber-100 border-amber-400 text-amber-600' : 'bg-white border-gray-200 text-gray-400'} border flex items-center justify-center hover:text-amber-600 hover:border-amber-300 transition-colors"
-                                title="${isPinned ? 'Bỏ ghim' : 'Ghim nguyên liệu này'}"
-                                onclick="window.togglePin(${f.id}, '${f.category}')">
-                            <i class="fa-solid fa-thumbtack"></i>
-                        </button>
                     </div>
                 </div>
             `;
             foodListContainer.insertAdjacentHTML('beforeend', html);
         });
 
-        window.togglePin = function(foodId, role) {
-            if (pinnedFoods[role] === foodId) {
-                delete pinnedFoods[role];
-            } else {
-                pinnedFoods[role] = foodId;
-            }
-            renderResult(currentResultData, currentWarnings, true);
-        };
+
 
         // Cập nhật tổng
         resTotalCal.textContent = `${Math.round(tCal)} kcal`;

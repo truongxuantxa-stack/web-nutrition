@@ -37,4 +37,8 @@ router.use('/api/meal-planner', requireAuth, requireOnboarded, mealPlannerRoutes
 const adaptiveTDEERoutes = require('./adaptiveTDEE.routes');
 router.use('/api/adaptive-tdee', requireAuth, requireOnboarded, adaptiveTDEERoutes);
 
+// ─── Report (Xuất báo cáo PDF) ───────────────────────────────────────────────
+const reportRoutes = require('./report.routes');
+router.use('/api/report', requireAuth, requireOnboarded, reportRoutes);
+
 module.exports = router;

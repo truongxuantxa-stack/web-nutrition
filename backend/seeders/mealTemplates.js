@@ -26,6 +26,16 @@ const templates = [
         ],
         isActive: true,
     },
+    {
+        name: 'Bữa phụ Năng lượng 🍌',
+        description: 'Bữa ăn nhẹ nhanh gọn, giàu năng lượng từ trái cây, yến mạch, whey protein và các loại hạt tốt.',
+        slots: [
+            { role: 'carb',    allowedTags: ['snack'] },
+            { role: 'protein', allowedTags: ['snack'] },
+            { role: 'fat',     allowedTags: ['snack'] },
+        ],
+        isActive: true,
+    },
 ];
 
 async function seedMealTemplates() {

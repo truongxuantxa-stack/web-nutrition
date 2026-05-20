@@ -366,7 +366,7 @@
               <%= entry.food ? entry.food.name : 'Món không xác định' %>
             </p>
             <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
-              <span class="text-xs text-gray-400 font-medium"><%= entry.amount %> <%= entry.food ? entry.food.unit : '' %></span>
+              <span class="text-xs text-gray-400 font-medium"><% if (entry.food && entry.food.unit === '100g') { %><%= Math.round(entry.amount * 100) %>g<% } else { %><%= entry.amount %> <%= entry.food ? entry.food.unit : '' %><% } %></span>
               <span class="text-xs font-black text-green-600"><%= Math.round(entry.caloriesSnapshot||0) %> kcal</span>
               <span class="pill pill-blue">P:<%= Math.round(entry.proteinSnapshot||0) %>g</span>
               <span class="pill pill-amber">C:<%= Math.round(entry.carbsSnapshot||0) %>g</span>
@@ -721,7 +721,7 @@ function appendNewEntryToDOM(entry) {
     <div class="flex-1 min-w-0">
       <p class="text-sm font-bold text-gray-800 truncate">${entry.foodName || 'Món không xác định'}</p>
       <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
-        <span class="text-xs text-gray-400 font-medium">${entry.amount} ${entry.unit || ''}</span>
+        <span class="text-xs text-gray-400 font-medium">${entry.unit === '100g' ? Math.round(entry.amount * 100) + 'g' : entry.amount + ' ' + (entry.unit || '')}</span>
         <span class="text-xs font-black text-green-600">${Math.round(addCal)} kcal</span>
         <span class="pill pill-blue">P:${Math.round(addPro)}g</span>
         <span class="pill pill-amber">C:${Math.round(addCarb)}g</span>

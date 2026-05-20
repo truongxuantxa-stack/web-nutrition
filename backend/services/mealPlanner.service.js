@@ -174,28 +174,35 @@ const solveLinearSystem3x3 = (A, b) => {
  * @returns {Array|null} Mảng kết quả gồm { food, grams }
  */
 const calculateWeights = (foods, target) => {
-    if (!foods || foods.length !== 4) {
-        throw new Error("Thuật toán yêu cầu chính xác 4 nguyên liệu (Carb, Protein, Fat, Fiber)");
+    if (!foods || (foods.length !== 3 && foods.length !== 4)) {
+        throw new Error("Thuật toán yêu cầu chính xác 3 hoặc 4 nguyên liệu.");
     }
 
-    // 1. Phân loại nguyên liệu (Tìm rau / Fiber)
-    const fiberFood = foods.find(f => f.category === 'fiber' || f.role === 'fiber');
+    let remaining = foods;
+    let adjustedTarget = { ...target };
+    let fiberFood = null;
     const FIBER_DEFAULT_GRAMS = 200; // Cố định 200g rau
-    const fiberWeight = FIBER_DEFAULT_GRAMS / 100;
 
-    if (!fiberFood) {
-        throw new Error("Không tìm thấy nguồn Rau/Fiber trong danh sách nguyên liệu.");
+    // 1. Phân loại nguyên liệu nếu là bữa chính (có 4 nguyên liệu)
+    if (foods.length === 4) {
+        fiberFood = foods.find(f => f.category === 'fiber' || f.role === 'fiber');
+        const fiberWeight = FIBER_DEFAULT_GRAMS / 100;
+
+        if (!fiberFood) {
+            throw new Error("Không tìm thấy nguồn Rau/Fiber trong danh sách nguyên liệu 4 món.");
+        }
+
+        // 2. Trừ lượng Macro của Rau ra khỏi mục tiêu bữa ăn
+        adjustedTarget = {
+            protein: target.protein - (fiberFood.protein * fiberWeight),
+            carbs: target.carbs - (fiberFood.carbs * fiberWeight),
+            fat: target.fat - (fiberFood.fat * fiberWeight)
+        };
+
+        // Lấy 3 nguyên liệu còn lại để giải phương trình
+        remaining = foods.filter(f => f.id !== fiberFood.id);
     }
 
-    // 2. Trừ lượng Macro của Rau ra khỏi mục tiêu bữa ăn
-    const adjustedTarget = {
-        protein: target.protein - (fiberFood.protein * fiberWeight),
-        carbs: target.carbs - (fiberFood.carbs * fiberWeight),
-        fat: target.fat - (fiberFood.fat * fiberWeight)
-    };
-
-    // 3. Lấy 3 nguyên liệu còn lại để giải phương trình
-    const remaining = foods.filter(f => f.id !== fiberFood.id);
     if (remaining.length !== 3) {
         throw new Error("Dữ liệu nguyên liệu còn lại không đúng 3 loại (Carb, Protein, Fat)");
     }
@@ -225,11 +232,13 @@ const calculateWeights = (foods, target) => {
         grams: Math.round(W[i] * 100)
     }));
 
-    // Bổ sung rau vào kết quả
-    results.push({
-        food: fiberFood,
-        grams: FIBER_DEFAULT_GRAMS
-    });
+    // Bổ sung rau vào kết quả nếu là bữa chính
+    if (fiberFood) {
+        results.push({
+            food: fiberFood,
+            grams: FIBER_DEFAULT_GRAMS
+        });
+    }
 
     return results;
 };

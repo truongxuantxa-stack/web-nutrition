@@ -10,9 +10,9 @@ const tagMap = {
     'Cá hồi tươi (Thô)': ['healthy_bowl'],
     'Cá rô phi (Thô)': ['traditional'],
     'Tôm tươi (Thô)': ['traditional', 'healthy_bowl'],
-    'Lòng trắng trứng (Thô)': ['healthy_bowl'],
+    'Lòng trắng trứng (Thô)': ['healthy_bowl', 'snack'],
     'Đậu phụ (Thô)': ['traditional', 'healthy_bowl'],
-    'Sữa chua Hy Lạp (Thô)': ['healthy_bowl'],
+    'Sữa chua Hy Lạp (Thô)': ['healthy_bowl', 'snack'],
     'Thịt đùi gà (Bỏ da)': ['traditional'],
     'Thịt lợn thăn (Nạc)': ['traditional'],
     'Bắp bò (Nạc)': ['traditional'],
@@ -21,12 +21,12 @@ const tagMap = {
     'Bạch tuộc': ['traditional'],
     'Lòng đỏ trứng (Thô)': ['traditional'], // fallback if not in map is fine, but I can omit
     'Đậu nành (Hạt khô)': ['healthy_bowl'],
-    'Phô mai tươi (Cottage Cheese)': ['healthy_bowl'],
+    'Phô mai tươi (Cottage Cheese)': ['healthy_bowl', 'snack'],
     'Thịt vịt (Nạc)': ['traditional'],
     'Cá thu (Thô)': ['traditional'],
     'Cá chép (Thô)': ['traditional'],
     'Tôm sú (Thô)': ['traditional'],
-    'Sữa tươi không đường': ['healthy_bowl'],
+    'Sữa tươi không đường': ['healthy_bowl', 'snack'],
     'Cá basa': ['traditional'],
     'Tempeh (Tương nén)': ['healthy_bowl'],
     'Lươn (Thô)': ['traditional'],
@@ -34,14 +34,15 @@ const tagMap = {
     'Cá lóc (Thô)': ['traditional'],
     'Cá diêu hồng (Thô)': ['traditional'],
     'Đậu hũ non (Thô)': ['traditional', 'healthy_bowl'],
-    'Trứng gà (Thô)': ['traditional', 'healthy_bowl'],
+    'Trứng gà (Thô)': ['traditional', 'healthy_bowl', 'snack'],
+    'Trứng cút (Thô)': ['traditional', 'healthy_bowl', 'snack'],
     'Trứng vịt (Thô)': ['traditional'],
 
     // --- Carb ---
     'Cơm trắng (Thô/Chín)': ['traditional'],
-    'Yến mạch khô (Thô)': ['healthy_bowl'],
+    'Yến mạch khô (Thô)': ['healthy_bowl', 'snack'],
     'Gạo lứt (Thô)': ['healthy_bowl'],
-    'Khoai lang (Thô)': ['traditional', 'healthy_bowl'],
+    'Khoai lang (Thô)': ['traditional', 'healthy_bowl', 'snack'],
     'Hạt Quinoa (Thô)': ['healthy_bowl'],
     'Ngô ngọt (Bắp)': ['traditional', 'healthy_bowl'],
     'Bí đỏ (Bí ngô)': ['traditional'],
@@ -69,18 +70,31 @@ const tagMap = {
     'Nấm đùi gà': ['traditional', 'healthy_bowl'],
 
     // --- Fat ---
-    'Quả Bơ (Thô)': ['healthy_bowl'],
-    'Hạt Hạnh nhân (Thô)': ['healthy_bowl'],
-    'Hạt Chia (Thô)': ['healthy_bowl'],
+    'Quả Bơ (Thô)': ['healthy_bowl', 'snack'],
+    'Hạt Hạnh nhân (Thô)': ['healthy_bowl', 'snack'],
+    'Hạt Chia (Thô)': ['healthy_bowl', 'snack'],
     'Dầu Olive (Thô)': ['traditional', 'healthy_bowl'],
-    'Hạt Óc chó': ['healthy_bowl'],
-    'Hạt Điều': ['healthy_bowl'],
-    'Hạt Bí': ['healthy_bowl'],
-    'Bơ đậu phộng (Nguyên chất)': ['healthy_bowl'],
+    'Hạt Óc chó': ['healthy_bowl', 'snack'],
+    'Hạt Điều': ['healthy_bowl', 'snack'],
+    'Hạt Bí': ['healthy_bowl', 'snack'],
+    'Bơ đậu phộng (Nguyên chất)': ['healthy_bowl', 'snack'],
     'Dầu Dừa': ['traditional'],
     'Vừng (Mè)': ['traditional'],
-    'Đậu phộng (Lạc thô)': ['traditional', 'healthy_bowl'],
+    'Đậu phộng (Lạc thô)': ['traditional', 'healthy_bowl', 'snack'],
     'Mỡ heo (Thô)': ['traditional'],
+
+    // --- Snack bổ sung ---
+    'Sữa Tăng Cơ (Whey Protein)': ['snack', 'healthy_bowl'],
+    'Thanh Protein (Protein Bar)': ['snack'],
+    'Bánh mì nguyên cám': ['carb', 'healthy_bowl', 'snack'],
+    'Bánh mì đen': ['carb', 'healthy_bowl', 'snack'],
+    'Bánh thuyền gạo lứt': ['carb', 'healthy_bowl', 'snack'],
+    'Sữa đậu nành không đường': ['snack', 'healthy_bowl'],
+    'Chuối (Thô)': ['snack'],
+    'Táo đỏ': ['snack'],
+    'Quả Việt quất': ['snack'],
+    'Quả Dâu tây': ['snack'],
+    'Hạt Hướng dương': ['fat', 'healthy_bowl', 'snack'],
 };
 
 const rawFoods = [
@@ -120,6 +134,11 @@ const rawFoods = [
     { name: 'Trứng gà (Thô)', calories: 155, protein: 13, carbs: 1.1, fat: 11, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
     { name: 'Trứng vịt (Thô)', calories: 185, protein: 12.8, carbs: 1.5, fat: 13.8, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
 
+    // === BỔ SUNG PROTEIN CHO BỮA PHỤ ===
+    { name: 'Sữa Tăng Cơ (Whey Protein)', calories: 380, protein: 78, carbs: 6, fat: 4, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
+    { name: 'Thanh Protein (Protein Bar)', calories: 350, protein: 30, carbs: 35, fat: 10, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
+    { name: 'Sữa đậu nành không đường', calories: 33, protein: 3.3, carbs: 1.8, fat: 1.6, unit: '100ml', category: 'protein', foodType: 'raw', isSuggestable: false },
+
     // 2. Nhóm Carb (Tinh bột chậm & Tinh bột nhanh) -> category: 'carb'
     { name: 'Cơm trắng (Thô/Chín)', calories: 130, protein: 2.7, carbs: 28, fat: 0.3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
     { name: 'Yến mạch khô (Thô)', calories: 389, protein: 16.9, carbs: 66.3, fat: 6.9, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
@@ -131,6 +150,9 @@ const rawFoods = [
     { name: 'Đậu đỏ (Hạt khô)', calories: 330, protein: 22, carbs: 60, fat: 1.2, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
     { name: 'Đậu xanh (Hạt khô)', calories: 347, protein: 24, carbs: 62, fat: 1.2, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
     { name: 'Sắn (Khoai mì)', calories: 160, protein: 1.4, carbs: 38, fat: 0.3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
+    { name: 'Bánh mì nguyên cám', calories: 247, protein: 13, carbs: 41.3, fat: 3.4, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
+    { name: 'Bánh mì đen', calories: 259, protein: 9, carbs: 48, fat: 3.3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
+    { name: 'Bánh thuyền gạo lứt', calories: 380, protein: 8, carbs: 80, fat: 3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
 
     // 2.1. Nhóm Fiber (Chất xơ / Rau củ) -> category: 'fiber'
     { name: 'Bông cải xanh (Thô)', calories: 34, protein: 2.8, carbs: 6.6, fat: 0.4, unit: '100g', category: 'fiber', foodType: 'raw', isSuggestable: false },
@@ -156,10 +178,10 @@ const rawFoods = [
     { name: 'Cà rốt', calories: 41, protein: 0.9, carbs: 9.6, fat: 0.2, unit: '100g', category: 'fiber', foodType: 'raw', isSuggestable: false },
 
     // 2.3. Nhóm Vitamin (Vitamin & Khoáng chất / Trái cây) -> category: 'vitamin'
-    { name: 'Chuối (Thô)', calories: 89, protein: 1.1, carbs: 22.8, fat: 0.3, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Táo đỏ', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Quả Việt quất', calories: 57, protein: 0.7, carbs: 14, fat: 0.3, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Quả Dâu tây', calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
+    { name: 'Chuối (Thô)', calories: 89, protein: 1.1, carbs: 22.8, fat: 0.3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
+    { name: 'Táo đỏ', calories: 52, protein: 0.3, carbs: 13.8, fat: 0.2, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
+    { name: 'Quả Việt quất', calories: 57, protein: 0.7, carbs: 14.5, fat: 0.3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
+    { name: 'Quả Dâu tây', calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
     { name: 'Đu đủ (Chín)', calories: 43, protein: 0.5, carbs: 10.8, fat: 0.3, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
     { name: 'Xoài (Chín)', calories: 60, protein: 0.8, carbs: 15, fat: 0.4, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
     { name: 'Dưa hấu', calories: 30, protein: 0.6, carbs: 7.6, fat: 0.2, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },

@@ -75,6 +75,23 @@
                         </select>
                     </div>
 
+                    <!-- Ghim sẵn nguyên liệu -->
+                    <div id="pinPresetSection" class="hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-semibold text-gray-700 flex items-center gap-1.5">
+                                <i class="fa-solid fa-thumbtack text-amber-500 text-xs"></i>
+                                Ghim Sẵn Nguyên Liệu
+                            </label>
+                            <button type="button" id="btnClearAllPins" class="text-xs text-gray-400 hover:text-red-500 transition-colors hidden">
+                                Xoá hết
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mb-3">Khoá nguyên liệu yêu thích trước khi tạo gợi ý.</p>
+                        <div id="pinSlotsContainer" class="space-y-2">
+                            <!-- Render JS -->
+                        </div>
+                    </div>
+
                     <button id="btnGenerate" class="w-full py-3 mt-2 rounded-xl text-sm font-bold text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                             style="background:linear-gradient(135deg,#16a34a,#059669)">
                         <i class="fa-solid fa-bolt mr-1"></i> TẠO GỢI Ý
