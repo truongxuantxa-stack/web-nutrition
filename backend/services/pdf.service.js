@@ -141,7 +141,7 @@ const drawCoverHeader = (doc, period) => {
  * @returns {PDFDocument} Stream PDF
  */
 const generateReportPDF = (reportData) => {
-    const { user, period, metrics, dailyLog, summary, isEmpty } = reportData;
+    const { user, period, metrics, dailyLog, summary, adaptiveTDEE, isEmpty } = reportData;
 
     const doc = new PDFDocument({
         size: 'A4',
@@ -190,14 +190,17 @@ const generateReportPDF = (reportData) => {
     y = drawSectionTitle(doc, '📊  CHỈ SỐ SỨC KHỎE', y);
 
     const metricsRows = [
-        ['BMI',                       metrics.bmi ? `${metrics.bmi}  (${metrics.bmiClass})` : '–'],
-        ['BMR (Trao đổi chất nền)',    metrics.bmr ? `${metrics.bmr} kcal/ngày` : '–'],
-        ['TDEE (Năng lượng tiêu hao)', metrics.tdee ? `${metrics.tdee} kcal/ngày` : '–'],
-        ['Mục tiêu calo/ngày',        metrics.targetCalories ? `${metrics.targetCalories} kcal` : '–'],
-        ['Protein mục tiêu',          metrics.macros?.protein ? `${metrics.macros.protein} g/ngày (${metrics.macroRatios?.protein || 30}%)` : '–'],
-        ['Carbs mục tiêu',            metrics.macros?.carbs ? `${metrics.macros.carbs} g/ngày (${metrics.macroRatios?.carbs || 40}%)` : '–'],
-        ['Fat mục tiêu',              metrics.macros?.fat ? `${metrics.macros.fat} g/ngày (${metrics.macroRatios?.fat || 30}%)` : '–'],
-        ['Nước uống mục tiêu',        metrics.waterGoal ? `${metrics.waterGoal} ml/ngày` : '–'],
+        ['BMI',                         metrics.bmi ? `${metrics.bmi}  (${metrics.bmiClass})` : '–'],
+        ['BMR (Trao đổi chất nền)',      metrics.bmr ? `${metrics.bmr} kcal/ngày` : '–'],
+        ['TDEE Tĩnh (Harris-Benedict)',  metrics.tdee ? `${metrics.tdee} kcal/ngày` : '–'],
+        ['TDEE Thích ứng',               metrics.adaptiveTDEE
+            ? `${metrics.adaptiveTDEE} kcal/ngày ✅`
+            : (metrics.useAdaptiveTDEE ? 'Chưa đủ dữ liệu (cần ≥2 tuần)' : 'Dùng TDEE tĩnh')],
+        ['Mục tiêu calo/ngày',          metrics.targetCalories ? `${metrics.targetCalories} kcal` : '–'],
+        ['Protein mục tiêu',            metrics.macros?.protein ? `${metrics.macros.protein} g/ngày (${metrics.macroRatios?.protein || 30}%)` : '–'],
+        ['Carbs mục tiêu',              metrics.macros?.carbs ? `${metrics.macros.carbs} g/ngày (${metrics.macroRatios?.carbs || 40}%)` : '–'],
+        ['Fat mục tiêu',                metrics.macros?.fat ? `${metrics.macros.fat} g/ngày (${metrics.macroRatios?.fat || 30}%)` : '–'],
+        ['Nước uống mục tiêu',          metrics.waterGoal ? `${metrics.waterGoal} ml/ngày` : '–'],
     ];
 
     metricsRows.forEach((row, i) => {
@@ -353,6 +356,194 @@ const generateReportPDF = (reportData) => {
         drawInfoRow(doc, PAGE_MARGIN, y, row[0], row[1], i % 2 === 0);
         y += 20;
     });
+
+    // ── Section: TDEE Thích ứng ───────────────────────────────────────────────
+    y += 6;
+    y = checkPageBreak(doc, y, 50);
+    y = drawSectionTitle(doc, '🧠  TDEE THÍCH ỨNG — SO SÁNH & LỊCH SỬ THEO TUẦN', y);
+
+    // ── So sánh TDEE tĩnh vs thích ứng ──────────────────────────────────────
+    if (metrics.adaptiveTDEE && metrics.tdee) {
+        const staticTDEE   = metrics.tdee;
+        const adaptiveTDEEVal = metrics.adaptiveTDEE;
+        const diff         = adaptiveTDEEVal - staticTDEE;
+        const diffPct      = Math.round((diff / staticTDEE) * 100);
+        const diffSign     = diff >= 0 ? '+' : '';
+        const diffColor    = diff > 0 ? COLORS.accent : diff < 0 ? '#DC2626' : COLORS.primary;
+
+        // Hộp so sánh 2 cột
+        const boxW  = doc.page.width - PAGE_MARGIN * 2;
+        const halfW = boxW / 2 - 4;
+
+        y = checkPageBreak(doc, y, 70);
+
+        // --- Ô TDEE Tĩnh (trái) ---
+        doc.save()
+           .rect(PAGE_MARGIN, y, halfW, 50)
+           .fillColor(COLORS.zebraRow)
+           .fill()
+           .restore();
+        doc.font(FONT_REGULAR).fontSize(8).fillColor(COLORS.gray)
+           .text('TDEE Tĩnh (Harris-Benedict)', PAGE_MARGIN + 6, y + 6, { width: halfW - 12 });
+        doc.font(FONT_BOLD).fontSize(18).fillColor(COLORS.black)
+           .text(`${staticTDEE} kcal`, PAGE_MARGIN + 6, y + 18, { width: halfW - 12 });
+        doc.font(FONT_REGULAR).fontSize(7.5).fillColor(COLORS.gray)
+           .text('Ước tính dựa trên công thức', PAGE_MARGIN + 6, y + 40, { width: halfW - 12 });
+
+        // --- Ô TDEE Thích ứng (phải) ---
+        doc.save()
+           .rect(PAGE_MARGIN + halfW + 8, y, halfW, 50)
+           .fillColor(COLORS.light)
+           .fill()
+           .restore();
+        doc.font(FONT_REGULAR).fontSize(8).fillColor(COLORS.accent)
+           .text('TDEE Thích ứng (thực tế)', PAGE_MARGIN + halfW + 14, y + 6, { width: halfW - 12 });
+        doc.font(FONT_BOLD).fontSize(18).fillColor(COLORS.dark)
+           .text(`${adaptiveTDEEVal} kcal`, PAGE_MARGIN + halfW + 14, y + 18, { width: halfW - 12 });
+        doc.font(FONT_REGULAR).fontSize(7.5).fillColor(COLORS.accent)
+           .text('Tính từ dữ liệu thực tế của bạn ✅', PAGE_MARGIN + halfW + 14, y + 40, { width: halfW - 12 });
+
+        y += 56;
+
+        let insight;
+        if (Math.abs(diffPct) <= 3) {
+            insight = `TDEE thích ứng xác nhận công thức tĩnh khá chính xác với bạn.`;
+        } else if (diff > 0) {
+            insight = `Cơ thể bạn đốt calo NHIỀU HƠN dự tính. Có thể tăng calo nếu đang giảm cân chậm hơn kế hoạch.`;
+        } else {
+            insight = `Cơ thể bạn đốt calo ÍT HƠN dự tính. Nên điều chỉnh giảm calo nạp vào nếu mục tiêu là giảm cân.`;
+        }
+
+        const textToPrint = `Chênh lệch: ${diffSign}${diff} kcal (${diffSign}${diffPct}%)  •  ${insight}`;
+
+        // Tính toán chiều cao cần thiết cho ô
+        doc.font(FONT_REGULAR).fontSize(8.5);
+        const reqHeight = doc.heightOfString(textToPrint, { width: boxW - 12 }) + 12; // padding trên dưới 6px
+        const boxHeight = Math.max(22, reqHeight);
+
+        y = checkPageBreak(doc, y, boxHeight + 4);
+        doc.save()
+           .rect(PAGE_MARGIN, y, boxW, boxHeight)
+           .fillColor(diff === 0 ? COLORS.light : diff > 0 ? '#FEF3C7' : '#FEE2E2')
+           .fill()
+           .restore();
+
+        doc.fillColor(diffColor)
+           .text(textToPrint, PAGE_MARGIN + 6, y + 6, { width: boxW - 12 });
+        y += boxHeight + 6;
+
+    } else if (metrics.useAdaptiveTDEE && !metrics.adaptiveTDEE) {
+        // Chưa đủ 2 tuần
+        y = checkPageBreak(doc, y, 30);
+        doc.font(FONT_REGULAR).fontSize(9).fillColor(COLORS.gray)
+           .text('TDEE thích ứng chưa được kích hoạt. Cần ít nhất 2 tuần ghi chép đầy đủ để hệ thống tính toán.', PAGE_MARGIN + 6, y + 6, {
+               width: doc.page.width - PAGE_MARGIN * 2 - 12,
+           });
+        y += 30;
+    }
+
+
+    // ── Bảng lịch sử TDEE theo tuần ─────────────────────────────────────────
+    y += 4;
+    y = checkPageBreak(doc, y, 20);
+    doc.font(FONT_BOLD).fontSize(9).fillColor(COLORS.dark)
+       .text('Lịch sử TDEE thích ứng theo tuần (từ tuần 2 trở đi):', PAGE_MARGIN, y);
+    y += 14;
+
+    if (!adaptiveTDEE || adaptiveTDEE.length === 0) {
+        y = checkPageBreak(doc, y, 30);
+        doc.font(FONT_REGULAR).fontSize(9).fillColor(COLORS.gray)
+           .text('Chưa có lịch sử. Hệ thống cần ít nhất 2 tuần ghi chép hợp lệ để hiển thị.', PAGE_MARGIN + 6, y + 6, {
+               width: doc.page.width - PAGE_MARGIN * 2 - 12,
+           });
+        y += 30;
+    } else {
+
+        // Header bảng
+        const aCols = [
+            { label: 'Tuần bắt đầu', width: 120 },
+            { label: 'Tuần kết thúc', width: 120 },
+            { label: 'TDEE tính được (kcal)', width: 120 },
+            { label: 'Trạng thái', width: 130 },
+        ];
+        const aTotalW = doc.page.width - PAGE_MARGIN * 2;
+
+        y = checkPageBreak(doc, y, 20);
+        doc.save()
+           .rect(PAGE_MARGIN, y, aTotalW, 18)
+           .fillColor(COLORS.light)
+           .fill()
+           .restore();
+
+        let ax = PAGE_MARGIN;
+        aCols.forEach(col => {
+            doc.font(FONT_BOLD).fontSize(8).fillColor(COLORS.accent)
+               .text(col.label, ax + 4, y + 5, { width: col.width - 8 });
+            ax += col.width;
+        });
+        y += 18;
+
+        // Rows (adaptiveTDEE đã sắp xếp DESC từ service, đảo lại để hiển thị tăng dần)
+        const sortedLogs = [...adaptiveTDEE].reverse();
+        sortedLogs.forEach((log, i) => {
+            y = checkPageBreak(doc, y, 18);
+            if (i % 2 === 0) {
+                doc.save()
+                   .rect(PAGE_MARGIN, y, aTotalW, 18)
+                   .fillColor(COLORS.zebraRow)
+                   .fill()
+                   .restore();
+            }
+
+            // Format ngày
+            const fmtDate = (d) => {
+                if (!d) return '–';
+                const dt = new Date(d);
+                return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
+            };
+
+            const STATUS_LABELS = {
+                applied:          'Hợp lệ',
+                clamped:          'Cập giới hạn',
+                skipped_low_data: 'Thiếu dữ liệu',
+                skipped_by_user:  'Bỏ qua',
+            };
+
+            const rowVals = [
+                fmtDate(log.weekStart),
+                fmtDate(log.weekEnd),
+                log.tdee ? Math.round(log.tdee).toString() : '–',
+                STATUS_LABELS[log.status] || log.status || '–',
+            ];
+
+            let bx = PAGE_MARGIN;
+            rowVals.forEach((val, j) => {
+                const color = j === 3 && log.status === 'applied' ? COLORS.primary
+                            : j === 3 && log.status === 'clamped' ? COLORS.accent
+                            : COLORS.black;
+                doc.font(j === 2 ? FONT_BOLD : FONT_REGULAR).fontSize(8).fillColor(color)
+                   .text(val, bx + 4, y + 5, { width: aCols[j].width - 8 });
+                bx += aCols[j].width;
+            });
+            y += 18;
+        });
+
+        // Dòng cuối: TDEE thích ứng hiện tại
+        if (metrics.adaptiveTDEE) {
+            y += 8;
+            y = checkPageBreak(doc, y, 30);
+            doc.save()
+               .rect(PAGE_MARGIN, y, aTotalW, 24)
+               .fillColor(COLORS.primary)
+               .roundedRect(PAGE_MARGIN, y, aTotalW, 24, 4)
+               .fill()
+               .restore();
+            doc.font(FONT_BOLD).fontSize(10).fillColor(COLORS.white)
+               .text(`✅  TDEE Thích ứng hiện tại (trung bình cuộn): ${metrics.adaptiveTDEE} kcal/ngày`,
+                   PAGE_MARGIN + 8, y + 7, { width: aTotalW - 16 });
+            y += 24;
+        }
+    }
 
     // ═══════════════════════════════════════════════════════════════════════
     // TRANG 3: Bảng Chi Tiết Theo Ngày
