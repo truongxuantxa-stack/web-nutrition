@@ -10,19 +10,19 @@ const path = require('path');
 
 // ── Đường dẫn font ───────────────────────────────────────────────────────────
 const FONT_REGULAR = path.join(__dirname, '../public/fonts/Roboto-Regular.ttf');
-const FONT_BOLD    = path.join(__dirname, '../public/fonts/Roboto-Bold.ttf');
+const FONT_BOLD = path.join(__dirname, '../public/fonts/Roboto-Bold.ttf');
 
 // ── Bảng màu Green/Health ────────────────────────────────────────────────────
 const COLORS = {
-    primary:    '#10B981', // Emerald-500
-    dark:       '#065F46', // Header dark
-    light:      '#F0FDF4', // Green-50
-    gray:       '#6B7280', // Gray-500
-    grayLight:  '#D1D5DB', // Gray-300
-    zebraRow:   '#F9FAFB', // Gray-50
-    white:      '#FFFFFF',
-    black:      '#111827',
-    accent:     '#059669', // Emerald-600
+    primary: '#10B981', // Emerald-500
+    dark: '#065F46', // Header dark
+    light: '#F0FDF4', // Green-50
+    gray: '#6B7280', // Gray-500
+    grayLight: '#D1D5DB', // Gray-300
+    zebraRow: '#F9FAFB', // Gray-50
+    white: '#FFFFFF',
+    black: '#111827',
+    accent: '#059669', // Emerald-600
 };
 
 const PAGE_MARGIN = 50;
@@ -32,12 +32,12 @@ const PAGE_MARGIN = 50;
  */
 const drawHRule = (doc, y, color = COLORS.grayLight) => {
     doc.save()
-       .moveTo(PAGE_MARGIN, y)
-       .lineTo(doc.page.width - PAGE_MARGIN, y)
-       .strokeColor(color)
-       .lineWidth(0.5)
-       .stroke()
-       .restore();
+        .moveTo(PAGE_MARGIN, y)
+        .lineTo(doc.page.width - PAGE_MARGIN, y)
+        .strokeColor(color)
+        .lineWidth(0.5)
+        .stroke()
+        .restore();
 };
 
 /**
@@ -49,17 +49,17 @@ const drawInfoRow = (doc, x, y, label, value, isZebra = false) => {
 
     if (isZebra) {
         doc.save()
-           .rect(PAGE_MARGIN, y, doc.page.width - PAGE_MARGIN * 2, rowH)
-           .fillColor(COLORS.zebraRow)
-           .fill()
-           .restore();
+            .rect(PAGE_MARGIN, y, doc.page.width - PAGE_MARGIN * 2, rowH)
+            .fillColor(COLORS.zebraRow)
+            .fill()
+            .restore();
     }
 
     doc.font(FONT_REGULAR).fontSize(9).fillColor(COLORS.gray)
-       .text(label, PAGE_MARGIN + 6, y + 5, { width: colW - 10 });
+        .text(label, PAGE_MARGIN + 6, y + 5, { width: colW - 10 });
 
     doc.font(FONT_BOLD).fontSize(9).fillColor(COLORS.black)
-       .text(String(value), PAGE_MARGIN + colW + 6, y + 5, { width: colW - 10 });
+        .text(String(value), PAGE_MARGIN + colW + 6, y + 5, { width: colW - 10 });
 };
 
 /**
@@ -67,13 +67,13 @@ const drawInfoRow = (doc, x, y, label, value, isZebra = false) => {
  */
 const drawSectionTitle = (doc, title, y) => {
     doc.save()
-       .rect(PAGE_MARGIN, y, doc.page.width - PAGE_MARGIN * 2, 22)
-       .fillColor(COLORS.dark)
-       .fill()
-       .restore();
+        .rect(PAGE_MARGIN, y, doc.page.width - PAGE_MARGIN * 2, 22)
+        .fillColor(COLORS.dark)
+        .fill()
+        .restore();
 
     doc.font(FONT_BOLD).fontSize(10).fillColor(COLORS.white)
-       .text(title, PAGE_MARGIN + 8, y + 6, { width: doc.page.width - PAGE_MARGIN * 2 - 16 });
+        .text(title, PAGE_MARGIN + 8, y + 6, { width: doc.page.width - PAGE_MARGIN * 2 - 16 });
 
     return y + 22;
 };
@@ -88,11 +88,11 @@ const drawFooter = (doc, pageNum, totalPages) => {
     drawHRule(doc, y - 5);
 
     doc.font(FONT_REGULAR).fontSize(8).fillColor(COLORS.gray)
-       .text('NMS — Hệ thống Quản lý Dinh dưỡng', PAGE_MARGIN, y + 2, { width, align: 'left', lineBreak: false })
-       .text(
-           `Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}   |   Trang ${pageNum}/${totalPages}`,
-           PAGE_MARGIN, y + 2, { width, align: 'right', lineBreak: false }
-       );
+        .text('NMS — Hệ thống Quản lý Dinh dưỡng', PAGE_MARGIN, y + 2, { width, align: 'left', lineBreak: false })
+        .text(
+            `Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}   |   Trang ${pageNum}/${totalPages}`,
+            PAGE_MARGIN, y + 2, { width, align: 'right', lineBreak: false }
+        );
 };
 
 /**
@@ -101,36 +101,166 @@ const drawFooter = (doc, pageNum, totalPages) => {
 const drawCoverHeader = (doc, period) => {
     // Nền header
     doc.save()
-       .rect(0, 0, doc.page.width, 90)
-       .fillColor(COLORS.zebraRow) // xám nhạt
-       .fill()
-       .restore();
+        .rect(0, 0, doc.page.width, 90)
+        .fillColor(COLORS.zebraRow) // xám nhạt
+        .fill()
+        .restore();
 
     // Logo NMS (góc trái)
     doc.save()
-       .circle(PAGE_MARGIN + 20, 45, 20)
-       .fillColor(COLORS.primary)
-       .fill()
-       .restore();
-       
+        .circle(PAGE_MARGIN + 20, 45, 20)
+        .fillColor(COLORS.primary)
+        .fill()
+        .restore();
+
     doc.font(FONT_BOLD).fontSize(14).fillColor(COLORS.white)
-       .text('NMS', PAGE_MARGIN, 38, {
-           width: 40,
-           align: 'center',
-       });
+        .text('NMS', PAGE_MARGIN, 38, {
+            width: 40,
+            align: 'center',
+        });
 
     // Tiêu đề & Sub (góc phải)
     doc.font(FONT_BOLD).fontSize(20).fillColor('#1E293B')
-       .text('BÁO CÁO DINH DƯỠNG CÁ NHÂN HÓA', PAGE_MARGIN + 60, 28, {
-           width: doc.page.width - PAGE_MARGIN * 2 - 60,
-           align: 'right',
-       });
+        .text('BÁO CÁO DINH DƯỠNG CÁ NHÂN HÓA', PAGE_MARGIN + 60, 28, {
+            width: doc.page.width - PAGE_MARGIN * 2 - 60,
+            align: 'right',
+        });
 
     doc.font(FONT_REGULAR).fontSize(11).fillColor(COLORS.gray)
-       .text(`📊  ${period.rangeLabel}  •  ${period.label}`, PAGE_MARGIN + 60, 56, {
-           width: doc.page.width - PAGE_MARGIN * 2 - 60,
-           align: 'right',
-       });
+        .text(`📊  ${period.rangeLabel}  •  ${period.label}`, PAGE_MARGIN + 60, 56, {
+            width: doc.page.width - PAGE_MARGIN * 2 - 60,
+            align: 'right',
+        });
+};
+
+/**
+ * Helper: Vẽ trang bìa độc lập (Cover Page) sang trọng.
+ */
+const drawCoverPage = (doc, user, period) => {
+    const bgPath = path.join(__dirname, '../public/images/cover_bg.png');
+    
+    // 1. Vẽ hình nền AI bao phủ toàn bộ trang bìa A4
+    try {
+        doc.image(bgPath, 0, 0, { width: doc.page.width, height: doc.page.height });
+    } catch (err) {
+        console.error("Lỗi khi load ảnh nền cover:", err);
+        // Fallback: Vẽ nền màu emerald/white tối giản nếu file ảnh gặp sự cố
+        doc.save()
+            .rect(0, 0, doc.page.width, doc.page.height)
+            .fillColor('#F9FAFB')
+            .fill()
+            .restore();
+    }
+
+    // 2. Viền trang bìa mỏng và sang trọng
+    doc.save()
+        .rect(15, 15, doc.page.width - 30, doc.page.height - 30)
+        .strokeColor('rgba(16, 185, 129, 0.15)')
+        .lineWidth(1)
+        .stroke()
+        .restore();
+
+    // 3. Logo NMS tinh tế nằm ở trục giữa phía trên
+    const centerX = doc.page.width / 2;
+    const logoY = 100;
+
+    // Vòng tròn ngoài nét đứt mảnh tinh xảo
+    doc.save()
+        .circle(centerX, logoY, 32)
+        .strokeColor('rgba(16, 185, 129, 0.35)')
+        .lineWidth(0.75)
+        .dash(3, { space: 3 })
+        .stroke()
+        .restore();
+
+    // Vòng tròn trong màu lục đậm thương hiệu
+    doc.save()
+        .circle(centerX, logoY, 26)
+        .fillColor('#065F46')
+        .fill()
+        .restore();
+
+    // Chữ NMS sắc nét ở giữa logo
+    doc.font('Bold').fontSize(11).fillColor(COLORS.white)
+        .text('NMS', centerX - 25, logoY - 8, { width: 50, align: 'center' });
+        
+    doc.font('Regular').fontSize(4.5).fillColor('#A7F3D0')
+        .text('HEALTH SYSTEM', centerX - 25, logoY + 4, { width: 50, align: 'center', characterSpacing: 0.5 });
+
+    // 4. Typography Tiêu đề và Subtitle hoành tráng nhưng thanh lịch
+    doc.font('Bold').fontSize(26).fillColor('#0F172A')
+        .text('BÁO CÁO DINH DƯỠNG', PAGE_MARGIN, 175, {
+            width: doc.page.width - PAGE_MARGIN * 2,
+            align: 'center',
+            characterSpacing: 0.5
+        });
+
+    doc.font('Regular').fontSize(9).fillColor('#059669')
+        .text('HỆ THỐNG PHÂN TÍCH & THÍCH ỨNG TDEE TỰ ĐỘNG', PAGE_MARGIN, 207, {
+            width: doc.page.width - PAGE_MARGIN * 2,
+            align: 'center',
+            characterSpacing: 1.5
+        });
+
+    // 5. Thẻ thông tin người dùng được thiết kế dạng Glassmorphism cao cấp
+    const cardW = 320;
+    const cardH = 115;
+    const cardX = centerX - cardW / 2;
+    const cardY = doc.page.height / 2 - 15;
+
+    // Lớp nền trắng bán trong suốt sang trọng
+    doc.save()
+        .roundedRect(cardX, cardY, cardW, cardH, 8)
+        .fillColor('rgba(255, 255, 255, 0.92)')
+        .fill()
+        .restore();
+
+    // Đường viền thẻ màu lục nhạt
+    doc.save()
+        .roundedRect(cardX, cardY, cardW, cardH, 8)
+        .strokeColor('rgba(16, 185, 129, 0.22)')
+        .lineWidth(0.75)
+        .stroke()
+        .restore();
+
+    // Nội dung text trong thẻ
+    doc.font('Regular').fontSize(7.5).fillColor('#94A3B8')
+        .text('BÁO CÁO ĐƯỢC CHUẨN BỊ CHO', cardX, cardY + 18, { width: cardW, align: 'center', characterSpacing: 1.5 });
+
+    doc.font('Bold').fontSize(16).fillColor('#0F172A')
+        .text(user.fullName || 'Người dùng', cardX, cardY + 34, { width: cardW, align: 'center' });
+
+    // Đường gạch ngang phân tách siêu mảnh
+    doc.save()
+        .moveTo(centerX - 40, cardY + 62)
+        .lineTo(centerX + 40, cardY + 62)
+        .strokeColor('#E2E8F0')
+        .lineWidth(0.5)
+        .stroke()
+        .restore();
+
+    doc.font('Regular').fontSize(9.5).fillColor('#475569')
+        .text(`Kỳ báo cáo: ${period.rangeLabel}  •  ${period.label}`, cardX, cardY + 74, { width: cardW, align: 'center' });
+
+    // 6. Câu trích dẫn động lực truyền cảm hứng ở sát chân trang
+    const QUOTES = [
+        "\"Hãy để thức ăn là thuốc của bạn, và thuốc là thức ăn của bạn.\" — Hippocrates",
+        "\"Sức khỏe không phải là thứ chúng ta có thể mua. Tuy nhiên, nó có thể là một tài khoản tiết kiệm cực kỳ giá trị.\" — Anne Wilson Schaef",
+        "\"Một cơ thể khỏe mạnh là phòng khách của tâm hồn, một cơ thể ốm yếu là nhà tù.\" — Francis Bacon",
+        "\"Kỷ luật là cầu nối giữa mục tiêu và thành tựu.\" — Jim Rohn",
+        "\"Ăn uống là một nhu cầu, nhưng ăn uống thông minh là một nghệ thuật.\" — François de La Rochefoucauld",
+        "\"Đầu tư vào sức khỏe hôm nay là tiết kiệm chi phí chữa bệnh ngày mai.\"",
+        "\"Chế độ ăn của bạn là một tài khoản ngân hàng. Lựa chọn thực phẩm tốt là các khoản đầu tư tốt.\" — Bethenny Frankel"
+    ];
+    const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    const quoteY = doc.page.height - 65;
+
+    doc.font('Regular').fontSize(8.5).fillColor('#475569')
+        .text(randomQuote, PAGE_MARGIN + 30, quoteY, {
+            width: doc.page.width - PAGE_MARGIN * 2 - 60,
+            align: 'center',
+            lineGap: 3
+        });
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -143,24 +273,30 @@ const drawCoverHeader = (doc, period) => {
  * @returns {PDFDocument} Stream PDF
  */
 const generateReportPDF = (reportData) => {
-    const { user, period, metrics, dailyLog, summary, adaptiveTDEE, isEmpty } = reportData;
+    const { user, period, metrics, dailyLog, summary, adaptiveTDEE, adaptiveInsight, isEmpty } = reportData;
 
     const doc = new PDFDocument({
         size: 'A4',
         margins: { top: PAGE_MARGIN, left: PAGE_MARGIN, right: PAGE_MARGIN, bottom: 20 },
         bufferPages: true, // Cho phép sửa các trang cũ để vẽ footer sau cùng
         info: {
-            Title:   `Báo cáo dinh dưỡng — ${period.label}`,
-            Author:  'NMS — Nutrition Management System',
+            Title: `Báo cáo dinh dưỡng — ${period.label}`,
+            Author: 'NMS — Nutrition Management System',
             Subject: 'Báo cáo dinh dưỡng cá nhân',
         },
     });
 
     // Register fonts
     doc.registerFont('Regular', FONT_REGULAR);
-    doc.registerFont('Bold',    FONT_BOLD);
+    doc.registerFont('Bold', FONT_BOLD);
 
-    // Các biến chung cho trang 1 & 2
+    // 1. Vẽ trang bìa độc lập (Cover Page)
+    drawCoverPage(doc, user, period);
+
+    // 2. Chuyển sang trang 2 để bắt đầu vẽ Dashboard
+    doc.addPage();
+
+    // Các biến chung cho trang 2 & 3
     const targetCal = metrics.targetCalories || 2000;
     const avgCal = summary.avgCalories || 0;
     const calPct = targetCal > 0 ? Math.round((avgCal / targetCal) * 100) : 0;
@@ -186,17 +322,17 @@ const generateReportPDF = (reportData) => {
     // ── Section: Thông tin cá nhân ──────────────────────────────────────
     // Profile Card bo góc
     doc.save()
-       .rect(PAGE_MARGIN, y, doc.page.width - PAGE_MARGIN * 2, 70)
-       .fillColor('#F8FAFC')
-       .roundedRect(PAGE_MARGIN, y, doc.page.width - PAGE_MARGIN * 2, 70, 8)
-       .fill()
-       .restore();
+        .rect(PAGE_MARGIN, y, doc.page.width - PAGE_MARGIN * 2, 70)
+        .fillColor('#F8FAFC')
+        .roundedRect(PAGE_MARGIN, y, doc.page.width - PAGE_MARGIN * 2, 70, 8)
+        .fill()
+        .restore();
 
     doc.font(FONT_BOLD).fontSize(14).fillColor(COLORS.black)
-       .text(`${user.fullName || 'Chưa cập nhật'}`, PAGE_MARGIN + 15, y + 15);
-       
+        .text(`${user.fullName || 'Chưa cập nhật'}`, PAGE_MARGIN + 15, y + 15);
+
     doc.font(FONT_REGULAR).fontSize(10).fillColor(COLORS.gray)
-       .text(`${user.age !== '–' ? user.age + ' tuổi' : ''}  •  ${user.gender}  •  ${user.height !== '–' ? user.height + ' cm' : ''}  •  ${user.weight !== '–' ? user.weight + ' kg' : ''}`, PAGE_MARGIN + 15, y + 35);
+        .text(`${user.age !== '–' ? user.age + ' tuổi' : ''}  •  ${user.gender}  •  ${user.height !== '–' ? user.height + ' cm' : ''}  •  ${user.weight !== '–' ? user.weight + ' kg' : ''}`, PAGE_MARGIN + 15, y + 35);
 
     // BMI Badge
     let bmiColor = COLORS.gray;
@@ -208,39 +344,39 @@ const generateReportPDF = (reportData) => {
     }
 
     doc.save()
-       .rect(doc.page.width - PAGE_MARGIN - 150, y + 15, 135, 20)
-       .fillColor(bmiColor)
-       .roundedRect(doc.page.width - PAGE_MARGIN - 150, y + 15, 135, 20, 10)
-       .fill()
-       .restore();
+        .rect(doc.page.width - PAGE_MARGIN - 150, y + 15, 135, 20)
+        .fillColor(bmiColor)
+        .roundedRect(doc.page.width - PAGE_MARGIN - 150, y + 15, 135, 20, 10)
+        .fill()
+        .restore();
 
     doc.font(FONT_BOLD).fontSize(9).fillColor(COLORS.white)
-       .text(`BMI: ${metrics.bmi || '–'} - ${metrics.bmiClass}`, doc.page.width - PAGE_MARGIN - 150, y + 20, { width: 135, align: 'center' });
+        .text(`BMI: ${metrics.bmi || '–'} - ${metrics.bmiClass}`, doc.page.width - PAGE_MARGIN - 150, y + 20, { width: 135, align: 'center' });
 
     doc.font(FONT_REGULAR).fontSize(10).fillColor(COLORS.black)
-       .text(`TDEE Thực tế: ${metrics.adaptiveTDEE || metrics.tdee || '–'} kcal`, doc.page.width - PAGE_MARGIN - 150, y + 42, { width: 135, align: 'center' });
+        .text(`TDEE Thực tế: ${metrics.adaptiveTDEE || metrics.tdee || '–'} kcal`, doc.page.width - PAGE_MARGIN - 150, y + 42, { width: 135, align: 'center' });
 
     y += 90;
 
     if (isEmpty) {
         // ── Empty State ──────────────────────────────────────────────────
         doc.save()
-           .roundedRect(PAGE_MARGIN, y, doc.page.width - PAGE_MARGIN * 2, 80, 6)
-           .fillColor(COLORS.light)
-           .fill()
-           .restore();
+            .roundedRect(PAGE_MARGIN, y, doc.page.width - PAGE_MARGIN * 2, 80, 6)
+            .fillColor(COLORS.light)
+            .fill()
+            .restore();
 
         doc.font(FONT_BOLD).fontSize(11).fillColor(COLORS.dark)
-           .text('Chưa có dữ liệu nhật ký trong khoảng thời gian này.', PAGE_MARGIN + 10, y + 20, {
-               width: doc.page.width - PAGE_MARGIN * 2 - 20,
-               align: 'center',
-           });
+            .text('Chưa có dữ liệu nhật ký trong khoảng thời gian này.', PAGE_MARGIN + 10, y + 20, {
+                width: doc.page.width - PAGE_MARGIN * 2 - 20,
+                align: 'center',
+            });
 
         doc.font(FONT_REGULAR).fontSize(9).fillColor(COLORS.gray)
-           .text('Hãy bắt đầu ghi nhật ký ăn uống và cân nặng hàng ngày để hệ thống tổng hợp báo cáo chuyên sâu.', PAGE_MARGIN + 10, y + 42, {
-               width: doc.page.width - PAGE_MARGIN * 2 - 20,
-               align: 'center',
-           });
+            .text('Hãy bắt đầu ghi nhật ký ăn uống và cân nặng hàng ngày để hệ thống tổng hợp báo cáo chuyên sâu.', PAGE_MARGIN + 10, y + 42, {
+                width: doc.page.width - PAGE_MARGIN * 2 - 20,
+                align: 'center',
+            });
 
         renderAllFooters(doc);
         doc.end();
@@ -257,10 +393,10 @@ const generateReportPDF = (reportData) => {
     else if (calPct < 90) calColor = '#F59E0B'; // Cam
 
     doc.font(FONT_BOLD).fontSize(10).fillColor(COLORS.black)
-       .text(`Tổng Calories`, PAGE_MARGIN, y);
+        .text(`Tổng Calories`, PAGE_MARGIN, y);
     doc.font(FONT_BOLD).fontSize(10).fillColor(calColor)
-       .text(`${avgCal} / ${targetCal} kcal (${calPct}%)`, PAGE_MARGIN, y, { align: 'right', width: doc.page.width - PAGE_MARGIN * 2 });
-    
+        .text(`${avgCal} / ${targetCal} kcal (${calPct}%)`, PAGE_MARGIN, y, { align: 'right', width: doc.page.width - PAGE_MARGIN * 2 });
+
     y += 15;
     const barWidth = doc.page.width - PAGE_MARGIN * 2;
     // Nền thanh
@@ -270,14 +406,14 @@ const generateReportPDF = (reportData) => {
     if (calFillW > 0) {
         doc.save().rect(PAGE_MARGIN, y, calFillW, 12).fillColor(calColor).roundedRect(PAGE_MARGIN, y, calFillW, 12, 6).fill().restore();
     }
-    
+
     y += 25;
 
     // Biểu đồ Macro Balance
     const drawMacroBar = (label, actual, target, pct, color, startY) => {
         doc.font(FONT_REGULAR).fontSize(9).fillColor(COLORS.gray).text(label, PAGE_MARGIN, startY);
         doc.font(FONT_BOLD).fontSize(9).fillColor(COLORS.black).text(`${actual}g / ${target}g (${pct}%)`, PAGE_MARGIN, startY, { align: 'right', width: barWidth });
-        
+
         startY += 12;
         // Nền thanh
         doc.save().rect(PAGE_MARGIN, startY, barWidth, 8).fillColor(COLORS.grayLight).roundedRect(PAGE_MARGIN, startY, barWidth, 8, 4).fill().restore();
@@ -319,65 +455,82 @@ const generateReportPDF = (reportData) => {
     y += 8;
 
     if (metrics.adaptiveTDEE && metrics.tdee) {
-        const staticTDEE   = metrics.tdee;
+        const staticTDEE = metrics.tdee;
         const adaptiveTDEEVal = metrics.adaptiveTDEE;
-        const diff         = adaptiveTDEEVal - staticTDEE;
-        const diffPct      = Math.round((diff / staticTDEE) * 100);
-        const diffSign     = diff >= 0 ? '+' : '';
-        const diffColor    = diff > 0 ? COLORS.accent : diff < 0 ? '#DC2626' : COLORS.primary;
+        const diff = adaptiveTDEEVal - staticTDEE;
+        const diffPct = Math.round((diff / staticTDEE) * 100);
+        const diffSign = diff >= 0 ? '+' : '';
 
-        const boxW  = doc.page.width - PAGE_MARGIN * 2;
+        const boxW = doc.page.width - PAGE_MARGIN * 2;
         const halfW = boxW / 2 - 4;
 
         // --- Ô TDEE Tĩnh (trái) ---
         doc.save()
-           .rect(PAGE_MARGIN, y, halfW, 36)
-           .fillColor(COLORS.zebraRow)
-           .fill()
-           .restore();
+            .rect(PAGE_MARGIN, y, halfW, 36)
+            .fillColor(COLORS.zebraRow)
+            .fill()
+            .restore();
         doc.font(FONT_REGULAR).fontSize(8).fillColor(COLORS.gray)
-           .text('TDEE Tĩnh (Harris-Benedict)', PAGE_MARGIN + 6, y + 4, { width: halfW - 12 });
+            .text('TDEE Tĩnh (Mifflin-St Jeor)', PAGE_MARGIN + 6, y + 4, { width: halfW - 12 });
         doc.font(FONT_BOLD).fontSize(11).fillColor(COLORS.black)
-           .text(`${staticTDEE} kcal/ngày`, PAGE_MARGIN + 6, y + 16, { width: halfW - 12 });
+            .text(`${staticTDEE} kcal/ngày`, PAGE_MARGIN + 6, y + 16, { width: halfW - 12 });
 
         // --- Ô TDEE Thích ứng (phải) ---
         doc.save()
-           .rect(PAGE_MARGIN + halfW + 8, y, halfW, 36)
-           .fillColor(COLORS.light)
-           .fill()
-           .restore();
+            .rect(PAGE_MARGIN + halfW + 8, y, halfW, 36)
+            .fillColor(COLORS.light)
+            .fill()
+            .restore();
         doc.font(FONT_REGULAR).fontSize(8).fillColor(COLORS.accent)
-           .text('TDEE Thích ứng (thực tế)', PAGE_MARGIN + halfW + 10, y + 4, { width: halfW - 12 });
+            .text('TDEE Thích ứng (thực tế)', PAGE_MARGIN + halfW + 10, y + 4, { width: halfW - 12 });
         doc.font(FONT_BOLD).fontSize(11).fillColor(COLORS.dark)
-           .text(`${adaptiveTDEEVal} kcal/ngày`, PAGE_MARGIN + halfW + 10, y + 16, { width: halfW - 12 });
+            .text(`${adaptiveTDEEVal} kcal/ngày`, PAGE_MARGIN + halfW + 10, y + 16, { width: halfW - 12 });
 
         y += 42;
 
         let insight;
         if (Math.abs(diffPct) <= 3) {
-            insight = `TDEE thích ứng xác nhận công thức tĩnh khá chính xác với bạn.`;
+            insight = `TDEE Thích ứng xác nhận công thức tĩnh phản ánh rất sát với cơ địa thực tế của bạn.`;
         } else if (diff > 0) {
-            insight = `Cơ thể bạn đốt calo nhiều hơn dự tính. Có thể nạp thêm calo khi giảm cân chậm.`;
+            insight = `Công thức tĩnh ước tính hơi thấp. TDEE Thích ứng đã điều chỉnh tăng, giúp bạn có thể ăn nhiều hơn mà vẫn bám sát mục tiêu.`;
         } else {
-            insight = `Cơ thể bạn đốt calo ít hơn dự tính. Nên bám sát calo mục tiêu để giảm cân tốt hơn.`;
+            insight = `Công thức tĩnh ước tính calo cao hơn thực tế (dễ gây tăng cân). TDEE Thích ứng đã kịp thời điều chỉnh giảm để bảo vệ thành quả của bạn.`;
         }
 
         const textToPrint = `Chênh lệch: ${diffSign}${diff} kcal (${diffSign}${diffPct}%)  •  ${insight}`;
 
-        doc.save()
-           .rect(PAGE_MARGIN, y, boxW, 16)
-           .fillColor(diff === 0 ? COLORS.light : diff > 0 ? '#FEF3C7' : '#FEE2E2')
-           .fill()
-           .restore();
+        doc.font(FONT_REGULAR).fontSize(8);
+        const textH = doc.heightOfString(textToPrint, { width: boxW - 12 });
+        const boxH = textH + 8; // Padding 4px on top and bottom
 
-        doc.font(FONT_REGULAR).fontSize(8).fillColor(diffColor)
-           .text(textToPrint, PAGE_MARGIN + 6, y + 4, { width: boxW - 12 });
-        y += 24;
+        let bgColor = COLORS.light;
+        let tColor = COLORS.primary;
+
+        if (diff > 0) {
+            bgColor = '#FEF3C7'; // Vàng nhạt (Amber-100)
+            tColor = '#B45309';  // Cam đậm (Amber-700)
+        } else if (diff < 0) {
+            bgColor = '#E0F2FE'; // Xanh dương nhạt (Sky-100)
+            tColor = '#0369A1';  // Xanh dương đậm (Sky-700)
+        } else {
+            bgColor = COLORS.zebraRow; // Xám nhạt
+            tColor = COLORS.gray;
+        }
+
+        doc.save()
+            .rect(PAGE_MARGIN, y, boxW, boxH)
+            .fillColor(bgColor)
+            .fill()
+            .restore();
+
+        doc.fillColor(tColor)
+            .text(textToPrint, PAGE_MARGIN + 6, y + 4, { width: boxW - 12 });
+        y += boxH + 8;
 
         // Bảng lịch sử tuần nếu có
         if (adaptiveTDEE && adaptiveTDEE.length > 0) {
             doc.font(FONT_BOLD).fontSize(8.5).fillColor(COLORS.dark)
-               .text('Lịch sử TDEE thích ứng qua các tuần:', PAGE_MARGIN, y);
+                .text('Lịch sử TDEE thích ứng qua các tuần:', PAGE_MARGIN, y);
             y += 12;
 
             const aCols = [
@@ -386,17 +539,17 @@ const generateReportPDF = (reportData) => {
                 { label: 'TDEE tính (kcal)', width: 120 },
                 { label: 'Trạng thái', width: 155 },
             ];
-            
+
             doc.save()
-               .rect(PAGE_MARGIN, y, boxW, 15)
-               .fillColor(COLORS.light)
-               .fill()
-               .restore();
+                .rect(PAGE_MARGIN, y, boxW, 15)
+                .fillColor(COLORS.light)
+                .fill()
+                .restore();
 
             let ax = PAGE_MARGIN;
             aCols.forEach(col => {
                 doc.font(FONT_BOLD).fontSize(7.5).fillColor(COLORS.accent)
-                   .text(col.label, ax + 4, y + 4, { width: col.width - 8 });
+                    .text(col.label, ax + 4, y + 4, { width: col.width - 8 });
                 ax += col.width;
             });
             y += 15;
@@ -405,23 +558,23 @@ const generateReportPDF = (reportData) => {
             sortedLogs.forEach((log, idx) => {
                 if (idx % 2 === 0) {
                     doc.save()
-                       .rect(PAGE_MARGIN, y, boxW, 14)
-                       .fillColor(COLORS.zebraRow)
-                       .fill()
-                       .restore();
+                        .rect(PAGE_MARGIN, y, boxW, 14)
+                        .fillColor(COLORS.zebraRow)
+                        .fill()
+                        .restore();
                 }
 
                 const fmtDate = (d) => {
                     if (!d) return '–';
                     const dt = new Date(d);
-                    return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`;
+                    return `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}`;
                 };
 
                 const STATUS_LABELS = {
-                    applied:          'Hợp lệ',
-                    clamped:          'Cập giới hạn',
+                    applied: 'Hợp lệ',
+                    clamped: 'Cập giới hạn',
                     skipped_low_data: 'Thiếu dữ liệu',
-                    skipped_by_user:  'Bỏ qua',
+                    skipped_by_user: 'Bỏ qua',
                 };
 
                 const vals = [
@@ -434,7 +587,7 @@ const generateReportPDF = (reportData) => {
                 let bx = PAGE_MARGIN;
                 vals.forEach((val, j) => {
                     doc.font(j === 2 ? FONT_BOLD : FONT_REGULAR).fontSize(7.5).fillColor(COLORS.black)
-                       .text(val, bx + 4, y + 3, { width: aCols[j].width - 8 });
+                        .text(val, bx + 4, y + 3, { width: aCols[j].width - 8 });
                     bx += aCols[j].width;
                 });
                 y += 14;
@@ -443,7 +596,7 @@ const generateReportPDF = (reportData) => {
 
     } else if (metrics.useAdaptiveTDEE && !metrics.adaptiveTDEE) {
         doc.font(FONT_REGULAR).fontSize(8.5).fillColor(COLORS.gray)
-           .text('💡 TDEE thích ứng chưa kích hoạt (cần ghi chép liên tục ≥2 tuần để hệ thống thu thập đủ dữ liệu cân nặng & calories).', PAGE_MARGIN + 6, y);
+            .text('💡 TDEE thích ứng chưa kích hoạt (cần ghi chép liên tục ≥2 tuần để hệ thống thu thập đủ dữ liệu cân nặng & calories).', PAGE_MARGIN + 6, y);
         y += 18;
     }
 
@@ -454,13 +607,13 @@ const generateReportPDF = (reportData) => {
     y = PAGE_MARGIN;
 
     doc.font(FONT_BOLD).fontSize(14).fillColor(COLORS.dark)
-       .text('ĐÁNH GIÁ CHUYÊN SÂU & GỢI Ý THỰC ĐƠN', PAGE_MARGIN, y, {
-           width: doc.page.width - PAGE_MARGIN * 2,
-       });
+        .text('ĐÁNH GIÁ CHUYÊN SÂU & GỢI Ý THỰC ĐƠN', PAGE_MARGIN, y, {
+            width: doc.page.width - PAGE_MARGIN * 2,
+        });
     y += 20;
 
     doc.font(FONT_REGULAR).fontSize(8.5).fillColor(COLORS.gray)
-       .text(`Kỳ báo cáo: ${period.label}  •  ${period.rangeLabel}`, PAGE_MARGIN, y);
+        .text(`Kỳ báo cáo: ${period.label}  •  ${period.rangeLabel}`, PAGE_MARGIN, y);
     y += 16;
     drawHRule(doc, y, '#E2E8F0');
     y += 15;
@@ -501,12 +654,95 @@ const generateReportPDF = (reportData) => {
     const checks = [calCheck, macroCheck, fiberCheck, waterCheck, complianceCheck];
     checks.forEach(check => {
         doc.font(FONT_REGULAR).fontSize(9).fillColor(COLORS.black)
-           .text(check, PAGE_MARGIN + 8, y, { width: doc.page.width - PAGE_MARGIN * 2 - 16, lineGap: 3 });
+            .text(check, PAGE_MARGIN + 8, y, { width: doc.page.width - PAGE_MARGIN * 2 - 16, lineGap: 3 });
         y += doc.heightOfString(check, { width: doc.page.width - PAGE_MARGIN * 2 - 16 }) + 10;
     });
     y += 10;
 
+    // ── Kế hoạch hành động từ TDEE Thích ứng (Actionable Insights) ───────────
+    // Bảo vệ tràn trang: nếu còn ít hơn 150px trước vùng footer thì sang trang mới
+    if (y > doc.page.height - PAGE_MARGIN - 40 - 150) {
+        doc.addPage();
+        y = PAGE_MARGIN;
+    }
+    y = drawSectionTitle(doc, '⚡  KẾ HOẠCH HÀNH ĐỘNG CHO TUẦN TỚI (ACTIONABLE INSIGHTS)', y);
+    y += 12;
+
+    const insightBoxW = doc.page.width - PAGE_MARGIN * 2;
+    const insightText = adaptiveInsight.message || '';
+    
+    // Tính chiều cao của box dựa trên độ dài tin nhắn
+    doc.font(FONT_REGULAR).fontSize(8.5);
+    const insightTextH = doc.heightOfString(insightText, { width: insightBoxW - 24 });
+    
+    let insightBgColor = COLORS.light;
+    let insightTextColor = COLORS.dark;
+
+    if (adaptiveInsight.hasData) {
+        if (adaptiveInsight.isPlateauing) {
+            insightBgColor = '#E0F2FE'; // Sky-100
+            insightTextColor = '#0369A1'; // Sky-700
+        } else if (adaptiveInsight.diffPct > 5) {
+            insightBgColor = '#FEF3C7'; // Amber-100
+            insightTextColor = '#B45309'; // Amber-700
+        }
+    } else {
+        insightBgColor = '#F9FAFB'; // Gray-50
+        insightTextColor = COLORS.gray;
+    }
+
+    // Vẽ box nền
+    let boxTotalH = insightTextH + 16;
+    if (adaptiveInsight.hasData && adaptiveInsight.isPlateauing) {
+        boxTotalH += 45; // Thêm chiều cao cho bảng so sánh
+    }
+
+    doc.save()
+        .roundedRect(PAGE_MARGIN, y, insightBoxW, boxTotalH, 6)
+        .fillColor(insightBgColor)
+        .fill()
+        .restore();
+
+    // Vẽ text tin nhắn
+    doc.font(FONT_REGULAR).fontSize(8.5).fillColor(insightTextColor)
+        .text(insightText, PAGE_MARGIN + 12, y + 8, { width: insightBoxW - 24, lineGap: 2 });
+
+    // Nếu đang chững cân, vẽ thêm bảng so sánh 2 cột nổi bật
+    if (adaptiveInsight.hasData && adaptiveInsight.isPlateauing) {
+        const compareY = y + insightTextH + 16;
+        const colW = (insightBoxW - 32) / 2;
+
+        // Cột trái: Hiện tại
+        doc.save()
+            .roundedRect(PAGE_MARGIN + 12, compareY, colW, 28, 4)
+            .fillColor(COLORS.white)
+            .fill()
+            .restore();
+        doc.font(FONT_REGULAR).fontSize(8).fillColor(COLORS.gray)
+            .text('Mục tiêu hiện tại:', PAGE_MARGIN + 18, compareY + 4);
+        doc.font(FONT_BOLD).fontSize(9.5).fillColor(COLORS.black)
+            .text(`${adaptiveInsight.currentTargetCalories} kcal/ngày`, PAGE_MARGIN + 18, compareY + 14);
+
+        // Cột phải: Đề xuất
+        doc.save()
+            .roundedRect(PAGE_MARGIN + 12 + colW + 8, compareY, colW, 28, 4)
+            .fillColor('#F0FDF4') // Green-50
+            .fill()
+            .restore();
+        doc.font(FONT_REGULAR).fontSize(8).fillColor('#047857') // Green-700
+            .text('Mục tiêu đề xuất mới:', PAGE_MARGIN + 18 + colW + 8, compareY + 4);
+        doc.font(FONT_BOLD).fontSize(9.5).fillColor('#065F46') // Green-800
+            .text(`${adaptiveInsight.suggestedTargetCalories} kcal/ngày  ↓`, PAGE_MARGIN + 18 + colW + 8, compareY + 14);
+    }
+
+    y += boxTotalH + 15;
+
     // ── Khuyến nghị từ hệ thống (Recommendations) ─────────────────────────
+    // Bảo vệ tràn trang: cần ít nhất 180px để vẽ section title + ít nhất 1 dòng khuyến nghị
+    if (y > doc.page.height - PAGE_MARGIN - 40 - 180) {
+        doc.addPage();
+        y = PAGE_MARGIN;
+    }
     y = drawSectionTitle(doc, '💡  GỢI Ý THỰC ĐƠN & LỐI SỐNG (AI RECOMMENDATIONS)', y);
     y += 12;
 
@@ -548,15 +784,15 @@ const generateReportPDF = (reportData) => {
     const recsBoxH = tempY - recsBoxY + 4;
 
     doc.save()
-       .roundedRect(PAGE_MARGIN, recsBoxY, doc.page.width - PAGE_MARGIN * 2, recsBoxH, 6)
-       .fillColor(COLORS.light)
-       .fill()
-       .restore();
+        .roundedRect(PAGE_MARGIN, recsBoxY, doc.page.width - PAGE_MARGIN * 2, recsBoxH, 6)
+        .fillColor(COLORS.light)
+        .fill()
+        .restore();
 
     let ry = recsBoxY + 10;
     recs.forEach(rec => {
         doc.font(FONT_REGULAR).fontSize(8.5).fillColor(COLORS.dark)
-           .text(rec, PAGE_MARGIN + 12, ry, { width: doc.page.width - PAGE_MARGIN * 2 - 24, lineGap: 2.5 });
+            .text(rec, PAGE_MARGIN + 12, ry, { width: doc.page.width - PAGE_MARGIN * 2 - 24, lineGap: 2.5 });
         ry += doc.heightOfString(rec, { width: doc.page.width - PAGE_MARGIN * 2 - 24 }) + 8;
     });
 
@@ -567,24 +803,24 @@ const generateReportPDF = (reportData) => {
     y = PAGE_MARGIN;
 
     doc.font(FONT_BOLD).fontSize(14).fillColor(COLORS.dark)
-       .text('CHI TIẾT THEO NGÀY', PAGE_MARGIN, y, {
-           width: doc.page.width - PAGE_MARGIN * 2,
-       });
+        .text('CHI TIẾT THEO NGÀY', PAGE_MARGIN, y, {
+            width: doc.page.width - PAGE_MARGIN * 2,
+        });
     y += 20;
 
     doc.font(FONT_REGULAR).fontSize(8.5).fillColor(COLORS.gray)
-       .text(`Kỳ báo cáo: ${period.label}`, PAGE_MARGIN, y);
+        .text(`Kỳ báo cáo: ${period.label}`, PAGE_MARGIN, y);
     y += 16;
     drawHRule(doc, y, '#E2E8F0');
     y += 15;
 
     // ── Bảng nhật ký ngày tối giản không đường kẻ dọc ───────────────────────
     const cols = [
-        { label: 'Ngày',       width: 60 },
-        { label: 'Cân nặng',   width: 75 },
-        { label: 'Calories',   width: 85 },
-        { label: 'Nước (ml)',  width: 85 },
-        { label: 'Tập (kcal)',  width: 90 },
+        { label: 'Ngày', width: 60 },
+        { label: 'Cân nặng', width: 75 },
+        { label: 'Calories', width: 85 },
+        { label: 'Nước (ml)', width: 85 },
+        { label: 'Tập (kcal)', width: 90 },
         { label: 'Trạng thái', width: 100 },
     ];
 
@@ -592,15 +828,15 @@ const generateReportPDF = (reportData) => {
 
     const drawTableHeader = (startY) => {
         doc.save()
-           .rect(PAGE_MARGIN, startY, tableWidth, 20)
-           .fillColor(COLORS.dark)
-           .fill()
-           .restore();
-           
+            .rect(PAGE_MARGIN, startY, tableWidth, 20)
+            .fillColor(COLORS.dark)
+            .fill()
+            .restore();
+
         let currentX = PAGE_MARGIN;
         cols.forEach(col => {
             doc.font(FONT_BOLD).fontSize(8).fillColor(COLORS.white)
-               .text(col.label, currentX + 6, startY + 6, { width: col.width - 12 });
+                .text(col.label, currentX + 6, startY + 6, { width: col.width - 12 });
             currentX += col.width;
         });
         return startY + 20;
@@ -620,37 +856,39 @@ const generateReportPDF = (reportData) => {
 
     if (allRows.length === 0) {
         doc.save()
-           .rect(PAGE_MARGIN, y, tableWidth, 20)
-           .fillColor(COLORS.zebraRow)
-           .fill()
-           .restore();
+            .rect(PAGE_MARGIN, y, tableWidth, 20)
+            .fillColor(COLORS.zebraRow)
+            .fill()
+            .restore();
         doc.font(FONT_REGULAR).fontSize(8.5).fillColor(COLORS.gray)
-           .text('Chưa có dữ liệu nhật ký cho kỳ này.', PAGE_MARGIN + 6, y + 6, { width: tableWidth - 12 });
+            .text('Chưa có dữ liệu nhật ký cho kỳ này.', PAGE_MARGIN + 6, y + 6, { width: tableWidth - 12 });
         y += 20;
     } else {
         allRows.forEach((row, i) => {
             if (y + 18 > doc.page.height - PAGE_MARGIN - 40) {
                 doc.addPage();
-                y = drawTableHeader(PAGE_MARGIN);
+                doc.font(FONT_BOLD).fontSize(10).fillColor(COLORS.dark)
+                    .text('CHI TIẾT THEO NGÀY (tiếp theo)', PAGE_MARGIN, PAGE_MARGIN);
+                y = drawTableHeader(PAGE_MARGIN + 16);
             }
 
             // Dùng xen kẽ nền xám nhạt (Zebra row)
             if (i % 2 === 0) {
                 doc.save()
-                   .rect(PAGE_MARGIN, y, tableWidth, 18)
-                   .fillColor(COLORS.zebraRow)
-                   .fill()
-                   .restore();
+                    .rect(PAGE_MARGIN, y, tableWidth, 18)
+                    .fillColor(COLORS.zebraRow)
+                    .fill()
+                    .restore();
             }
 
             // Kẻ đường phân cách ngang mỏng màu #E2E8F0
             doc.save()
-               .moveTo(PAGE_MARGIN, y + 18)
-               .lineTo(PAGE_MARGIN + tableWidth, y + 18)
-               .strokeColor('#E2E8F0')
-               .lineWidth(0.5)
-               .stroke()
-               .restore();
+                .moveTo(PAGE_MARGIN, y + 18)
+                .lineTo(PAGE_MARGIN + tableWidth, y + 18)
+                .strokeColor('#E2E8F0')
+                .lineWidth(0.5)
+                .stroke()
+                .restore();
 
             const status = getStatus(row.calories, metrics.targetCalories);
 
@@ -668,7 +906,7 @@ const generateReportPDF = (reportData) => {
                 const isStatusCol = j === 5;
                 const textColor = isStatusCol ? status.color : COLORS.black;
                 doc.font(isStatusCol || j === 0 ? FONT_BOLD : FONT_REGULAR).fontSize(8).fillColor(textColor)
-                   .text(String(val), cx + 6, y + 5, { width: cols[j].width - 12 });
+                    .text(String(val), cx + 6, y + 5, { width: cols[j].width - 12 });
                 cx += cols[j].width;
             });
             y += 18;
@@ -677,14 +915,16 @@ const generateReportPDF = (reportData) => {
         // Hàng trung bình / Tổng kết dưới cùng
         if (y + 20 > doc.page.height - PAGE_MARGIN - 40) {
             doc.addPage();
-            y = drawTableHeader(PAGE_MARGIN);
+            doc.font(FONT_BOLD).fontSize(10).fillColor(COLORS.dark)
+                .text('CHI TIẾT THEO NGÀY (tiếp theo)', PAGE_MARGIN, PAGE_MARGIN);
+            y = drawTableHeader(PAGE_MARGIN + 16);
         }
 
         doc.save()
-           .rect(PAGE_MARGIN, y, tableWidth, 20)
-           .fillColor(COLORS.primary)
-           .fill()
-           .restore();
+            .rect(PAGE_MARGIN, y, tableWidth, 20)
+            .fillColor(COLORS.primary)
+            .fill()
+            .restore();
 
         const avgData = [
             'T.Bình',
@@ -698,7 +938,7 @@ const generateReportPDF = (reportData) => {
         let cx = PAGE_MARGIN;
         avgData.forEach((val, j) => {
             doc.font(FONT_BOLD).fontSize(8).fillColor(COLORS.white)
-               .text(String(val), cx + 6, y + 6, { width: cols[j].width - 12 });
+                .text(String(val), cx + 6, y + 6, { width: cols[j].width - 12 });
             cx += cols[j].width;
         });
         y += 20;
@@ -710,13 +950,16 @@ const generateReportPDF = (reportData) => {
 };
 
 /**
- * Hàm hỗ trợ vẽ footer lên TẤT CẢ các trang đã được buffer.
+ * Hàm hỗ trợ vẽ footer lên TẤT CẢ các trang nội dung (bỏ qua trang bìa).
+ * Đánh số trang bắt đầu từ 1 cho trang nội dung đầu tiên (sau trang bìa).
  */
 function renderAllFooters(doc) {
     const range = doc.bufferedPageRange();
-    for (let i = range.start; i < range.start + range.count; i++) {
+    const totalContentPages = range.count - 1; // Tổng trang nội dung (không tính bìa)
+    for (let i = range.start + 1; i < range.start + range.count; i++) {
         doc.switchToPage(i);
-        drawFooter(doc, i + 1, range.count);
+        const contentPageNum = i - range.start; // 1, 2, 3, ...
+        drawFooter(doc, contentPageNum, totalContentPages);
     }
 }
 

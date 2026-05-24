@@ -8,7 +8,6 @@
 const { DiaryEntry, Food } = require('../models');
 const {
     calculateAllMetrics,
-    calculateEffectiveMacros,
     calculateWaterGoal,
 } = require('../services/nutrition.service');
 const {
@@ -61,22 +60,13 @@ exports.getDiary = async (req, res) => {
         const mealGroups  = groupEntriesByMeal(entries);
         const consumed    = sumNutritionFromEntries(entries);
 
-        // ── Tính effectiveTarget trước tiên ─────────────────────────────────
         // Hardcore Tracking: KHÔNG cộng calo đốt từ luyện tập vào TDEE
         const totalBurned     = await getTotalBurnedByDate(user.id, date);
-        const effectiveTarget = metrics.targetCalories || 0;
 
-        // ── Macro hiệu quả (scale tỷ lệ thuận theo effectiveTarget) ─────────
-        const effectiveMacros = calculateEffectiveMacros(
-            metrics.macros, metrics.targetCalories, effectiveTarget
-        );
-
-
-
-        // ── Tiến độ & Health Insights (dùng effectiveTarget + effectiveMacros) ─
-        const calorieProgress = getCalorieProgress(consumed.calories, effectiveTarget);
-        const macroProgress   = getMacroProgress(consumed, effectiveMacros || metrics.macros);
-        const healthInsights  = getHealthInsights(consumed, metrics, mealGroups, effectiveTarget, effectiveMacros);
+        // ── Tiến độ & Health Insights ─
+        const calorieProgress = getCalorieProgress(consumed.calories, metrics.targetCalories || 0);
+        const macroProgress   = getMacroProgress(consumed, metrics.macros || {});
+        const healthInsights  = getHealthInsights(consumed, metrics, mealGroups);
 
         // Tính tổng calo theo từng bữa để hiển thị
         // [QA-FIX] Khởi tạo đủ 4 key với default = 0, tránh undefined khi bữa chưa có món
@@ -111,8 +101,6 @@ exports.getDiary = async (req, res) => {
                 sodium  : consumed.sodium != null ? Math.round(consumed.sodium * 10) / 10 : null,
             },
             totalBurned,
-            effectiveTarget,
-            effectiveMacros,
             calorieProgress,
             macroProgress,
             healthInsights,

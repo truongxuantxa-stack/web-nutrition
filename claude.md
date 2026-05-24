@@ -35,10 +35,9 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 
 
 ## 6. Changelog (Nhật ký thay đổi)
-- **[feat] PDF Report Export:** Triển khai tính năng xuất báo cáo dinh dưỡng PDF (7 ngày / 30 ngày) dùng PDFKit + font Roboto hỗ trợ tiếng Việt. Layout 3 trang: Thông tin cá nhân & chỉ số, Tổng hợp & đánh giá, Bảng chi tiết theo ngày. Stream trực tiếp về client, không tạo file tạm. UI: Dropdown button trên Dashboard.
-- **[feat] Adaptive TDEE System:** Triển khai thuật toán chống thích ứng chuyển hóa (EMA filtering, ±30% Clamping, 4-week Rolling Average). Tích hợp Cron Job chạy mỗi tuần, cho phép user theo dõi lịch sử và chủ động Skip tuần. Đồng bộ huy hiệu cảnh báo (Badges) xuyên suốt Dashboard và Diary.
-- **[feat] Meal Planner Solver:** Cài đặt thuật toán giải tích số Khử Gauss 3x3 sinh thực đơn. Tích hợp UI/UX mượt mà: cấu hình % macro, tự động chia bữa, smart swap đổi món, và đồng bộ đẩy thẳng vào nhật ký ăn uống.
-- **[ux] Meal Planner - Ghim Sẵn Trước Khi Tạo:** Bổ sung section "Ghim Sẵn Nguyên Liệu" ngay tại panel Sinh Bữa Ăn. Người dùng chọn nguyên liệu yêu thích cho từng slot (Protein/Carb/Fat/Fiber) và ghim trước khi bấm Tạo Gợi Ý. Hỗ trợ badge hiển thị món đã ghim, nút Xoá hết pin, đồng bộ state `pinnedFoods` với kết quả sau khi generate.
-- **[feat] Custom Macros Planner:** Hỗ trợ người dùng tuỳ chỉnh tỷ lệ P/C/F theo mục tiêu (Keto, Low-fat...).
-- **[feat] Custom Food & Food Library:** Tính năng tạo món ăn cá nhân (Private). Bổ sung thêm nhiều nguyên liệu thô (Trứng thô, Thịt thô...). Mở rộng giới hạn tìm kiếm (limit 100).
-- **[fix/refactor] UI & System Optimization:** Chuyển đổi Date Navigator sang UI mũi tên tĩnh. Gỡ bỏ thuật toán gợi ý cũ để nhường chỗ cho Gauss Solver. Đồng nhất UI Nước uống (Water Tracking) qua cơ chế AJAX không tải lại trang.
+- **[feat/docs/refactor] PDF Report System:** Nâng cấp và tối ưu hóa hệ thống xuất PDF: thiết kế Trang bìa (Cover Page) sang trọng, Kế hoạch hành động (Actionable Insights) dựa trên Adaptive TDEE, khắc phục lỗi phân trang/tràn chữ/thiếu biến `avgFiber`, nâng cấp UI Profile Card và checklist đánh giá theo chuẩn IOM.
+- **[feat] Adaptive TDEE System:** Triển khai thuật toán chống thích ứng chuyển hóa (EMA, Rolling Average 4 tuần), lập lịch tự động hàng tuần qua Cron Job, đồng bộ badges cảnh báo.
+- **[feat/ux] Meal Planner Solver (Gauss):** Triển khai thuật toán giải tích số Khử Gauss 3x3 sinh thực đơn tự động, cơ chế ghim nguyên liệu (pinning), smart swap (đổi món) và tích hợp đẩy trực tiếp vào nhật ký.
+- **[feat] Custom Planner & Food Library:** Hỗ trợ tùy chỉnh tỷ lệ dinh dưỡng cá nhân (Custom Macros) và tạo món ăn cá nhân (Private), mở rộng thư viện nguyên liệu thô.
+- **[fix/refactor] UI & System Optimization:** Chuyển Date Navigator sang UI mũi tên tĩnh, đồng bộ UI Water Tracking bằng AJAX không tải lại trang, loại bỏ thuật toán gợi ý cũ.
+

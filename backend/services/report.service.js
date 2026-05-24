@@ -242,6 +242,63 @@ const getReportData = async (userId, range = 'week') => {
         ? validLogs.slice(0, validLogs.length - 1) // bỏ phần tử cuối = tuần 1
         : [];
 
+    // ── Tính toán adaptiveInsight ──────────────────────────────────────────
+    const staticTDEE = metrics.staticTDEE || 2000;
+    const adaptiveTDEEVal = user.adaptiveTDEE ? Math.round(user.adaptiveTDEE) : null;
+    const hasAdaptiveData = !!(user.useAdaptiveTDEE && adaptiveTDEEVal);
+
+    let adaptiveInsight = {
+        hasData: false,
+        staticTDEE: Math.round(staticTDEE),
+        adaptiveTDEE: null,
+        diff: 0,
+        diffPct: 0,
+        isPlateauing: false,
+        suggestedTargetCalories: Math.round(metrics.targetCalories || 2000),
+        currentTargetCalories: Math.round(metrics.targetCalories || 2000),
+        message: '💡 Chưa kích hoạt hoặc chưa đủ dữ liệu TDEE Thích ứng để đề xuất kế hoạch hành động. Hãy tiếp tục ghi chép nhật ký dinh dưỡng và cân nặng đều đặn.'
+    };
+
+    if (hasAdaptiveData) {
+        const diff = Math.round(adaptiveTDEEVal - staticTDEE);
+        const diffPct = Math.round((diff / staticTDEE) * 100 * 10) / 10;
+        const isPlateauing = diffPct < -5;
+
+        // Tính suggestedTargetCalories
+        let suggested = adaptiveTDEEVal;
+        if (user.goal === 'lose_weight') {
+            suggested = adaptiveTDEEVal - 500;
+        } else if (user.goal === 'gain_weight') {
+            suggested = adaptiveTDEEVal + 300;
+        } else if (user.goal === 'maintain_weight') {
+            suggested = adaptiveTDEEVal;
+        }
+        // Clamp min = BMR (không bao giờ dưới BMR)
+        const bmrVal = metrics.bmr ? Math.round(metrics.bmr) : 1200;
+        suggested = Math.max(suggested, bmrVal);
+
+        let message = '';
+        if (isPlateauing) {
+            message = `⚡ Cơ thể bạn đang có dấu hiệu thích ứng chuyển hóa (chững cân). TDEE thực tế đã giảm xuống ${adaptiveTDEEVal} kcal/ngày (thấp hơn ${Math.abs(diffPct)}% so với công thức tĩnh). Hệ thống đề xuất bạn điều chỉnh Mục tiêu Calo cho tuần tới về mức ${Math.round(suggested)} kcal/ngày để tiếp tục giảm mỡ an toàn.`;
+        } else if (diffPct > 5) {
+            message = `📈 Cơ thể bạn đang tiêu hao năng lượng nhiều hơn dự kiến (TDEE thực tế cao hơn ${diffPct}% so với công thức tĩnh). Bạn có thể thoải mái ăn thêm mà vẫn bám sát mục tiêu.`;
+        } else {
+            message = `✅ TDEE thích ứng xác nhận công thức tĩnh đang phản ánh chính xác cơ địa thực tế của bạn. Hãy tiếp tục duy trì chế độ ăn hiện tại.`;
+        }
+
+        adaptiveInsight = {
+            hasData: true,
+            staticTDEE: Math.round(staticTDEE),
+            adaptiveTDEE: adaptiveTDEEVal,
+            diff,
+            diffPct,
+            isPlateauing,
+            suggestedTargetCalories: Math.round(suggested),
+            currentTargetCalories: Math.round(metrics.targetCalories || 2000),
+            message
+        };
+    }
+
     return {
         user: userInfo,
         period: {
@@ -255,7 +312,7 @@ const getReportData = async (userId, range = 'week') => {
             bmi:             metrics.bmi,
             bmiClass:        metrics.bmiClass?.label || '–',
             bmr:             metrics.bmr,
-            tdee:            metrics.staticTDEE,        // TDEE tĩnh (Harris-Benedict) — không dùng adaptive
+            tdee:            metrics.staticTDEE,        // TDEE tĩnh (Mifflin-St Jeor) — không dùng adaptive
             adaptiveTDEE:    user.adaptiveTDEE ? Math.round(user.adaptiveTDEE) : null,
             useAdaptiveTDEE: user.useAdaptiveTDEE,
             targetCalories:  metrics.targetCalories,
@@ -272,6 +329,7 @@ const getReportData = async (userId, range = 'week') => {
             rollingTDEE: l.rollingTDEE,
             status:      l.status,
         })),
+        adaptiveInsight,
         isEmpty,
     };
 };

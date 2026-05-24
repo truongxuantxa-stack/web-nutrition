@@ -164,25 +164,6 @@ const calculateMacros = (targetCalories, ratios = {}) => {
 };
 
 
-
-/**
- * Scale macros tỉ lệ thuận theo effectiveTarget (sau khi cộng calo đốt từ luyện tập).
- * @param {Object} macros         - { protein, carbs, fat } gốc từ calculateMacros(targetCalories)
- * @param {number} targetCalories - Mục tiêu calo gốc (TDEE-based)
- * @param {number} effectiveTarget- Mục tiêu calo thực tế (TDEE + burned)
- * @returns {{ protein, carbs, fat }}
- */
-const calculateEffectiveMacros = (macros, targetCalories, effectiveTarget) => {
-    if (!macros || !targetCalories || targetCalories === 0) return macros;
-    if (effectiveTarget === targetCalories) return macros;
-    const ratio = effectiveTarget / targetCalories;
-    return {
-        protein: Math.round(macros.protein * ratio),
-        carbs:   Math.round(macros.carbs   * ratio),
-        fat:     Math.round(macros.fat     * ratio),
-    };
-};
-
 /**
  * Hàm tổng hợp: Tính toán tất cả chỉ số dinh dưỡng cho một user.
  *
@@ -263,7 +244,6 @@ module.exports = {
     calculateTDEE,
     adjustCaloriesForGoal,
     calculateMacros,
-    calculateEffectiveMacros,
     calculateAllMetrics,
     calculateWaterGoal,
     ACTIVITY_FACTORS,

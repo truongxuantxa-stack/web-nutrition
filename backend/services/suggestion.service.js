@@ -92,15 +92,12 @@ const getMacroProgress = (consumed, targets) => {
  * @param {Object} consumed         - { calories, protein, carbs, fat }
  * @param {Object} metrics          - { targetCalories, macros: { protein, carbs, fat } }
  * @param {Object} mealGroups       - { sang: [], trua: [], ... }
- * @param {number} [effectiveTarget]- Mục tiêu calo thực tế sau khi tính cả luyện tập
- * @param {Object} [effectiveMacros]- { protein, carbs, fat } đã scale theo effectiveTarget
  * @returns {Array} Mảng các cảnh báo { type, icon, message }
  */
-const getHealthInsights = (consumed, metrics, mealGroups = {}, effectiveTarget = null, effectiveMacros = null) => {
+const getHealthInsights = (consumed, metrics, mealGroups = {}) => {
     const insights = [];
-    // Dùng effectiveTarget nếu có, fallback về metrics.targetCalories
-    const targetCal = effectiveTarget || metrics.targetCalories;
-    const macros    = effectiveMacros  || metrics.macros;
+    const targetCal = metrics.targetCalories;
+    const macros    = metrics.macros;
     if (!targetCal) return insights;
 
     const calPct = (consumed.calories / targetCal) * 100;

@@ -125,7 +125,7 @@
     <!-- Mục tiêu -->
     <div class="stat-card green">
       <p class="stat-label">Mục tiêu hôm nay</p>
-      <p class="stat-value text-green-600 animated-num"><%= effectiveTarget || metrics.targetCalories || '–' %></p>
+      <p class="stat-value text-green-600 animated-num"><%= metrics.targetCalories || '–' %></p>
       <p class="stat-sub">
         <% if (user.goal === 'lose_weight') { %>📉 Giảm cân
         <% } else if (user.goal === 'gain_weight') { %>📈 Tăng cân
@@ -172,7 +172,7 @@
 
         <!-- Stats list -->
         <div class="flex-1 space-y-2.5">
-          <% const rem = (effectiveTarget || metrics.targetCalories || 0) - consumed.calories; %>
+          <% const rem = (metrics.targetCalories || 0) - consumed.calories; %>
           <div class="flex justify-between items-center py-1 border-b border-gray-50">
             <span class="text-xs text-gray-500 font-medium">Đã nạp</span>
             <span class="text-sm font-black text-green-600"><%= consumed.calories %> kcal</span>
@@ -185,7 +185,7 @@
           <% } %>
           <div class="flex justify-between items-center py-1 border-b border-gray-50">
             <span class="text-xs text-gray-500 font-medium">Mục tiêu</span>
-            <span class="text-sm font-bold text-gray-700"><%= effectiveTarget || metrics.targetCalories || '–' %> kcal</span>
+            <span class="text-sm font-bold text-gray-700"><%= metrics.targetCalories || '–' %> kcal</span>
           </div>
           <div class="flex justify-between items-center py-1 border-b border-gray-50">
             <span class="text-xs text-gray-500 font-medium">Còn lại</span>

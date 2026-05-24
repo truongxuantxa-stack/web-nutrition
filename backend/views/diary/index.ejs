@@ -88,7 +88,7 @@
           <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200" title="Mục tiêu calo đã được tự động tối ưu bằng thuật toán TDEE Thích ứng">Thích ứng ⚡</span>
         <% } %>
       </p>
-      <p class="stat-value text-blue-600 animated-num"><%= effectiveTarget || metrics.targetCalories || '–' %></p>
+      <p class="stat-value text-blue-600 animated-num"><%= metrics.targetCalories || '–' %></p>
       <p class="stat-sub">
         kcal / ngày<% if (totalBurned > 0) { %>
         <span class="text-orange-500 font-bold"> (Đã đốt <%= totalBurned %> kcal)</span>
@@ -97,7 +97,7 @@
     </div>
     <div class="stat-card amber">
       <p class="stat-label">Còn lại</p>
-      <% const remaining = (effectiveTarget || metrics.targetCalories || 0) - consumed.calories; %>
+      <% const remaining = (metrics.targetCalories || 0) - consumed.calories; %>
       <p class="stat-value text-amber-600 animated-num" id="statRemaining">
         <%= remaining >= 0 ? remaining : 0 %>
       </p>
@@ -114,7 +114,7 @@
   </div>
 
   <!-- ── Macro Bars ─────────────────────────────────────────── -->
-  <% if (metrics.macros && effectiveTarget) { %>
+  <% if (metrics.macros && metrics.targetCalories) { %>
   <div class="nt-card p-4 mb-5">
     <div class="flex items-center justify-between mb-4">
       <p class="section-title">⚡ Phân bổ Macros <%= _dateLabel %></p>
@@ -126,7 +126,7 @@
       <div>
         <div class="flex justify-between text-xs mb-1.5">
           <span class="font-bold text-blue-600">🥩 Protein</span>
-          <span class="text-gray-400 font-semibold" id="macroProteinLabel"><%= consumed.protein %>/<%= (effectiveMacros || metrics.macros).protein %>g</span>
+          <span class="text-gray-400 font-semibold" id="macroProteinLabel"><%= consumed.protein %>/<%= metrics.macros.protein %>g</span>
         </div>
         <div class="macro-bar-track"><div class="macro-bar-fill bg-blue-500" id="macroProteinBar" style="width:<%= macroProgress.protein %>%"></div></div>
         <p class="text-xs text-blue-400 mt-1 font-bold" id="macroProteinPct"><%= macroProgress.protein %>%</p>
@@ -134,7 +134,7 @@
       <div>
         <div class="flex justify-between text-xs mb-1.5">
           <span class="font-bold text-amber-600">🍚 Carbs</span>
-          <span class="text-gray-400 font-semibold" id="macroCarbsLabel"><%= consumed.carbs %>/<%= (effectiveMacros || metrics.macros).carbs %>g</span>
+          <span class="text-gray-400 font-semibold" id="macroCarbsLabel"><%= consumed.carbs %>/<%= metrics.macros.carbs %>g</span>
         </div>
         <div class="macro-bar-track"><div class="macro-bar-fill bg-amber-400" id="macroCarbsBar" style="width:<%= macroProgress.carbs %>%"></div></div>
         <p class="text-xs text-amber-400 mt-1 font-bold" id="macroCarbsPct"><%= macroProgress.carbs %>%</p>
@@ -142,7 +142,7 @@
       <div>
         <div class="flex justify-between text-xs mb-1.5">
           <span class="font-bold text-rose-600">🥑 Fat</span>
-          <span class="text-gray-400 font-semibold" id="macroFatLabel"><%= consumed.fat %>/<%= (effectiveMacros || metrics.macros).fat %>g</span>
+          <span class="text-gray-400 font-semibold" id="macroFatLabel"><%= consumed.fat %>/<%= metrics.macros.fat %>g</span>
         </div>
         <div class="macro-bar-track"><div class="macro-bar-fill bg-rose-400" id="macroFatBar" style="width:<%= macroProgress.fat %>%"></div></div>
         <p class="text-xs text-rose-400 mt-1 font-bold" id="macroFatPct"><%= macroProgress.fat %>%</p>
@@ -613,11 +613,11 @@ async function submitAddFood() {
 }
 
 // ── Các hằng số dinh dưỡng (được ghi vào DOM bởi EJS) ──────────────────────
-const EFFECTIVE_TARGET = <%= effectiveTarget || metrics.targetCalories || 0 %>;
+const EFFECTIVE_TARGET = <%= metrics.targetCalories || 0 %>;
 const MACRO_TARGET = {
-  protein: <%= (effectiveMacros || metrics.macros) ? (effectiveMacros || metrics.macros).protein : 0 %>,
-  carbs:   <%= (effectiveMacros || metrics.macros) ? (effectiveMacros || metrics.macros).carbs   : 0 %>,
-  fat:     <%= (effectiveMacros || metrics.macros) ? (effectiveMacros || metrics.macros).fat     : 0 %>,
+  protein: <%= metrics.macros ? metrics.macros.protein : 0 %>,
+  carbs:   <%= metrics.macros ? metrics.macros.carbs   : 0 %>,
+  fat:     <%= metrics.macros ? metrics.macros.fat     : 0 %>,
 };
 // Trạng thái hiện tại (mutable)
 let _consumed = {
