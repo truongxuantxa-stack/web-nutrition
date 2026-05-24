@@ -30,11 +30,12 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 - [x] Phase 5: Giao diện UI/UX & Thuật toán lõi (Meal Planner, Adaptive TDEE).
   - [x] **Bước 1 (Ngày 1-2):** Hoàn thành tính năng Xuất báo cáo PDF chất lượng cao bằng `pdfkit` trên Backend Express hiện tại.
 - [ ] **Bước 2 (Ngày 3):** Khởi tạo dự án Frontend React (Vite) độc lập + Setup Tailwind CSS/DaisyUI + Thiết kế Landing Page siêu đẹp với đầy đủ hiệu ứng animation.
-- [ ] **Bước 3 (Ngày 4-5):** Cấu hình CORS ở Express Backend + Tạo các JSON API Route (`/api/v1/...`) song song + Xử lý Auth (JWT/Cookie).
+- [x] **Bước 3 (Ngày 4-5):** Cấu hình CORS ở Express Backend + Tạo các JSON API Route (`/api/v1/...`) song song + Xử lý Auth (JWT/Cookie).
 - [ ] **Bước 4 (Tuần 2):** Chuyển đổi toàn bộ các trang cốt lõi (Dashboard vẽ biểu đồ, Nhật ký ăn uống, Meal Planner) sang React SPA.
 
 
 ## 6. Changelog (Nhật ký thay đổi)
+- **[feat] API v1 (Bước 3):** Triển khai nhánh API JSON song song với EJS: namespace `/api/v1`, CORS chỉ bật ở production (dev dùng Vite Proxy), Auth Flow với Access Token 15 phút (JSON body) + Refresh Token 7 ngày (HttpOnly Cookie), `requireAuthApi` middleware (Bearer token, JSON 401), rate limiter 20req/15min, `express-validator` cho input validation, chuẩn hóa response qua `apiResponse.js` middleware, tài liệu `API_DOCS.md`.
 - **[feat/docs/refactor] PDF Report System:** Nâng cấp và tối ưu hóa hệ thống xuất PDF: thiết kế Trang bìa (Cover Page) sang trọng, Kế hoạch hành động (Actionable Insights) dựa trên Adaptive TDEE, khắc phục lỗi phân trang/tràn chữ/thiếu biến `avgFiber`, nâng cấp UI Profile Card và checklist đánh giá theo chuẩn IOM.
 - **[feat] Adaptive TDEE System:** Triển khai thuật toán chống thích ứng chuyển hóa (EMA, Rolling Average 4 tuần), lập lịch tự động hàng tuần qua Cron Job, đồng bộ badges cảnh báo.
 - **[feat/ux] Meal Planner Solver (Gauss):** Triển khai thuật toán giải tích số Khử Gauss 3x3 sinh thực đơn tự động, cơ chế ghim nguyên liệu (pinning), smart swap (đổi món) và tích hợp đẩy trực tiếp vào nhật ký.

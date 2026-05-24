@@ -4,6 +4,12 @@ const express = require('express');
 const router  = express.Router();
 const { requireAuth, requireOnboarded, optionalAuth } = require('../middlewares/auth.middleware');
 
+// Không xử lý các request thuộc namespace /api/v1/ — đã được xử lý ở app.js
+router.use('/api/v1', (req, res) => {
+    // Nếu request đến đây nghĩa là /api/v1 router không match → 404 JSON
+    return res.error('Endpoint không tồn tại.', 404);
+});
+
 // ─── Trang chủ: redirect ─────────────────────────────────────────────────────
 router.get('/', (req, res) => {
     res.redirect('/dang-nhap');

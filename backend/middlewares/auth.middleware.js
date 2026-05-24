@@ -106,10 +106,49 @@ const optionalAuth = async (req, res, next) => {
     next();
 };
 
+/**
+ * Middleware auth cho API routes (/api/v1/*).
+ * Đọc Access Token từ Authorization header (Bearer <token>).
+ * Trả JSON 401 thay vì redirect — tương thích với React SPA.
+ */
+const requireAuthApi = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+    if (!token) {
+        return res.error('Chưa đăng nhập.', 401);
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findByPk(decoded.id, {
+            attributes: { exclude: ['password'] },
+        });
+
+        if (!user) {
+            return res.error('User không tồn tại.', 401);
+        }
+
+        req.user = user;
+        next();
+    } catch (err) {
+        // Phân biệt token hết hạn vs token sai hoàn toàn (để Frontend biết trigger refresh)
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({
+                success: false,
+                message: 'Token đã hết hạn.',
+                code: 'TOKEN_EXPIRED',
+            });
+        }
+        return res.error('Token không hợp lệ.', 401);
+    }
+};
+
 module.exports = {
     requireAuth,
     requireOnboarded,
     redirectIfOnboarded,
     redirectIfAuthenticated,
     optionalAuth,
+    requireAuthApi,
 };
