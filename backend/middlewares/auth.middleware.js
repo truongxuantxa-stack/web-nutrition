@@ -57,7 +57,10 @@ const requireOnboarded = (req, res, next) => {
  */
 const redirectIfOnboarded = (req, res, next) => {
     if (req.user.isOnboarded) {
-        return res.redirect('/dashboard');
+        const redirectUrl = process.env.NODE_ENV === 'production'
+            ? '/dashboard'
+            : `${process.env.CLIENT_URL || 'http://localhost:5173'}/dashboard`;
+        return res.redirect(redirectUrl);
     }
     next();
 };
@@ -73,7 +76,10 @@ const redirectIfAuthenticated = (req, res, next) => {
 
     try {
         jwt.verify(token, process.env.JWT_SECRET);
-        return res.redirect('/dashboard');
+        const redirectUrl = process.env.NODE_ENV === 'production'
+            ? '/dashboard'
+            : `${process.env.CLIENT_URL || 'http://localhost:5173'}/dashboard`;
+        return res.redirect(redirectUrl);
     } catch {
         res.clearCookie('token');
         next();

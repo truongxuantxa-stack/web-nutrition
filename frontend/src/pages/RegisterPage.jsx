@@ -21,7 +21,8 @@ export default function RegisterPage() {
     try {
       const user = await register(form.name, form.email, form.password);
       if (!user.isOnboarded) {
-        window.location.href = '/onboarding';
+        // Onboarding vẫn là EJS — redirect đến backend trực tiếp
+        window.location.href = 'http://localhost:3000/onboarding';
       } else {
         navigate('/dashboard');
       }

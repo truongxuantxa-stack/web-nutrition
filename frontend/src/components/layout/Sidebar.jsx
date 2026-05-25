@@ -6,6 +6,7 @@ import {
   CalendarDays,
   Scale,
   Dumbbell,
+  User,
   LogOut,
 } from 'lucide-react';
 
@@ -13,12 +14,9 @@ const navItems = [
   { to: '/dashboard',    label: 'Tổng quan',    icon: LayoutDashboard },
   { to: '/diary',        label: 'Nhật ký',       icon: BookOpen },
   { to: '/meal-planner', label: 'Lập kế hoạch',  icon: CalendarDays },
-];
-
-// EJS pages (dùng window.location thay vì NavLink)
-const ejsItems = [
-  { href: '/can-nang',  label: 'Cân nặng',   icon: Scale },
-  { href: '/luyen-tap', label: 'Luyện tập',  icon: Dumbbell },
+  { to: '/weight',       label: 'Cân nặng',      icon: Scale },
+  { to: '/exercise',     label: 'Luyện tập',     icon: Dumbbell },
+  { to: '/profile',      label: 'Hồ sơ',         icon: User },
 ];
 
 export default function Sidebar() {
@@ -51,19 +49,6 @@ export default function Sidebar() {
             <Icon className="w-4 h-4 shrink-0" />
             {label}
           </NavLink>
-        ))}
-
-        <div className="divider my-2 text-xs text-base-content/40">EJS Pages</div>
-
-        {ejsItems.map(({ href, label, icon: Icon }) => (
-          <a
-            key={href}
-            href={href}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-base-content/70 hover:bg-base-200 hover:text-base-content transition-colors"
-          >
-            <Icon className="w-4 h-4 shrink-0" />
-            {label}
-          </a>
         ))}
       </nav>
 

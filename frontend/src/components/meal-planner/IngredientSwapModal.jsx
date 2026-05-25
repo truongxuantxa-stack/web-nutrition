@@ -4,7 +4,7 @@ import { X, Search } from 'lucide-react';
 
 export default function IngredientSwapModal({ isOpen, onClose, swapTarget, onConfirmSwap }) {
   const [searchQ, setSearchQ] = useState('');
-  const role = swapTarget?.role || '';
+  const role = swapTarget?.food?.category || swapTarget?.role || '';
 
   const { data: foods = [], isLoading } = useFoodsByRole(role);
 
@@ -30,7 +30,7 @@ export default function IngredientSwapModal({ isOpen, onClose, swapTarget, onCon
 
         {swapTarget && (
           <p className="text-sm text-base-content/60 mb-3">
-            Đang thay thế: <strong>{swapTarget.foodName}</strong>
+            Đang thay thế: <strong>{swapTarget.food?.name || swapTarget.foodName}</strong>
             {role && <span className="badge badge-ghost badge-sm ml-2 capitalize">{role}</span>}
           </p>
         )}

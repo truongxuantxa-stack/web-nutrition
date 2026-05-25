@@ -31,10 +31,22 @@ const processQueue = (error, token = null) => {
 };
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Normalize: EJS controllers trả { success, foods/entry/... } (flat)
+    // API controllers dùng res.success() trả { success, data: {...}, message }
+    // → Chuẩn hóa về { success, data, message } thống nhất
+    const body = response.data;
+    if (body && body.success === true && body.data === undefined) {
+      // EJS-style response: extract known data fields, wrap vào data
+      const { success, message, ...rest } = body;
+      response.data = { success, data: rest, message: message || '' };
+    }
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
-    const skipToast = originalRequest?._skipToast;
+    // Đọc skipToast từ _meta hoặc fallback _skipToast (backward compat)
+    const skipToast = originalRequest?._meta?.skipToast ?? originalRequest?._skipToast;
 
     // Xử lý 401 → thử refresh token
     if (error.response?.status === 401 && !originalRequest._retry) {

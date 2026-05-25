@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       return;
     }
     try {
-      const { data } = await api.get('/auth/me', { _skipToast: true });
+      const { data } = await api.get('/auth/me', { _meta: { skipToast: true } });
       setUser(data.data.user);
     } catch {
       clearToken();
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
   // ─── login ───────────────────────────────────────────────────────────────────
   const login = async (email, password) => {
-    const { data } = await api.post('/auth/login', { email, password }, { _skipToast: true });
+    const { data } = await api.post('/auth/login', { email, password }, { _meta: { skipToast: true } });
     saveToken(data.data.accessToken);
     setUser(data.data.user);
     return data.data.user;
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
 
   // ─── register ────────────────────────────────────────────────────────────────
   const register = async (name, email, password) => {
-    const { data } = await api.post('/auth/register', { name, email, password }, { _skipToast: true });
+    const { data } = await api.post('/auth/register', { name, email, password }, { _meta: { skipToast: true } });
     saveToken(data.data.accessToken);
     setUser(data.data.user);
     return data.data.user;

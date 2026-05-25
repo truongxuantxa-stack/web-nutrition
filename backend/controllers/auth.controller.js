@@ -79,7 +79,10 @@ exports.login = async (req, res) => {
             return res.redirect('/onboarding');
         }
 
-        res.redirect('/dashboard');
+        const redirectUrl = process.env.NODE_ENV === 'production'
+            ? '/dashboard'
+            : `${process.env.CLIENT_URL || 'http://localhost:5173'}/dashboard`;
+        res.redirect(redirectUrl);
     } catch (err) {
         console.error('Login error:', err);
         res.render('auth/login', {
@@ -208,7 +211,10 @@ exports.saveOnboarding = async (req, res) => {
             waterGoal : calculateWaterGoal(weightNum),
         });
 
-        res.redirect('/dashboard');
+        const redirectUrl = process.env.NODE_ENV === 'production'
+            ? '/dashboard'
+            : `${process.env.CLIENT_URL || 'http://localhost:5173'}/dashboard`;
+        res.redirect(redirectUrl);
     } catch (err) {
         console.error('Onboarding error:', err);
         if (err.name === 'SequelizeValidationError') {

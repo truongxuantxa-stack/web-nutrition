@@ -34,6 +34,24 @@ const setRefreshTokenCookie = (res, token) => {
     });
 };
 
+/**
+ * Set token (EJS JWT cookie) vào cookie.
+ */
+const signTokenAndSetCookie = (res, userId) => {
+    const token = jwt.sign(
+        { id: userId },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    );
+
+    res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày (ms)
+    });
+};
+
 // ─── POST /api/v1/auth/login ─────────────────────────────────────────────────
 
 exports.login = async (req, res) => {
@@ -58,6 +76,9 @@ exports.login = async (req, res) => {
 
         // Set Refresh Token vào cookie
         setRefreshTokenCookie(res, refreshToken);
+
+        // Set EJS Session Token vào cookie
+        signTokenAndSetCookie(res, user.id);
 
         return res.success(
             {
@@ -105,6 +126,9 @@ exports.register = async (req, res) => {
 
         setRefreshTokenCookie(res, refreshToken);
 
+        // Set EJS Session Token vào cookie
+        signTokenAndSetCookie(res, user.id);
+
         return res.status(201).json({
             success: true,
             message: 'Đăng ký thành công.',
@@ -131,6 +155,7 @@ exports.register = async (req, res) => {
 
 exports.logout = (req, res) => {
     res.clearCookie('refreshToken', { path: '/api/v1/auth/refresh-token' });
+    res.clearCookie('token');
     return res.success(null, 'Đăng xuất thành công.');
 };
 

@@ -23,7 +23,10 @@ export default function WeightChart({ chartData = [] }) {
   }
 
   const labels  = chartData.map(d => {
-    const [, m, day] = d.date.split('-');
+    if (!d.date || typeof d.date !== 'string') return '';
+    const parts = d.date.split('T')[0].split('-');
+    if (parts.length < 3) return d.date;
+    const [, m, day] = parts;
     return `${day}/${m}`;
   });
   const weights = chartData.map(d => d.weight);

@@ -160,6 +160,9 @@ exports.addEntry = async (req, res) => {
             });
         }
 
+        const isRaw = food.foodType === 'raw';
+        const factor = isRaw ? amountNum / 100 : amountNum;
+
         // Tạo entry với snapshot dinh dưỡng tại thời điểm này
         const entry = await DiaryEntry.create({
             userId           : user.id,
@@ -167,13 +170,13 @@ exports.addEntry = async (req, res) => {
             amount           : amountNum,
             mealType,
             date             : entryDate,
-            caloriesSnapshot : Math.round(food.calories * amountNum * 10) / 10,
-            proteinSnapshot  : Math.round(food.protein  * amountNum * 10) / 10,
-            carbsSnapshot    : Math.round(food.carbs    * amountNum * 10) / 10,
-            fatSnapshot      : Math.round(food.fat      * amountNum * 10) / 10,
-            fiberSnapshot    : food.fiber  != null ? Math.round(food.fiber  * amountNum * 10) / 10 : null,
-            sugarSnapshot    : food.sugar  != null ? Math.round(food.sugar  * amountNum * 10) / 10 : null,
-            sodiumSnapshot   : food.sodium != null ? Math.round(food.sodium * amountNum * 10) / 10 : null,
+            caloriesSnapshot : Math.round(food.calories * factor * 10) / 10,
+            proteinSnapshot  : Math.round(food.protein  * factor * 10) / 10,
+            carbsSnapshot    : Math.round(food.carbs    * factor * 10) / 10,
+            fatSnapshot      : Math.round(food.fat      * factor * 10) / 10,
+            fiberSnapshot    : food.fiber  != null ? Math.round(food.fiber  * factor * 10) / 10 : null,
+            sugarSnapshot    : food.sugar  != null ? Math.round(food.sugar  * factor * 10) / 10 : null,
+            sodiumSnapshot   : food.sodium != null ? Math.round(food.sodium * factor * 10) / 10 : null,
             note             : note ? note.trim() : null,
         });
 

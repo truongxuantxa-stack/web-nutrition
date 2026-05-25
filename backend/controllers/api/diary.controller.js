@@ -89,6 +89,7 @@ exports.getDiary = async (req, res) => {
                     meal,
                     list.map(e => ({
                         id              : e.id,
+                        foodId          : e.foodId,
                         foodName        : e.food?.name || 'Đã xóa',
                         amount          : e.amount,
                         unit            : e.food?.unit || '',

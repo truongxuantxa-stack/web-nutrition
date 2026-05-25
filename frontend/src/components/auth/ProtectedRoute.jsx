@@ -16,10 +16,9 @@ export default function ProtectedRoute() {
     return <Navigate to="/login" replace />;
   }
 
-  // Nếu chưa onboard → redirect về EJS onboarding (Strangler Fig pattern)
+  // Nếu chưa onboard → chuyển sang trang Onboarding nội bộ trong React SPA
   if (user && user.isOnboarded === false) {
-    window.location.href = '/onboarding';
-    return null;
+    return <Navigate to="/onboarding" replace />;
   }
 
   return <Outlet />;

@@ -23,6 +23,12 @@ export default function MealPlannerPage() {
   const [showSwap, setShowSwap]               = useState(false);
   const [showConfig, setShowConfig]           = useState(false);
   const [currentFoods, setCurrentFoods]       = useState([]);
+  const [pinnedFoods, setPinnedFoods]         = useState({
+    carb: null,
+    protein: null,
+    fat: null,
+    fiber: null
+  });
 
   const { data: configData = [] }   = useMealConfig();
   const { data: templates = [] }    = useTemplates();
@@ -33,18 +39,43 @@ export default function MealPlannerPage() {
   const handleGenerate = () => {
     if (!selectedMeal)     { toast.error('Vui lòng chọn bữa ăn.'); return; }
     if (!selectedTemplate) { toast.error('Vui lòng chọn template.'); return; }
+
+    const preferences = {};
+    Object.entries(pinnedFoods).forEach(([role, id]) => {
+      if (id) preferences[role] = id;
+    });
+
     generateMeal.mutate(
-      { mealKey: selectedMeal, templateId: selectedTemplate, preferences: {} },
+      { mealKey: selectedMeal, templateId: selectedTemplate, preferences },
       {
         onSuccess: (res) => {
           setResult(res);
-          setCurrentFoods(res.data?.map(i => i.foodId) || []);
+          setCurrentFoods(res.data?.map(i => i.food?.id) || []);
           if (res.success) toast.success('Đã tạo thực đơn!');
           else toast('Thực đơn có cảnh báo — kiểm tra kết quả', { icon: '⚠️' });
         },
         onError: () => toast.error('Không thể tạo thực đơn.'),
       }
     );
+  };
+
+  const handleTogglePin = (item) => {
+    const role = item.food?.category || item.role;
+    if (!role) return;
+
+    setPinnedFoods(prev => {
+      const isPinned = prev[role] === item.food?.id;
+      const nextId = isPinned ? null : item.food?.id;
+      if (nextId) {
+        toast.success(`Đã ghim món ${item.food?.name}`);
+      } else {
+        toast('Đã bỏ ghim món', { icon: '🔓' });
+      }
+      return {
+        ...prev,
+        [role]: nextId
+      };
+    });
   };
 
   const handleSwapClick = (item) => {
@@ -59,11 +90,22 @@ export default function MealPlannerPage() {
         mealKey       : selectedMeal,
         currentFoodIds: currentFoods,
         newFoodId     : newFood.id,
-        slotRoleToSwap: swapTarget.role,
+        slotRoleToSwap: swapTarget.food?.category || swapTarget.role,
       },
       {
         onSuccess: (res) => {
           setResult(res);
+          setCurrentFoods(res.data?.map(i => i.food?.id) || []); // Đồng bộ món hiện tại sau khi đổi
+          
+          // Tự động ghim món vừa đổi để giữ nguyên cho các lần tạo tiếp theo
+          const role = swapTarget.food?.category || swapTarget.role;
+          if (role) {
+            setPinnedFoods(prev => ({
+              ...prev,
+              [role]: newFood.id
+            }));
+          }
+
           if (res.success) toast.success(`Đã đổi sang ${newFood.name}!`);
           else toast('Tổ hợp này có vấn đề — xem cảnh báo', { icon: '⚠️' });
         },
@@ -74,10 +116,10 @@ export default function MealPlannerPage() {
   const handlePushToDiary = () => {
     if (!result?.data?.length) { toast.error('Chưa có thực đơn để đẩy.'); return; }
     const entries = result.data
-      .filter(i => i.weightGrams > 0)
+      .filter(i => i.grams > 0)
       .map(i => ({
-        foodId  : i.foodId,
-        amount  : Math.round(i.weightGrams),
+        foodId  : i.food?.id,
+        amount  : Math.round(i.grams),
         mealType: selectedMeal,
       }));
     pushToDiary.mutate(entries, {
@@ -152,7 +194,7 @@ export default function MealPlannerPage() {
             <span className="badge badge-success badge-sm">3</span>
             Kết quả thực đơn
           </h2>
-          <MealResult result={result} onSwap={handleSwapClick} />
+          <MealResult result={result} onSwap={handleSwapClick} pinnedFoods={pinnedFoods} onTogglePin={handleTogglePin} />
 
           {/* Đẩy vào nhật ký */}
           {result.success && (

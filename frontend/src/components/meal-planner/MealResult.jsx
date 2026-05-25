@@ -1,6 +1,6 @@
 import { RefreshCw, AlertTriangle, Pin } from 'lucide-react';
 
-export default function MealResult({ result, onSwap }) {
+export default function MealResult({ result, onSwap, pinnedFoods = {}, onTogglePin }) {
   if (!result) return null;
 
   const { success, data: items = [], errors = [], warnings = [] } = result;
@@ -35,38 +35,49 @@ export default function MealResult({ result, onSwap }) {
             </thead>
             <tbody>
               {items.map((item, i) => {
-                const isNegative = item.weightGrams < 0;
+                const isNegative = item.grams < 0;
+                const role = item.food?.category || item.role;
+                const isPinned = pinnedFoods[role] === item.food?.id;
+
                 return (
                   <tr key={i} className={isNegative ? 'bg-error/5' : ''}>
                     <td>
                       <div className="flex items-center gap-1.5">
-                        {item.pinned && <Pin className="w-3 h-3 text-primary shrink-0" />}
-                        <span className="font-medium text-sm">{item.foodName}</span>
+                        {isPinned && <Pin className="w-3.5 h-3.5 text-primary shrink-0 fill-primary" />}
+                        <span className="font-medium text-sm">{item.food?.name || item.foodName}</span>
                         {isNegative && (
                           <span className="badge badge-error badge-xs">⚠️</span>
                         )}
                       </div>
-                      {item.role && (
-                        <span className="badge badge-ghost badge-xs capitalize">{item.role}</span>
+                      {role && (
+                        <span className="badge badge-ghost badge-xs capitalize">{role}</span>
                       )}
                     </td>
                     <td className="text-right font-mono text-sm">
-                      {isNegative ? '—' : `${Math.round(item.weightGrams)}g`}
+                      {isNegative ? '—' : `${Math.round(item.grams)}g`}
                     </td>
                     <td className="text-right text-sm">
-                      {isNegative ? '—' : `${Math.round(item.caloriesContrib)} kcal`}
+                      {isNegative ? '—' : `${Math.round((item.food?.calories || 0) * item.grams / 100)} kcal`}
                     </td>
                     <td className="text-right text-xs text-base-content/50">
-                      {isNegative ? '—' : `${Math.round(item.proteinContrib)}/${Math.round(item.carbsContrib)}/${Math.round(item.fatContrib)}`}
+                      {isNegative ? '—' : `${Math.round((item.food?.protein || 0) * item.grams / 100)}/${Math.round((item.food?.carbs || 0) * item.grams / 100)}/${Math.round((item.food?.fat || 0) * item.grams / 100)}`}
                     </td>
-                    <td>
+                    <td className="flex items-center justify-end gap-1.5">
+                      <button
+                        id={`pin-${i}`}
+                        onClick={() => onTogglePin(item)}
+                        className={`btn btn-ghost btn-xs btn-square ${isPinned ? 'text-primary bg-primary/10' : 'text-base-content/30 hover:bg-base-200'}`}
+                        title={isPinned ? 'Bỏ ghim món này' : 'Ghim cố định món này'}
+                      >
+                        <Pin className="w-3.5 h-3.5" />
+                      </button>
                       <button
                         id={`swap-${i}`}
                         onClick={() => onSwap(item, i)}
-                        className="btn btn-ghost btn-xs gap-1"
+                        className="btn btn-ghost btn-xs btn-square text-base-content/60 hover:bg-base-200"
                         title="Đổi nguyên liệu"
                       >
-                        <RefreshCw className="w-3 h-3" />
+                        <RefreshCw className="w-3.5 h-3.5" />
                       </button>
                     </td>
                   </tr>
