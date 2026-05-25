@@ -8,8 +8,8 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 ## 2. Tech Stack & Architecture
 - **Backend:** Node.js, Express.js.
 - **Database:** MySQL với Sequelize ORM.
-- **Frontend:** EJS Template Engine, Tailwind CSS, DaisyUI.
-- **Libraries:** Chart.js (Biểu đồ), PDFKit (Xuất báo cáo), node-cron (Chạy ngầm).
+- **Frontend:** React 19 SPA (Vite + Tailwind v4 + DaisyUI v5), EJS Template Engine (legacy pages).
+- **Libraries:** react-chartjs-2/Chart.js (Biểu đồ), TanStack Query (server state), react-hot-toast (notifications), dayjs (date), PDFKit (Xuất báo cáo), node-cron (Chạy ngầm).
 - **Architecture (MVC):** `/controllers`, `/models`, `/routes`, `/views`, `/services`, `/middlewares`, `/public`.
 
 ## 3. Core Algorithms & Formulas
@@ -31,10 +31,11 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
   - [x] **Bước 1 (Ngày 1-2):** Hoàn thành tính năng Xuất báo cáo PDF chất lượng cao bằng `pdfkit` trên Backend Express hiện tại.
 - [ ] **Bước 2 (Ngày 3):** Khởi tạo dự án Frontend React (Vite) độc lập + Setup Tailwind CSS/DaisyUI + Thiết kế Landing Page siêu đẹp với đầy đủ hiệu ứng animation.
 - [x] **Bước 3 (Ngày 4-5):** Cấu hình CORS ở Express Backend + Tạo các JSON API Route (`/api/v1/...`) song song + Xử lý Auth (JWT/Cookie).
-- [ ] **Bước 4 (Tuần 2):** Chuyển đổi toàn bộ các trang cốt lõi (Dashboard vẽ biểu đồ, Nhật ký ăn uống, Meal Planner) sang React SPA.
+- [x] **Bước 4 (Tuần 2):** Chuyển đổi toàn bộ các trang cốt lõi (Dashboard vẽ biểu đồ, Nhật ký ăn uống, Meal Planner) sang React SPA.
 
 
 ## 6. Changelog (Nhật ký thay đổi)
+- **[feat] React SPA Core Pages (Bước 4):** Chuyển đổi Dashboard, Nhật ký ăn uống, Meal Planner sang React 19 SPA. Phase 0: Vite proxy, Axios interceptors (auto-refresh JWT), TanStack Query (staleTime 30s, cascade invalidation), dayjs locale vi, AuthContext, ProtectedRoute (Strangler Fig pattern), AppLayout (DaisyUI drawer sidebar). Phase 1: 6 API controllers mới (`/api/v1/dashboard`, `/diary`, `/weight`, `/water`, `/exercise`, `/meal-planner`) wrap service layer, không sửa EJS controllers cũ. Phase 2: DashboardPage với CalorieRing SVG animated, MacrosChart Doughnut, WeightChart Line, WaterProgress quick-add. Phase 3: DiaryPage với 4 MealGroup accordion, AddFoodModal (tìm kiếm debounce + tạo custom food), WaterTracker inline. Phase 4: MealPlannerPage với Gauss Solver integration, swap ingredients, push to diary.
 - **[feat] API v1 (Bước 3):** Triển khai nhánh API JSON song song với EJS: namespace `/api/v1`, CORS chỉ bật ở production (dev dùng Vite Proxy), Auth Flow với Access Token 15 phút (JSON body) + Refresh Token 7 ngày (HttpOnly Cookie), `requireAuthApi` middleware (Bearer token, JSON 401), rate limiter 20req/15min, `express-validator` cho input validation, chuẩn hóa response qua `apiResponse.js` middleware, tài liệu `API_DOCS.md`.
 - **[feat/docs/refactor] PDF Report System:** Nâng cấp và tối ưu hóa hệ thống xuất PDF: thiết kế Trang bìa (Cover Page) sang trọng, Kế hoạch hành động (Actionable Insights) dựa trên Adaptive TDEE, khắc phục lỗi phân trang/tràn chữ/thiếu biến `avgFiber`, nâng cấp UI Profile Card và checklist đánh giá theo chuẩn IOM.
 - **[feat] Adaptive TDEE System:** Triển khai thuật toán chống thích ứng chuyển hóa (EMA, Rolling Average 4 tuần), lập lịch tự động hàng tuần qua Cron Job, đồng bộ badges cảnh báo.

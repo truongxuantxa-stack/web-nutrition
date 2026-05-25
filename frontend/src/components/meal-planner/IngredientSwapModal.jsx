@@ -1,0 +1,81 @@
+import { useState } from 'react';
+import { useFoodsByRole } from '../../hooks/useMealPlanner';
+import { X, Search } from 'lucide-react';
+
+export default function IngredientSwapModal({ isOpen, onClose, swapTarget, onConfirmSwap }) {
+  const [searchQ, setSearchQ] = useState('');
+  const role = swapTarget?.role || '';
+
+  const { data: foods = [], isLoading } = useFoodsByRole(role);
+
+  const filtered = searchQ
+    ? foods.filter(f => f.name.toLowerCase().includes(searchQ.toLowerCase()))
+    : foods;
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal modal-open">
+      <div className="modal-box max-w-md">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-bold">Đổi nguyên liệu</h3>
+          <button
+            id="swap-modal-close"
+            onClick={onClose}
+            className="btn btn-ghost btn-sm btn-square"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {swapTarget && (
+          <p className="text-sm text-base-content/60 mb-3">
+            Đang thay thế: <strong>{swapTarget.foodName}</strong>
+            {role && <span className="badge badge-ghost badge-sm ml-2 capitalize">{role}</span>}
+          </p>
+        )}
+
+        <div className="relative mb-3">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/40" />
+          <input
+            id="swap-search"
+            type="text"
+            className="input input-bordered input-sm w-full pl-9"
+            placeholder="Tìm nguyên liệu..."
+            value={searchQ}
+            onChange={e => setSearchQ(e.target.value)}
+          />
+        </div>
+
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <span className="loading loading-spinner loading-md text-primary" />
+          </div>
+        ) : (
+          <div className="max-h-72 overflow-y-auto flex flex-col gap-1">
+            {filtered.map(food => (
+              <button
+                key={food.id}
+                id={`swap-food-${food.id}`}
+                onClick={() => { onConfirmSwap(food); onClose(); }}
+                className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-base-200 text-left transition-colors"
+              >
+                <span className="text-lg shrink-0">🥦</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{food.name}</p>
+                  <p className="text-xs text-base-content/50">
+                    {food.calories} kcal · P:{food.protein}g C:{food.carbs}g F:{food.fat}g
+                  </p>
+                </div>
+              </button>
+            ))}
+            {filtered.length === 0 && (
+              <p className="text-center text-base-content/40 text-sm py-4">Không có nguyên liệu phù hợp</p>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="modal-backdrop bg-black/40" onClick={onClose} />
+    </div>
+  );
+}

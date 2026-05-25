@@ -1,0 +1,96 @@
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// controllers/api/dashboard.controller.js
+// GET /api/v1/dashboard?date=YYYY-MM-DD — trả JSON tổng hợp dashboard
+// Wrap lại service layer, không sửa controller EJS cũ
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const { DiaryEntry, Food, WeightLog, ExerciseLog } = require('../../models');
+const { calculateAllMetrics, calculateWaterGoal }  = require('../../services/nutrition.service');
+const {
+    sumNutritionFromEntries,
+    getCalorieProgress,
+    getMacroProgress,
+} = require('../../services/suggestion.service');
+const { getWaterByDate } = require('../water.controller');
+
+// ─── Helper ──────────────────────────────────────────────────────────────────
+const toLocalDateString = (d) => {
+    const year  = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day   = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+// ─── GET /api/v1/dashboard?date=YYYY-MM-DD ────────────────────────────────────
+exports.getDashboard = async (req, res) => {
+    try {
+        const user    = req.user;
+        const metrics = calculateAllMetrics(user);
+
+        // Dùng query param nếu có, fallback hôm nay
+        let date = req.query.date;
+        if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+            date = toLocalDateString(new Date());
+        }
+
+        // Nhật ký ngày được chọn
+        const entries = await DiaryEntry.findAll({
+            where  : { userId: user.id, date },
+            include: [{ model: Food, as: 'food' }],
+        });
+        const consumed        = sumNutritionFromEntries(entries);
+        const calorieProgress = getCalorieProgress(consumed.calories, metrics.targetCalories || 0);
+        const macroProgress   = getMacroProgress(consumed, metrics.macros || {});
+
+        // Lịch sử cân nặng (7 ngày gần nhất cho biểu đồ mini)
+        const weightLogs = await WeightLog.findAll({
+            where: { userId: user.id },
+            order: [['date', 'DESC']],
+            limit: 7,
+        });
+        const weightChartData = [...weightLogs].reverse().map(l => ({ date: l.date, weight: l.weight }));
+
+        // Tổng calo đốt trong ngày
+        const exerciseLogs = await ExerciseLog.findAll({
+            where     : { userId: user.id, date },
+            attributes: ['caloriesBurned'],
+        });
+        const totalBurned = Math.round(exerciseLogs.reduce((sum, l) => sum + l.caloriesBurned, 0));
+
+        // Nước uống
+        const { total: waterTotal } = await getWaterByDate(user.id, date);
+        const waterGoal = user.waterGoal || calculateWaterGoal(user.weight);
+
+        return res.success({
+            user: {
+                id          : user.id,
+                name        : user.fullName,
+                email       : user.email,
+                isOnboarded : user.isOnboarded,
+                weight      : user.weight,
+                height      : user.height,
+                goal        : user.goal,
+            },
+            date,
+            metrics,
+            consumed: {
+                calories: Math.round(consumed.calories),
+                protein : Math.round(consumed.protein),
+                carbs   : Math.round(consumed.carbs),
+                fat     : Math.round(consumed.fat),
+            },
+            totalBurned,
+            calorieProgress,
+            macroProgress,
+            weightChartData,
+            mealCount: entries.length,
+            waterTotal,
+            waterGoal,
+        });
+    } catch (err) {
+        console.error('[API] getDashboard error:', err);
+        return res.error('Lỗi server khi lấy dữ liệu dashboard.', 500);
+    }
+};
