@@ -9,7 +9,7 @@ import {
 import { useDownloadReport } from '../hooks/useReport';
 import api from '../lib/axios';
 import toast from 'react-hot-toast';
-import { User, Calendar, Ruler, Scale, Dumbbell, Target, ShieldAlert, Award, Save, RefreshCw, Plus, X, FileText } from 'lucide-react';
+import { User, Calendar, Ruler, Scale, Dumbbell, Target, ShieldAlert, Award, Save, Plus, X, FileText } from 'lucide-react';
 
 export default function ProfilePage() {
   const { data, isLoading, error } = useProfileData();
@@ -43,17 +43,19 @@ export default function ProfilePage() {
   useEffect(() => {
     if (data?.user) {
       const u = data.user;
-      setName(u.name || '');
-      setGender(u.gender || 'male');
-      setBirthDate(u.birthDate || '');
-      setHeight(u.height || '');
-      setWeight(u.weight || '');
-      setActivityLevel(u.activityLevel || 'sedentary');
-      setGoal(u.goal || 'maintain_weight');
+      Promise.resolve().then(() => {
+        setName(u.name || '');
+        setGender(u.gender || 'male');
+        setBirthDate(u.birthDate || '');
+        setHeight(u.height || '');
+        setWeight(u.weight || '');
+        setActivityLevel(u.activityLevel || 'sedentary');
+        setGoal(u.goal || 'maintain_weight');
 
-      setMacroProtein(u.macroProtein || 30);
-      setMacroCarbs(u.macroCarbs || 40);
-      setMacroFat(u.macroFat || 30);
+        setMacroProtein(u.macroProtein || 30);
+        setMacroCarbs(u.macroCarbs || 40);
+        setMacroFat(u.macroFat || 30);
+      });
     }
   }, [data]);
 

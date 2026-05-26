@@ -14,13 +14,15 @@ export const useTemplates = () =>
     queryFn : () => api.get('/meal-planner/templates').then(r => r.data.data),
   });
 
-export const useFoodsByRole = (role) =>
-  useQuery({
-    queryKey: ['meal-planner', 'foods', role],
-    queryFn : () => api.get(`/meal-planner/foods?role=${role}`).then(r => r.data.data),
+export const useFoodsByRole = (role, tags = []) => {
+  const tagsStr = tags && tags.length > 0 ? tags.join(',') : '';
+  return useQuery({
+    queryKey: ['meal-planner', 'foods', role, tagsStr],
+    queryFn : () => api.get(`/meal-planner/foods?role=${role}${tagsStr ? `&tags=${tagsStr}` : ''}`).then(r => r.data.data),
     enabled : !!role,
     staleTime: 5 * 60_000, // 5 phút
   });
+};
 
 // ─── Mutations ────────────────────────────────────────────────────────────────
 export const useGenerateMeal = () =>

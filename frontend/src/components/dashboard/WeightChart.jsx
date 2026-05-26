@@ -14,7 +14,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 export default function WeightChart({ chartData = [] }) {
   if (!chartData.length) {
     return (
-      <div className="card bg-base-100 border border-base-300">
+      <div className="glass-card rounded-3xl">
         <div className="card-body p-5 items-center justify-center h-48">
           <p className="text-base-content/40 text-sm">Chưa có dữ liệu cân nặng</p>
         </div>
@@ -37,7 +37,14 @@ export default function WeightChart({ chartData = [] }) {
       label          : 'Cân nặng (kg)',
       data           : weights,
       borderColor    : '#22c55e',
-      backgroundColor: 'rgba(34,197,94,0.12)',
+      backgroundColor: (context) => {
+        const { ctx, chartArea } = context.chart;
+        if (!chartArea) return 'rgba(34,197,94,0.12)';
+        const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+        gradient.addColorStop(0, 'rgba(34,197,94,0.25)');
+        gradient.addColorStop(1, 'rgba(34,197,94,0.02)');
+        return gradient;
+      },
       borderWidth    : 2,
       fill           : true,
       tension        : 0.35,
@@ -60,12 +67,12 @@ export default function WeightChart({ chartData = [] }) {
     },
     scales: {
       x: { grid: { display: false }, ticks: { font: { size: 11 } } },
-      y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 } } },
+      y: { grid: { display: false }, ticks: { font: { size: 11 } } },
     },
   };
 
   return (
-    <div className="card bg-base-100 border border-base-300">
+    <div className="glass-card rounded-3xl">
       <div className="card-body p-5 gap-2">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-base-content/50">Cân nặng 7 ngày</h3>
         <div className="h-44">

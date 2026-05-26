@@ -9,7 +9,7 @@ export default function AppLayout() {
       <input id="app-drawer-toggle" type="checkbox" className="drawer-toggle" />
 
       {/* ─── Main content ─────────────────────────────────────────── */}
-      <div className="drawer-content flex flex-col min-h-screen bg-base-200">
+      <div className="drawer-content flex flex-col min-h-screen gradient-bg">
         {/* Mobile topbar */}
         <div className="navbar bg-base-100 border-b border-base-300 lg:hidden sticky top-0 z-30">
           <label

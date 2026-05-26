@@ -408,22 +408,24 @@ const generateMealPlan = async (template, target, preferences = {}) => {
                 };
             }
 
-            // Nếu Failed: Lưu lại tổ hợp foods để làm Heuristic Fallback nếu sau 15 lần vẫn fail
+            // Nếu Failed: Lưu lại kết quả Gauss đầu tiên (chứa nghiệm âm hoặc cảnh báo) làm phương án hiển thị lỗi
             if (!bestAttempt) {
-                bestAttempt = foods;
+                bestAttempt = {
+                    data: weights,
+                    validation: validation
+                };
             }
         } catch (error) {
             console.error(`Attempt ${attempt} failed:`, error.message);
         }
     }
 
-    // Nếu không tìm được tổ hợp nào có nghiệm dương, chạy Heuristic Fallback
+    // Nếu không tìm được tổ hợp nào có nghiệm dương hoàn toàn, trả về kết quả tốt nhất chứa nghiệm âm (success: false) để người dùng tự đổi món
     if (bestAttempt) {
-        const fallbackResult = solveHeuristicFallback(bestAttempt, target);
         return {
-            success: true,
-            data: fallbackResult.data,
-            warnings: fallbackResult.warnings
+            success: false,
+            data: bestAttempt.data,
+            errors: bestAttempt.validation.errors
         };
     }
     

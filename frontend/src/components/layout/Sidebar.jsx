@@ -23,12 +23,12 @@ export default function Sidebar() {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="w-64 min-h-screen bg-base-100 border-r border-base-300 flex flex-col">
+    <aside className="w-64 min-h-screen glass-sidebar flex flex-col">
       {/* Logo */}
       <div className="p-6 border-b border-base-300">
         <div className="flex items-center gap-2">
           <span className="text-2xl">🥗</span>
-          <span className="text-xl font-bold text-primary">NutriTrack</span>
+          <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">NutriTrack</span>
         </div>
       </div>
 
@@ -41,8 +41,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
               ${isActive
-                ? 'bg-primary/10 text-primary'
-                : 'text-base-content/70 hover:bg-base-200 hover:text-base-content'
+                ? 'bg-primary/10 text-primary border-l-4 border-primary rounded-l-none'
+                : 'text-base-content/70 hover:bg-base-200/50 hover:text-base-content'
               }`
             }
           >

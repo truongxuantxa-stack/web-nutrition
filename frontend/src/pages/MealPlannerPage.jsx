@@ -12,8 +12,10 @@ import TemplateSelector    from '../components/meal-planner/TemplateSelector';
 import MealResult          from '../components/meal-planner/MealResult';
 import IngredientSwapModal from '../components/meal-planner/IngredientSwapModal';
 import MealConfigModal     from '../components/meal-planner/MealConfigModal';
+import PinSlotRow          from '../components/meal-planner/PinSlotRow';
 import toast from 'react-hot-toast';
 import { Settings, Wand2, BookOpen } from 'lucide-react';
+import AnimatedSection from '../components/common/AnimatedSection';
 
 export default function MealPlannerPage() {
   const [selectedMeal, setSelectedMeal]       = useState(null);
@@ -128,6 +130,23 @@ export default function MealPlannerPage() {
     });
   };
 
+  const activeTemplate = templates.find(t => t.id === selectedTemplate);
+  const swapRole = swapTarget?.food?.category || swapTarget?.role;
+  const allowedTags = activeTemplate?.slots?.find(s => s.role === swapRole)?.allowedTags || [];
+
+  const handleSelectTemplate = (id) => {
+    setSelectedTemplate(id);
+    setPinnedFoods({ carb: null, protein: null, fat: null, fiber: null });
+    setResult(null);
+  };
+
+  const handlePinChange = (role, foodId) => {
+    setPinnedFoods(prev => ({
+      ...prev,
+      [role]: foodId
+    }));
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
@@ -147,9 +166,9 @@ export default function MealPlannerPage() {
       </div>
 
       {/* Step 1: Chọn bữa ăn */}
-      <div className="flex flex-col gap-2">
+      <AnimatedSection delay={0} className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold text-base-content/60 flex items-center gap-2">
-          <span className="badge badge-primary badge-sm">1</span>
+          <span className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 text-white text-xs font-bold inline-flex items-center justify-center">1</span>
           Chọn bữa ăn
         </h2>
         <MealSelector
@@ -157,41 +176,75 @@ export default function MealPlannerPage() {
           selectedMeal={selectedMeal}
           onSelect={setSelectedMeal}
         />
-      </div>
+      </AnimatedSection>
 
       {/* Step 2: Chọn template */}
-      <div className="flex flex-col gap-2">
+      <AnimatedSection delay={0.05} className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold text-base-content/60 flex items-center gap-2">
-          <span className="badge badge-primary badge-sm">2</span>
+          <span className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 text-white text-xs font-bold inline-flex items-center justify-center">2</span>
           Chọn template
         </h2>
         <TemplateSelector
           templates={templates}
           selectedId={selectedTemplate}
-          onSelect={setSelectedTemplate}
+          onSelect={handleSelectTemplate}
         />
-      </div>
+      </AnimatedSection>
+
+      {/* Step 2.5: Ghim sẵn nguyên liệu */}
+      {activeTemplate && activeTemplate.slots && (
+        <AnimatedSection delay={0.1} className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-base-content/60 flex items-center gap-2">
+              <span className="w-10 h-6 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 text-white text-xs font-bold inline-flex items-center justify-center">2.5</span>
+              Ghim sẵn nguyên liệu (Tùy chọn)
+            </h2>
+            {Object.values(pinnedFoods).some(v => v !== null) && (
+              <button
+                id="clear-all-pins"
+                onClick={() => setPinnedFoods({ carb: null, protein: null, fat: null, fiber: null })}
+                className="btn btn-ghost btn-xs text-error font-semibold"
+              >
+                Xóa tất cả ghim
+              </button>
+            )}
+          </div>
+          <p className="text-xs text-base-content/50">Khóa nguyên liệu yêu thích trước khi thuật toán tự động đề xuất.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {activeTemplate.slots.map((slot, idx) => (
+              <PinSlotRow
+                key={idx}
+                slot={slot}
+                pinnedFoodId={pinnedFoods[slot.role]}
+                onPinChange={handlePinChange}
+              />
+            ))}
+          </div>
+        </AnimatedSection>
+      )}
 
       {/* Nút Tạo thực đơn */}
-      <button
-        id="generate-meal"
-        onClick={handleGenerate}
-        disabled={generateMeal.isPending || !selectedMeal || !selectedTemplate}
-        className="btn btn-primary gap-2 w-full sm:w-auto self-start"
-      >
-        {generateMeal.isPending ? (
-          <span className="loading loading-spinner loading-sm" />
-        ) : (
-          <Wand2 className="w-4 h-4" />
-        )}
-        Tạo thực đơn
-      </button>
+      <AnimatedSection delay={0.12}>
+        <button
+          id="generate-meal"
+          onClick={handleGenerate}
+          disabled={generateMeal.isPending || !selectedMeal || !selectedTemplate}
+          className="btn border-none gap-2 w-full sm:w-auto self-start bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 hover:scale-[1.02] active:scale-[0.98] transition-all"
+        >
+          {generateMeal.isPending ? (
+            <span className="loading loading-spinner loading-sm" />
+          ) : (
+            <Wand2 className="w-4 h-4" />
+          )}
+          Tạo thực đơn
+        </button>
+      </AnimatedSection>
 
       {/* Step 3: Kết quả */}
       {result && (
-        <div className="flex flex-col gap-3">
+        <AnimatedSection delay={0.15} className="flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-base-content/60 flex items-center gap-2">
-            <span className="badge badge-success badge-sm">3</span>
+            <span className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 text-white text-xs font-bold inline-flex items-center justify-center">3</span>
             Kết quả thực đơn
           </h2>
           <MealResult result={result} onSwap={handleSwapClick} pinnedFoods={pinnedFoods} onTogglePin={handleTogglePin} />
@@ -212,7 +265,7 @@ export default function MealPlannerPage() {
               Đẩy vào nhật ký hôm nay
             </button>
           )}
-        </div>
+        </AnimatedSection>
       )}
 
       {/* Modals */}
@@ -220,6 +273,7 @@ export default function MealPlannerPage() {
         isOpen={showSwap}
         onClose={() => setShowSwap(false)}
         swapTarget={swapTarget}
+        allowedTags={allowedTags}
         onConfirmSwap={handleConfirmSwap}
       />
       <MealConfigModal

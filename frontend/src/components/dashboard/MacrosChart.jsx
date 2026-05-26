@@ -47,7 +47,7 @@ export default function MacrosChart({ consumed, target }) {
   };
 
   return (
-    <div className="card bg-base-100 border border-base-300">
+    <div className="glass-card rounded-3xl">
       <div className="card-body p-5 gap-3">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-base-content/50">Macros</h3>
         <div className="h-48">

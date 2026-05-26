@@ -1,52 +1,52 @@
-# Skill: Testing (Kiểm Thử Tự Động & Bán Tự Động)
+# Skill: Testing (Kiểm Thử Kỹ Thuật & QA)
 
 ## 🎯 Mục đích (Purpose)
-Đảm bảo hệ thống NMS (Nutrition Management System) luôn hoạt động ổn định sau mỗi lần thêm/sửa/xóa code. Tránh tình trạng lỗi "cộng dồn" hoặc tính năng mới làm hỏng tính năng cũ.
+Đảm bảo hệ thống NMS (Nutrition Management System) luôn hoạt động ổn định về mặt kỹ thuật sau mỗi lần thêm/sửa/xóa code. Tránh tình trạng lỗi "cộng dồn", lỗi logic, hoặc code mới làm hỏng chức năng cũ.
+
+---
 
 ## 📋 Quy trình áp dụng (Workflow)
-Mỗi khi AI hoàn thành một Task hoặc người dùng yêu cầu kiểm tra, AI sẽ tự động (hoặc người dùng sẽ làm theo) các bước sau:
+Mỗi khi AI hoàn thành một Task hoặc người dùng yêu cầu kiểm tra, AI sẽ thực hiện các bước kiểm thử kỹ thuật sau:
 
 ### Bước 1: Xác định phạm vi bị ảnh hưởng (Scope)
-AI cần tự hỏi: "Task vừa rồi thay đổi phần nào?"
-- **Database (Models):** Cần test validation, thêm trường thiếu, quan hệ (relationships).
-- **Logic (Services):** BMR, TDEE, Suggesion -> Bắt buộc Unit Test bằng data giả.
-- **API (Controllers):** Route đăng nhập, thêm món, xóa món -> Bắt buộc check Response HTTP (Status 200, 400).
-- **Giao diện (Views):** EJS render, AJAX, CSS -> Hướng dẫn user tự check bằng mắt hoặc AI check kỹ HTML tĩnh.
+AI cần xác định: "Task vừa rồi thay đổi phần nào?"
+*   **Database (Models):** Cần test validation các trường dữ liệu, khóa ngoại, các quan hệ (relationships).
+*   **Logic (Services):** Tính BMR, TDEE, Gauss Solver -> Bắt buộc chạy thử/test logic bằng dữ liệu giả.
+*   **API (Controllers & Routes):** Đăng nhập, thêm/xóa entries, cập nhật nước -> Kiểm tra HTTP Response Status (200, 400, 401...).
+*   **Giao diện (React Components):** React render, cập nhật state (như custom hooks, TanStack Query), call API -> Đảm bảo mượt mà, không giật lag.
 
 ### Bước 2: Thực thi Test (Execution)
 
 #### 1. Logic / Math Test (Services)
-- **Cách làm:** Gọi hàm với đầu vào cố định và kiểm tra đầu ra.
-- **Ví dụ (Water Tracking):**
-  - Giả định: Người dùng nặng 70kg.
-  - Kỳ vọng: `waterGoal` = `70 * 35` = `2450`.
-  - Thực tế: Chạy hàm `calculateWaterGoal(70)` -> Kết quả phải là 2450.
+*   **Cách làm:** Gọi hàm với đầu vào cố định và kiểm tra đầu ra xem có đúng kỳ vọng không.
+*   **Ví dụ (Water Goal):**
+    *   Giả định: Người dùng nặng 70kg.
+    *   Kỳ vọng: `waterGoal` = `70 * 35` = `2450`.
+    *   Thực tế: Chạy hàm `calculateWaterGoal(70)` -> Kết quả phải là 2450.
+*   **Ví dụ (Gauss Solver):**
+    *   Giả định: Giải hệ phương trình với các món ăn đầu vào có khối lượng xác định.
+    *   Kỳ vọng: Trả về kết quả chính xác, hoặc trả về lỗi nếu nghiệm âm / không khả thi.
 
 #### 2. API / Controller Test (Routes)
-- **Cách làm:** Gửi giả lập Request (nếu có thư viện như Postman/Supertest) hoặc sử dụng file script nhỏ.
-- **Ví dụ (Thêm món ăn):**
-  - Giả định: Gửi `POST /nhat-ky/them` với `amount: -10` (số âm).
-  - Kỳ vọng: Controller chặn lại, trả về lỗi `400 Bad Request`.
+*   **Cách làm:** Gửi giả lập Request hoặc chạy các script test nhỏ để kiểm tra phản hồi của Server.
+*   **Ví dụ (Thêm món ăn):**
+    *   Giả định: Gửi `POST /api/v1/diary/entries` với `amount: -10` (số âm).
+    *   Kỳ vọng: Validation middleware chặn lại, trả về lỗi `400 Bad Request`.
 
-#### 3. UI/UX Test (Giao diện EJS/AJAX)
-- **Cách làm:** Review lại code render.
-- **Tiêu chí:** 
-  - Responsive có bị vỡ không?
-  - AJAX cập nhật (ví dụ: vòng tròn nước, thêm món) có bị reload trang toàn bộ không? (Vi phạm triết lý app).
+#### 3. UI/UX Test (Reactivity & React SPA)
+*   **Cách làm:** Kiểm tra thủ công giao diện và các trạng thái của component.
+*   **Tiêu chí bắt buộc:**
+    *   **Responsive:** Không bị vỡ giao diện cơ bản trên các màn hình di động/tablet/desktop.
+    *   **Reactivity (Tính phản ứng):** Khi người dùng tương tác (như thêm nước, xóa món ăn, đổi món), các thông số tổng liên quan (như thanh progress bar calo nạp, nước nạp) phải tự động thay đổi ngay lập tức nhờ React State, tuyệt đối không được tải lại trang (reload).
+    *   **Console Log:** Không có lỗi màu đỏ (`Error`) hoặc cảnh báo màu vàng (`Warning`) phát sinh trong Console của trình duyệt.
 
-### Bước 3: Báo cáo & Khắc phục (Report & Fix)
-- Nếu có lỗi: AI tự động phân tích và đề xuất hướng sửa ngay trong phản hồi.
-- Nếu mọi thứ Pass: Chuyển sang Bước 4 để Review code.
-
-### Bước 4: Code Review & Tối ưu (Checklist trước khi Git Push)
-Tránh tâm lý "Để sau dọn cũng được" (Later never comes). Bắt buộc dọn dẹp và tối ưu xong mới được phép cung cấp lệnh `git commit`.
-
-AI và người dùng cần rà soát 4 tiêu chí sau:
-1. **Sự đơn giản (Simplicity Check):** Đoạn code này có thể viết ngắn gọn hơn không? Có lạm dụng cấu trúc phức tạp không?
-2. **Kiểm soát thư viện (Dependency Discipline):** Có thêm thư viện ngoài (npm package) cho một việc có thể giải quyết bằng code thuần không? (Mỗi thư viện là một gánh nặng, ưu tiên Vanilla JS/CSS).
-3. **Dọn rác (Dead Code Hygiene):** Có để lại hàm, biến không dùng (`_unused`), dòng comment nháp hay `console.log()` nào không? Nếu có, liệt kê ra và xin phép xóa.
-4. **Phạm vi tác động (Surgical Changes):** Thay đổi có nhỏ gọn, tập trung vào đúng vấn đề không? Có vô tình làm hỏng logic hay xóa nhầm comment cũ ở file khác không?
+### Bước 3: Dọn rác & Tối ưu (Dead Code Hygiene)
+Trước khi hoàn thành việc kiểm thử, AI bắt buộc phải dọn dẹp mã nguồn:
+1.  **Xóa code debug:** Xóa toàn bộ các dòng `console.log()` debug.
+2.  **Dọn biến thừa:** Xóa bỏ các biến, hàm, thư viện import không sử dụng (`_unused`).
+3.  **Simplicity Check:** Đơn giản hóa các cấu trúc điều kiện hoặc logic lặp phức tạp không cần thiết.
 
 ---
-**💡 Nguyên tắc cốt lõi:**
-"Thà code chậm nhưng chắc, còn hơn code nhanh mà lỗi. LUÔN test kỹ trước khi `git push`."
+
+## 💡 Nguyên tắc cốt lõi:
+> **"Thà code chậm nhưng chắc, còn hơn code nhanh mà lỗi. LUÔN hoàn thành test kỹ thuật trước khi bàn giao."**

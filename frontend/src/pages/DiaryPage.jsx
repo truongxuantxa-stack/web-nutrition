@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useDiaryData, useDeleteEntry } from '../hooks/useDiary';
 import { getToday } from '../lib/dayjs';
-import DateNavigator  from '../components/common/DateNavigator';
+import WeeklyCalendarStrip from '../components/diary/WeeklyCalendarStrip';
 import MealGroup      from '../components/diary/MealGroup';
 import HealthInsights from '../components/diary/HealthInsights';
 import WaterTracker   from '../components/diary/WaterTracker';
 import AddFoodModal   from '../components/diary/AddFoodModal';
+import AnimatedSection from '../components/common/AnimatedSection';
+import DaySummaryWidget from '../components/diary/DaySummaryWidget';
 
 const MEAL_KEYS = ['sang', 'trua', 'toi', 'phu'];
 
@@ -20,7 +22,7 @@ export default function DiaryPage() {
   if (isLoading) return <DiarySkeleton />;
   if (error) return <div className="alert alert-error">Không thể tải nhật ký.</div>;
 
-  const { consumed, metrics, calorieProgress, healthInsights, mealGroups = {}, mealCalories = {}, waterTotal, waterGoal, waterLogs = [] } = data;
+  const { consumed, metrics, healthInsights, mealGroups = {}, mealCalories = {}, waterTotal, waterGoal, waterLogs = [] } = data;
 
   const openAddFood = (meal) => {
     setActiveMeal(meal);
@@ -30,57 +32,60 @@ export default function DiaryPage() {
   return (
     <div className="flex flex-col gap-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h1 className="text-2xl font-bold">Nhật ký ăn uống</h1>
-        <DateNavigator date={date} onDateChange={setDate} />
-      </div>
-
-      {/* Tổng hợp calo ngày (compact) */}
-      <div className="card bg-primary/5 border border-primary/20">
-        <div className="card-body p-4 flex-row items-center justify-between flex-wrap gap-3">
-          <div>
-            <span className="text-2xl font-bold text-primary">{consumed.calories}</span>
-            <span className="text-base-content/50 text-sm ml-1">/ {metrics?.targetCalories || 0} kcal</span>
-          </div>
-          <div className="flex gap-4 text-sm">
-            <span><strong className="text-blue-500">{consumed.protein}g</strong> <span className="text-base-content/50">Protein</span></span>
-            <span><strong className="text-amber-500">{consumed.carbs}g</strong> <span className="text-base-content/50">Carbs</span></span>
-            <span><strong className="text-pink-500">{consumed.fat}g</strong> <span className="text-base-content/50">Fat</span></span>
-          </div>
-          <div className="w-full">
-            <progress
-              className="progress progress-primary h-2"
-              value={Math.min(calorieProgress?.percent || 0, 100)}
-              max="100"
-            />
-          </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Nhật ký ăn uống</h1>
+          <p className="text-xs text-base-content/50 mt-0.5">Theo dõi chi tiết dinh dưỡng và bữa ăn trong ngày</p>
         </div>
       </div>
 
-      {/* 4 nhóm bữa ăn */}
-      <div className="flex flex-col gap-3">
-        {MEAL_KEYS.map(mealKey => (
-          <MealGroup
-            key={mealKey}
-            mealKey={mealKey}
-            entries={mealGroups[mealKey] || []}
-            totalCalories={mealCalories[mealKey] || 0}
-            onAddFood={openAddFood}
-            onDeleteEntry={(id) => deleteEntry.mutate(id)}
-          />
-        ))}
-      </div>
+      {/* ── WEEKLY CALENDAR STRIP (full width) ── */}
+      <AnimatedSection delay={0.02}>
+        <WeeklyCalendarStrip date={date} onDateChange={setDate} />
+      </AnimatedSection>
 
-      {/* Health Insights */}
-      <HealthInsights insights={healthInsights} />
+      {/* ── HERO SUMMARY CARD (full width) ── */}
+      <AnimatedSection delay={0.05}>
+        <DaySummaryWidget
+          consumed={consumed.calories}
+          target={metrics?.targetCalories || 0}
+          consumedMacros={consumed}
+          targetMacros={metrics?.macros || {}}
+        />
+      </AnimatedSection>
 
-      {/* Water Tracker */}
-      <WaterTracker
-        total={waterTotal}
-        goal={waterGoal}
-        logs={waterLogs}
-        date={date}
-      />
+      {/* ── WATER TRACKER — horizontal bar (full width) ── */}
+      <AnimatedSection delay={0.1}>
+        <WaterTracker
+          total={waterTotal}
+          goal={waterGoal}
+          logs={waterLogs}
+          date={date}
+        />
+      </AnimatedSection>
+
+      {/* ── MEAL GROUPS — 2x2 grid (full width) ── */}
+      <AnimatedSection delay={0.15}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {MEAL_KEYS.map(mealKey => (
+            <MealGroup
+              key={mealKey}
+              mealKey={mealKey}
+              entries={mealGroups[mealKey] || []}
+              totalCalories={mealCalories[mealKey] || 0}
+              onAddFood={openAddFood}
+              onDeleteEntry={(id) => deleteEntry.mutate(id)}
+            />
+          ))}
+        </div>
+      </AnimatedSection>
+
+      {/* ── HEALTH INSIGHTS (full width, chỉ hiện khi có dữ liệu) ── */}
+      {healthInsights?.length > 0 && (
+        <AnimatedSection delay={0.2}>
+          <HealthInsights insights={healthInsights} />
+        </AnimatedSection>
+      )}
 
       {/* Modal thêm món */}
       <AddFoodModal
@@ -94,13 +99,17 @@ export default function DiaryPage() {
 }
 
 function DiarySkeleton() {
+  const shimmer = 'rounded-2xl bg-gradient-to-r from-base-300 via-base-200 to-base-300 bg-[length:200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]';
   return (
-    <div className="flex flex-col gap-4 animate-pulse">
-      <div className="h-10 bg-base-300 rounded w-64" />
-      <div className="h-20 bg-base-300 rounded-2xl" />
-      {[...Array(4)].map((_, i) => (
-        <div key={i} className="h-32 bg-base-300 rounded-2xl" />
-      ))}
+    <div className="flex flex-col gap-5">
+      <div className="h-10 bg-base-300 rounded w-64 animate-pulse" />
+      <div className={`h-48 ${shimmer}`} />
+      <div className={`h-16 ${shimmer}`} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className={`h-48 ${shimmer}`} />
+        ))}
+      </div>
     </div>
   );
 }

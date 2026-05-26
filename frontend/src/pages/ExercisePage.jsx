@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useExerciseData, useExerciseSports, useAddExercise, useDeleteExercise } from '../hooks/useExercise';
 import { getToday } from '../lib/dayjs';
 import DateNavigator from '../components/common/DateNavigator';
-import { Flame, Clock, Plus, Trash2, Dumbbell, Sparkles } from 'lucide-react';
+import { Clock, Plus, Trash2, Dumbbell, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
+import AnimatedSection from '../components/common/AnimatedSection';
+import CalorieRing from '../components/dashboard/CalorieRing';
 
 export default function ExercisePage() {
   const [date, setDate] = useState(getToday());
@@ -76,28 +78,12 @@ export default function ExercisePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Form & Summary */}
-        <div className="flex flex-col gap-6 lg:col-span-1">
-          {/* Calorie Burned Summary Card */}
-          <div className="card bg-base-100 border border-base-300 shadow-sm relative overflow-hidden">
-            <div className="absolute right-0 top-0 translate-x-3 -translate-y-3 w-24 h-24 bg-success/5 rounded-full blur-xl pointer-events-none" />
-            <div className="card-body p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-xl bg-success/15 text-success">
-                  <Flame className="w-6 h-6 animate-pulse" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-base-content/50">Năng lượng tiêu thụ</p>
-                  <div className="flex items-baseline gap-1 mt-0.5">
-                    <span className="text-3xl font-extrabold text-base-content">{totalBurned}</span>
-                    <span className="text-sm font-semibold text-base-content/60">kcal</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <AnimatedSection delay={0} className="flex flex-col gap-6 lg:col-span-1">
+          {/* Calorie Burned Ring — tái sử dụng component */}
+          <CalorieRing consumed={totalBurned} target={500} />
 
           {/* Add Exercise Form */}
-          <div className="card bg-base-100 border border-base-300 shadow-sm">
+          <div className="glass-card">
             <div className="card-body p-6">
               <h3 className="text-sm font-semibold uppercase tracking-wider text-base-content/50 mb-4">Ghi nhận Luyện tập</h3>
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -109,7 +95,7 @@ export default function ExercisePage() {
                   </label>
                   <select
                     id="exercise-sport"
-                    className="select select-bordered select-sm w-full"
+                    className="select select-bordered select-sm w-full focus:ring-2 focus:ring-primary/30 focus:border-primary transition-shadow"
                     required
                     value={selectedSport}
                     onChange={(e) => setSelectedSport(e.target.value)}
@@ -136,7 +122,7 @@ export default function ExercisePage() {
                     min="1"
                     max="600"
                     placeholder="Ví dụ: 30"
-                    className="input input-bordered input-sm"
+                    className="input input-bordered input-sm focus:ring-2 focus:ring-primary/30 focus:border-primary transition-shadow"
                     required
                     value={durationInput}
                     onChange={(e) => setDurationInput(e.target.value)}
@@ -159,11 +145,11 @@ export default function ExercisePage() {
               </form>
             </div>
           </div>
-        </div>
+        </AnimatedSection>
 
         {/* Right Column: Today's Exercise Log */}
-        <div className="lg:col-span-2">
-          <div className="card bg-base-100 border border-base-300 shadow-sm overflow-hidden h-full">
+        <AnimatedSection delay={0.1} className="lg:col-span-2">
+          <div className="glass-card overflow-hidden h-full">
             <div className="card-body p-6 gap-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-base-content/50">Bài tập đã ghi</h3>
@@ -220,7 +206,7 @@ export default function ExercisePage() {
               </div>
             </div>
           </div>
-        </div>
+        </AnimatedSection>
       </div>
     </div>
   );
@@ -228,17 +214,17 @@ export default function ExercisePage() {
 
 function ExerciseSkeleton() {
   return (
-    <div className="flex flex-col gap-6 animate-pulse">
+    <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <div className="h-8 bg-base-300 rounded w-48" />
-        <div className="h-8 bg-base-300 rounded w-32" />
+        <div className="h-8 bg-base-300 rounded w-48 animate-pulse" />
+        <div className="h-8 bg-base-300 rounded w-32 animate-pulse" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="flex flex-col gap-6 lg:col-span-1">
-          <div className="h-20 bg-base-300 rounded-2xl" />
-          <div className="h-56 bg-base-300 rounded-2xl" />
+          <div className="h-44 rounded-2xl bg-gradient-to-r from-base-300 via-base-200 to-base-300 bg-[length:200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]" />
+          <div className="h-56 rounded-2xl bg-gradient-to-r from-base-300 via-base-200 to-base-300 bg-[length:200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]" />
         </div>
-        <div className="h-80 bg-base-300 rounded-2xl lg:col-span-2" />
+        <div className="h-80 rounded-2xl bg-gradient-to-r from-base-300 via-base-200 to-base-300 bg-[length:200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite] lg:col-span-2" />
       </div>
     </div>
   );

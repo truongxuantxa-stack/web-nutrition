@@ -1,9 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../lib/axios';
 import FoodSearchResult from './FoodSearchResult';
 import toast from 'react-hot-toast';
-import { X, Search, ChefHat, Plus } from 'lucide-react';
+import { X, Search, ChefHat } from 'lucide-react';
 
 const MEAL_LABELS = {
   sang: 'Bữa sáng',
@@ -13,7 +13,7 @@ const MEAL_LABELS = {
 };
 
 // ─── Tab: Tìm kiếm ────────────────────────────────────────────────────────────
-function SearchTab({ date, defaultMeal, onClose }) {
+function SearchTab({ date, defaultMeal }) {
   const [q, setQ]           = useState('');
   const [selected, setSelected] = useState(null);
   const [amount, setAmount] = useState('100');
@@ -142,7 +142,7 @@ function SearchTab({ date, defaultMeal, onClose }) {
 }
 
 // ─── Tab: Tạo món mới ─────────────────────────────────────────────────────────
-function CreateFoodTab({ date, onClose }) {
+function CreateFoodTab({ onClose }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({
     name: '', calories: '', protein: '', carbs: '', fat: '',
@@ -276,9 +276,9 @@ export default function AddFoodModal({ isOpen, onClose, date, defaultMeal = 'san
         </div>
 
         {tab === 'search' ? (
-          <SearchTab date={date} defaultMeal={defaultMeal} onClose={onClose} />
+          <SearchTab date={date} defaultMeal={defaultMeal} />
         ) : (
-          <CreateFoodTab date={date} onClose={onClose} />
+          <CreateFoodTab onClose={onClose} />
         )}
       </div>
       <div className="modal-backdrop bg-black/40" onClick={onClose} />

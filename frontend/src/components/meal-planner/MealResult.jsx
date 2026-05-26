@@ -3,7 +3,7 @@ import { RefreshCw, AlertTriangle, Pin } from 'lucide-react';
 export default function MealResult({ result, onSwap, pinnedFoods = {}, onTogglePin }) {
   if (!result) return null;
 
-  const { success, data: items = [], errors = [], warnings = [] } = result;
+  const { data: items = [], errors = [], warnings = [] } = result;
 
   const allIssues = [...errors, ...(warnings || [])];
 
@@ -22,7 +22,7 @@ export default function MealResult({ result, onSwap, pinnedFoods = {}, onToggleP
 
       {/* Result table */}
       {items.length > 0 && (
-        <div className="card bg-base-100 border border-base-300 overflow-hidden">
+        <div className="glass-card overflow-hidden">
           <table className="table table-sm">
             <thead>
               <tr className="bg-base-200 text-xs text-base-content/60">
@@ -50,7 +50,12 @@ export default function MealResult({ result, onSwap, pinnedFoods = {}, onToggleP
                         )}
                       </div>
                       {role && (
-                        <span className="badge badge-ghost badge-xs capitalize">{role}</span>
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize ${
+                          role === 'protein' ? 'bg-blue-500/10 text-blue-600' :
+                          role === 'carb'    ? 'bg-amber-500/10 text-amber-600' :
+                          role === 'fat'     ? 'bg-pink-500/10 text-pink-600' :
+                                               'bg-emerald-500/10 text-emerald-600'
+                        }`}>{role}</span>
                       )}
                     </td>
                     <td className="text-right font-mono text-sm">

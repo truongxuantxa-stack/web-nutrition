@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useFoodsByRole } from '../../hooks/useMealPlanner';
 import { X, Search } from 'lucide-react';
 
-export default function IngredientSwapModal({ isOpen, onClose, swapTarget, onConfirmSwap }) {
+export default function IngredientSwapModal({ isOpen, onClose, swapTarget, allowedTags = [], onConfirmSwap }) {
   const [searchQ, setSearchQ] = useState('');
   const role = swapTarget?.food?.category || swapTarget?.role || '';
 
-  const { data: foods = [], isLoading } = useFoodsByRole(role);
+  const { data: foods = [], isLoading } = useFoodsByRole(role, allowedTags);
 
   const filtered = searchQ
     ? foods.filter(f => f.name.toLowerCase().includes(searchQ.toLowerCase()))
