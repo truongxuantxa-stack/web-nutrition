@@ -97,6 +97,30 @@ const DiaryEntry = sequelize.define('DiaryEntry', {
         allowNull: true,
         defaultValue: null,
     },
+    vitaminASnapshot: {
+        // Vitamin A (µg RAE) — snapshot
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
+    vitaminCSnapshot: {
+        // Vitamin C (mg) — snapshot
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
+    calciumSnapshot: {
+        // Canxi (mg) — snapshot
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
+    ironSnapshot: {
+        // Sắt (mg) — snapshot
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
     note: {
         // Ghi chú tùy ý của người dùng
         type: DataTypes.STRING(255),

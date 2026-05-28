@@ -8,9 +8,9 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 ## 2. Tech Stack & Architecture
 - **Backend:** Node.js, Express.js.
 - **Database:** MySQL với Sequelize ORM.
-- **Frontend:** React 19 SPA (Vite + Tailwind v4 + DaisyUI v5), EJS Template Engine (legacy pages).
+- **Frontend:** React 19 SPA (Vite + Tailwind v4 + DaisyUI v5).
 - **Libraries:** react-chartjs-2/Chart.js (Biểu đồ), TanStack Query (server state), react-hot-toast (notifications), dayjs (date), PDFKit (Xuất báo cáo), node-cron (Chạy ngầm).
-- **Architecture (MVC):** `/controllers`, `/models`, `/routes`, `/views`, `/services`, `/middlewares`, `/public`.
+- **Architecture (MVC):** `/controllers/api`, `/models`, `/routes/api`, `/services`, `/middlewares`, `/public`.
 
 ## 3. Core Algorithms & Formulas
 - **BMR (Mifflin-St Jeor) & TDEE:** Công thức nền tảng tĩnh.
@@ -32,7 +32,9 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 - [x] **Bước 2 (Ngày 3):** Khởi tạo dự án Frontend React (Vite) độc lập + Setup Tailwind CSS/DaisyUI + Thiết kế giao diện Dashboard/Diary/Meal Planner siêu đẹp với đầy đủ hiệu ứng animation.
 - [x] **Bước 3 (Ngày 4-5):** Cấu hình CORS ở Express Backend + Tạo các JSON API Route (`/api/v1/...`) song song + Xử lý Auth (JWT/Cookie).
 - [x] **Bước 4 (Tuần 2):** Chuyển đổi toàn bộ các trang cốt lõi (Dashboard vẽ biểu đồ, Nhật ký ăn uống, Meal Planner) sang React SPA.
-
+- [ ] Phase 6: Các tính năng nâng cao & Trải nghiệm người dùng (Kế hoạch tiếp theo)
+  - [ ] **Habit Trackers - Theo dõi thói quen phụ (Lấy cảm hứng từ LIFESUM):** Cho phép người dùng tạo và theo dõi các thói quen phụ lành mạnh (uống đủ nước, ngủ đủ giấc, ăn rau xanh, hạn chế đồ ngọt, v.v.) đi kèm với giao diện visual sinh động giúp tăng sự gắn kết với ứng dụng.
+  - [ ] **Giao diện "Ribbon Chart" cho Cân nặng (Lấy cảm hứng từ MACROFACTOR):** Trực quan hóa cân nặng thực tế và xu hướng cân nặng trung bình (Weight Trend) dưới dạng biểu đồ dải (Ribbon Chart) mượt mà, giúp người dùng lọc nhiễu dao động cân nặng do nước/glycogen hàng ngày và hiểu rõ tiến trình tăng/giảm cân thực tế.
 
 ## 6. Changelog (Nhật ký thay đổi)
 - **[feat/cleanup] Dọn dẹp các files và tài nguyên cũ dư thừa:** Xóa bỏ toàn bộ các tệp routes cũ dùng để render HTML (EJS), xóa thư mục giao diện EJS `/views`, các scripts JS tĩnh không còn dùng ở `/public/js`, gỡ bỏ gói thư viện `ejs` khỏi backend `package.json`, và dọn dẹp các React components không còn sử dụng ở frontend (`StatCard`, `MealCalorieBreakdown`).
@@ -49,4 +51,6 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 - **[fix] Meal Planner Fixes:** Loại bỏ Heuristic Fallback khi Gauss Solver ra nghiệm âm, trả về trực tiếp nghiệm âm kèm cảnh báo lỗi trên UI để người dùng tự do bấm Swap đổi món; Cập nhật hook `useFoodsByRole` và `IngredientSwapModal` để đồng bộ truyền tham số `tags` lọc nguyên liệu phù hợp khi Đổi món (Swap) trên giao diện React SPA.
 - **[feat] Preset Ingredient Pinning:** Tích hợp component `PinSlotRow` và tính năng Ghim Sẵn Nguyên Liệu trước khi sinh thực đơn (Bước 2.5) trên trang Meal Planner React SPA, hỗ trợ tự động tải danh sách lọc theo tag phù hợp và nút xóa tất cả ghim tiện lợi.
 - **[feat/ux] Weight Logs Collapse:** Thêm cơ chế giới hạn hiển thị danh sách lịch sử cân nặng tối đa 5 dòng bằng cách sử dụng `useState` nội bộ, kèm nút "Xem thêm / Thu gọn" nhằm tối giản hóa giao diện trang Theo dõi Cân nặng khi dữ liệu dài lên.
+- **[chore/refactor] Đồng bộ cấu trúc API Folder:** Di chuyển toàn bộ các controller còn lại vào thư mục `backend/controllers/api`, gom nhóm và làm sạch các route cũ sang `backend/routes/api` đảm bảo kiến trúc API-only chuẩn hóa, gỡ bỏ tệp route gốc `backend/routes/index.js` và xóa component `MealCalorieBreakdown.jsx` không còn sử dụng ở frontend.
+
 

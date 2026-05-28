@@ -100,6 +100,42 @@ const Food = sequelize.define('Food', {
             min: { args: [0], msg: 'Sodium không thể âm.' },
         },
     },
+    vitaminA: {
+        // Vitamin A (µg RAE) trên 1 đơn vị
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [0], msg: 'Vitamin A không thể âm.' },
+        },
+    },
+    vitaminC: {
+        // Vitamin C (mg) trên 1 đơn vị
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [0], msg: 'Vitamin C không thể âm.' },
+        },
+    },
+    calcium: {
+        // Canxi (mg) trên 1 đơn vị
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [0], msg: 'Canxi không thể âm.' },
+        },
+    },
+    iron: {
+        // Sắt (mg) trên 1 đơn vị
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [0], msg: 'Sắt không thể âm.' },
+        },
+    },
     unit: {
         // Đơn vị tính (ví dụ: "100g", "1 tô", "1 bát", "1 ly")
         type: DataTypes.STRING(50),
