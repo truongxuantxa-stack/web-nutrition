@@ -60,7 +60,36 @@ async function run() {
             updated++;
         }
 
-        console.log(`\n🎉  Hoàn tất! Đã cập nhật ${updated} món, không tìm thấy ${notFound} món.`);
+        // Cập nhật các món nguyên liệu thô còn lại (dùng ảnh generic theo category)
+        const genericImages = {
+            'protein': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop',
+            'thit_ca': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop',
+            'carb': 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&h=300&fit=crop',
+            'com': 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&h=300&fit=crop',
+            'pho_bun': 'https://images.unsplash.com/photo-1582878826629-29b7ad1cb438?w=400&h=300&fit=crop',
+            'banh': 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=300&fit=crop',
+            'fiber': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop',
+            'rau_cu': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop',
+            'vitamin': 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=300&fit=crop',
+            'trai_cay': 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=300&fit=crop',
+            'fat': 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&h=300&fit=crop',
+            'do_uong': 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=300&fit=crop',
+            'khac': 'https://images.unsplash.com/photo-1490818387583-1b5f2621124c?w=400&h=300&fit=crop'
+        };
+
+        const rawFoodsWithoutImage = await Food.findAll({
+            where: { foodType: 'raw', imageUrl: null, isCustom: false }
+        });
+
+        let genericUpdated = 0;
+        for (const food of rawFoodsWithoutImage) {
+            const genericImg = genericImages[food.category] || genericImages['khac'];
+            await food.update({ imageUrl: genericImg });
+            genericUpdated++;
+        }
+
+        console.log(`\n🎉  Hoàn tất! Đã cập nhật ${updated} món cụ thể, không tìm thấy ${notFound} món.`);
+        console.log(`🎉  Đã cập nhật thêm ${genericUpdated} món bằng ảnh mặc định theo danh mục.`);
     } catch (err) {
         console.error('❌  Lỗi:', err.message);
         process.exit(1);
