@@ -146,7 +146,8 @@ function CreateFoodTab({ onClose }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({
     name: '', calories: '', protein: '', carbs: '', fat: '',
-    fiber: '', unit: '100g', category: 'khac', foodType: 'raw',
+    fiber: '', sugar: '', sodium: '', vitaminA: '', vitaminC: '', calcium: '', iron: '',
+    unit: '100g', category: 'khac', foodType: 'raw',
   });
 
   const createFood = useMutation({
@@ -200,7 +201,42 @@ function CreateFoodTab({ onClose }) {
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-2 gap-2">
+
+        {/* Vi chất nâng cao */}
+        <div className="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box mt-2">
+          <input type="checkbox" id="collapse-micronutrients" /> 
+          <div className="collapse-title text-xs font-medium py-2 min-h-0">
+            Vi chất nâng cao (Tùy chọn)
+          </div>
+          <div className="collapse-content flex flex-col gap-2 pb-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {[
+                { k: 'fiber',    label: 'Chất xơ (g)' },
+                { k: 'sugar',    label: 'Đường (g)' },
+                { k: 'sodium',   label: 'Natri (mg)' },
+                { k: 'vitaminA', label: 'Vitamin A (µg)' },
+                { k: 'vitaminC', label: 'Vitamin C (mg)' },
+                { k: 'calcium',  label: 'Canxi (mg)' },
+                { k: 'iron',     label: 'Sắt (mg)' },
+              ].map(({ k, label }) => (
+                <div key={k} className="form-control">
+                  <label className="label py-0"><span className="label-text text-[10px] text-base-content/70">{label}</span></label>
+                  <input
+                    id={`create-food-${k}`}
+                    type="number"
+                    className="input input-bordered input-xs h-7"
+                    value={form[k]}
+                    onChange={e => set(k, e.target.value)}
+                    min="0"
+                    step="any"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-2 mt-1">
           <div className="form-control">
             <label className="label py-0"><span className="label-text text-xs">Đơn vị</span></label>
             <input

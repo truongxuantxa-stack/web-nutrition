@@ -72,6 +72,7 @@ exports.getDashboard = async (req, res) => {
                 weight      : user.weight,
                 height      : user.height,
                 goal        : user.goal,
+                gender      : user.gender,
             },
             date,
             metrics,

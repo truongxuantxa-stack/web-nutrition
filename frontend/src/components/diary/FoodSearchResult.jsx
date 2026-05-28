@@ -8,10 +8,16 @@ export default function FoodSearchResult({ food, onSelect }) {
       onClick={() => onSelect(food)}
       className="flex items-center gap-3 p-3 w-full text-left hover:bg-base-200 rounded-xl transition-colors group"
     >
-      {/* Icon theo foodType */}
-      <span className="text-2xl shrink-0">
-        {food.foodType === 'raw' ? '🥦' : '🍲'}
-      </span>
+      {/* Hình ảnh hoặc Icon theo foodType */}
+      {food.imageUrl ? (
+        <img src={food.imageUrl} alt={food.name} className="w-10 h-10 object-cover rounded-full shrink-0" />
+      ) : (
+        <div className="w-10 h-10 flex items-center justify-center bg-base-200 rounded-full shrink-0">
+          <span className="text-xl">
+            {food.foodType === 'raw' ? '🥦' : '🍲'}
+          </span>
+        </div>
+      )}
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium truncate group-hover:text-primary transition-colors">
           {food.name}

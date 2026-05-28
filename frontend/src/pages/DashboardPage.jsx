@@ -13,6 +13,7 @@ import CalorieRing  from '../components/dashboard/CalorieRing';
 import MacrosChart  from '../components/dashboard/MacrosChart';
 import WeightChart  from '../components/dashboard/WeightChart';
 import WaterProgress from '../components/dashboard/WaterProgress';
+import MicronutrientCard from '../components/dashboard/MicronutrientCard';
 import MacroSummaryCard from '../components/dashboard/MacroSummaryCard';
 import RecentMeals from '../components/dashboard/RecentMeals';
 import RecentActivity from '../components/dashboard/RecentActivity';
@@ -320,6 +321,10 @@ export default function DashboardPage() {
         <div className="lg:col-span-1 flex flex-col gap-6">
           <AnimatedSection delay={0.2} className="flex flex-col">
             <WaterProgress total={waterTotal} goal={waterGoal} date={date} />
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.22} className="flex flex-col">
+            <MicronutrientCard consumed={consumed} gender={data.user?.gender} />
           </AnimatedSection>
 
           <AnimatedSection delay={0.25} className="flex flex-col">
