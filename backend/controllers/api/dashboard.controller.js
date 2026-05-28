@@ -13,7 +13,7 @@ const {
     getCalorieProgress,
     getMacroProgress,
 } = require('../../services/suggestion.service');
-const { getWaterByDate } = require('../water.controller');
+const { getWaterByDate } = require('../../services/water.service');
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 const toLocalDateString = (d) => {

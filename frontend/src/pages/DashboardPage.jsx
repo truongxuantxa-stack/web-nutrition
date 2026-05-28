@@ -67,7 +67,7 @@ export default function DashboardPage() {
   };
 
   // Tính % calo đã nạp
-  const targetCalories = metrics?.targetCalories || 0;
+  const targetCalories = metrics?.targetCalories ? Math.round(metrics.targetCalories) : 0;
   const caloriePercent = targetCalories > 0 ? Math.round((consumed.calories / targetCalories) * 100) : 0;
 
   // Lấy avatar chữ cái đầu
@@ -268,19 +268,21 @@ export default function DashboardPage() {
                         {adaptiveLoading ? (
                           <span className="loading loading-dots loading-sm" />
                         ) : (
-                          adaptiveStatus?.useAdaptiveTDEE ? adaptiveStatus?.adaptiveTDEE : adaptiveStatus?.staticTDEE || '--'
+                          adaptiveStatus?.useAdaptiveTDEE 
+                            ? (adaptiveStatus.adaptiveTDEE ? Math.round(adaptiveStatus.adaptiveTDEE) : '--')
+                            : (adaptiveStatus.staticTDEE ? Math.round(adaptiveStatus.staticTDEE) : '--')
                         )}
                       </span>
                       <span className="text-xs text-base-content/60 font-semibold">kcal/ngày</span>
                     </div>
                     <p className="text-[10px] text-base-content/50 mt-3 leading-relaxed">
                       {adaptiveStatus?.useAdaptiveTDEE 
-                        ? `Đang áp dụng thích ứng (Tĩnh: ${adaptiveStatus?.staticTDEE} kcal)` 
+                        ? `Đang áp dụng thích ứng (Tĩnh: ${adaptiveStatus?.staticTDEE ? Math.round(adaptiveStatus.staticTDEE) : '--'} kcal)` 
                         : 'Đang áp dụng TDEE tĩnh (chưa bật thích ứng)'}
                     </p>
                   </div>
                   <div className="border-t border-base-200/50 pt-3 flex justify-between items-center">
-                    <span className="text-xs text-base-content/60 font-semibold">Mục tiêu: {metrics?.targetCalories || 0} kcal</span>
+                    <span className="text-xs text-base-content/60 font-semibold">Mục tiêu: {targetCalories} kcal</span>
                     <button 
                       onClick={() => navigate('/weight')}
                       className="btn btn-ghost btn-xs text-primary gap-0.5 px-1.5 hover:bg-primary/10 rounded-full font-bold"

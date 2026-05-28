@@ -5,8 +5,8 @@
 // Điều phối luồng xuất báo cáo PDF
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const { getReportData }    = require('../services/report.service');
-const { generateReportPDF } = require('../services/pdf.service');
+const { getReportData }    = require('../../services/report.service');
+const { generateReportPDF } = require('../../services/pdf.service');
 
 /**
  * GET /api/report/pdf?range=week|month

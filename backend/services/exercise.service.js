@@ -6,6 +6,9 @@
 // Công thức: Calo = MET × Cân nặng (kg) × Thời gian (giờ)
 // ═══════════════════════════════════════════════════════════════════════════════
 
+const { ExerciseLog }                    = require('../models');
+const { toLocalDateString, toDateString } = require('../utils/date.helper');
+
 // ─── Bảng MET theo môn ───────────────────────────────────────────────────────
 // Nguồn tham khảo: Compendium of Physical Activities (Ainsworth et al.)
 // defaultMet = MET ở cường độ trung bình (moderate), dùng làm mặc định khi tính calo
@@ -151,11 +154,80 @@ const getSportInfo = (sportKey) => {
     return { label: sport.label, icon: sport.icon };
 };
 
+// ─── Lấy tổng calo đốt theo ngày (dùng bởi diary, dashboard) ────────────────
+const getTotalBurnedByDate = async (userId, date) => {
+    const logs = await ExerciseLog.findAll({
+        where     : { userId, date },
+        attributes: ['caloriesBurned'],
+    });
+    return Math.round(logs.reduce((sum, l) => sum + l.caloriesBurned, 0));
+};
+
+/**
+ * Validate và tạo ExerciseLog mới.
+ * @param {number} userId
+ * @param {{ sport, duration, date }} payload
+ * @param {number} weightKg - cân nặng user (kg)
+ * @returns {{ log: object }}
+ * @throws {{ status: number, message: string }}
+ */
+const addExerciseLog = async (userId, { sport, duration, date }, weightKg) => {
+    if (!sport || !duration) {
+        throw { status: 400, message: 'Vui lòng chọn môn và nhập số phút.' };
+    }
+
+    const durationNum = parseInt(duration);
+    if (isNaN(durationNum) || durationNum < 1 || durationNum > 600) {
+        throw { status: 400, message: 'Thời gian không hợp lệ (1–600 phút).' };
+    }
+
+    const entryDate = toDateString(date);
+    const today     = toLocalDateString(new Date());
+    if (entryDate > today) {
+        throw { status: 400, message: 'Không thể ghi nhật ký cho ngày tương lai.' };
+    }
+
+    const caloriesBurned = calculateExerciseCalories(sport, durationNum, weightKg || 60);
+    if (caloriesBurned === 0) {
+        throw { status: 400, message: 'Môn thể thao không hợp lệ.' };
+    }
+
+    const log  = await ExerciseLog.create({ userId, sport, duration: durationNum, caloriesBurned, date: entryDate });
+    const info = getSportInfo(sport);
+    return {
+        log: {
+            id            : log.id,
+            sport,
+            sportLabel    : info.label,
+            sportIcon     : info.icon,
+            duration      : durationNum,
+            caloriesBurned,
+            date          : entryDate,
+        },
+    };
+};
+
+/**
+ * Tìm và xóa ExerciseLog.
+ * @param {number} userId
+ * @param {number} logId
+ * @throws {{ status: number, message: string }}
+ */
+const deleteExerciseLog = async (userId, logId) => {
+    const log = await ExerciseLog.findOne({ where: { id: logId, userId } });
+    if (!log) {
+        throw { status: 404, message: 'Không tìm thấy mục luyện tập.' };
+    }
+    await log.destroy();
+};
+
 module.exports = {
     getSupportedSports,
     calculateExerciseCalories,
     calculateExerciseCaloriesDefault,
     getSportInfo,
-
+    getTotalBurnedByDate,
+    addExerciseLog,
+    deleteExerciseLog,
     MET_TABLE,
 };

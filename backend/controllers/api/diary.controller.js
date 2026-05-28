@@ -2,10 +2,10 @@
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // controllers/api/diary.controller.js
-// Wrap lại diary service layer cho React SPA — trả JSON thuần
+// Lớp mỏng: nhận request → gọi services → trả JSON.
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const { DiaryEntry, Food } = require('../../models');
+const { DiaryEntry, Food }  = require('../../models');
 const {
     calculateAllMetrics,
     calculateWaterGoal,
@@ -17,25 +17,18 @@ const {
     getMacroProgress,
     getHealthInsights,
 } = require('../../services/suggestion.service');
-const { getTotalBurnedByDate } = require('../exercise.controller');
-const { getWaterByDate }       = require('../water.controller');
-const { Op }                   = require('sequelize');
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-const toLocalDateString = (d) => {
-    const year  = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day   = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
-
-const toDateString = (date) => {
-    if (!date) return toLocalDateString(new Date());
-    if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return toLocalDateString(new Date());
-    return toLocalDateString(d);
-};
+const { getTotalBurnedByDate } = require('../../services/exercise.service');
+const { getWaterByDate }       = require('../../services/water.service');
+const {
+    addDiaryEntry,
+    deleteDiaryEntry,
+    searchFood    : searchFoodSvc,
+    createCustomFood,
+    updateCustomFood,
+    deleteCustomFood,
+} = require('../../services/diary.service');
+const { Op } = require('sequelize');
+const { toDateString } = require('../../utils/date.helper');
 
 // ─── GET /api/v1/diary?date=YYYY-MM-DD ───────────────────────────────────────
 exports.getDiary = async (req, res) => {
@@ -131,23 +124,88 @@ exports.getDiary = async (req, res) => {
 };
 
 // ─── POST /api/v1/diary/entries ──────────────────────────────────────────────
-// Forward trực tiếp sang diary.controller.addEntry (đã trả JSON sẵn)
-exports.addEntry = require('../diary.controller').addEntry;
+exports.addEntry = async (req, res) => {
+    try {
+        const result = await addDiaryEntry(req.user.id, req.body);
+        return res.success({
+            message: `Đã thêm ${result.entry.foodName} vào nhật ký!`,
+            entry  : result.entry,
+        });
+    } catch (err) {
+        if (err.status) return res.error(err.message, err.status);
+        if (err.name === 'SequelizeValidationError') return res.error(err.errors[0].message, 400);
+        console.error('[API] addEntry error:', err);
+        return res.error('Đã có lỗi xảy ra. Vui lòng thử lại.', 500);
+    }
+};
 
 // ─── DELETE /api/v1/diary/entries/:id ────────────────────────────────────────
-exports.deleteEntry = require('../diary.controller').deleteEntry;
+exports.deleteEntry = async (req, res) => {
+    try {
+        await deleteDiaryEntry(req.user.id, req.params.id);
+        return res.success({ message: 'Đã xóa mục nhật ký.' });
+    } catch (err) {
+        if (err.status) return res.error(err.message, err.status);
+        console.error('[API] deleteEntry error:', err);
+        return res.error('Đã có lỗi xảy ra. Vui lòng thử lại.', 500);
+    }
+};
 
 // ─── GET /api/v1/diary/foods/search ──────────────────────────────────────────
-exports.searchFood = require('../diary.controller').searchFood;
+exports.searchFood = async (req, res) => {
+    try {
+        const result = await searchFoodSvc(req.user.id, req.query);
+        return res.success(result);
+    } catch (err) {
+        console.error('[API] searchFood error:', err);
+        return res.error('Lỗi tìm kiếm.', 500);
+    }
+};
 
 // ─── POST /api/v1/diary/foods ─────────────────────────────────────────────────
-exports.createCustomFood = require('../diary.controller').createCustomFood;
+exports.createCustomFood = async (req, res) => {
+    try {
+        const result = await createCustomFood(req.user.id, req.body);
+        return res.success({
+            message: `Đã tạo món "${result.food.name}" thành công!`,
+            food   : result.food,
+        });
+    } catch (err) {
+        if (err.status) return res.error(err.message, err.status);
+        if (err.name === 'SequelizeValidationError') return res.error(err.errors[0].message, 400);
+        console.error('[API] createCustomFood error:', err);
+        return res.error('Đã có lỗi xảy ra. Vui lòng thử lại.', 500);
+    }
+};
 
 // ─── PUT /api/v1/diary/foods/:id ─────────────────────────────────────────────
-exports.updateCustomFood = require('../diary.controller').updateCustomFood;
+exports.updateCustomFood = async (req, res) => {
+    try {
+        const result = await updateCustomFood(req.user.id, req.params.id, req.body);
+        return res.success({
+            message: `Đã cập nhật món "${result.food.name}" thành công!`,
+            food   : result.food,
+        });
+    } catch (err) {
+        if (err.status) return res.error(err.message, err.status);
+        console.error('[API] updateCustomFood error:', err);
+        return res.error('Đã có lỗi xảy ra.', 500);
+    }
+};
 
 // ─── DELETE /api/v1/diary/foods/:id ──────────────────────────────────────────
-exports.deleteCustomFood = require('../diary.controller').deleteCustomFood;
+exports.deleteCustomFood = async (req, res) => {
+    try {
+        const result = await deleteCustomFood(req.user.id, req.params.id);
+        return res.success({
+            message: `Đã xóa món "${result.foodName}". Lịch sử nhật ký cũ vẫn được bảo tồn.`,
+        });
+    } catch (err) {
+        if (err.status) return res.error(err.message, err.status);
+        console.error('[API] deleteCustomFood error:', err);
+        return res.error('Đã có lỗi xảy ra.', 500);
+    }
+};
 
 // ─── GET /api/v1/diary/foods/my ──────────────────────────────────────────────
 exports.getMyCustomFoods = async (req, res) => {

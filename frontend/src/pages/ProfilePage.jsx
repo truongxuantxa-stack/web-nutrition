@@ -323,15 +323,15 @@ export default function ProfilePage() {
                   </div>
                   <div className="border-t border-base-200 pt-3">
                     <span className="text-xs text-base-content/60">Tỷ lệ trao đổi chất cơ bản (BMR)</span>
-                    <p className="text-xl font-bold mt-0.5">{metrics.bmr ? `${metrics.bmr} kcal` : '--'}</p>
+                    <p className="text-xl font-bold mt-0.5">{metrics.bmr ? `${Math.round(metrics.bmr)} kcal` : '--'}</p>
                   </div>
                   <div className="border-t border-base-200 pt-3">
                     <span className="text-xs text-base-content/60">Tổng tiêu hao hàng ngày (TDEE)</span>
-                    <p className="text-xl font-bold mt-0.5">{metrics.tdee ? `${metrics.tdee} kcal` : '--'}</p>
+                    <p className="text-xl font-bold mt-0.5">{metrics.tdee ? `${Math.round(metrics.tdee)} kcal` : '--'}</p>
                   </div>
                   <div className="border-t border-base-200 pt-3 bg-primary/5 rounded-xl p-3 border border-primary/10">
                     <span className="text-xs text-primary font-bold">Mục tiêu Calo nạp mỗi ngày</span>
-                    <p className="text-2xl font-black text-primary mt-0.5">{metrics.targetCalories ? `${metrics.targetCalories} kcal` : '--'}</p>
+                    <p className="text-2xl font-black text-primary mt-0.5">{metrics.targetCalories ? `${Math.round(metrics.targetCalories)} kcal` : '--'}</p>
                   </div>
                 </div>
               </div>

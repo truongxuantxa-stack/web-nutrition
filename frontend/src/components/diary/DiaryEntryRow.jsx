@@ -1,15 +1,27 @@
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 
-const FOOD_EMOJIS = ['🍚','🍗','🥦','🍖','🍜','🥩','🥚','🍳','🥗','🍲','🌽','🥕','🍞','🧀','🥛','🍌','🍎','🥜','🐟','🦐'];
-
 function getFoodEmoji(name) {
   if (!name) return '🍽️';
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = ((hash << 5) - hash + name.charCodeAt(i)) | 0;
-  }
-  return FOOD_EMOJIS[Math.abs(hash) % FOOD_EMOJIS.length];
+  const lower = name.toLowerCase();
+  
+  if (lower.includes('cơm') || lower.includes('gạo') || lower.includes('cháo') || lower.includes('xôi')) return '🍚';
+  if (lower.includes('bò') || lower.includes('beef') || lower.includes('bê')) return '🥩';
+  if (lower.includes('gà') || lower.includes('vịt') || lower.includes('chim') || lower.includes('cút')) return '🍗';
+  if (lower.includes('cá') || lower.includes('mực') || lower.includes('tôm') || lower.includes('cua') || lower.includes('hải sản') || lower.includes('ốc') || lower.includes('nghêu')) return '🐟';
+  if (lower.includes('rau') || lower.includes('cải') || lower.includes('salad') || lower.includes('xà lách') || lower.includes('thực vật')) return '🥗';
+  if (lower.includes('trứng') || lower.includes('egg')) return '🥚';
+  if (lower.includes('sữa') || lower.includes('milk') || lower.includes('bơ')) return '🥛';
+  if (lower.includes('bánh mì') || lower.includes('bread') || lower.includes('sandwich')) return '🍞';
+  if (lower.includes('mì') || lower.includes('phở') || lower.includes('bún') || lower.includes('hủ tiếu') || lower.includes('miến')) return '🍜';
+  if (lower.includes('heo') || lower.includes('lợn') || lower.includes('thịt') || lower.includes('chả') || lower.includes('giò')) return '🍖';
+  if (lower.includes('chuối')) return '🍌';
+  if (lower.includes('táo')) return '🍎';
+  if (lower.includes('trái cây') || lower.includes('hoa quả') || lower.includes('cam') || lower.includes('nho')) return '🍎';
+  if (lower.includes('đậu') || lower.includes('đỗ') || lower.includes('hạt')) return '🥜';
+  if (lower.includes('canh') || lower.includes('súp') || lower.includes('soup')) return '🍲';
+  
+  return '🍽️'; // Default
 }
 
 export default function DiaryEntryRow({ entry, onDelete }) {

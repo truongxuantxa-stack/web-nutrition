@@ -2,30 +2,17 @@
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // controllers/api/exercise.controller.js
-// Wrap exercise service cho React SPA — GET trả JSON
+// Lớp mỏng: nhận request → gọi exercise.service → trả JSON.
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const { ExerciseLog }                     = require('../../models');
+const { ExerciseLog } = require('../../models');
 const {
     getSupportedSports,
     getSportInfo,
-    calculateExerciseCalories,
+    addExerciseLog,
+    deleteExerciseLog,
 } = require('../../services/exercise.service');
-
-const toLocalDateString = (d) => {
-    const year  = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day   = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
-
-const toDateString = (date) => {
-    if (!date) return toLocalDateString(new Date());
-    if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return toLocalDateString(new Date());
-    return toLocalDateString(d);
-};
+const { toLocalDateString, toDateString } = require('../../utils/date.helper');
 
 // ─── GET /api/v1/exercise?date= ──────────────────────────────────────────────
 exports.getExercise = async (req, res) => {
@@ -60,11 +47,33 @@ exports.getExercise = async (req, res) => {
 };
 
 // ─── POST /api/v1/exercise ────────────────────────────────────────────────────
-// Forward trực tiếp — đã trả JSON sẵn
-exports.addExercise = require('../exercise.controller').addExercise;
+exports.addExercise = async (req, res) => {
+    try {
+        const weightKg = parseFloat(req.user.weight) || 60;
+        const result   = await addExerciseLog(req.user.id, req.body, weightKg);
+        return res.success({
+            message: `Đã ghi nhận ${result.log.duration} phút ${result.log.sportLabel}!`,
+            log    : result.log,
+        });
+    } catch (err) {
+        if (err.status) return res.error(err.message, err.status);
+        if (err.name === 'SequelizeValidationError') return res.error(err.errors[0].message, 400);
+        console.error('[API] addExercise error:', err);
+        return res.error('Đã có lỗi xảy ra.', 500);
+    }
+};
 
 // ─── DELETE /api/v1/exercise/:id ─────────────────────────────────────────────
-exports.deleteExercise = require('../exercise.controller').deleteExercise;
+exports.deleteExercise = async (req, res) => {
+    try {
+        await deleteExerciseLog(req.user.id, req.params.id);
+        return res.success({ message: 'Đã xóa mục luyện tập.' });
+    } catch (err) {
+        if (err.status) return res.error(err.message, err.status);
+        console.error('[API] deleteExercise error:', err);
+        return res.error('Đã có lỗi xảy ra.', 500);
+    }
+};
 
 // ─── GET /api/v1/exercise/sports ─────────────────────────────────────────────
 exports.getSports = (req, res) => {

@@ -428,7 +428,7 @@ export default function WeightPage() {
                     <div>
                       <span className="text-xs font-semibold text-base-content/50 uppercase tracking-wider text-[10px]">TDEE Tĩnh (BMR * Activity)</span>
                       <div className="text-xl font-extrabold text-base-content mt-1">
-                        {adaptiveStatus?.staticTDEE || '--'} <span className="text-xs font-normal">kcal</span>
+                        {adaptiveStatus?.staticTDEE ? Math.round(adaptiveStatus.staticTDEE) : '--'} <span className="text-xs font-normal">kcal</span>
                       </div>
                     </div>
                     <p className="text-[9px] text-base-content/40 mt-2">Tính từ giới tính, chiều cao, tuổi, cân nặng và hệ số hoạt động</p>
@@ -438,7 +438,7 @@ export default function WeightPage() {
                     <div>
                       <span className="text-xs font-bold text-primary uppercase tracking-wider text-[10px]">TDEE Thích ứng thực tế</span>
                       <div className="text-xl font-black text-primary mt-1">
-                        {adaptiveStatus?.adaptiveTDEE || '--'} <span className="text-xs font-bold">kcal</span>
+                        {adaptiveStatus?.adaptiveTDEE ? Math.round(adaptiveStatus.adaptiveTDEE) : '--'} <span className="text-xs font-bold">kcal</span>
                       </div>
                     </div>
                     <p className="text-[9px] text-primary/60 mt-2">Dựa trên cân nặng thực tế và hấp thụ năng lượng 4 tuần</p>
@@ -448,7 +448,7 @@ export default function WeightPage() {
                     <div>
                       <span className="text-xs font-semibold text-base-content/50 uppercase tracking-wider text-[10px]">TDEE Đang Áp Dụng</span>
                       <div className="text-xl font-extrabold text-base-content mt-1">
-                        {adaptiveStatus?.currentTDEE || '--'} <span className="text-xs font-normal">kcal</span>
+                        {adaptiveStatus?.currentTDEE ? Math.round(adaptiveStatus.currentTDEE) : '--'} <span className="text-xs font-normal">kcal</span>
                       </div>
                     </div>
                     <p className="text-[9px] text-base-content/40 mt-2">
@@ -460,7 +460,7 @@ export default function WeightPage() {
                     <div>
                       <span className="text-xs font-bold text-success uppercase tracking-wider text-[10px]">Mục tiêu Calo hằng ngày</span>
                       <div className="text-xl font-black text-success mt-1">
-                        {adaptiveStatus?.targetCalories || '--'} <span className="text-xs font-bold">kcal</span>
+                        {adaptiveStatus?.targetCalories ? Math.round(adaptiveStatus.targetCalories) : '--'} <span className="text-xs font-bold">kcal</span>
                       </div>
                     </div>
                     <p className="text-[9px] text-success/60 mt-2">Đã tối ưu theo mục tiêu giảm/tăng/giữ cân của bạn</p>
@@ -488,7 +488,7 @@ export default function WeightPage() {
                         </span>
                       </div>
                       <div className="text-xs">
-                        Calo nạp TB: <span className="font-bold text-base-content">{adaptiveStatus.latestLog.avgDailyIntake} kcal/ngày</span>
+                        Calo nạp TB: <span className="font-bold text-base-content">{adaptiveStatus.latestLog.avgDailyIntake ? Math.round(adaptiveStatus.latestLog.avgDailyIntake) : 0} kcal/ngày</span>
                       </div>
                     </div>
                   </div>

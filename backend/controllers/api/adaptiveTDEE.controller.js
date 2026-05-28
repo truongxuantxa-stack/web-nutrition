@@ -1,8 +1,8 @@
 'use strict';
 
-const adaptiveService = require('../services/adaptiveTDEE.service');
-const { AdaptiveTDEELog, User } = require('../models');
-const nutritionService = require('../services/nutrition.service');
+const adaptiveService = require('../../services/adaptiveTDEE.service');
+const { AdaptiveTDEELog, User } = require('../../models');
+const nutritionService = require('../../services/nutrition.service');
 
 // Lấy ngày Thứ Hai của tuần hiện tại
 const getWeekStart = (date = new Date()) => {

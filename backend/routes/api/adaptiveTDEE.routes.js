@@ -1,7 +1,7 @@
 'use strict';
 
 const router = require('express').Router();
-const ctrl   = require('../../controllers/adaptiveTDEE.controller');
+const ctrl   = require('../../controllers/api/adaptiveTDEE.controller');
 
 router.get('/status',      ctrl.getStatus);
 // Tải toàn bộ lịch sử 12 tuần gần nhất

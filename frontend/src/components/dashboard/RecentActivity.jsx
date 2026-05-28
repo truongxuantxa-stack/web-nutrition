@@ -19,7 +19,7 @@ export default function RecentActivity({ logs = [], totalBurned = 0 }) {
             <span>🏃</span> Hoạt động hôm nay
           </h3>
           {totalBurned > 0 && (
-            <span className="badge badge-success text-success-content font-bold gap-1 text-xs">
+            <span className="badge badge-success text-success-content font-bold gap-1 text-xs whitespace-nowrap shrink-0">
               🔥 {totalBurned} kcal
             </span>
           )}
