@@ -1,6 +1,12 @@
+import { useState } from 'react';
 import { RefreshCw, AlertTriangle, Pin } from 'lucide-react';
+import ImageLightbox from '../common/ImageLightbox';
+import SafeImage from '../common/SafeImage';
 
 export default function MealResult({ result, onSwap, pinnedFoods = {}, onTogglePin }) {
+  const [activeLightboxImg, setActiveLightboxImg] = useState(null);
+  const [activeLightboxTitle, setActiveLightboxTitle] = useState('');
+
   if (!result) return null;
 
   const { data: items = [], errors = [], warnings = [] } = result;
@@ -41,13 +47,29 @@ export default function MealResult({ result, onSwap, pinnedFoods = {}, onToggleP
 
                 return (
                   <tr key={i} className={isNegative ? 'bg-error/5' : ''}>
-                    <td>
-                      <div className="flex items-center gap-1.5">
+                    <td className="align-middle">
+                      <div className="flex items-center gap-2">
                         {isPinned && <Pin className="w-3.5 h-3.5 text-primary shrink-0 fill-primary" />}
-                        <span className="font-medium text-sm">{item.food?.name || item.foodName}</span>
-                        {isNegative && (
-                          <span className="badge badge-error badge-xs">⚠️</span>
-                        )}
+                        <SafeImage
+                          src={item.food?.imageUrl}
+                          alt={item.food?.name}
+                          className="w-7 h-7 rounded-lg object-cover bg-base-300 border border-base-content/10 shadow-sm shrink-0 cursor-zoom-in hover:scale-110 active:scale-95 transition-transform"
+                          onClick={() => {
+                            setActiveLightboxImg(item.food.imageUrl);
+                            setActiveLightboxTitle(item.food.name);
+                          }}
+                          fallback={
+                            <div className="w-7 h-7 rounded-lg bg-base-200 flex items-center justify-center text-xs shrink-0 select-none border border-base-content/5">
+                              {role === 'protein' ? '🥩' : role === 'carb' ? '🍚' : role === 'fat' ? '🥑' : role === 'fiber' ? '🥗' : '🍽️'}
+                            </div>
+                          }
+                        />
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-medium text-sm truncate max-w-[150px] sm:max-w-xs">{item.food?.name || item.foodName}</span>
+                          {isNegative && (
+                            <span className="badge badge-error badge-xs w-max mt-0.5">⚠️ Giá trị âm</span>
+                          )}
+                        </div>
                       </div>
                       {role && (
                         <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize ${
@@ -92,6 +114,13 @@ export default function MealResult({ result, onSwap, pinnedFoods = {}, onToggleP
           </table>
         </div>
       )}
+
+      <ImageLightbox 
+        src={activeLightboxImg} 
+        alt={activeLightboxTitle} 
+        isOpen={!!activeLightboxImg} 
+        onClose={() => setActiveLightboxImg(null)} 
+      />
     </div>
   );
 }

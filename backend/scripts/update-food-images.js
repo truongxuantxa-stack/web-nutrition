@@ -1,101 +1,146 @@
 'use strict';
 /**
- * Cập nhật imageUrl cho thực phẩm thô.
+ * Cập nhật imageUrl cho các thực phẩm chế biến (dish) chưa có ảnh bằng Wikipedia API
+ * kết hợp với ảnh fallback chất lượng cao từ Unsplash dựa trên phân loại tên món ăn.
+ * 
  * Chạy: node scripts/update-food-images.js
  */
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const https = require('https');
 const { sequelize, Food } = require('../models');
 
-// [tên, imageUrl]
-const updates = [
-    // ── PROTEIN ─────────────────────────────────────
-    ['Ức gà (Thô)', 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400&h=300&fit=crop'],
-    ['Cá hồi tươi (Thô)', 'https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?w=400&h=300&fit=crop'],
-    ['Thịt bò thăn (Thô)', 'https://images.unsplash.com/photo-1603048297172-c92544798d5e?w=400&h=300&fit=crop'],
-    ['Đậu phụ (Thô)', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'],
-    ['Trứng gà (Thô)', 'https://images.unsplash.com/photo-1587486913049-53fc88980cb5?w=400&h=300&fit=crop'],
-    ['Sữa chua Hy Lạp (Thô)', 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop'],
-    
-    // ── CARB ────────────────────────────────────────
-    ['Cơm trắng (Thô/Chín)', 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&h=300&fit=crop'],
-    ['Yến mạch khô (Thô)', 'https://images.unsplash.com/photo-1517673132405-a56a6eb01fc3?w=400&h=300&fit=crop'],
-    ['Khoai lang (Thô)', 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&h=300&fit=crop'],
-    ['Gạo lứt (Thô)', 'https://images.unsplash.com/photo-1586201375761-83865001e8ac?w=400&h=300&fit=crop'],
+// Danh sách ảnh Unsplash chất lượng cao theo phân loại để làm fallback
+const FALLBACK_IMAGES = {
+    salad: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop',
+    noodle: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800&auto=format&fit=crop', // Phở, bún, mì
+    rice: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&auto=format&fit=crop', // Cơm, xôi
+    bread: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&auto=format&fit=crop', // Bánh mì, bánh ngọt
+    drink: 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=800&auto=format&fit=crop', // Sinh tố, nước ép
+    general: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop' // Các món khác
+};
 
-    // ── FIBER ───────────────────────────────────────
-    ['Bông cải xanh (Thô)', 'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?w=400&h=300&fit=crop'],
-    ['Rau xà lách', 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=300&fit=crop'],
-    ['Cà chua', 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&h=300&fit=crop'],
-    ['Cà rốt', 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&h=300&fit=crop'],
-    ['Dưa chuột', 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&h=300&fit=crop'],
+// Hàm chọn ảnh fallback dựa trên tên món ăn
+function getFallbackImage(foodName) {
+    const nameLower = foodName.toLowerCase();
+    if (nameLower.includes('salad') || nameLower.includes('rau') || nameLower.includes('nộm') || nameLower.includes('gỏi')) {
+        return FALLBACK_IMAGES.salad;
+    }
+    if (nameLower.includes('bún') || nameLower.includes('phở') || nameLower.includes('mì') || nameLower.includes('miến') || nameLower.includes('hủ tiếu') || nameLower.includes('cháo') || nameLower.includes('súp')) {
+        return FALLBACK_IMAGES.noodle;
+    }
+    if (nameLower.includes('cơm') || nameLower.includes('xôi')) {
+        return FALLBACK_IMAGES.rice;
+    }
+    if (nameLower.includes('bánh')) {
+        return FALLBACK_IMAGES.bread;
+    }
+    if (nameLower.includes('sinh tố') || nameLower.includes('nước') || nameLower.includes('trà') || nameLower.includes('sữa') || nameLower.includes('nước ép')) {
+        return FALLBACK_IMAGES.drink;
+    }
+    return FALLBACK_IMAGES.general;
+}
 
-    // ── VITAMIN ─────────────────────────────────────
-    ['Chuối (Thô)', 'https://images.unsplash.com/photo-1571501679680-bd5a119f1a2b?w=400&h=300&fit=crop'],
-    ['Cam (Thô)', 'https://images.unsplash.com/photo-1547514701-42782101795e?w=400&h=300&fit=crop'],
-    ['Quả Dâu tây', 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=400&h=300&fit=crop'],
-    ['Táo đỏ', 'https://images.unsplash.com/photo-1560806887-1e4cd0b6fac6?w=400&h=300&fit=crop'],
+// Helper gửi request HTTP GET và nhận JSON
+const getJson = (url) => {
+    return new Promise((resolve, reject) => {
+        const options = {
+            headers: {
+                'User-Agent': 'NutritionAppGraduationProject/1.0 (contact: student@example.com)'
+            }
+        };
+        https.get(url, options, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                try {
+                    resolve(JSON.parse(data));
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        }).on('error', reject);
+    });
+};
 
-    // ── FAT ─────────────────────────────────────────
-    ['Quả Bơ (Thô)', 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&h=300&fit=crop'],
-    ['Hạt Hạnh nhân (Thô)', 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=400&h=300&fit=crop'],
-    ['Hạt Chia (Thô)', 'https://images.unsplash.com/photo-1590483849557-04870f44383c?w=400&h=300&fit=crop'],
-];
+// Hàm tìm ảnh trên Wikipedia
+const searchWikipediaImage = async (query) => {
+    try {
+        // Tìm trang Wikipedia tiếng Việt phù hợp nhất
+        const searchUrl = `https://vi.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&utf8=1`;
+        const searchResult = await getJson(searchUrl);
+        
+        if (searchResult.query && searchResult.query.search && searchResult.query.search.length > 0) {
+            const title = searchResult.query.search[0].title;
+            
+            // Lấy ảnh thumbnail kích thước 600px của trang đó
+            const imgUrl = `https://vi.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&format=json&pithumbsize=600`;
+            const imgResult = await getJson(imgUrl);
+            
+            const pages = imgResult.query.pages;
+            const pageId = Object.keys(pages)[0];
+            if (pages[pageId] && pages[pageId].thumbnail) {
+                return pages[pageId].thumbnail.source;
+            }
+        }
+        return null;
+    } catch (e) {
+        return null;
+    }
+};
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function run() {
     try {
         await sequelize.authenticate();
-        console.log('✅  Kết nối database thành công.');
+        console.log('✅ Kết nối database thành công.');
 
-        let updated = 0;
-        let notFound = 0;
-
-        for (const [name, imageUrl] of updates) {
-            const food = await Food.findOne({ where: { name } });
-            if (!food) {
-                console.log(`   ⚠️  Không tìm thấy: "${name}"`);
-                notFound++;
-                continue;
-            }
-            await food.update({ imageUrl });
-            updated++;
-        }
-
-        // Cập nhật các món nguyên liệu thô còn lại (dùng ảnh generic theo category)
-        const genericImages = {
-            'protein': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop',
-            'thit_ca': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop',
-            'carb': 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&h=300&fit=crop',
-            'com': 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&h=300&fit=crop',
-            'pho_bun': 'https://images.unsplash.com/photo-1582878826629-29b7ad1cb438?w=400&h=300&fit=crop',
-            'banh': 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=300&fit=crop',
-            'fiber': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop',
-            'rau_cu': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop',
-            'vitamin': 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=300&fit=crop',
-            'trai_cay': 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=300&fit=crop',
-            'fat': 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&h=300&fit=crop',
-            'do_uong': 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=300&fit=crop',
-            'khac': 'https://images.unsplash.com/photo-1490818387583-1b5f2621124c?w=400&h=300&fit=crop'
-        };
-
-        const rawFoodsWithoutImage = await Food.findAll({
-            where: { foodType: 'raw', imageUrl: null, isCustom: false }
+        // Lấy tất cả các món chế biến (dish) chưa có ảnh
+        const dishesWithoutImage = await Food.findAll({
+            where: { foodType: 'dish', imageUrl: null, isCustom: false }
         });
 
-        let genericUpdated = 0;
-        for (const food of rawFoodsWithoutImage) {
-            const genericImg = genericImages[food.category] || genericImages['khac'];
-            await food.update({ imageUrl: genericImg });
-            genericUpdated++;
+        console.log(`Tìm thấy ${dishesWithoutImage.length} món ăn chưa có ảnh trong database.`);
+        console.log('Bắt đầu quét ảnh tự động từ Wikipedia + Unsplash Fallback...');
+
+        let updatedWiki = 0;
+        let updatedFallback = 0;
+
+        for (let i = 0; i < dishesWithoutImage.length; i++) {
+            const food = dishesWithoutImage[i];
+            process.stdout.write(`[${i+1}/${dishesWithoutImage.length}] Đang xử lý "${food.name}"... `);
+
+            // 1. Tìm trên Wikipedia trước
+            let imageUrl = await searchWikipediaImage(food.name);
+            let type = 'Wikipedia';
+
+            // 2. Nếu không tìm thấy, dùng ảnh fallback Unsplash theo từ khóa
+            if (!imageUrl) {
+                imageUrl = getFallbackImage(food.name);
+                type = 'Fallback Unsplash';
+                updatedFallback++;
+            } else {
+                updatedWiki++;
+            }
+
+            // Cập nhật vào DB
+            await food.update({ imageUrl });
+            console.log(`✅ Thành công (${type})`);
+
+            // Chờ 200ms để tránh gửi request quá dồn dập
+            await sleep(200);
         }
 
-        console.log(`\n🎉  Hoàn tất! Đã cập nhật ${updated} món cụ thể, không tìm thấy ${notFound} món.`);
-        console.log(`🎉  Đã cập nhật thêm ${genericUpdated} món bằng ảnh mặc định theo danh mục.`);
+        console.log(`\n🎉 Hoàn thành cập nhật ảnh cho ${dishesWithoutImage.length} món!`);
+        console.log(`- Lấy từ Wikipedia: ${updatedWiki} món.`);
+        console.log(`- Dùng ảnh Unsplash Fallback: ${updatedFallback} món.`);
+
     } catch (err) {
-        console.error('❌  Lỗi:', err.message);
-        process.exit(1);
+        console.error('❌ Lỗi hệ thống:', err.message);
     } finally {
         await sequelize.close();
-        console.log('🔒  Đã đóng kết nối.');
+        console.log('🔒 Đã đóng kết nối database.');
     }
 }
 

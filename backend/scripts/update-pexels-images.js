@@ -53,9 +53,9 @@ async function run() {
         await sequelize.authenticate();
         console.log('✅  Kết nối database thành công.');
 
-        // Chỉ lấy những món raw chưa có ảnh (101 món)
+        // Lấy những món chế biến (dish) chưa có ảnh
         const rawFoodsWithoutImage = await Food.findAll({
-            where: { foodType: 'raw', imageUrl: null, isCustom: false }
+            where: { foodType: 'dish', imageUrl: null, isCustom: false }
         });
 
         console.log(`Tiến hành tìm ảnh cho ${rawFoodsWithoutImage.length} món ăn qua Pexels API...`);

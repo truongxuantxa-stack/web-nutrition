@@ -208,7 +208,7 @@ exports.getFoodsByRole = async (req, res) => {
 
         let foods = await Food.findAll({
             where     : whereClause,
-            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'unit', 'tags', 'category'],
+            attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'unit', 'tags', 'category', 'imageUrl'],
         });
 
         // Lọc theo tags nếu có

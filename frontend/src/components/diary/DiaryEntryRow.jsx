@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
+import ImageLightbox from '../common/ImageLightbox';
+import SafeImage from '../common/SafeImage';
+
 
 function getFoodEmoji(name) {
   if (!name) return '🍽️';
@@ -26,6 +29,8 @@ function getFoodEmoji(name) {
 
 export default function DiaryEntryRow({ entry, onDelete }) {
   const [confirming, setConfirming] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
 
   const handleDelete = (e) => {
     e.stopPropagation();
@@ -41,7 +46,15 @@ export default function DiaryEntryRow({ entry, onDelete }) {
       <div className="flex items-center justify-between gap-x-3 w-full">
         {/* Cột thông tin món ăn */}
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <span className="text-base shrink-0 select-none">{emoji}</span>
+          <SafeImage
+            src={entry.imageUrl}
+            alt={entry.foodName}
+            className="w-6 h-6 rounded-full object-cover shrink-0 bg-base-300 border border-base-content/10 shadow-sm cursor-zoom-in hover:scale-110 active:scale-95 transition-transform"
+            onClick={() => setIsLightboxOpen(true)}
+            fallback={
+              <span className="text-base shrink-0 select-none">{emoji}</span>
+            }
+          />
           <p className="text-sm font-semibold truncate text-base-content/90" title={entry.foodName}>
             {entry.foodName}
           </p>
@@ -88,6 +101,12 @@ export default function DiaryEntryRow({ entry, onDelete }) {
           </div>
         </div>
       </div>
+      <ImageLightbox 
+        src={entry.imageUrl} 
+        alt={entry.foodName} 
+        isOpen={isLightboxOpen} 
+        onClose={() => setIsLightboxOpen(false)} 
+      />
     </li>
   );
 }

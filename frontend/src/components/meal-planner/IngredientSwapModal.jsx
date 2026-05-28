@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import { useFoodsByRole } from '../../hooks/useMealPlanner';
 import { X, Search } from 'lucide-react';
+import ImageLightbox from '../common/ImageLightbox';
+import SafeImage from '../common/SafeImage';
+
 
 export default function IngredientSwapModal({ isOpen, onClose, swapTarget, allowedTags = [], onConfirmSwap }) {
   const [searchQ, setSearchQ] = useState('');
+  const [activeLightboxImg, setActiveLightboxImg] = useState(null);
+  const [activeLightboxTitle, setActiveLightboxTitle] = useState('');
+
   const role = swapTarget?.food?.category || swapTarget?.role || '';
 
   const { data: foods = [], isLoading } = useFoodsByRole(role, allowedTags);
@@ -60,7 +66,21 @@ export default function IngredientSwapModal({ isOpen, onClose, swapTarget, allow
                 onClick={() => { onConfirmSwap(food); onClose(); }}
                 className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-base-200 text-left transition-colors"
               >
-                <span className="text-lg shrink-0">🥦</span>
+                <SafeImage
+                  src={food.imageUrl}
+                  alt={food.name}
+                  className="w-8 h-8 rounded-lg object-cover bg-base-300 shrink-0 border border-base-content/10 cursor-zoom-in hover:scale-110 active:scale-95 transition-transform"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Ngăn chọn món khi chỉ muốn phóng to ảnh
+                    setActiveLightboxImg(food.imageUrl);
+                    setActiveLightboxTitle(food.name);
+                  }}
+                  fallback={
+                    <div className="w-8 h-8 rounded-lg bg-base-200 flex items-center justify-center text-sm shrink-0 select-none border border-base-content/5">
+                      {role === 'protein' ? '🥩' : role === 'carb' ? '🍚' : role === 'fat' ? '🥑' : role === 'fiber' ? '🥗' : '🥦'}
+                    </div>
+                  }
+                />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{food.name}</p>
                   <p className="text-xs text-base-content/50">
@@ -76,6 +96,13 @@ export default function IngredientSwapModal({ isOpen, onClose, swapTarget, allow
         )}
       </div>
       <div className="modal-backdrop bg-black/40" onClick={onClose} />
+
+      <ImageLightbox 
+        src={activeLightboxImg} 
+        alt={activeLightboxTitle} 
+        isOpen={!!activeLightboxImg} 
+        onClose={() => setActiveLightboxImg(null)} 
+      />
     </div>
   );
 }
