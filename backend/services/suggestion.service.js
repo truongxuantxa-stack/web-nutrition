@@ -37,13 +37,21 @@ const sumNutritionFromEntries = (entries) => {
         const fiberVal  = entry.fiberSnapshot  ?? (entry.food?.fiber  != null ? entry.food.fiber  * factor : null);
         const sugarVal  = entry.sugarSnapshot  ?? (entry.food?.sugar  != null ? entry.food.sugar  * factor : null);
         const sodiumVal = entry.sodiumSnapshot ?? (entry.food?.sodium != null ? entry.food.sodium * factor : null);
+        const vitaminAVal = entry.vitaminASnapshot ?? (entry.food?.vitaminA != null ? entry.food.vitaminA * factor : null);
+        const vitaminCVal = entry.vitaminCSnapshot ?? (entry.food?.vitaminC != null ? entry.food.vitaminC * factor : null);
+        const calciumVal  = entry.calciumSnapshot  ?? (entry.food?.calcium  != null ? entry.food.calcium  * factor : null);
+        const ironVal     = entry.ironSnapshot     ?? (entry.food?.iron     != null ? entry.food.iron     * factor : null);
 
         if (fiberVal  != null) acc.fiber  = (acc.fiber  ?? 0) + fiberVal;
         if (sugarVal  != null) acc.sugar  = (acc.sugar  ?? 0) + sugarVal;
         if (sodiumVal != null) acc.sodium = (acc.sodium ?? 0) + sodiumVal;
+        if (vitaminAVal != null) acc.vitaminA = (acc.vitaminA ?? 0) + vitaminAVal;
+        if (vitaminCVal != null) acc.vitaminC = (acc.vitaminC ?? 0) + vitaminCVal;
+        if (calciumVal  != null) acc.calcium  = (acc.calcium  ?? 0) + calciumVal;
+        if (ironVal     != null) acc.iron     = (acc.iron     ?? 0) + ironVal;
 
         return acc;
-    }, { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: null, sugar: null, sodium: null });
+    }, { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: null, sugar: null, sodium: null, vitaminA: null, vitaminC: null, calcium: null, iron: null });
 };
 
 /**
@@ -148,6 +156,35 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}) => {
                 icon: '🥑',
                 message: 'Tỷ lệ chất béo đang khá cao. Bạn nên chọn các món luộc, hấp thay vì chiên xào cho bữa tiếp theo.'
             });
+        }
+    }
+
+    // 2.5. Cảnh báo Vi chất (khi nạp > 60% calo)
+    if (calPct > 60) {
+        const fiberRDI = 25;
+        const calciumRDI = 1000;
+        const ironRDI = 18;
+        const vitaminCRDI = 75;
+        const sodiumTarget = 2300;
+        const sugarTarget = 25;
+
+        if (consumed.fiber != null && consumed.fiber < fiberRDI * 0.5) {
+            insights.push({ type: 'warning', icon: '🥦', message: 'Chất xơ đang thấp, hãy bổ sung rau xanh, ngũ cốc nguyên hạt.' });
+        }
+        if (consumed.calcium != null && consumed.calcium < calciumRDI * 0.4) {
+            insights.push({ type: 'warning', icon: '🥛', message: 'Canxi thấp, hãy uống sữa hoặc ăn rau lá xanh đậm.' });
+        }
+        if (consumed.iron != null && consumed.iron < ironRDI * 0.4) {
+            insights.push({ type: 'warning', icon: '🥩', message: 'Sắt thấp, hãy ăn thịt đỏ, gan hoặc rau chân vịt.' });
+        }
+        if (consumed.vitaminC != null && consumed.vitaminC < vitaminCRDI * 0.4) {
+            insights.push({ type: 'warning', icon: '🍊', message: 'Thiếu Vitamin C, hãy ăn cam, ổi hoặc ớt chuông.' });
+        }
+        if (consumed.sodium != null && consumed.sodium > sodiumTarget) {
+            insights.push({ type: 'warning', icon: '🧂', message: 'Natri cao, hạn chế đồ mặn và thực phẩm chế biến sẵn.' });
+        }
+        if (consumed.sugar != null && consumed.sugar > sugarTarget) {
+            insights.push({ type: 'warning', icon: '🍬', message: 'Đường cao, giảm đồ ngọt và nước có ga.' });
         }
     }
 

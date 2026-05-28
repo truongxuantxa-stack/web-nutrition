@@ -149,6 +149,12 @@ const getReportData = async (userId, range = 'week') => {
             carbs:    Math.round(nutrition.carbs),
             fat:      Math.round(nutrition.fat),
             fiber:    nutrition.fiber != null ? Math.round(nutrition.fiber) : null,
+            sugar:    nutrition.sugar != null ? Math.round(nutrition.sugar) : null,
+            sodium:   nutrition.sodium != null ? Math.round(nutrition.sodium) : null,
+            vitaminA: nutrition.vitaminA != null ? Math.round(nutrition.vitaminA) : null,
+            vitaminC: nutrition.vitaminC != null ? Math.round(nutrition.vitaminC) : null,
+            calcium:  nutrition.calcium != null ? Math.round(nutrition.calcium) : null,
+            iron:     nutrition.iron != null ? Math.round(nutrition.iron) : null,
             water:    waterByDate[date] || 0,
             exerciseBurned: Math.round(exerciseByDate[date] || 0),
             weight:   weightByDate[date] || null,
@@ -165,6 +171,10 @@ const getReportData = async (userId, range = 'week') => {
         avgCarbs: 0,
         avgFat: 0,
         avgFiber: 0,
+        avgVitaminA: 0,
+        avgVitaminC: 0,
+        avgCalcium: 0,
+        avgIron: 0,
         avgWater: 0,
         totalExerciseCalories: 0,
         calorieCompliance: 0, // % số ngày đạt ±10% target
@@ -180,9 +190,21 @@ const getReportData = async (userId, range = 'week') => {
         const totalCarb = dailyLog.reduce((s, d) => s + d.carbs, 0);
         const totalFat  = dailyLog.reduce((s, d) => s + d.fat, 0);
         
-        // Fiber: chỉ tính trung bình từ những ngày CÓ dữ liệu fiber
+        // Fiber, VitaminA, VitaminC, Calcium, Iron: chỉ tính trung bình từ những ngày CÓ dữ liệu
         const daysWithFiber = dailyLog.filter(d => d.fiber != null);
         const totalFiber = daysWithFiber.reduce((s, d) => s + d.fiber, 0);
+
+        const daysWithVitA = dailyLog.filter(d => d.vitaminA != null);
+        const totalVitA = daysWithVitA.reduce((s, d) => s + d.vitaminA, 0);
+
+        const daysWithVitC = dailyLog.filter(d => d.vitaminC != null);
+        const totalVitC = daysWithVitC.reduce((s, d) => s + d.vitaminC, 0);
+
+        const daysWithCalcium = dailyLog.filter(d => d.calcium != null);
+        const totalCalcium = daysWithCalcium.reduce((s, d) => s + d.calcium, 0);
+
+        const daysWithIron = dailyLog.filter(d => d.iron != null);
+        const totalIron = daysWithIron.reduce((s, d) => s + d.iron, 0);
 
         const totalWater = dailyLog.reduce((s, d) => s + d.water, 0);
         const totalExercise = dailyLog.reduce((s, d) => s + d.exerciseBurned, 0);
@@ -192,6 +214,10 @@ const getReportData = async (userId, range = 'week') => {
         summary.avgCarbs    = Math.round(totalCarb / daysWithData);
         summary.avgFat      = Math.round(totalFat / daysWithData);
         summary.avgFiber    = daysWithFiber.length > 0 ? Math.round(totalFiber / daysWithFiber.length) : 0;
+        summary.avgVitaminA = daysWithVitA.length > 0 ? Math.round(totalVitA / daysWithVitA.length) : 0;
+        summary.avgVitaminC = daysWithVitC.length > 0 ? Math.round(totalVitC / daysWithVitC.length) : 0;
+        summary.avgCalcium  = daysWithCalcium.length > 0 ? Math.round(totalCalcium / daysWithCalcium.length) : 0;
+        summary.avgIron     = daysWithIron.length > 0 ? Math.round(totalIron / daysWithIron.length) : 0;
         summary.avgWater    = Math.round(totalWater / daysWithData);
         summary.totalExerciseCalories = Math.round(totalExercise);
 

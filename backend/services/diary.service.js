@@ -22,6 +22,10 @@ const calcSnapshot = (food, amountNum) => {
         fiberSnapshot    : food.fiber  != null ? Math.round(food.fiber  * factor * 10) / 10 : null,
         sugarSnapshot    : food.sugar  != null ? Math.round(food.sugar  * factor * 10) / 10 : null,
         sodiumSnapshot   : food.sodium != null ? Math.round(food.sodium * factor * 10) / 10 : null,
+        vitaminASnapshot : food.vitaminA != null ? Math.round(food.vitaminA * factor * 10) / 10 : null,
+        vitaminCSnapshot : food.vitaminC != null ? Math.round(food.vitaminC * factor * 10) / 10 : null,
+        calciumSnapshot  : food.calcium  != null ? Math.round(food.calcium  * factor * 10) / 10 : null,
+        ironSnapshot     : food.iron     != null ? Math.round(food.iron     * factor * 10) / 10 : null,
     };
 };
 
@@ -115,13 +119,14 @@ const searchFood = async (userId, { q, category, foodType, limit }) => {
         where     : whereClause,
         limit     : Math.min(limitNum, 100),
         order     : [['isCustom', 'DESC'], ['name', 'ASC']],
-        attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'unit', 'category', 'foodType', 'isCustom'],
+        attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'vitaminA', 'vitaminC', 'calcium', 'iron', 'unit', 'category', 'foodType', 'isCustom', 'imageUrl'],
     });
     return { foods };
 };
 
 // ─── Validate macro fields dùng chung cho create + update ────────────────────
-const validateMacros = ({ calories, protein, carbs, fat, fiber, sugar, sodium }) => {
+const validateMacros = (foodData) => {
+    const { calories, protein, carbs, fat, fiber, sugar, sodium, vitaminA, vitaminC, calcium, iron } = foodData;
     const calNum  = parseFloat(calories);
     const proNum  = parseFloat(protein);
     const carbNum = parseFloat(carbs);
@@ -146,11 +151,20 @@ const validateMacros = ({ calories, protein, carbs, fat, fiber, sugar, sodium })
     const fiberNum  = (fiber  !== '' && fiber  != null) ? parseFloat(fiber)  : null;
     const sugarNum  = (sugar  !== '' && sugar  != null) ? parseFloat(sugar)  : null;
     const sodiumNum = (sodium !== '' && sodium != null) ? parseFloat(sodium) : null;
+    const vitaminANum = (vitaminA !== '' && vitaminA != null) ? parseFloat(vitaminA) : null;
+    const vitaminCNum = (vitaminC !== '' && vitaminC != null) ? parseFloat(vitaminC) : null;
+    const calciumNum  = (calcium  !== '' && calcium  != null) ? parseFloat(calcium)  : null;
+    const ironNum     = (iron     !== '' && iron     != null) ? parseFloat(iron)     : null;
+
     if (fiberNum  != null && (isNaN(fiberNum)  || fiberNum  < 0)) throw { status: 400, message: 'Chất xơ không hợp lệ.' };
     if (sugarNum  != null && (isNaN(sugarNum)  || sugarNum  < 0)) throw { status: 400, message: 'Đường không hợp lệ.' };
     if (sodiumNum != null && (isNaN(sodiumNum) || sodiumNum < 0)) throw { status: 400, message: 'Natri không hợp lệ.' };
+    if (vitaminANum != null && (isNaN(vitaminANum) || vitaminANum < 0)) throw { status: 400, message: 'Vitamin A không hợp lệ.' };
+    if (vitaminCNum != null && (isNaN(vitaminCNum) || vitaminCNum < 0)) throw { status: 400, message: 'Vitamin C không hợp lệ.' };
+    if (calciumNum  != null && (isNaN(calciumNum)  || calciumNum  < 0)) throw { status: 400, message: 'Canxi không hợp lệ.' };
+    if (ironNum     != null && (isNaN(ironNum)     || ironNum     < 0)) throw { status: 400, message: 'Sắt không hợp lệ.' };
 
-    return { calNum, proNum, carbNum, fatNum, fiberNum, sugarNum, sodiumNum };
+    return { calNum, proNum, carbNum, fatNum, fiberNum, sugarNum, sodiumNum, vitaminANum, vitaminCNum, calciumNum, ironNum };
 };
 
 /**
@@ -165,7 +179,7 @@ const createCustomFood = async (userId, foodData) => {
     if (!name || name.trim() === '') {
         throw { status: 400, message: 'Tên món ăn không được để trống.' };
     }
-    const { calNum, proNum, carbNum, fatNum, fiberNum, sugarNum, sodiumNum } = validateMacros(foodData);
+    const { calNum, proNum, carbNum, fatNum, fiberNum, sugarNum, sodiumNum, vitaminANum, vitaminCNum, calciumNum, ironNum } = validateMacros(foodData);
 
     const food = await Food.create({
         userId,
@@ -178,6 +192,10 @@ const createCustomFood = async (userId, foodData) => {
         fiber        : fiberNum,
         sugar        : sugarNum,
         sodium       : sodiumNum,
+        vitaminA     : vitaminANum,
+        vitaminC     : vitaminCNum,
+        calcium      : calciumNum,
+        iron         : ironNum,
         unit         : unit && unit.trim() ? unit.trim() : '1 suất',
         category     : category || 'khac',
         foodType     : foodType || 'dish',
@@ -195,6 +213,10 @@ const createCustomFood = async (userId, foodData) => {
             fiber   : food.fiber,
             sugar   : food.sugar,
             sodium  : food.sodium,
+            vitaminA: food.vitaminA,
+            vitaminC: food.vitaminC,
+            calcium : food.calcium,
+            iron    : food.iron,
             unit    : food.unit,
             category: food.category,
             foodType: food.foodType,
@@ -221,7 +243,7 @@ const updateCustomFood = async (userId, foodId, foodData) => {
     if (!name || name.trim() === '') {
         throw { status: 400, message: 'Tên món ăn không được để trống.' };
     }
-    const { calNum, proNum, carbNum, fatNum, fiberNum, sugarNum, sodiumNum } = validateMacros(foodData);
+    const { calNum, proNum, carbNum, fatNum, fiberNum, sugarNum, sodiumNum, vitaminANum, vitaminCNum, calciumNum, ironNum } = validateMacros(foodData);
 
     const updatedName = name.trim();
     await existingFood.update({
@@ -233,6 +255,10 @@ const updateCustomFood = async (userId, foodId, foodData) => {
         fiber   : fiberNum,
         sugar   : sugarNum,
         sodium  : sodiumNum,
+        vitaminA: vitaminANum,
+        vitaminC: vitaminCNum,
+        calcium : calciumNum,
+        iron    : ironNum,
         unit    : unit && unit.trim() ? unit.trim() : existingFood.unit,
         category: category || existingFood.category,
         foodType: foodType || existingFood.foodType,
@@ -250,6 +276,10 @@ const updateCustomFood = async (userId, foodId, foodData) => {
             fiber   : fiberNum,
             sugar   : sugarNum,
             sodium  : sodiumNum,
+            vitaminA: vitaminANum,
+            vitaminC: vitaminCNum,
+            calcium : calciumNum,
+            iron    : ironNum,
             unit    : unit && unit.trim() ? unit.trim() : existingFood.unit,
             category: category || existingFood.category,
             foodType: foodType || existingFood.foodType,
