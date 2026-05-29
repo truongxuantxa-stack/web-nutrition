@@ -77,5 +77,6 @@ exports.deleteExercise = async (req, res) => {
 
 // ─── GET /api/v1/exercise/sports ─────────────────────────────────────────────
 exports.getSports = (req, res) => {
-    return res.success({ sports: getSupportedSports() });
+    const weightKg = parseFloat(req.user?.weight) || 60;
+    return res.success({ sports: getSupportedSports(weightKg) });
 };

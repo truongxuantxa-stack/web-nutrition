@@ -42,7 +42,7 @@ export default function DiaryEntryRow({ entry, onDelete }) {
   const emoji = getFoodEmoji(entry.foodName);
 
   return (
-    <li className="flex flex-col px-3 py-2 hover:bg-base-200/40 transition-colors group">
+    <li className="flex flex-col px-4 py-2 hover:bg-base-200/40 transition-colors group">
       <div className="flex items-center justify-between gap-x-3 w-full">
         {/* Cột thông tin món ăn */}
         <div className="flex items-center gap-2 min-w-0 flex-1">

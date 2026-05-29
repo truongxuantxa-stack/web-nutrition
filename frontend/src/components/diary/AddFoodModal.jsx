@@ -71,7 +71,10 @@ function SearchTab({ date, defaultMeal }) {
             <FoodSearchResult
               key={food.id}
               food={food}
-              onSelect={setSelected}
+              onSelect={(food) => {
+                setSelected(food);
+                setAmount(food.foodType === 'dish' ? '1' : '100');
+              }}
             />
           ))}
         </div>

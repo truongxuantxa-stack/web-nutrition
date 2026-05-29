@@ -12,6 +12,8 @@ const {
     sumNutritionFromEntries,
     getCalorieProgress,
     getMacroProgress,
+    getHealthInsights,
+    calculateDailyHealthScore,
 } = require('../../services/suggestion.service');
 const { getWaterByDate } = require('../../services/water.service');
 
@@ -44,7 +46,18 @@ exports.getDashboard = async (req, res) => {
         const calorieProgress = getCalorieProgress(consumed.calories, metrics.targetCalories || 0);
         const macroProgress   = getMacroProgress(consumed, metrics.macros || {});
 
-        // Lịch sử cân nặng (7 ngày gần nhất cho biểu đồ mini)
+        // Nước uống
+        const { total: waterTotal } = await getWaterByDate(user.id, date);
+        const waterGoal = user.waterGoal || calculateWaterGoal(user.weight);
+
+        // Health Insights + Score
+        const healthInsights = getHealthInsights(
+            consumed, metrics, {},
+            waterTotal, waterGoal, user.gender
+        );
+        const healthScore = calculateDailyHealthScore(
+            consumed, metrics, waterTotal, waterGoal, healthInsights, user.gender
+        );
         const weightLogs = await WeightLog.findAll({
             where: { userId: user.id },
             order: [['date', 'DESC']],
@@ -59,9 +72,7 @@ exports.getDashboard = async (req, res) => {
         });
         const totalBurned = Math.round(exerciseLogs.reduce((sum, l) => sum + l.caloriesBurned, 0));
 
-        // Nước uống
-        const { total: waterTotal } = await getWaterByDate(user.id, date);
-        const waterGoal = user.waterGoal || calculateWaterGoal(user.weight);
+        // Nước uống — đã tính bên trên, chỉ cần lấy logs nếu cần
 
         return res.success({
             user: {
@@ -93,6 +104,8 @@ exports.getDashboard = async (req, res) => {
             calorieProgress,
             macroProgress,
             weightChartData,
+            healthInsights,
+            healthScore,
             mealCount: entries.length,
             waterTotal,
             waterGoal,

@@ -15,13 +15,16 @@ export default function MealGroup({ mealKey, entries = [], totalCalories, onAddF
     <div className={`glass-card meal-card-${mealKey} hover:-translate-y-0.5 transition-transform duration-200 flex flex-col justify-between h-full overflow-hidden border-l-[3px] ${meta.accent}`}>
       {/* Header */}
       <div>
-        <div className={`flex items-center justify-between p-4 ${meta.headerBg}`}>
+        <div className={`flex items-center justify-between px-4 py-3.5 ${meta.headerBg}`}>
           <div className="flex items-center gap-2">
             <span className="text-lg">{meta.icon}</span>
             <span className="font-bold text-sm text-base-content/90">{meta.label}</span>
             <span className="badge badge-ghost badge-sm text-[10px] px-1.5 py-0.5 h-auto">{entries.length} món</span>
           </div>
-          <span className="text-sm font-extrabold text-primary">{totalCalories} kcal</span>
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <span className="text-sm font-extrabold text-primary">{totalCalories} kcal</span>
+            <div className="w-6 h-6 shrink-0" />
+          </div>
         </div>
 
         {/* Body */}
@@ -43,7 +46,7 @@ export default function MealGroup({ mealKey, entries = [], totalCalories, onAddF
       </div>
 
       {/* Footer & Action */}
-      <div className="p-3 bg-base-200/15 pt-2">
+      <div className="px-4 py-3 bg-base-200/15">
         <button
           id={`add-food-${mealKey}`}
           onClick={() => onAddFood(mealKey)}

@@ -16,6 +16,7 @@ const {
     getCalorieProgress,
     getMacroProgress,
     getHealthInsights,
+    calculateDailyHealthScore,
 } = require('../../services/suggestion.service');
 const { getTotalBurnedByDate } = require('../../services/exercise.service');
 const { getWaterByDate }       = require('../../services/water.service');
@@ -48,15 +49,22 @@ exports.getDiary = async (req, res) => {
         const totalBurned     = await getTotalBurnedByDate(user.id, date);
         const calorieProgress = getCalorieProgress(consumed.calories, metrics.targetCalories || 0);
         const macroProgress   = getMacroProgress(consumed, metrics.macros || {});
-        const healthInsights  = getHealthInsights(consumed, metrics, mealGroups);
+
+        const { total: waterTotal, logs: waterLogs } = await getWaterByDate(user.id, date);
+        const waterGoal = user.waterGoal || calculateWaterGoal(user.weight);
+
+        const healthInsights  = getHealthInsights(
+            consumed, metrics, mealGroups,
+            waterTotal, waterGoal, user.gender
+        );
+        const healthScore     = calculateDailyHealthScore(
+            consumed, metrics, waterTotal, waterGoal, healthInsights, user.gender
+        );
 
         const mealCalories = { sang: 0, trua: 0, toi: 0, phu: 0 };
         Object.keys(mealGroups).forEach(meal => {
             mealCalories[meal] = Math.round(sumNutritionFromEntries(mealGroups[meal]).calories);
         });
-
-        const { total: waterTotal, logs: waterLogs } = await getWaterByDate(user.id, date);
-        const waterGoal = user.waterGoal || calculateWaterGoal(user.weight);
 
         return res.success({
             date,
@@ -121,6 +129,7 @@ exports.getDiary = async (req, res) => {
             calorieProgress,
             macroProgress,
             healthInsights,
+            healthScore,
             waterTotal,
             waterGoal,
             waterLogs: waterLogs.map(l => ({

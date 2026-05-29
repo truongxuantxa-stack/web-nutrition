@@ -110,23 +110,25 @@ export default function MealResult({ result, onSwap, pinnedFoods = {}, onToggleP
                     <td className="text-right text-xs text-base-content/50">
                       {isNegative ? '—' : `${Math.round((item.food?.protein || 0) * item.grams / 100)}/${Math.round((item.food?.carbs || 0) * item.grams / 100)}/${Math.round((item.food?.fat || 0) * item.grams / 100)}`}
                     </td>
-                    <td className="flex items-center justify-end gap-1.5">
-                      <button
-                        id={`pin-${i}`}
-                        onClick={() => onTogglePin(item)}
-                        className={`btn btn-ghost btn-xs btn-square ${isPinned ? 'text-primary bg-primary/10' : 'text-base-content/30 hover:bg-base-200'}`}
-                        title={isPinned ? 'Bỏ ghim món này' : 'Ghim cố định món này'}
-                      >
-                        <Pin className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        id={`swap-${i}`}
-                        onClick={() => onSwap(item, i)}
-                        className="btn btn-ghost btn-xs btn-square text-base-content/60 hover:bg-base-200"
-                        title="Đổi nguyên liệu"
-                      >
-                        <RefreshCw className="w-3.5 h-3.5" />
-                      </button>
+                    <td className="align-middle">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          id={`pin-${i}`}
+                          onClick={() => onTogglePin(item)}
+                          className={`btn btn-ghost btn-xs btn-square ${isPinned ? 'text-primary bg-primary/10' : 'text-base-content/30 hover:bg-base-200'}`}
+                          title={isPinned ? 'Bỏ ghim món này' : 'Ghim cố định món này'}
+                        >
+                          <Pin className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          id={`swap-${i}`}
+                          onClick={() => onSwap(item, i)}
+                          className="btn btn-ghost btn-xs btn-square text-base-content/60 hover:bg-base-200"
+                          title="Đổi nguyên liệu"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

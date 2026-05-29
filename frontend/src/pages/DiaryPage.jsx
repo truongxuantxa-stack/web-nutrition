@@ -3,7 +3,8 @@ import { useDiaryData, useDeleteEntry } from '../hooks/useDiary';
 import { getToday } from '../lib/dayjs';
 import WeeklyCalendarStrip from '../components/diary/WeeklyCalendarStrip';
 import MealGroup      from '../components/diary/MealGroup';
-import HealthInsights from '../components/diary/HealthInsights';
+import DailyInsightsCard from '../components/common/DailyInsightsCard';
+
 import WaterTracker   from '../components/diary/WaterTracker';
 import AddFoodModal   from '../components/diary/AddFoodModal';
 import AnimatedSection from '../components/common/AnimatedSection';
@@ -22,7 +23,7 @@ export default function DiaryPage() {
   if (isLoading) return <DiarySkeleton />;
   if (error) return <div className="alert alert-error">Không thể tải nhật ký.</div>;
 
-  const { consumed, metrics, healthInsights, mealGroups = {}, mealCalories = {}, waterTotal, waterGoal, waterLogs = [] } = data;
+  const { consumed, metrics, healthInsights, healthScore, mealGroups = {}, mealCalories = {}, waterTotal, waterGoal, waterLogs = [] } = data;
 
   const openAddFood = (meal) => {
     setActiveMeal(meal);
@@ -80,12 +81,13 @@ export default function DiaryPage() {
         </div>
       </AnimatedSection>
 
-      {/* ── HEALTH INSIGHTS (full width, chỉ hiện khi có dữ liệu) ── */}
-      {healthInsights?.length > 0 && (
-        <AnimatedSection delay={0.2}>
-          <HealthInsights insights={healthInsights} />
-        </AnimatedSection>
-      )}
+      {/* ── DAILY INSIGHTS (full width) ── */}
+      <AnimatedSection delay={0.2}>
+        <DailyInsightsCard
+          insights={healthInsights || []}
+          healthScore={healthScore}
+        />
+      </AnimatedSection>
 
       {/* Modal thêm món */}
       <AddFoodModal

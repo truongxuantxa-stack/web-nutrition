@@ -104,7 +104,7 @@ export default function ExercisePage() {
                     <option value="" disabled>-- Chọn môn thể thao --</option>
                     {sports.map((s) => (
                       <option key={s.key} value={s.key}>
-                        {s.icon} {s.label} ({Math.round(s.defaultMet * 60)} kcal/h)
+                        {s.icon} {s.label} ({s.caloriesPerHour || Math.round(s.defaultMet * 60)} kcal/h)
                       </option>
                     ))}
                   </select>

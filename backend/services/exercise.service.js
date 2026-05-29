@@ -123,12 +123,13 @@ const MET_TABLE = {
 
 
 // ─── Lấy danh sách môn thể thao (dùng cho dropdown UI) ───────────────────────
-const getSupportedSports = () => {
+const getSupportedSports = (weightKg = 60) => {
     return Object.entries(MET_TABLE).map(([key, val]) => ({
         key,
-        label     : val.label,
-        icon      : val.icon,
-        defaultMet: val.defaultMet,
+        label          : val.label,
+        icon           : val.icon,
+        defaultMet     : val.defaultMet,
+        caloriesPerHour: Math.round(val.defaultMet * weightKg),
     }));
 };
 

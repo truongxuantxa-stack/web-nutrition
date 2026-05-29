@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDashboard } from '../hooks/useDashboard';
 import { useDownloadReport } from '../hooks/useReport';
@@ -18,6 +18,7 @@ import MacroSummaryCard from '../components/dashboard/MacroSummaryCard';
 import RecentMeals from '../components/dashboard/RecentMeals';
 import RecentActivity from '../components/dashboard/RecentActivity';
 import QuickActionFAB from '../components/dashboard/QuickActionFAB';
+import DailyInsightsCard from '../components/common/DailyInsightsCard';
 import AddFoodModal from '../components/diary/AddFoodModal';
 
 import { FileText, ArrowRight, TrendingDown, TrendingUp } from 'lucide-react';
@@ -46,10 +47,43 @@ export default function DashboardPage() {
   const { data: adaptiveStatus, isLoading: adaptiveLoading } = useAdaptiveStatus();
   const downloadReport = useDownloadReport();
 
+  // Gộp tất cả các bữa ăn từ diaryData.mealGroups thành một danh sách phẳng
+  const allDiaryEntries = useMemo(() => {
+    const entries = [];
+    if (diaryData && diaryData.mealGroups) {
+      Object.keys(diaryData.mealGroups).forEach((mealKey) => {
+        const groupEntries = diaryData.mealGroups[mealKey] || [];
+        groupEntries.forEach((entry) => {
+          entries.push({
+            ...entry,
+            mealType: mealKey,
+          });
+        });
+      });
+    }
+    return entries;
+  }, [diaryData]);
+
+  // Tính trend cân nặng gần nhất
+  const trend = useMemo(() => {
+    const chartData = data?.weightChartData;
+    if (!chartData || chartData.length < 2) return null;
+    const latest = chartData[chartData.length - 1].weight;
+    const previous = chartData[chartData.length - 2].weight;
+    const diff = latest - previous;
+    return {
+      latest,
+      previous,
+      diff: parseFloat(diff.toFixed(1)),
+      isDown: diff < 0,
+      isUp: diff > 0,
+    };
+  }, [data?.weightChartData]);
+
   if (isLoading || diaryLoading || exerciseLoading) return <DashboardSkeleton />;
   if (error) return <div className="alert alert-error m-4">Không thể tải dữ liệu dashboard.</div>;
 
-  const { metrics, consumed, totalBurned, macroProgress, weightChartData, waterTotal, waterGoal } = data;
+  const { metrics, consumed, totalBurned, macroProgress, weightChartData, waterTotal, waterGoal, healthInsights, healthScore } = data;
 
   const handleDownloadReport = (range) => {
     downloadReport.mutate(range, {
@@ -74,38 +108,8 @@ export default function DashboardPage() {
   // Lấy avatar chữ cái đầu
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
 
-  // Gộp tất cả các bữa ăn từ diaryData.mealGroups thành một danh sách phẳng
-  const allDiaryEntries = [];
-  if (diaryData && diaryData.mealGroups) {
-    Object.keys(diaryData.mealGroups).forEach((mealKey) => {
-      const groupEntries = diaryData.mealGroups[mealKey] || [];
-      groupEntries.forEach((entry) => {
-        allDiaryEntries.push({
-          ...entry,
-          mealType: mealKey,
-        });
-      });
-    });
-  }
-
   // Danh sách log bài tập
   const exerciseLogs = exerciseData?.logs || [];
-
-  // Tính trend cân nặng gần nhất
-  const getWeightTrend = () => {
-    if (!weightChartData || weightChartData.length < 2) return null;
-    const latest = weightChartData[weightChartData.length - 1].weight;
-    const previous = weightChartData[weightChartData.length - 2].weight;
-    const diff = latest - previous;
-    return {
-      latest,
-      previous,
-      diff: parseFloat(diff.toFixed(1)),
-      isDown: diff < 0,
-      isUp: diff > 0,
-    };
-  };
-  const trend = getWeightTrend();
 
   return (
     <div className="flex flex-col gap-6 pb-20">
@@ -315,6 +319,17 @@ export default function DashboardPage() {
             </div>
           </AnimatedSection>
 
+          {/* Dời 2 blocks này sang cột chính để cân bằng không gian */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <AnimatedSection delay={0.25} className="flex flex-col h-full">
+              <RecentMeals entries={allDiaryEntries} onAddClick={() => handleOpenAddFood('sang')} />
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.3} className="flex flex-col h-full">
+              <RecentActivity logs={exerciseLogs} totalBurned={totalBurned} />
+            </AnimatedSection>
+          </div>
+
         </div>
 
         {/* Right Sidebar (1/3) */}
@@ -327,13 +342,15 @@ export default function DashboardPage() {
             <MicronutrientCard consumed={consumed} gender={data.user?.gender} />
           </AnimatedSection>
 
-          <AnimatedSection delay={0.25} className="flex flex-col">
-            <RecentMeals entries={allDiaryEntries} onAddClick={() => handleOpenAddFood('sang')} />
+          {/* Daily Insights Card */}
+          <AnimatedSection delay={0.18} className="flex flex-col">
+            <DailyInsightsCard
+              insights={healthInsights || []}
+              healthScore={healthScore}
+              maxVisible={3}
+            />
           </AnimatedSection>
 
-          <AnimatedSection delay={0.3} className="flex flex-col">
-            <RecentActivity logs={exerciseLogs} totalBurned={totalBurned} />
-          </AnimatedSection>
         </div>
 
       </div>
