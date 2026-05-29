@@ -71,7 +71,7 @@ export default function RecentMeals({ entries = [], onAddClick }) {
                       {entry.foodName}
                     </p>
                     <p className="text-[10px] text-base-content/50">
-                      {MEAL_NAME[entry.mealType] || 'Bữa ăn'} • {entry.amount} {entry.unit}
+                      {MEAL_NAME[entry.mealType] || 'Bữa ăn'} • {entry.unit === '100g' ? `${entry.amount}g` : entry.unit === '100ml' ? `${entry.amount}ml` : `${entry.amount} ${entry.unit}`}
                     </p>
                   </div>
                 </div>

@@ -73,10 +73,14 @@ exports.getDiary = async (req, res) => {
                 proteinSnapshot : e.proteinSnapshot,
                 carbsSnapshot   : e.carbsSnapshot,
                 fatSnapshot     : e.fatSnapshot,
-                fiberSnapshot   : e.fiberSnapshot,
-                sugarSnapshot   : e.sugarSnapshot,
-                sodiumSnapshot  : e.sodiumSnapshot,
-                note            : e.note,
+                fiberSnapshot    : e.fiberSnapshot,
+                sugarSnapshot    : e.sugarSnapshot,
+                sodiumSnapshot   : e.sodiumSnapshot,
+                vitaminASnapshot : e.vitaminASnapshot,
+                vitaminCSnapshot : e.vitaminCSnapshot,
+                calciumSnapshot  : e.calciumSnapshot,
+                ironSnapshot     : e.ironSnapshot,
+                note             : e.note,
             })),
             mealGroups: Object.fromEntries(
                 Object.entries(mealGroups).map(([meal, list]) => [
@@ -93,6 +97,13 @@ exports.getDiary = async (req, res) => {
                         proteinSnapshot : e.proteinSnapshot,
                         carbsSnapshot   : e.carbsSnapshot,
                         fatSnapshot     : e.fatSnapshot,
+                        fiberSnapshot    : e.fiberSnapshot,
+                        sugarSnapshot    : e.sugarSnapshot,
+                        sodiumSnapshot   : e.sodiumSnapshot,
+                        vitaminASnapshot : e.vitaminASnapshot,
+                        vitaminCSnapshot : e.vitaminCSnapshot,
+                        calciumSnapshot  : e.calciumSnapshot,
+                        ironSnapshot     : e.ironSnapshot,
                     }))
                 ])
             ),

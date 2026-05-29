@@ -104,7 +104,7 @@ const rawFoods = [
     { name: 'Cá hồi tươi (Thô)', calories: 208, protein: 20, carbs: 0, fat: 13, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
     { name: 'Cá rô phi (Thô)', calories: 128, protein: 26, carbs: 0, fat: 2.7, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
     { name: 'Tôm tươi (Thô)', calories: 99, protein: 24, carbs: 0, fat: 0.3, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
-    { name: 'Lòng trắng trứng (Thô)', calories: 52, protein: 11, carbs: 0.7, fat: 0.2, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
+    { name: 'Lòng trắng trứng (Thô)', calories: 52, protein: 11, carbs: 0.7, fat: 0.2, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false, imageUrl: '/images/foods/long_trang_trung.webp' },
     { name: 'Đậu phụ (Thô)', calories: 76, protein: 8, carbs: 2, fat: 4.8, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
     { name: 'Sữa chua Hy Lạp (Thô)', calories: 59, protein: 10, carbs: 3.6, fat: 0.4, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
     { name: 'Thịt đùi gà (Bỏ da)', calories: 120, protein: 20, carbs: 0, fat: 4, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
@@ -130,13 +130,13 @@ const rawFoods = [
     { name: 'Cá diêu hồng (Thô)', calories: 100, protein: 18, carbs: 0, fat: 2.5, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
     { name: 'Hến', calories: 45, protein: 4.5, carbs: 5.1, fat: 0.6, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
     { name: 'Đậu hũ non (Thô)', calories: 61, protein: 6, carbs: 1.5, fat: 3.5, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
-    { name: 'Trứng cút (Thô)', calories: 158, protein: 13, carbs: 0.4, fat: 11, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
-    { name: 'Trứng gà (Thô)', calories: 155, protein: 13, carbs: 1.1, fat: 11, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
+    { name: 'Trứng cút (Thô)', calories: 158, protein: 13, carbs: 0.4, fat: 11, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false, imageUrl: '/images/foods/trung_cut.webp' },
+    { name: 'Trứng gà (Thô)', calories: 155, protein: 13, carbs: 1.1, fat: 11, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false, imageUrl: '/images/foods/trung_ga.webp' },
     { name: 'Trứng vịt (Thô)', calories: 185, protein: 12.8, carbs: 1.5, fat: 13.8, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
 
     // === BỔ SUNG PROTEIN CHO BỮA PHỤ ===
-    { name: 'Sữa Tăng Cơ (Whey Protein)', calories: 380, protein: 78, carbs: 6, fat: 4, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
-    { name: 'Thanh Protein (Protein Bar)', calories: 350, protein: 30, carbs: 35, fat: 10, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false },
+    { name: 'Sữa Tăng Cơ (Whey Protein)', calories: 380, protein: 78, carbs: 6, fat: 4, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false, imageUrl: '/images/foods/sua_tang_co.jfif' },
+    { name: 'Thanh Protein (Protein Bar)', calories: 350, protein: 30, carbs: 35, fat: 10, unit: '100g', category: 'protein', foodType: 'raw', isSuggestable: false, imageUrl: '/images/foods/thanh_protein.jfif' },
     { name: 'Sữa đậu nành không đường', calories: 33, protein: 3.3, carbs: 1.8, fat: 1.6, unit: '100ml', category: 'protein', foodType: 'raw', isSuggestable: false },
 
     // 2. Nhóm Carb (Tinh bột chậm & Tinh bột nhanh) -> category: 'carb'
@@ -199,8 +199,8 @@ const rawFoods = [
     { name: 'Hạt Điều', calories: 553, protein: 18, carbs: 30, fat: 44, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false },
     { name: 'Hạt Bí', calories: 559, protein: 30, carbs: 11, fat: 49, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false },
     { name: 'Bơ đậu phộng (Nguyên chất)', calories: 588, protein: 25, carbs: 20, fat: 50, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false },
-    { name: 'Dầu Dừa', calories: 862, protein: 0, carbs: 0, fat: 100, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false },
-    { name: 'Vừng (Mè)', calories: 573, protein: 17.7, carbs: 23.4, fat: 49.7, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false },
+    { name: 'Dầu Dừa', calories: 862, protein: 0, carbs: 0, fat: 100, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false, imageUrl: '/images/foods/dau_dua.webp' },
+    { name: 'Vừng (Mè)', calories: 573, protein: 17.7, carbs: 23.4, fat: 49.7, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false, imageUrl: '/images/foods/vung_me.jfif' },
     { name: 'Đậu phộng (Lạc thô)', calories: 567, protein: 25.8, carbs: 16.1, fat: 49.2, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false },
     { name: 'Mỡ heo (Thô)', calories: 900, protein: 0, carbs: 0, fat: 100, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false },
     { name: 'Hạt Macca', calories: 718, protein: 7.9, carbs: 13.8, fat: 75.8, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false },

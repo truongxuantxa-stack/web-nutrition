@@ -97,7 +97,9 @@ function SearchTab({ date, defaultMeal }) {
           <div className="grid grid-cols-2 gap-2">
             <div className="form-control">
               <label className="label py-0">
-                <span className="label-text text-xs">Số lượng ({selected.unit || 'g'})</span>
+                <span className="label-text text-xs">
+                  Số lượng ({selected.unit === '100g' ? 'g' : selected.unit === '100ml' ? 'ml' : (selected.unit || 'g')})
+                </span>
               </label>
               <input
                 id="food-amount-input"

@@ -69,6 +69,27 @@ export default function MealResult({ result, onSwap, pinnedFoods = {}, onToggleP
                           {isNegative && (
                             <span className="badge badge-error badge-xs w-max mt-0.5">⚠️ Giá trị âm</span>
                           )}
+                          {/* Vi chất */}
+                          {!isNegative && (() => {
+                            const f = item.food;
+                            const g = item.grams;
+                            if (!f) return null;
+                            const fiber    = f.fiber    > 0 ? Math.round(f.fiber    * g / 100 * 10) / 10 : 0;
+                            const vitA     = f.vitaminA > 0 ? Math.round(f.vitaminA * g / 100) : 0;
+                            const vitC     = f.vitaminC > 0 ? Math.round(f.vitaminC * g / 100 * 10) / 10 : 0;
+                            const calcium  = f.calcium  > 0 ? Math.round(f.calcium  * g / 100) : 0;
+                            const iron     = f.iron     > 0 ? Math.round(f.iron     * g / 100 * 10) / 10 : 0;
+                            if (!fiber && !vitA && !vitC && !calcium && !iron) return null;
+                            return (
+                              <span className="text-[10px] text-base-content/40 flex flex-wrap gap-x-2 mt-0.5">
+                                {fiber   > 0 && <span>Chất xơ: {fiber}g</span>}
+                                {vitA    > 0 && <span>🥕 Vitamin A: {vitA}µg</span>}
+                                {vitC    > 0 && <span>🍊 Vitamin C: {vitC}mg</span>}
+                                {calcium > 0 && <span>🦴 Canxi: {calcium}mg</span>}
+                                {iron    > 0 && <span>🩸 Sắt: {iron}mg</span>}
+                              </span>
+                            );
+                          })()}
                         </div>
                       </div>
                       {role && (

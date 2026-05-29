@@ -60,7 +60,7 @@ export default function DiaryEntryRow({ entry, onDelete }) {
           </p>
           <span className="text-base-content/30 text-xs shrink-0">·</span>
           <span className="text-xs text-base-content/40 font-semibold whitespace-nowrap shrink-0">
-            {entry.amount} {entry.unit}
+            {entry.unit === '100g' ? `${entry.amount}g` : entry.unit === '100ml' ? `${entry.amount}ml` : `${entry.amount} ${entry.unit}`}
           </span>
         </div>
 
@@ -92,13 +92,37 @@ export default function DiaryEntryRow({ entry, onDelete }) {
       {/* Macros hidden by default, visible on hover */}
       <div className="grid grid-rows-[0fr] md:group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-200 ease-in-out pl-[34px]">
         <div className="overflow-hidden">
-          <div className="pt-1.5 pb-0.5 text-[10px] whitespace-nowrap flex items-center gap-2">
+          {/* Macros chính */}
+          <div className="pt-1.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5">
             <span className="text-blue-500/80 font-medium">P: {entry.proteinSnapshot}g</span>
             <span className="text-base-content/20">·</span>
             <span className="text-amber-500/80 font-medium">C: {entry.carbsSnapshot}g</span>
             <span className="text-base-content/20">·</span>
             <span className="text-pink-500/80 font-medium">F: {entry.fatSnapshot}g</span>
+            {entry.fiberSnapshot != null && entry.fiberSnapshot > 0 && (
+              <>
+                <span className="text-base-content/20">·</span>
+                <span className="text-green-600/80 font-medium">Xơ: {entry.fiberSnapshot}g</span>
+              </>
+            )}
           </div>
+          {/* Vi chất — chỉ hiện nếu có ít nhất 1 giá trị */}
+          {(entry.vitaminASnapshot > 0 || entry.vitaminCSnapshot > 0 || entry.calciumSnapshot > 0 || entry.ironSnapshot > 0) && (
+            <div className="pb-0.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5 text-base-content/50">
+              {entry.vitaminASnapshot > 0 && (
+                <span>🥕 Vitamin A: {Math.round(entry.vitaminASnapshot)}µg</span>
+              )}
+              {entry.vitaminCSnapshot > 0 && (
+                <span>🍊 Vitamin C: {Math.round(entry.vitaminCSnapshot * 10) / 10}mg</span>
+              )}
+              {entry.calciumSnapshot > 0 && (
+                <span>🦴 Canxi: {Math.round(entry.calciumSnapshot)}mg</span>
+              )}
+              {entry.ironSnapshot > 0 && (
+                <span>🩸 Sắt: {Math.round(entry.ironSnapshot * 10) / 10}mg</span>
+              )}
+            </div>
+          )}
         </div>
       </div>
       <ImageLightbox 

@@ -39,7 +39,16 @@ export default function FoodSearchResult({ food, onSelect }) {
           <p className="text-xs text-base-content/50">
             {food.calories} kcal / {food.unit || '100g'} ·{' '}
             P:{food.protein}g C:{food.carbs}g F:{food.fat}g
+            {food.fiber > 0 && <> · Xơ:{food.fiber}g</>}
           </p>
+          {(food.vitaminA > 0 || food.vitaminC > 0 || food.calcium > 0 || food.iron > 0) && (
+            <p className="text-[10px] text-base-content/40 flex flex-wrap gap-x-2 mt-0.5">
+              {food.vitaminA > 0 && <span>🥕 Vitamin A: {Math.round(food.vitaminA)}µg</span>}
+              {food.vitaminC > 0 && <span>🍊 Vitamin C: {Math.round(food.vitaminC * 10) / 10}mg</span>}
+              {food.calcium  > 0 && <span>🦴 Canxi: {Math.round(food.calcium)}mg</span>}
+              {food.iron     > 0 && <span>🩸 Sắt: {Math.round(food.iron * 10) / 10}mg</span>}
+            </p>
+          )}
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
           {food.isCustom && (
