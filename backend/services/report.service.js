@@ -8,7 +8,6 @@
 const { User, DiaryEntry, WeightLog, ExerciseLog, WaterLog, AdaptiveTDEELog, Food } = require('../models');
 const { calculateAllMetrics, calculateWaterGoal } = require('./nutrition.service');
 const { sumNutritionFromEntries, getHealthInsights, calculateDailyHealthScore } = require('./suggestion.service');
-const { buildFoodHealthRating } = require('./foodRating.service');
 const { Op } = require('sequelize');
 
 /**
@@ -53,7 +52,52 @@ const formatDateKey = (date) => {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
+/**
+ * Phân tích thực phẩm đóng góp nhiều nhất (Top Foods Contributors)
+ * @param {Array} diaryEntries 
+ */
+const buildTopFoodsContributors = (diaryEntries) => {
+    const foodMap = {};
+    
+    diaryEntries.forEach(entry => {
+        const id = entry.foodId;
+        if (!foodMap[id]) {
+            foodMap[id] = {
+                name: entry.food?.name || `Food #${id}`,
+                calories: 0, protein: 0, sugar: 0, sodium: 0, fiber: 0,
+            };
+        }
+        foodMap[id].calories += entry.caloriesSnapshot || 0;
+        foodMap[id].protein  += entry.proteinSnapshot  || 0;
+        foodMap[id].sugar    += entry.sugarSnapshot    || 0;
+        foodMap[id].sodium   += entry.sodiumSnapshot   || 0;
+        foodMap[id].fiber    += entry.fiberSnapshot    || 0;
+    });
 
+    const foods = Object.values(foodMap);
+    const buildTop = (key, limit = 5) => {
+        const total = foods.reduce((s, f) => s + f[key], 0);
+        if (total === 0) return [];
+        return foods
+            .filter(f => f[key] > 0)
+            .sort((a, b) => b[key] - a[key])
+            .slice(0, limit)
+            .map((f, i) => ({
+                rank: i + 1,
+                name: f.name,
+                value: Math.round(f[key]),
+                percentage: Math.round((f[key] / total) * 100),
+            }));
+    };
+
+    return {
+        calories: buildTop('calories'),
+        protein:  buildTop('protein'),
+        sugar:    buildTop('sugar'),
+        sodium:   buildTop('sodium'),
+        fiber:    buildTop('fiber'),
+    };
+};
 
 /**
  * Thu thập và tổng hợp toàn bộ dữ liệu báo cáo.
@@ -411,9 +455,9 @@ const getReportData = async (userId, range = 'week') => {
         adaptiveInsight,
         healthInsights: reportInsights,
         healthScore: reportHealthScore,
-        foodHealthRating: isEmpty
-            ? { warnings: [], healthy: [], summary: { totalUniqueFoods: 0, redFlaggedCount: 0, allGreenCount: 0 } }
-            : buildFoodHealthRating(diaryEntries),
+        topFoods: isEmpty 
+            ? { calories: [], protein: [], sugar: [], sodium: [], fiber: [] } 
+            : buildTopFoodsContributors(diaryEntries),
         isEmpty,
     };
 };
