@@ -110,10 +110,11 @@ const getMacroProgress = (consumed, targets) => {
  * @param {number} waterTotal    - Lượng nước đã uống (ml)
  * @param {number} waterGoal     - Mục tiêu nước (ml)
  * @param {string} gender        - 'male' | 'female' (cho ngưỡng AHA đường)
+ * @param {boolean} isHistorical - cờ đánh dấu dữ liệu quá khứ (ví dụ: báo cáo PDF) để không bị ảnh hưởng bởi giờ hiện tại
  * @returns {Array} Mảng { severity, icon, title, message }
  *   severity: 'danger' | 'warning' | 'suggestion' | 'water'
  */
-const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, waterGoal = 2000, gender = 'male') => {
+const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, waterGoal = 2000, gender = 'male', isHistorical = false) => {
     const dangerInsights     = [];
     const warningInsights    = [];
     const waterInsights      = [];
@@ -126,8 +127,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
     const calPct      = (consumed.calories / targetCal) * 100;
     const currentHour = new Date().getHours();
 
-    // Gate cảnh báo THIẾU: chỉ kích hoạt khi đã đạt 100% calo HOẶC sau 20:00
-    const shouldWarnDeficiency = calPct >= 100 || currentHour >= 20;
+    // Gate cảnh báo THIẾU: kích hoạt luôn nếu là dữ liệu quá khứ (isHistorical), hoặc khi đã đạt 100% calo HOẶC sau 20:00
+    const shouldWarnDeficiency = isHistorical || calPct >= 100 || currentHour >= 20;
 
     // ── RDI chuẩn ────────────────────────────────────────────────────────────
     const isMale      = gender !== 'female';
@@ -154,7 +155,7 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
         warningInsights.push({
             severity: 'warning',
             icon: '⚡',
-            title: 'Đã đạt mục tiêu calo hôm nay',
+            title: isHistorical ? 'Đã đạt mục tiêu calo trung bình' : 'Đã đạt mục tiêu calo hôm nay',
             message: 'Bạn nên dừng ăn thêm hoặc chọn rau/nước thay vì thực phẩm giàu năng lượng.',
         });
     }
@@ -164,7 +165,7 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
         dangerInsights.push({
             severity: 'danger',
             icon: '🧂',
-            title: `Lượng muối hôm nay rất cao (${Math.round(consumed.sodium)}mg)`,
+            title: isHistorical ? `Lượng muối rất cao (${Math.round(consumed.sodium)}mg)` : `Lượng muối hôm nay rất cao (${Math.round(consumed.sodium)}mg)`,
             message: 'Nguy cơ tích nước và tăng huyết áp. Hãy uống thêm nước lọc để hỗ trợ đào thải nhé!',
         });
     }
@@ -215,7 +216,7 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
             warningInsights.push({
                 severity: 'warning',
                 icon: '🥩',
-                title: 'Hôm nay bạn đang nạp hơi ít Protein',
+                title: isHistorical ? 'Bạn đang nạp hơi ít Protein' : 'Hôm nay bạn đang nạp hơi ít Protein',
                 message: 'Thiếu đạm có thể gây mất cơ bắp, đặc biệt khi đang giảm cân. Ưu tiên thịt nạc, trứng, đậu.',
             });
         }
@@ -248,8 +249,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
             suggestionInsights.push({
                 severity: 'suggestion',
                 icon: '🥛',
-                title: 'Canxi hôm nay chưa đạt 80% mức khuyến nghị',
-                message: 'Cân nhắc uống 1 ly sữa ít béo hoặc ăn thêm rau cải xanh, hạnh nhân vào ngày mai.',
+                title: isHistorical ? 'Canxi chưa đạt 80% mức khuyến nghị' : 'Canxi hôm nay chưa đạt 80% mức khuyến nghị',
+                message: isHistorical ? 'Cân nhắc uống 1 ly sữa ít béo hoặc ăn thêm rau cải xanh, hạnh nhân.' : 'Cân nhắc uống 1 ly sữa ít béo hoặc ăn thêm rau cải xanh, hạnh nhân vào ngày mai.',
             });
         }
 
@@ -258,7 +259,7 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
             suggestionInsights.push({
                 severity: 'suggestion',
                 icon: '🫀',
-                title: 'Lượng Sắt hôm nay còn thiếu',
+                title: isHistorical ? 'Lượng Sắt còn thiếu' : 'Lượng Sắt hôm nay còn thiếu',
                 message: 'Sắt cần cho máu và năng lượng. Bổ sung thịt đỏ, gan, hoặc rau chân vịt kết hợp Vitamin C để tăng hấp thụ.',
             });
         }
@@ -268,7 +269,7 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
             suggestionInsights.push({
                 severity: 'suggestion',
                 icon: '🍊',
-                title: 'Vitamin C hôm nay chưa đủ',
+                title: isHistorical ? 'Vitamin C chưa đủ' : 'Vitamin C hôm nay chưa đủ',
                 message: 'Vitamin C tăng đề kháng và giúp hấp thụ Sắt. Ăn cam, ổi, ớt chuông hoặc kiwi là đủ nhu cầu ngay.',
             });
         }

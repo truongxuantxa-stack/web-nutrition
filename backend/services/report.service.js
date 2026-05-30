@@ -7,7 +7,7 @@
 
 const { User, DiaryEntry, WeightLog, ExerciseLog, WaterLog, AdaptiveTDEELog, Food } = require('../models');
 const { calculateAllMetrics, calculateWaterGoal } = require('./nutrition.service');
-const { sumNutritionFromEntries } = require('./suggestion.service');
+const { sumNutritionFromEntries, getHealthInsights, calculateDailyHealthScore } = require('./suggestion.service');
 const { Op } = require('sequelize');
 
 /**
@@ -50,6 +50,53 @@ const formatDate = (date) => {
 const formatDateKey = (date) => {
     const d = new Date(date);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+/**
+ * Phân tích thực phẩm đóng góp nhiều nhất (Top Foods Contributors)
+ * @param {Array} diaryEntries 
+ */
+const buildTopFoodsContributors = (diaryEntries) => {
+    const foodMap = {};
+    
+    diaryEntries.forEach(entry => {
+        const id = entry.foodId;
+        if (!foodMap[id]) {
+            foodMap[id] = {
+                name: entry.food?.name || `Food #${id}`,
+                calories: 0, protein: 0, sugar: 0, sodium: 0, fiber: 0,
+            };
+        }
+        foodMap[id].calories += entry.caloriesSnapshot || 0;
+        foodMap[id].protein  += entry.proteinSnapshot  || 0;
+        foodMap[id].sugar    += entry.sugarSnapshot    || 0;
+        foodMap[id].sodium   += entry.sodiumSnapshot   || 0;
+        foodMap[id].fiber    += entry.fiberSnapshot    || 0;
+    });
+
+    const foods = Object.values(foodMap);
+    const buildTop = (key, limit = 5) => {
+        const total = foods.reduce((s, f) => s + f[key], 0);
+        if (total === 0) return [];
+        return foods
+            .filter(f => f[key] > 0)
+            .sort((a, b) => b[key] - a[key])
+            .slice(0, limit)
+            .map((f, i) => ({
+                rank: i + 1,
+                name: f.name,
+                value: Math.round(f[key]),
+                percentage: Math.round((f[key] / total) * 100),
+            }));
+    };
+
+    return {
+        calories: buildTop('calories'),
+        protein:  buildTop('protein'),
+        sugar:    buildTop('sugar'),
+        sodium:   buildTop('sodium'),
+        fiber:    buildTop('fiber'),
+    };
 };
 
 /**
@@ -138,12 +185,9 @@ const getReportData = async (userId, range = 'week') => {
     // ── Tổng hợp daily log (chỉ ngày CÓ diary) ──────────────────────────────
     const dailyLog = Object.entries(diaryByDate).map(([date, entries]) => {
         const nutrition = sumNutritionFromEntries(entries);
-        return {
-            date,
-            dateFormatted: (() => {
-                const [y, m, d] = date.split('-');
-                return `${d}/${m}`;
-            })(),
+        const dayWater = waterByDate[date] || 0;
+
+        const dayConsumed = {
             calories: Math.round(nutrition.calories),
             protein:  Math.round(nutrition.protein),
             carbs:    Math.round(nutrition.carbs),
@@ -155,9 +199,26 @@ const getReportData = async (userId, range = 'week') => {
             vitaminC: nutrition.vitaminC != null ? Math.round(nutrition.vitaminC) : null,
             calcium:  nutrition.calcium != null ? Math.round(nutrition.calcium) : null,
             iron:     nutrition.iron != null ? Math.round(nutrition.iron) : null,
-            water:    waterByDate[date] || 0,
+        };
+
+        const dayInsights = getHealthInsights(
+            dayConsumed, metrics, {}, dayWater, waterGoal, user.gender, true
+        );
+        const dayScore = calculateDailyHealthScore(
+            dayConsumed, metrics, dayWater, waterGoal, dayInsights, user.gender
+        );
+
+        return {
+            date,
+            dateFormatted: (() => {
+                const [y, m, d] = date.split('-');
+                return `${d}/${m}`;
+            })(),
+            ...dayConsumed,
+            water:    dayWater,
             exerciseBurned: Math.round(exerciseByDate[date] || 0),
             weight:   weightByDate[date] || null,
+            healthScore: dayScore.score,
         };
     });
 
@@ -175,6 +236,8 @@ const getReportData = async (userId, range = 'week') => {
         avgVitaminC: 0,
         avgCalcium: 0,
         avgIron: 0,
+        avgSugar: null,
+        avgSodium: null,
         avgWater: 0,
         totalExerciseCalories: 0,
         calorieCompliance: 0, // % số ngày đạt ±10% target
@@ -206,6 +269,12 @@ const getReportData = async (userId, range = 'week') => {
         const daysWithIron = dailyLog.filter(d => d.iron != null);
         const totalIron = daysWithIron.reduce((s, d) => s + d.iron, 0);
 
+        const daysWithSugar = dailyLog.filter(d => d.sugar != null);
+        const totalSugar = daysWithSugar.reduce((s, d) => s + d.sugar, 0);
+
+        const daysWithSodium = dailyLog.filter(d => d.sodium != null);
+        const totalSodium = daysWithSodium.reduce((s, d) => s + d.sodium, 0);
+
         const totalWater = dailyLog.reduce((s, d) => s + d.water, 0);
         const totalExercise = dailyLog.reduce((s, d) => s + d.exerciseBurned, 0);
 
@@ -218,6 +287,8 @@ const getReportData = async (userId, range = 'week') => {
         summary.avgVitaminC = daysWithVitC.length > 0 ? Math.round(totalVitC / daysWithVitC.length) : 0;
         summary.avgCalcium  = daysWithCalcium.length > 0 ? Math.round(totalCalcium / daysWithCalcium.length) : 0;
         summary.avgIron     = daysWithIron.length > 0 ? Math.round(totalIron / daysWithIron.length) : 0;
+        summary.avgSugar    = daysWithSugar.length > 0 ? Math.round(totalSugar / daysWithSugar.length) : null;
+        summary.avgSodium   = daysWithSodium.length > 0 ? Math.round(totalSodium / daysWithSodium.length) : null;
         summary.avgWater    = Math.round(totalWater / daysWithData);
         summary.totalExerciseCalories = Math.round(totalExercise);
 
@@ -325,6 +396,32 @@ const getReportData = async (userId, range = 'week') => {
         };
     }
 
+    // ── Health Insights & Score trung bình toàn kỳ (isHistorical = true) ──
+    const avgConsumed = {
+        calories: summary.avgCalories,
+        protein:  summary.avgProtein,
+        carbs:    summary.avgCarbs,
+        fat:      summary.avgFat,
+        fiber:    summary.avgFiber || null,
+        sugar:    summary.avgSugar,
+        sodium:   summary.avgSodium,
+        vitaminA: summary.avgVitaminA || null,
+        vitaminC: summary.avgVitaminC || null,
+        calcium:  summary.avgCalcium || null,
+        iron:     summary.avgIron || null,
+    };
+
+    const reportInsights = isEmpty ? [] : getHealthInsights(
+        avgConsumed, metrics, {},
+        summary.avgWater, waterGoal, user.gender, true
+    );
+
+    const reportHealthScore = isEmpty
+        ? { score: null, label: 'Chưa có dữ liệu', emoji: '🍽️', bonuses: [] }
+        : calculateDailyHealthScore(
+            avgConsumed, metrics, summary.avgWater, waterGoal, reportInsights, user.gender
+        );
+
     return {
         user: userInfo,
         period: {
@@ -356,6 +453,11 @@ const getReportData = async (userId, range = 'week') => {
             status:      l.status,
         })),
         adaptiveInsight,
+        healthInsights: reportInsights,
+        healthScore: reportHealthScore,
+        topFoods: isEmpty 
+            ? { calories: [], protein: [], sugar: [], sodium: [], fiber: [] } 
+            : buildTopFoodsContributors(diaryEntries),
         isEmpty,
     };
 };

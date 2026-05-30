@@ -263,6 +263,49 @@ const drawCoverPage = (doc, user, period) => {
         });
 };
 
+/**
+ * Helper: Vẽ bảng Top Foods (2 cột layout)
+ */
+const drawTopFoodsTable = (doc, title, icon, data, unit, x, y, colWidth) => {
+    // Header nhỏ
+    doc.font(FONT_BOLD).fontSize(8.5).fillColor(COLORS.dark)
+        .text(`${icon} ${title}`, x, y);
+    
+    let currentY = y + 14;
+    
+    data.forEach((item) => {
+        // Tên thực phẩm
+        doc.font(FONT_REGULAR).fontSize(8).fillColor(COLORS.black)
+            .text(`${item.rank}. ${item.name}`, x, currentY, { width: colWidth - 55, lineBreak: false });
+        
+        // Giá trị & phần trăm
+        doc.font(FONT_BOLD).fontSize(8).fillColor(COLORS.gray)
+            .text(`${item.value}${unit} (${item.percentage}%)`, x + colWidth - 55, currentY, { width: 55, align: 'right', lineBreak: false });
+        
+        currentY += 12;
+        
+        // Mini progress bar
+        doc.save()
+            .rect(x, currentY, colWidth, 3)
+            .fillColor(COLORS.grayLight)
+            .fill()
+            .restore();
+            
+        const fillW = Math.max(0, Math.min(colWidth, (colWidth * item.percentage) / 100));
+        if (fillW > 0) {
+            doc.save()
+                .rect(x, currentY, fillW, 3)
+                .fillColor(COLORS.accent)
+                .fill()
+                .restore();
+        }
+        
+        currentY += 8; // Khoảng cách giữa các row
+    });
+    
+    return currentY;
+};
+
 // ──────────────────────────────────────────────────────────────────────────────
 // Hàm chính: Tạo PDFDocument và stream về
 // ──────────────────────────────────────────────────────────────────────────────
@@ -273,7 +316,7 @@ const drawCoverPage = (doc, user, period) => {
  * @returns {PDFDocument} Stream PDF
  */
 const generateReportPDF = (reportData) => {
-    const { user, period, metrics, dailyLog, summary, adaptiveTDEE, adaptiveInsight, isEmpty } = reportData;
+    const { user, period, metrics, dailyLog, summary, adaptiveTDEE, adaptiveInsight, isEmpty, healthInsights, healthScore, topFoods } = reportData;
 
     const doc = new PDFDocument({
         size: 'A4',
@@ -618,46 +661,167 @@ const generateReportPDF = (reportData) => {
     drawHRule(doc, y, '#E2E8F0');
     y += 15;
 
-    // ── Checklist Đánh giá sức khỏe ──────────────────────────────────────
-    y = drawSectionTitle(doc, '📋  ĐÁNH GIÁ CHỈ SỐ SỨC KHỎE (HEALTH EVALUATION)', y);
+    // ── Health Score Card ──────────────────────────────────────
+    y = drawSectionTitle(doc, '📋  ĐÁNH GIÁ CHỈ SỐ SỨC KHỎE', y);
     y += 12;
 
-    const isCalOk = calPct >= 90 && calPct <= 110;
-    const calCheck = isCalOk
-        ? `✅ Năng lượng nạp vào: Đạt chuẩn hàng ngày (trung bình nạp ${avgCal.toLocaleString('vi-VN')} kcal / mục tiêu ${targetCal.toLocaleString('vi-VN')} kcal, đạt ${calPct}%).`
-        : `⚠️ Năng lượng nạp vào: Chưa tối ưu (trung bình nạp ${avgCal.toLocaleString('vi-VN')} kcal so với mục tiêu ${targetCal.toLocaleString('vi-VN')} kcal, đạt ${calPct}%).`;
+    const scoreBoxW = doc.page.width - PAGE_MARGIN * 2;
+    
+    // Tính chiều cao card dựa trên số lượng bonus
+    const numBonuses = (healthScore && healthScore.bonuses && healthScore.bonuses.length > 0) ? healthScore.bonuses.length : 1;
+    const scoreCardH = Math.max(70, 45 + numBonuses * 14);
 
-    const isMacroOk = pctP >= 70 && pctC >= 70 && pctF >= 70;
-    const macroCheck = isMacroOk
-        ? `✅ Cân bằng đa lượng (Macros): Tỷ lệ nạp Protein, Carbs, Fat đạt trên 70% mục tiêu khuyến nghị.`
-        : `⚠️ Cân bằng đa lượng (Macros): Cần cải thiện, tỷ lệ nạp Protein (${pctP}%), Carbs (${pctC}%), Fat (${pctF}%) chưa đồng đều với mục tiêu.`;
+    doc.save()
+        .roundedRect(PAGE_MARGIN, y, scoreBoxW, scoreCardH, 6)
+        .fillColor(COLORS.light)
+        .fill()
+        .restore();
 
-    const fiberTarget = Math.round((targetCal / 1000) * 14);
-    const fiberPct = fiberTarget > 0 ? Math.round((avgFiber / fiberTarget) * 100) : 0;
-    const isFiberOk = fiberPct >= 70;
-    const fiberCheck = isFiberOk
-        ? `✅ Chất xơ (Fiber): Đạt khuyến nghị IOM (${avgFiber}g / ${fiberTarget}g mục tiêu - đạt ${fiberPct}%).`
-        : `⚠️ Chất xơ (Fiber): Chưa đạt chuẩn IOM (${avgFiber}g / ${fiberTarget}g mục tiêu - đạt ${fiberPct}%). Hãy tăng cường rau xanh.`;
+    // Điểm số bên trái
+    let scoreColor = '#EF4444'; // Red
+    if (healthScore && healthScore.score >= 90) scoreColor = '#10B981'; // Green
+    else if (healthScore && healthScore.score >= 75) scoreColor = '#3B82F6'; // Blue
+    else if (healthScore && healthScore.score >= 60) scoreColor = '#F59E0B'; // Yellow
 
-    const waterGoal = metrics.waterGoal || 2000;
-    const waterPct = Math.round((summary.avgWater / waterGoal) * 100);
-    const isWaterOk = waterPct >= 90;
-    const waterCheck = isWaterOk
-        ? `✅ Lượng nước uống: Đầy đủ và khoa học (trung bình đạt ${summary.avgWater.toLocaleString('vi-VN')} ml / mục tiêu ${waterGoal.toLocaleString('vi-VN')} ml - đạt ${waterPct}%).`
-        : `⚠️ Lượng nước uống: Còn thiếu nước (trung bình đạt ${summary.avgWater.toLocaleString('vi-VN')} ml / mục tiêu ${waterGoal.toLocaleString('vi-VN')} ml - đạt ${waterPct}%).`;
+    doc.font(FONT_BOLD).fontSize(28).fillColor(scoreColor)
+        .text(`${healthScore && healthScore.score !== null ? healthScore.score : '–'}`, PAGE_MARGIN + 15, y + 15, { width: 50, align: 'center' });
+    
+    doc.font(FONT_REGULAR).fontSize(10).fillColor(COLORS.gray)
+        .text('/100', PAGE_MARGIN + 15, y + 45, { width: 50, align: 'center' });
 
-    const isComplianceOk = summary.calorieCompliance >= 70;
-    const complianceCheck = isComplianceOk
-        ? `✅ Kỷ luật dinh dưỡng: Tốt (${summary.calorieCompliance}% số ngày bám sát mục tiêu calo ±10%).`
-        : `⚠️ Kỷ luật dinh dưỡng: Cần cải thiện (chỉ ${summary.calorieCompliance}% số ngày bám sát mục tiêu calo ±10%).`;
+    // Label và emoji
+    if (healthScore) {
+        doc.font(FONT_BOLD).fontSize(12).fillColor(COLORS.dark)
+            .text(`${healthScore.emoji || ''} ${healthScore.label || ''}`, PAGE_MARGIN + 80, y + 15);
+    }
 
-    const checks = [calCheck, macroCheck, fiberCheck, waterCheck, complianceCheck];
-    checks.forEach(check => {
-        doc.font(FONT_REGULAR).fontSize(9).fillColor(COLORS.black)
-            .text(check, PAGE_MARGIN + 8, y, { width: doc.page.width - PAGE_MARGIN * 2 - 16, lineGap: 3 });
-        y += doc.heightOfString(check, { width: doc.page.width - PAGE_MARGIN * 2 - 16 }) + 10;
-    });
-    y += 10;
+    // Bonuses
+    let bonusY = y + 35;
+    if (healthScore && healthScore.bonuses && healthScore.bonuses.length > 0) {
+        healthScore.bonuses.forEach(b => {
+            doc.font(FONT_REGULAR).fontSize(8.5).fillColor(COLORS.black)
+                .text(`✅ ${b.label} (+${b.points}đ)`, PAGE_MARGIN + 80, bonusY);
+            bonusY += 14;
+        });
+    } else {
+        doc.font(FONT_REGULAR).fontSize(8.5).fillColor(COLORS.gray)
+            .text('Chưa có thông tin điểm thưởng.', PAGE_MARGIN + 80, bonusY);
+    }
+    
+    y += scoreCardH + 15;
+
+    // ── Phân tích thực phẩm (Top Contributors) ───────────────────────────────────
+    if (topFoods) {
+        // Check tràn trang cho section title
+        if (y + 130 > doc.page.height - PAGE_MARGIN - 40) {
+            doc.addPage();
+            y = PAGE_MARGIN;
+        }
+
+        y = drawSectionTitle(doc, '🏆  PHÂN TÍCH THỰC PHẨM (TOP CONTRIBUTORS)', y);
+        y += 10;
+        
+        const halfW = (doc.page.width - PAGE_MARGIN * 2 - 12) / 2;  // gap 12px giữa 2 cột
+        const leftX = PAGE_MARGIN;
+        const rightX = PAGE_MARGIN + halfW + 12;
+        
+        // Hàng 1: Calories (trái) | Protein (phải)
+        const y1Left  = topFoods.calories && topFoods.calories.length > 0
+            ? drawTopFoodsTable(doc, 'Calories', '🔥', topFoods.calories, 'kcal', leftX, y, halfW) : y;
+        const y1Right = topFoods.protein && topFoods.protein.length > 0
+            ? drawTopFoodsTable(doc, 'Protein', '🥩', topFoods.protein, 'g', rightX, y, halfW) : y;
+        let yRow1 = Math.max(y1Left, y1Right);
+        if (yRow1 > y) y = yRow1 + 8;
+        
+        // Hàng 2: Sugar (trái) | Sodium (phải)
+        if ((topFoods.sugar && topFoods.sugar.length > 0) || (topFoods.sodium && topFoods.sodium.length > 0)) {
+            if (y + 110 > doc.page.height - PAGE_MARGIN - 40) { doc.addPage(); y = PAGE_MARGIN; }
+            const y2Left  = topFoods.sugar && topFoods.sugar.length > 0
+                ? drawTopFoodsTable(doc, 'Đường (Sugar)', '🍬', topFoods.sugar, 'g', leftX, y, halfW) : y;
+            const y2Right = topFoods.sodium && topFoods.sodium.length > 0
+                ? drawTopFoodsTable(doc, 'Natri (Sodium)', '🧂', topFoods.sodium, 'mg', rightX, y, halfW) : y;
+            let yRow2 = Math.max(y2Left, y2Right);
+            if (yRow2 > y) y = yRow2 + 8;
+        }
+        
+        // Hàng 3: Fiber (full-width, căn giữa)
+        if (topFoods.fiber && topFoods.fiber.length > 0) {
+            if (y + 110 > doc.page.height - PAGE_MARGIN - 40) { doc.addPage(); y = PAGE_MARGIN; }
+            y = drawTopFoodsTable(doc, 'Chất xơ', '🥦', topFoods.fiber, 'g', leftX, y, doc.page.width - PAGE_MARGIN * 2);
+            y += 12;
+        }
+        
+        y += 10;
+    }
+
+    // ── Health Insights ───────────────────────────────────────────
+    // Bảo vệ tràn trang cho section title
+    if (y > doc.page.height - PAGE_MARGIN - 60) {
+        doc.addPage();
+        y = PAGE_MARGIN;
+    }
+
+    y = drawSectionTitle(doc, '🏥  CẢNH BÁO DINH DƯỠNG (HEALTH INSIGHTS)', y);
+    y += 12;
+
+    if (!healthInsights || healthInsights.length === 0) {
+        doc.save()
+            .roundedRect(PAGE_MARGIN, y, scoreBoxW, 30, 4)
+            .fillColor('#F9FAFB')
+            .fill()
+            .restore();
+        
+        doc.font(FONT_REGULAR).fontSize(9).fillColor(COLORS.gray)
+            .text('✅ Tuyệt vời! Không có cảnh báo dinh dưỡng nào đáng lo ngại.', PAGE_MARGIN + 10, y + 10);
+        y += 45;
+    } else {
+        healthInsights.forEach(insight => {
+            let barColor = COLORS.gray;
+            let bgColor = '#F9FAFB';
+            
+            if (insight.severity === 'danger') { barColor = '#EF4444'; bgColor = '#FEF2F2'; }
+            else if (insight.severity === 'warning') { barColor = '#F59E0B'; bgColor = '#FFFBEB'; }
+            else if (insight.severity === 'water') { barColor = '#3B82F6'; bgColor = '#EFF6FF'; }
+            else if (insight.severity === 'suggestion') { barColor = '#6B7280'; bgColor = '#F3F4F6'; }
+
+            // Tính chiều cao của insight box
+            doc.font(FONT_BOLD).fontSize(9);
+            const titleH = doc.heightOfString(`${insight.icon} ${insight.title}`, { width: scoreBoxW - 24 });
+            doc.font(FONT_REGULAR).fontSize(8.5);
+            const messageH = doc.heightOfString(insight.message, { width: scoreBoxW - 24 });
+            
+            const insightH = titleH + messageH + 16;
+
+            // Bảo vệ tràn trang cho từng insight
+            if (y + insightH > doc.page.height - PAGE_MARGIN - 40) {
+                doc.addPage();
+                y = PAGE_MARGIN;
+            }
+
+            // Nền box
+            doc.save()
+                .roundedRect(PAGE_MARGIN, y, scoreBoxW, insightH, 4)
+                .fillColor(bgColor)
+                .fill()
+                .restore();
+
+            // Thanh màu bên trái
+            doc.save()
+                .rect(PAGE_MARGIN, y, 4, Math.max(insightH, 0)) // Avoid negative values, just in case
+                .fillColor(barColor)
+                .fill()
+                .restore();
+
+            // Nội dung
+            doc.font(FONT_BOLD).fontSize(9).fillColor(COLORS.black)
+                .text(`${insight.icon} ${insight.title}`, PAGE_MARGIN + 12, y + 8, { width: scoreBoxW - 24 });
+            
+            doc.font(FONT_REGULAR).fontSize(8.5).fillColor(COLORS.gray)
+                .text(insight.message, PAGE_MARGIN + 12, y + 8 + titleH + 2, { width: scoreBoxW - 24 });
+
+            y += insightH + 8;
+        });
+    }
 
     // ── Kế hoạch hành động từ TDEE Thích ứng (Actionable Insights) ───────────
     // Bảo vệ tràn trang: nếu còn ít hơn 150px trước vùng footer thì sang trang mới
