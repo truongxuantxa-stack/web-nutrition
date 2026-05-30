@@ -64,14 +64,12 @@ const buildTopFoodsContributors = (diaryEntries) => {
         if (!foodMap[id]) {
             foodMap[id] = {
                 name: entry.food?.name || `Food #${id}`,
-                calories: 0, protein: 0, sugar: 0, sodium: 0, fiber: 0,
+                sugar: 0, sodium: 0, count: 0,
             };
         }
-        foodMap[id].calories += entry.caloriesSnapshot || 0;
-        foodMap[id].protein  += entry.proteinSnapshot  || 0;
+        foodMap[id].count += 1;
         foodMap[id].sugar    += entry.sugarSnapshot    || 0;
         foodMap[id].sodium   += entry.sodiumSnapshot   || 0;
-        foodMap[id].fiber    += entry.fiberSnapshot    || 0;
     });
 
     const foods = Object.values(foodMap);
@@ -85,17 +83,15 @@ const buildTopFoodsContributors = (diaryEntries) => {
             .map((f, i) => ({
                 rank: i + 1,
                 name: f.name,
+                count: f.count,
                 value: Math.round(f[key]),
                 percentage: Math.round((f[key] / total) * 100),
             }));
     };
 
     return {
-        calories: buildTop('calories'),
-        protein:  buildTop('protein'),
         sugar:    buildTop('sugar'),
         sodium:   buildTop('sodium'),
-        fiber:    buildTop('fiber'),
     };
 };
 

@@ -340,7 +340,7 @@ const generateReportPDF = (reportData) => {
     doc.addPage();
 
     // Các biến chung cho trang 2 & 3
-    const targetCal = metrics.targetCalories || 2000;
+    const targetCal = Math.round(metrics.targetCalories || 2000);
     const avgCal = summary.avgCalories || 0;
     const calPct = targetCal > 0 ? Math.round((avgCal / targetCal) * 100) : 0;
 
@@ -353,10 +353,28 @@ const generateReportPDF = (reportData) => {
     const pctC = macros.carbs > 0 ? Math.round((avgC / macros.carbs) * 100) : 0;
     const pctF = macros.fat > 0 ? Math.round((avgF / macros.fat) * 100) : 0;
 
+    const isMale = user.gender === 'Nam';
+
     const avgFiber = summary.avgFiber || 0;
     const fiberTarget = Math.round((targetCal / 1000) * 14);
     const fiberPct = fiberTarget > 0 ? Math.round((avgFiber / fiberTarget) * 100) : 0;
     
+    const avgVitA = summary.avgVitaminA || 0;
+    const vitATarget = isMale ? 900 : 700;
+    const vitAPct = Math.round((avgVitA / vitATarget) * 100);
+
+    const avgVitC = summary.avgVitaminC || 0;
+    const vitCTarget = isMale ? 90 : 75;
+    const vitCPct = Math.round((avgVitC / vitCTarget) * 100);
+
+    const avgCalcium = summary.avgCalcium || 0;
+    const calciumTarget = 1000;
+    const calciumPct = Math.round((avgCalcium / calciumTarget) * 100);
+
+    const avgIron = summary.avgIron || 0;
+    const ironTarget = isMale ? 8 : 18;
+    const ironPct = Math.round((avgIron / ironTarget) * 100);
+
     const waterGoal = metrics.waterGoal || 2000;
     const waterPct = waterGoal > 0 ? Math.round((summary.avgWater / waterGoal) * 100) : 0;
 
@@ -458,9 +476,9 @@ const generateReportPDF = (reportData) => {
     y += 25;
 
     // Biểu đồ Macro Balance
-    const drawMacroBar = (label, actual, target, pct, color, startY) => {
+    const drawMacroBar = (label, actual, target, pct, color, startY, unit = 'g') => {
         doc.font(FONT_REGULAR).fontSize(9).fillColor(COLORS.gray).text(label, PAGE_MARGIN, startY);
-        doc.font(FONT_BOLD).fontSize(9).fillColor(COLORS.black).text(`${actual}g / ${target}g (${pct}%)`, PAGE_MARGIN, startY, { align: 'right', width: barWidth });
+        doc.font(FONT_BOLD).fontSize(9).fillColor(COLORS.black).text(`${actual}${unit} / ${target}${unit} (${pct}%)`, PAGE_MARGIN, startY, { align: 'right', width: barWidth });
 
         startY += 12;
         // Nền thanh
@@ -476,9 +494,21 @@ const generateReportPDF = (reportData) => {
     y = drawMacroBar('Protein (Chất đạm)', avgP, macros.protein || 120, pctP, '#10B981', y);
     y = drawMacroBar('Carbohydrate (Tinh bột)', avgC, macros.carbs || 200, pctC, '#3B82F6', y);
     y = drawMacroBar('Lipid (Chất béo)', avgF, macros.fat || 60, pctF, '#F59E0B', y);
+    
+    // Vi chất dinh dưỡng
+    y = drawMacroBar('Chất xơ', avgFiber, fiberTarget, fiberPct, '#8B5CF6', y, 'g');
+    y = drawMacroBar('Vitamin A', avgVitA, vitATarget, vitAPct, '#EC4899', y, 'mcg');
+    y = drawMacroBar('Vitamin C', avgVitC, vitCTarget, vitCPct, '#F43F5E', y, 'mg');
+    y = drawMacroBar('Canxi', avgCalcium, calciumTarget, calciumPct, '#14B8A6', y, 'mg');
+    y = drawMacroBar('Sắt', avgIron, ironTarget, ironPct, '#6366F1', y, 'mg');
+
     y += 10;
 
     // ── 3. Cân nặng & Vận động ──────────────────────────────────────────────
+    if (y + 140 > doc.page.height - PAGE_MARGIN - 40) {
+        doc.addPage();
+        y = PAGE_MARGIN;
+    }
     y = drawSectionTitle(doc, '⚖️  CÂN NẶNG & VẬN ĐỘNG', y);
     y += 4;
 
@@ -499,6 +529,10 @@ const generateReportPDF = (reportData) => {
     y += 10;
 
     // ── 4. TDEE Thích ứng ──────────────────────────────────────────────────
+    if (y + 160 > doc.page.height - PAGE_MARGIN - 40) {
+        doc.addPage();
+        y = PAGE_MARGIN;
+    }
     y = drawSectionTitle(doc, '🧠  TDEE THÍCH ỨNG (ADAPTIVE TDEE)', y);
     y += 8;
 
@@ -578,7 +612,7 @@ const generateReportPDF = (reportData) => {
         // Bảng lịch sử tuần nếu có
         if (adaptiveTDEE && adaptiveTDEE.length > 0) {
             doc.font(FONT_BOLD).fontSize(8.5).fillColor(COLORS.dark)
-                .text('Lịch sử TDEE thích ứng qua các tuần:', PAGE_MARGIN, y);
+                .text('Lịch sử TDEE thích ứng qua các tuần:', PAGE_MARGIN, y, { lineBreak: false });
             y += 12;
 
             const aCols = [
@@ -597,13 +631,32 @@ const generateReportPDF = (reportData) => {
             let ax = PAGE_MARGIN;
             aCols.forEach(col => {
                 doc.font(FONT_BOLD).fontSize(7.5).fillColor(COLORS.accent)
-                    .text(col.label, ax + 4, y + 4, { width: col.width - 8 });
+                    .text(col.label, ax + 4, y + 4, { width: col.width - 8, lineBreak: false });
                 ax += col.width;
             });
             y += 15;
 
             const sortedLogs = [...adaptiveTDEE].reverse();
             sortedLogs.forEach((log, idx) => {
+                if (y + 14 > doc.page.height - PAGE_MARGIN - 40) {
+                    doc.addPage();
+                    y = PAGE_MARGIN;
+                    
+                    // Vẽ lại Header bảng
+                    doc.save()
+                        .rect(PAGE_MARGIN, y, boxW, 15)
+                        .fillColor(COLORS.light)
+                        .fill()
+                        .restore();
+                    let hx = PAGE_MARGIN;
+                    aCols.forEach(col => {
+                        doc.font(FONT_BOLD).fontSize(7.5).fillColor(COLORS.accent)
+                            .text(col.label, hx + 4, y + 4, { width: col.width - 8, lineBreak: false });
+                        hx += col.width;
+                    });
+                    y += 15;
+                }
+
                 if (idx % 2 === 0) {
                     doc.save()
                         .rect(PAGE_MARGIN, y, boxW, 14)
@@ -635,7 +688,7 @@ const generateReportPDF = (reportData) => {
                 let bx = PAGE_MARGIN;
                 vals.forEach((val, j) => {
                     doc.font(j === 2 ? FONT_BOLD : FONT_REGULAR).fontSize(7.5).fillColor(COLORS.black)
-                        .text(val, bx + 4, y + 3, { width: aCols[j].width - 8 });
+                        .text(val, bx + 4, y + 3, { width: aCols[j].width - 8, lineBreak: false });
                     bx += aCols[j].width;
                 });
                 y += 14;
@@ -689,10 +742,10 @@ const generateReportPDF = (reportData) => {
     else if (healthScore && healthScore.score >= 60) scoreColor = '#F59E0B'; // Yellow
 
     doc.font(FONT_BOLD).fontSize(28).fillColor(scoreColor)
-        .text(`${healthScore && healthScore.score !== null ? healthScore.score : '–'}`, PAGE_MARGIN + 15, y + 15, { width: 50, align: 'center' });
+        .text(`${healthScore && healthScore.score !== null ? healthScore.score : '–'}`, PAGE_MARGIN + 15, y + 15, { width: 50, align: 'center', lineBreak: false });
     
     doc.font(FONT_REGULAR).fontSize(10).fillColor(COLORS.gray)
-        .text('/100', PAGE_MARGIN + 15, y + 45, { width: 50, align: 'center' });
+        .text('/100', PAGE_MARGIN + 15, y + 45, { width: 50, align: 'center', lineBreak: false });
 
     // Label và emoji
     if (healthScore) {
@@ -829,21 +882,27 @@ const generateReportPDF = (reportData) => {
     }
 
     // ── Kế hoạch hành động từ TDEE Thích ứng (Actionable Insights) ───────────
-    // Bảo vệ tràn trang: nếu còn ít hơn 150px trước vùng footer thì sang trang mới
-    if (y > doc.page.height - PAGE_MARGIN - 40 - 150) {
-        doc.addPage();
-        y = PAGE_MARGIN;
-    }
-    y = drawSectionTitle(doc, '⚡  KẾ HOẠCH HÀNH ĐỘNG CHO TUẦN TỚI (ACTIONABLE INSIGHTS)', y);
-    y += 12;
-
     const insightBoxW = doc.page.width - PAGE_MARGIN * 2;
     const insightText = adaptiveInsight.message || '';
     
     // Tính chiều cao của box dựa trên độ dài tin nhắn
     doc.font(FONT_REGULAR).fontSize(8.5);
-    const insightTextH = doc.heightOfString(insightText, { width: insightBoxW - 24 });
+    const insightTextH = doc.heightOfString(insightText, { width: insightBoxW - 24, lineGap: 2 });
     
+    let boxTotalH = insightTextH + 16;
+    if (adaptiveInsight.hasData && adaptiveInsight.isPlateauing) {
+        boxTotalH += 45; // Thêm chiều cao cho bảng so sánh
+    }
+
+    // Bảo vệ tràn trang: title(22) + margin(12) + boxTotalH
+    if (y + 34 + boxTotalH > doc.page.height - PAGE_MARGIN - 40) {
+        doc.addPage();
+        y = PAGE_MARGIN;
+    }
+
+    y = drawSectionTitle(doc, '⚡  KẾ HOẠCH HÀNH ĐỘNG CHO TUẦN TỚI (ACTIONABLE INSIGHTS)', y);
+    y += 12;
+
     let insightBgColor = COLORS.light;
     let insightTextColor = COLORS.dark;
 
@@ -861,11 +920,6 @@ const generateReportPDF = (reportData) => {
     }
 
     // Vẽ box nền
-    let boxTotalH = insightTextH + 16;
-    if (adaptiveInsight.hasData && adaptiveInsight.isPlateauing) {
-        boxTotalH += 45; // Thêm chiều cao cho bảng so sánh
-    }
-
     doc.save()
         .roundedRect(PAGE_MARGIN, y, insightBoxW, boxTotalH, 6)
         .fillColor(insightBgColor)
@@ -888,9 +942,9 @@ const generateReportPDF = (reportData) => {
             .fill()
             .restore();
         doc.font(FONT_REGULAR).fontSize(8).fillColor(COLORS.gray)
-            .text('Mục tiêu hiện tại:', PAGE_MARGIN + 18, compareY + 4);
+            .text('Mục tiêu hiện tại:', PAGE_MARGIN + 18, compareY + 4, { lineBreak: false });
         doc.font(FONT_BOLD).fontSize(9.5).fillColor(COLORS.black)
-            .text(`${adaptiveInsight.currentTargetCalories} kcal/ngày`, PAGE_MARGIN + 18, compareY + 14);
+            .text(`${adaptiveInsight.currentTargetCalories} kcal/ngày`, PAGE_MARGIN + 18, compareY + 14, { lineBreak: false });
 
         // Cột phải: Đề xuất
         doc.save()
@@ -899,9 +953,9 @@ const generateReportPDF = (reportData) => {
             .fill()
             .restore();
         doc.font(FONT_REGULAR).fontSize(8).fillColor('#047857') // Green-700
-            .text('Mục tiêu đề xuất mới:', PAGE_MARGIN + 18 + colW + 8, compareY + 4);
+            .text('Mục tiêu đề xuất mới:', PAGE_MARGIN + 18 + colW + 8, compareY + 4, { lineBreak: false });
         doc.font(FONT_BOLD).fontSize(9.5).fillColor('#065F46') // Green-800
-            .text(`${adaptiveInsight.suggestedTargetCalories} kcal/ngày  ↓`, PAGE_MARGIN + 18 + colW + 8, compareY + 14);
+            .text(`${adaptiveInsight.suggestedTargetCalories} kcal/ngày  ↓`, PAGE_MARGIN + 18 + colW + 8, compareY + 14, { lineBreak: false });
     }
 
     y += boxTotalH + 15;
@@ -945,13 +999,20 @@ const generateReportPDF = (reportData) => {
         recs.push('🥩 Gợi ý duy trì sức khỏe: Duy trì tỷ lệ dinh dưỡng cân bằng. Ăn uống đa dạng nguồn thực phẩm, kết hợp nhiều màu sắc rau củ và không bỏ bữa.');
     }
 
-    const recsBoxY = y;
-    let tempY = y + 10;
+    // Tính toán chiều cao khối Recommendations
+    doc.font(FONT_REGULAR).fontSize(8.5);
+    let recsBoxH = 14; // padding top 10 + bottom 4
     recs.forEach(rec => {
-        tempY += doc.heightOfString(rec, { width: doc.page.width - PAGE_MARGIN * 2 - 24 }) + 8;
+        recsBoxH += doc.heightOfString(rec, { width: doc.page.width - PAGE_MARGIN * 2 - 24, lineGap: 2.5 }) + 8;
     });
-    const recsBoxH = tempY - recsBoxY + 4;
 
+    // Bảo vệ tràn trang
+    if (y + 34 + recsBoxH > doc.page.height - PAGE_MARGIN - 40) {
+        doc.addPage();
+        y = PAGE_MARGIN;
+    }
+
+    const recsBoxY = y;
     doc.save()
         .roundedRect(PAGE_MARGIN, recsBoxY, doc.page.width - PAGE_MARGIN * 2, recsBoxH, 6)
         .fillColor(COLORS.light)
@@ -962,7 +1023,7 @@ const generateReportPDF = (reportData) => {
     recs.forEach(rec => {
         doc.font(FONT_REGULAR).fontSize(8.5).fillColor(COLORS.dark)
             .text(rec, PAGE_MARGIN + 12, ry, { width: doc.page.width - PAGE_MARGIN * 2 - 24, lineGap: 2.5 });
-        ry += doc.heightOfString(rec, { width: doc.page.width - PAGE_MARGIN * 2 - 24 }) + 8;
+        ry += doc.heightOfString(rec, { width: doc.page.width - PAGE_MARGIN * 2 - 24, lineGap: 2.5 }) + 8;
     });
 
     // ═══════════════════════════════════════════════════════════════════════
