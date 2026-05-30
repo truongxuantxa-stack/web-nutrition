@@ -354,6 +354,11 @@ const generateReportPDF = (reportData) => {
     const pctF = macros.fat > 0 ? Math.round((avgF / macros.fat) * 100) : 0;
 
     const avgFiber = summary.avgFiber || 0;
+    const fiberTarget = Math.round((targetCal / 1000) * 14);
+    const fiberPct = fiberTarget > 0 ? Math.round((avgFiber / fiberTarget) * 100) : 0;
+    
+    const waterGoal = metrics.waterGoal || 2000;
+    const waterPct = waterGoal > 0 ? Math.round((summary.avgWater / waterGoal) * 100) : 0;
 
     // ═══════════════════════════════════════════════════════════════════════
     // TRANG 1: Cover + Thông Tin Cá Nhân + Dashboard Chỉ Số
