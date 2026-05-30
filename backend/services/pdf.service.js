@@ -264,46 +264,117 @@ const drawCoverPage = (doc, user, period) => {
 };
 
 /**
- * Helper: Vẽ bảng Top Foods (2 cột layout)
+ * Helper: Vẽ section Đánh giá Thực phẩm theo chuẩn FSA
  */
-const drawTopFoodsTable = (doc, title, icon, data, unit, x, y, colWidth) => {
-    // Header nhỏ
-    doc.font(FONT_BOLD).fontSize(8.5).fillColor(COLORS.dark)
-        .text(`${icon} ${title}`, x, y);
-    
-    let currentY = y + 14;
-    
-    data.forEach((item) => {
-        // Tên thực phẩm
-        doc.font(FONT_REGULAR).fontSize(8).fillColor(COLORS.black)
-            .text(`${item.rank}. ${item.name}`, x, currentY, { width: colWidth - 55, lineBreak: false });
-        
-        // Giá trị & phần trăm
-        doc.font(FONT_BOLD).fontSize(8).fillColor(COLORS.gray)
-            .text(`${item.value}${unit} (${item.percentage}%)`, x + colWidth - 55, currentY, { width: 55, align: 'right', lineBreak: false });
-        
-        currentY += 12;
-        
-        // Mini progress bar
-        doc.save()
-            .rect(x, currentY, colWidth, 3)
-            .fillColor(COLORS.grayLight)
-            .fill()
-            .restore();
+const drawFoodHealthRatingSection = (doc, data, startY) => {
+    let y = startY;
+    const { warnings = [], healthy = [], summary = {} } = data;
+    const boxW = doc.page.width - PAGE_MARGIN * 2;
+
+    // Header tóm tắt
+    doc.save()
+        .roundedRect(PAGE_MARGIN, y, boxW, 26, 4)
+        .fillColor('#F8FAFC')
+        .fill()
+        .restore();
+
+    doc.font(FONT_BOLD).fontSize(9).fillColor(COLORS.black)
+        .text(`Tóm tắt: ${summary.totalUniqueFoods || 0} thực phẩm đã dùng | ${summary.redFlaggedCount || 0} cảnh báo 🔴 | ${summary.allGreenCount || 0} lành mạnh 🟢`, PAGE_MARGIN, y + 8, { width: boxW, align: 'center' });
+    y += 40;
+
+    // --- WARNINGS ---
+    if (warnings.length > 0) {
+        doc.font(FONT_BOLD).fontSize(10).fillColor('#DC2626')
+            .text('⚠️ CẢNH BÁO — Thực phẩm cần hạn chế (ăn ≥ 2 lần):', PAGE_MARGIN, y);
+        y += 15;
+
+        warnings.forEach((item, index) => {
+            if (y > doc.page.height - PAGE_MARGIN - 60) {
+                doc.addPage();
+                y = PAGE_MARGIN;
+            }
+
+            const r = item.rating;
+            let h = 40; // min height
+            const criteriaText = Object.values(r.criteria)
+                .filter(c => c.rating === 'red')
+                .map(c => `• ${c.name}: ${c.value}${c.unit} 🔴 (ngưỡng: ${c.threshold})`)
+                .join('\n');
+            const altText = r.alternatives && r.alternatives.length > 0 
+                ? `→ Gợi ý thay thế: ${r.alternatives.join(', ')}`
+                : '';
+                
+            doc.font(FONT_REGULAR).fontSize(8.5);
+            const critH = doc.heightOfString(criteriaText, { width: boxW - 24, lineGap: 2 });
+            const altH = altText ? doc.heightOfString(altText, { width: boxW - 24, lineGap: 2 }) : 0;
             
-        const fillW = Math.max(0, Math.min(colWidth, (colWidth * item.percentage) / 100));
-        if (fillW > 0) {
+            const cardH = 25 + critH + (altText ? altH + 5 : 0);
+
             doc.save()
-                .rect(x, currentY, fillW, 3)
-                .fillColor(COLORS.accent)
+                .roundedRect(PAGE_MARGIN, y, boxW, cardH, 4)
+                .fillColor('#FEF2F2')
                 .fill()
                 .restore();
-        }
+
+            doc.save()
+                .path(`M ${PAGE_MARGIN} ${y+4} Q ${PAGE_MARGIN} ${y} ${PAGE_MARGIN+4} ${y} L ${PAGE_MARGIN+4} ${y+cardH} Q ${PAGE_MARGIN} ${y+cardH} ${PAGE_MARGIN} ${y+cardH-4} Z`)
+                .fillColor('#EF4444')
+                .fill()
+                .restore();
+
+            doc.font(FONT_BOLD).fontSize(9).fillColor('#7F1D1D')
+                .text(`🔴 ${index + 1}. ${item.food.name}`, PAGE_MARGIN + 12, y + 8);
+            
+            doc.font(FONT_REGULAR).fontSize(8.5).fillColor('#991B1B')
+                .text(`(ăn ${item.frequency} lần)`, PAGE_MARGIN + 12, y + 8, { width: boxW - 24, align: 'right' });
+
+            let ty = y + 22;
+            doc.font(FONT_REGULAR).fontSize(8.5).fillColor('#991B1B')
+                .text(criteriaText, PAGE_MARGIN + 12, ty, { width: boxW - 24, lineGap: 2 });
+            
+            ty += critH + 5;
+            if (altText) {
+                doc.font(FONT_BOLD).fontSize(8.5).fillColor('#166534')
+                    .text(altText, PAGE_MARGIN + 12, ty, { width: boxW - 24, lineGap: 2 });
+            }
+
+            y += cardH + 10;
+        });
+    }
+
+    // --- HEALTHY ---
+    if (healthy.length > 0) {
+        if (warnings.length > 0) y += 10;
         
-        currentY += 8; // Khoảng cách giữa các row
-    });
-    
-    return currentY;
+        if (y > doc.page.height - PAGE_MARGIN - 80) {
+            doc.addPage();
+            y = PAGE_MARGIN;
+        }
+
+        doc.font(FONT_BOLD).fontSize(10).fillColor('#059669')
+            .text('✅ THỰC PHẨM LÀNH MẠNH NHẤT:', PAGE_MARGIN, y);
+        y += 15;
+
+        doc.save()
+            .roundedRect(PAGE_MARGIN, y, boxW, healthy.length * 22 + 16, 4)
+            .fillColor('#F0FDF4')
+            .fill()
+            .restore();
+
+        let ty = y + 8;
+        healthy.forEach((item, index) => {
+            const hText = item.highlights && item.highlights.length > 0 ? ` — ${item.highlights.join(', ')} 🟢` : ' 🟢';
+            doc.font(FONT_BOLD).fontSize(9).fillColor('#065F46')
+                .text(`${index + 1}. ${item.food.name} `, PAGE_MARGIN + 12, ty, { continued: true })
+                .font(FONT_REGULAR).text(`(${item.frequency} lần)`, { continued: true })
+                .fillColor('#047857').text(hText);
+            ty += 22;
+        });
+        
+        y += healthy.length * 22 + 25;
+    }
+
+    return y;
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -316,7 +387,7 @@ const drawTopFoodsTable = (doc, title, icon, data, unit, x, y, colWidth) => {
  * @returns {PDFDocument} Stream PDF
  */
 const generateReportPDF = (reportData) => {
-    const { user, period, metrics, dailyLog, summary, adaptiveTDEE, adaptiveInsight, isEmpty, healthInsights, healthScore, topFoods } = reportData;
+    const { user, period, metrics, dailyLog, summary, adaptiveTDEE, adaptiveInsight, isEmpty, healthInsights, healthScore, foodHealthRating } = reportData;
 
     const doc = new PDFDocument({
         size: 'A4',
@@ -715,48 +786,17 @@ const generateReportPDF = (reportData) => {
     
     y += scoreCardH + 15;
 
-    // ── Phân tích thực phẩm (Top Contributors) ───────────────────────────────────
-    if (topFoods) {
-        // Check tràn trang cho section title
-        if (y + 130 > doc.page.height - PAGE_MARGIN - 40) {
+    // ── Đánh giá Thực phẩm theo chuẩn FSA ─────────────────────────────────────────
+    if (foodHealthRating && (foodHealthRating.warnings.length > 0 || foodHealthRating.healthy.length > 0)) {
+        if (y + 100 > doc.page.height - PAGE_MARGIN - 40) {
             doc.addPage();
             y = PAGE_MARGIN;
         }
 
-        y = drawSectionTitle(doc, '🏆  PHÂN TÍCH THỰC PHẨM (TOP CONTRIBUTORS)', y);
+        y = drawSectionTitle(doc, '🔬  ĐÁNH GIÁ THỰC PHẨM THEO CHUẨN DINH DƯỠNG (FSA)', y);
         y += 10;
         
-        const halfW = (doc.page.width - PAGE_MARGIN * 2 - 12) / 2;  // gap 12px giữa 2 cột
-        const leftX = PAGE_MARGIN;
-        const rightX = PAGE_MARGIN + halfW + 12;
-        
-        // Hàng 1: Calories (trái) | Protein (phải)
-        const y1Left  = topFoods.calories && topFoods.calories.length > 0
-            ? drawTopFoodsTable(doc, 'Calories', '🔥', topFoods.calories, 'kcal', leftX, y, halfW) : y;
-        const y1Right = topFoods.protein && topFoods.protein.length > 0
-            ? drawTopFoodsTable(doc, 'Protein', '🥩', topFoods.protein, 'g', rightX, y, halfW) : y;
-        let yRow1 = Math.max(y1Left, y1Right);
-        if (yRow1 > y) y = yRow1 + 8;
-        
-        // Hàng 2: Sugar (trái) | Sodium (phải)
-        if ((topFoods.sugar && topFoods.sugar.length > 0) || (topFoods.sodium && topFoods.sodium.length > 0)) {
-            if (y + 110 > doc.page.height - PAGE_MARGIN - 40) { doc.addPage(); y = PAGE_MARGIN; }
-            const y2Left  = topFoods.sugar && topFoods.sugar.length > 0
-                ? drawTopFoodsTable(doc, 'Đường (Sugar)', '🍬', topFoods.sugar, 'g', leftX, y, halfW) : y;
-            const y2Right = topFoods.sodium && topFoods.sodium.length > 0
-                ? drawTopFoodsTable(doc, 'Natri (Sodium)', '🧂', topFoods.sodium, 'mg', rightX, y, halfW) : y;
-            let yRow2 = Math.max(y2Left, y2Right);
-            if (yRow2 > y) y = yRow2 + 8;
-        }
-        
-        // Hàng 3: Fiber (full-width, căn giữa)
-        if (topFoods.fiber && topFoods.fiber.length > 0) {
-            if (y + 110 > doc.page.height - PAGE_MARGIN - 40) { doc.addPage(); y = PAGE_MARGIN; }
-            y = drawTopFoodsTable(doc, 'Chất xơ', '🥦', topFoods.fiber, 'g', leftX, y, doc.page.width - PAGE_MARGIN * 2);
-            y += 12;
-        }
-        
-        y += 10;
+        y = drawFoodHealthRatingSection(doc, foodHealthRating, y);
     }
 
     // ── Health Insights ───────────────────────────────────────────
