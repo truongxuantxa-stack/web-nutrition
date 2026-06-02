@@ -28,13 +28,16 @@ export default function StatsCounter() {
     { value: 500, suffix: '+', label: 'Nguyên liệu CSDL', duration: 2 },
     { value: 4, suffix: '', label: 'Thuật toán thông minh', duration: 1.5 },
     { value: 100, suffix: '%', label: 'Cá nhân hóa', duration: 2 },
-    { value: 7, suffix: '/30', label: 'Báo cáo PDF chi tiết', duration: 1.5 }, // We'll just animate to 7
+    { value: 7, suffix: ' - 30', label: 'Ngày lên thực đơn', duration: 1.5 },
   ];
 
   return (
-    <section className="py-16 bg-amber-50 dark:bg-amber-900/10">
+    <section className="py-16 bg-white relative overflow-hidden">
+      {/* Subtle decorative line */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-[#DFE3E4] to-transparent"></div>
+      
       <div className="container mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x-0 md:divide-x divide-amber-200 dark:divide-amber-800/30">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x-0 md:divide-x divide-[#DFE3E4]">
           {stats.map((stat, index) => (
             <motion.div 
               key={index}
@@ -44,10 +47,10 @@ export default function StatsCounter() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <div className="text-4xl md:text-5xl font-bold font-heading text-emerald-600 dark:text-emerald-400 mb-2">
+              <div className="text-4xl md:text-5xl font-bold font-heading text-[#003139] mb-2">
                 <Counter from={0} to={stat.value} suffix={stat.suffix} duration={stat.duration} />
               </div>
-              <div className="text-sm font-medium text-amber-900/60 dark:text-amber-100/50 uppercase tracking-wider">
+              <div className="text-sm font-medium text-[#244348] uppercase tracking-wider">
                 {stat.label}
               </div>
             </motion.div>

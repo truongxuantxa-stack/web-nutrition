@@ -113,18 +113,20 @@ const calculateTDEE = (bmr, activityLevel) => {
 
 /**
  * Điều chỉnh TDEE theo mục tiêu sức khỏe.
- * - Giảm cân:    TDEE - 500 kcal (tạo thâm hụt calo)
+ * - Giảm cân:    TDEE - 500 kcal (tạo thâm hụt calo, nhưng KHÔNG BAO GIỜ DƯỚI BMR)
  * - Duy trì:     TDEE (giữ nguyên)
  * - Tăng cân:    TDEE + 300 kcal (tăng nhẹ để tăng cơ)
  *
  * @param {number} tdee - TDEE cơ bản
  * @param {string} goal - 'lose_weight' | 'maintain_weight' | 'gain_weight'
+ * @param {number} bmr  - BMR để làm mức sàn (chốt chặn an toàn)
  * @returns {number|null} Mục tiêu calo/ngày đã điều chỉnh
  */
-const adjustCaloriesForGoal = (tdee, goal) => {
+const adjustCaloriesForGoal = (tdee, goal, bmr) => {
     if (!tdee) return null;
+    const floor = bmr ? Math.round(bmr) : 1200;
     switch (goal) {
-        case 'lose_weight':     return Math.max(1200, tdee - 500); // Tối thiểu 1200 kcal
+        case 'lose_weight':     return Math.max(floor, tdee - 500); // Tối thiểu bằng BMR
         case 'maintain_weight': return tdee;
         case 'gain_weight':     return tdee + 300;
         default:                return tdee;
@@ -180,7 +182,7 @@ const calculateAllMetrics = (user) => {
     const isAdaptiveActive = user.useAdaptiveTDEE && user.adaptiveTDEE !== null;
     const tdee = isAdaptiveActive ? user.adaptiveTDEE : staticTDEE;
     
-    const targetCal = adjustCaloriesForGoal(tdee, user.goal);
+    const targetCal = adjustCaloriesForGoal(tdee, user.goal, bmr);
     const age       = user.birthDate ? calculateAge(user.birthDate) : null;
 
     // Đọc ratios từ user (null = user cũ chưa thiết lập → calculateMacros tự fallback)

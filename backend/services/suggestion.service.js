@@ -283,7 +283,7 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
         waterInsights.push({
             severity: 'water',
             icon: '💧',
-            title: `Cơ thể bạn đang thiếu nước (${waterPct}% mục tiêu)`,
+            title: `Cơ thể bạn đang thiếu nước mới đạt (${waterPct}% mục tiêu)`,
             message: 'Thiếu nước làm chậm trao đổi chất và giảm năng lượng. Hãy uống ngay 1-2 ly nước nhé!',
         });
     }

@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
 import Sidebar from './Sidebar';
 import ErrorBoundary from '../common/ErrorBoundary';
 
@@ -37,18 +36,6 @@ export default function AppLayout() {
         <label htmlFor="app-drawer-toggle" aria-label="Đóng menu" className="drawer-overlay" />
         <Sidebar />
       </div>
-
-      {/* ─── Toast container ──────────────────────────────────────── */}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            borderRadius: '8px',
-            fontSize: '14px',
-          },
-        }}
-      />
     </div>
   );
 }

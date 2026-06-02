@@ -8,6 +8,7 @@
 const { User, DiaryEntry, WeightLog, ExerciseLog, WaterLog, AdaptiveTDEELog, Food } = require('../models');
 const { calculateAllMetrics, calculateWaterGoal } = require('./nutrition.service');
 const { sumNutritionFromEntries, getHealthInsights, calculateDailyHealthScore } = require('./suggestion.service');
+const { buildWeeklyFoodReport } = require('./foodScoring.service');
 const { Op } = require('sequelize');
 
 /**
@@ -371,8 +372,13 @@ const getReportData = async (userId, range = 'week') => {
         suggested = Math.max(suggested, bmrVal);
 
         let message = '';
+        const currentTarget = Math.round(metrics.targetCalories || 2000);
         if (isPlateauing) {
-            message = `⚡ Cơ thể bạn đang có dấu hiệu thích ứng chuyển hóa (chững cân). TDEE thực tế đã giảm xuống ${adaptiveTDEEVal} kcal/ngày (thấp hơn ${Math.abs(diffPct)}% so với công thức tĩnh). Hệ thống đề xuất bạn điều chỉnh Mục tiêu Calo cho tuần tới về mức ${Math.round(suggested)} kcal/ngày để tiếp tục giảm mỡ an toàn.`;
+            if (Math.round(suggested) === currentTarget) {
+                message = `⚡ Cơ thể bạn đang có dấu hiệu chững cân (TDEE thực tế giảm xuống ${adaptiveTDEEVal} kcal/ngày, thấp hơn ${Math.abs(diffPct)}% so với công thức tĩnh). Tuy nhiên, mức calo hiện tại của bạn đã chạm ngưỡng an toàn tối thiểu (BMR). Hệ thống đề xuất bạn DUY TRÌ mục tiêu ở mức ${Math.round(suggested)} kcal/ngày, tuyệt đối không cắt giảm thêm để chờ phục hồi chuyển hóa.`;
+            } else {
+                message = `⚡ Cơ thể bạn đang có dấu hiệu thích ứng chuyển hóa (chững cân). TDEE thực tế đã giảm xuống ${adaptiveTDEEVal} kcal/ngày (thấp hơn ${Math.abs(diffPct)}% so với công thức tĩnh). Hệ thống đề xuất bạn điều chỉnh Mục tiêu Calo cho tuần tới về mức ${Math.round(suggested)} kcal/ngày để tiếp tục giảm mỡ an toàn.`;
+            }
         } else if (diffPct > 5) {
             message = `📈 Cơ thể bạn đang tiêu hao năng lượng nhiều hơn dự kiến (TDEE thực tế cao hơn ${diffPct}% so với công thức tĩnh). Bạn có thể thoải mái ăn thêm mà vẫn bám sát mục tiêu.`;
         } else {
@@ -454,6 +460,7 @@ const getReportData = async (userId, range = 'week') => {
         topFoods: isEmpty 
             ? { calories: [], protein: [], sugar: [], sodium: [], fiber: [] } 
             : buildTopFoodsContributors(diaryEntries),
+        foodScoringReport: isEmpty ? null : buildWeeklyFoodReport(diaryEntries, range),
         isEmpty,
     };
 };

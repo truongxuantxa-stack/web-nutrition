@@ -65,6 +65,7 @@ Dự án được chia thành 6 giai đoạn phát triển (Phases). Hiện tạ
 5. **Thuật toán Tổng hợp & Snapshot Dinh dưỡng (Nutrition Aggregation Algorithm):** Thuật toán tính toán tổng hợp (Reduce) kết hợp cơ chế ưu tiên dữ liệu (Data Prioritization). Thuật toán kiểm tra và sử dụng trạng thái dữ liệu tại thời điểm ăn (snapshot) để tính toán tổng, nhằm bảo toàn tính toàn vẹn của lịch sử nhật ký.
 6. **Thuật toán Tìm kiếm & Xếp hạng Ưu tiên (Prioritized Search Algorithm):** Tự động xây dựng câu lệnh lọc (Dynamic Query Building) dựa trên danh mục/từ khóa, đồng thời thực thi thuật toán xếp hạng: ưu tiên đẩy các món ăn tùy chỉnh (Custom Foods) của người dùng lên trước các món mặc định của hệ thống.
 7. **Thuật toán TDEE Thích ứng (Adaptive TDEE Algorithm) ⚡:** Thay vì tính tĩnh bằng công thức Mifflin, hệ thống áp dụng logic lọc nhiễu cân nặng (Exponential Moving Average) kết hợp với dữ liệu nhật ký ăn để tìm ra chính xác mức độ thay đổi chuyển hóa (Metabolic Adaptation), qua đó tự động hiệu chỉnh (CLAMP) TDEE thực tế để phá vỡ hiệu ứng "đứng cân" của người dùng.
+8. **Thuật toán Chấm điểm Mật độ Dinh dưỡng (Nutrient Density Scoring Algorithm) ⚡:** Cấp điểm chất lượng y khoa (0-100đ, base 50đ) cho món ăn dựa trên lượng vi chất (Đường, Natri, Chất xơ) trên mỗi 100 kcal. Các thực phẩm "rỗng calo" bị phạt điểm xuống mức trung bình. Có luật ngoại lệ tự nhiên (Natural Exemption) miễn trừ án phạt Đường/Natri cho các nhóm trái cây, rau củ, thực phẩm thô để bảo vệ tính logic dinh dưỡng.
 
 ## 6. CƠ SỞ LÝ THUYẾT & CÔNG THỨC ÁP DỤNG
 Dưới đây là các công thức toán học và sinh học cốt lõi được lập trình trong hệ thống:
@@ -108,11 +109,7 @@ Dưới đây là các công thức toán học và sinh học cốt lõi đư�
 ## 8. HƯỚNG PHÁT TRIỂN & CÁC THUẬT TOÁN DỰ KIẾN (Future Scope)
 Để mở rộng hệ thống đạt tiêu chuẩn của các ứng dụng dinh dưỡng thương mại lớn, dự án có định hướng nghiên cứu và tích hợp thêm các thuật toán bậc cao sau:
 
-**1. Thuật toán Chấm điểm Chất lượng Bữa ăn (Meal Quality Scoring Algorithm):**
-- **Vấn đề:** Việc chỉ đạt đủ số lượng Calo/Macro là chưa đủ để phản ánh sức khỏe toàn diện. Nguồn gốc của lượng calo đó (từ thực phẩm sạch hay thức ăn nhanh) mới quyết định chất lượng dinh dưỡng.
-- **Giải pháp thuật toán:** Áp dụng logic đánh giá **Mật độ dinh dưỡng (Nutrient Density)**. Thuật toán sẽ quét qua các vi chất (Fiber, Sugar, Sodium) đã được lưu trữ trong Database. Dựa vào bộ luật tiêu chuẩn y tế, hệ thống sẽ chấm điểm xếp hạng (A, B, C, D) cho tổng thể các bữa ăn trong ngày. Ví dụ: Bữa ăn đủ Macro nhưng quá lượng đường và natri cho phép sẽ bị hạ điểm, giúp định hướng thói quen ăn uống lành mạnh hơn.
-
-**2. Tư duy Kiến trúc Tách biệt (Decoupling) giữa Dinh dưỡng và Tập luyện:**
+**1. Tư duy Kiến trúc Tách biệt (Decoupling) giữa Dinh dưỡng và Tập luyện:**
 - **Hạn chế của hệ thống hiện tại:** Hiện tại, thuật toán của dự án đang tính toán theo hướng cộng dồn lượng calo đốt cháy từ tập luyện vào quỹ calo được phép nạp trong ngày (tương tự MyFitnessPal). Cách tiếp cận này bộc lộ điểm yếu thực tế: Dẫn đến hiện tượng tính trùng (Double-counting) do mức độ vận động đã được bao hàm trong hệ số tính TDEE ban đầu. Cùng với sai số ước tính lượng calo đốt từ bài tập có thể lên tới 40-90%, việc cho phép "ăn bù" sẽ phá hỏng hoàn toàn quá trình thâm hụt năng lượng.
 - **Hướng cải tiến (Triết lý Hardcore Tracking):** Trong tương lai, hệ thống sẽ được tái cấu trúc để tách biệt hoàn toàn hai module. Module tập luyện sẽ hoạt động độc lập chỉ với mục đích lưu lịch sử, đánh giá tiến độ sức mạnh và tạo động lực tâm lý. Quỹ calo ăn uống sẽ được "chốt" cố định theo TDEE mục tiêu ban đầu. Việc "cắt đứt" liên kết này giúp triệt tiêu hoàn toàn sai số và đưa hệ thống tiệm cận với tiêu chuẩn y khoa thể thao hiện đại.
 

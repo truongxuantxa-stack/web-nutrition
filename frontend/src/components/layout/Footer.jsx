@@ -5,54 +5,54 @@ import { motion } from 'framer-motion';
 export default function Footer() {
   return (
     <motion.footer 
-      className="bg-neutral text-neutral-content pt-16 pb-8"
+      className="bg-[#01272E] text-[#96A5A8] pt-16 pb-8"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >
       <div className="container mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-          {/* Logo & Desc */}
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          {/* Cột 1: Logo & Desc */}
+          <div className="col-span-1 md:col-span-2 lg:pr-12">
             <div className="flex items-center gap-2 text-2xl font-bold font-heading mb-4 text-white">
-              <Leaf className="w-7 h-7 text-emerald-500" />
+              <Leaf className="w-7 h-7 text-[#5FE089]" />
               <span>NutriTrack</span>
             </div>
-            <p className="text-neutral-400 max-w-sm">
-              Hệ thống quản lý dinh dưỡng thông minh, cá nhân hóa dựa trên thuật toán tối ưu. Đồ án tốt nghiệp 2026.
+            <p className="text-[#96A5A8] text-sm leading-relaxed">
+              Hệ thống quản lý dinh dưỡng thông minh, cá nhân hóa dựa trên thuật toán tối ưu.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Cột 2: Tính năng */}
           <div>
-            <h3 className="font-heading font-semibold text-lg text-white mb-4">Liên kết nhanh</h3>
-            <ul className="space-y-2 text-neutral-400">
-              <li><a href="#features" className="hover:text-emerald-400 transition-colors">Tính năng</a></li>
-              <li><a href="#how-it-works" className="hover:text-emerald-400 transition-colors">Cách hoạt động</a></li>
-              <li><a href="#testimonials" className="hover:text-emerald-400 transition-colors">Đánh giá</a></li>
-              <li><a href="#" className="hover:text-emerald-400 transition-colors">Báo cáo khoa học</a></li>
+            <h3 className="font-heading font-semibold text-lg text-white mb-4">Tính năng</h3>
+            <ul className="space-y-3 text-sm">
+              <li><a href="#" className="hover:text-[#5FE089] transition-colors">Dashboard Bento</a></li>
+              <li><a href="#" className="hover:text-[#5FE089] transition-colors">Nhật ký ăn uống</a></li>
+              <li><a href="#" className="hover:text-[#5FE089] transition-colors">Meal Planner</a></li>
+              <li><a href="#" className="hover:text-[#5FE089] transition-colors">Theo dõi cân nặng</a></li>
             </ul>
           </div>
 
-          {/* Social */}
+          {/* Cột 3: Tài nguyên */}
           <div>
-            <h3 className="font-heading font-semibold text-lg text-white mb-4">Dự án mã nguồn mở</h3>
-            <p className="text-neutral-400 mb-4">
-              Xem mã nguồn trên GitHub và đóng góp cho dự án.
-            </p>
-            <a href="https://github.com/truongxuantxa-stack/web-nutrition" target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm text-neutral-content hover:text-white hover:bg-neutral-focus">
-              <Code className="w-4 h-4 mr-2" />
-              GitHub
-            </a>
+            <h3 className="font-heading font-semibold text-lg text-white mb-4">Tài nguyên</h3>
+            <ul className="space-y-3 text-sm">
+              <li><a href="#" className="hover:text-[#5FE089] transition-colors">Báo cáo khoa học</a></li>
+              <li><a href="#" className="hover:text-[#5FE089] transition-colors">Thuật toán Gauss</a></li>
+              <li><a href="#" className="hover:text-[#5FE089] transition-colors">API Docs</a></li>
+            </ul>
           </div>
+
+
         </div>
 
-        <div className="border-t border-neutral-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-neutral-400 text-sm">
-          <p>© 2026 NutriTrack. Graduation Project.</p>
-          <div className="flex gap-4">
-            <a href="#" className="hover:text-white transition-colors">Chính sách bảo mật</a>
-            <a href="#" className="hover:text-white transition-colors">Điều khoản dịch vụ</a>
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+          <p>© 2026 NutriTrack. All rights reserved.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-[#5FE089] transition-colors">Chính sách bảo mật</a>
+            <a href="#" className="hover:text-[#5FE089] transition-colors">Điều khoản dịch vụ</a>
           </div>
         </div>
       </div>

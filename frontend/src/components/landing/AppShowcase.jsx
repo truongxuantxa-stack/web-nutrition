@@ -1,61 +1,101 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import dashboardImage from '../../assets/images/dashboard_mockup.png';
+
+import dashboardScreenshot from '../../assets/images/screenshot_dashboard.png';
+import mealPlannerScreenshot from '../../assets/images/screenshot_meal_planner.png';
+import pdfReportScreenshot from '../../assets/images/screenshot_pdf_report.png';
 
 export default function AppShowcase() {
   return (
-    <section className="py-20 bg-base-200 overflow-hidden">
+    <section className="py-24 bg-white relative overflow-hidden">
       <div className="container mx-auto px-6 lg:px-12">
-        <div className="text-center mb-16">
+        <div className="text-center mb-20">
           <motion.h2 
-            className="text-3xl md:text-4xl font-bold font-heading mb-4"
+            className="text-4xl md:text-5xl font-bold font-heading text-[#003139]"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            Khám phá tác động của chế độ ăn uống đến sức khỏe
+            Trải nghiệm hoàn toàn khác biệt
           </motion.h2>
-          <motion.p 
-            className="text-base-content/70 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-          >
-            Giao diện trực quan, dễ sử dụng, giúp bạn kiểm soát hoàn toàn lượng calo và macro nạp vào cơ thể mỗi ngày.
-          </motion.p>
         </div>
 
-        <motion.div 
-          className="relative max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          {/* Phone Frame */}
-          <div className="relative mx-auto border-gray-800 dark:border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-xl">
-            <div className="w-[148px] h-[18px] bg-gray-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute"></div>
-            <div className="h-[46px] w-[3px] bg-gray-800 absolute -left-[17px] top-[124px] rounded-l-lg"></div>
-            <div className="h-[46px] w-[3px] bg-gray-800 absolute -left-[17px] top-[178px] rounded-l-lg"></div>
-            <div className="h-[64px] w-[3px] bg-gray-800 absolute -right-[17px] top-[142px] rounded-r-lg"></div>
-            
-            {/* Screen */}
-            <div className="rounded-[2rem] overflow-hidden w-full h-full bg-white dark:bg-base-100">
+        <div className="relative max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center h-auto md:h-[520px]" style={{ perspective: '1000px' }}>
+          
+          {/* Screenshot 1: Meal Planner (Left) */}
+          <motion.div 
+            className="w-full md:absolute md:left-0 md:w-[55%] z-10 hidden md:block"
+            initial={{ opacity: 0, x: -50, rotateY: 10 }}
+            whileInView={{ opacity: 1, x: 0, rotateY: 5 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            <div className="bg-white rounded-xl overflow-hidden border border-[#DFE3E4]" style={{ boxShadow: '0 4px 6px rgba(0,49,57,0.07), 0 12px 28px rgba(0,49,57,0.12), 0 20px 60px rgba(0,49,57,0.06)' }}>
+              <div className="bg-[#F0F2F3] px-3 py-2 flex items-center gap-1.5 border-b border-[#DFE3E4]">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+              </div>
               <img 
-                src={dashboardImage} 
-                alt="App Dashboard" 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.src = 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop';
-                }}
+                src={mealPlannerScreenshot} 
+                alt="Meal Planner" 
+                className="w-full aspect-[16/10] object-cover object-top"
+                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1498837167922-41c53bbfedab?q=80&w=800&auto=format&fit=crop'; }}
               />
             </div>
-          </div>
-          
-          {/* Decorative background circle */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl aspect-square bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-3xl -z-10"></div>
-        </motion.div>
+          </motion.div>
+
+          {/* Screenshot 3: PDF Report (Right) */}
+          <motion.div 
+            className="w-full md:absolute md:right-0 md:w-[55%] z-10 hidden md:block"
+            initial={{ opacity: 0, x: 50, rotateY: -10 }}
+            whileInView={{ opacity: 1, x: 0, rotateY: -5 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            <div className="bg-white rounded-xl overflow-hidden border border-[#DFE3E4]" style={{ boxShadow: '0 4px 6px rgba(0,49,57,0.07), 0 12px 28px rgba(0,49,57,0.12), 0 20px 60px rgba(0,49,57,0.06)' }}>
+              <div className="bg-[#F0F2F3] px-3 py-2 flex items-center gap-1.5 border-b border-[#DFE3E4]">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+              </div>
+              <img 
+                src={pdfReportScreenshot} 
+                alt="PDF Report Preview" 
+                className="w-full aspect-[16/10] object-cover object-top"
+                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop'; }}
+              />
+            </div>
+          </motion.div>
+
+          {/* Screenshot 2: Dashboard (Center) */}
+          <motion.div 
+            className="w-full md:absolute md:left-1/2 md:-translate-x-1/2 md:w-3/4 z-20 mt-12 md:mt-0"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <div className="bg-white rounded-xl overflow-hidden border border-[#DFE3E4]" style={{ boxShadow: 'rgba(21,23,29,0.25) 0px 10px 30px' }}>
+              <div className="bg-[#F0F2F3] px-4 py-3 flex items-center gap-2 border-b border-[#DFE3E4]">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                </div>
+              </div>
+              <img 
+                src={dashboardScreenshot} 
+                alt="Dashboard" 
+                className="w-full aspect-[16/10] object-cover object-top"
+                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop'; }}
+              />
+            </div>
+          </motion.div>
+
+        </div>
       </div>
     </section>
   );
