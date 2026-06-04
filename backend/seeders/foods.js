@@ -254,7 +254,7 @@ const dishes = [
     { name: 'Cơm Tấm Sườn', calories: 550, protein: 25, carbs: 70, fat: 20, unit: 'đĩa', category: 'com', foodType: 'dish', isSuggestable: true },
     { name: 'Bún Chả', calories: 550, protein: 20, carbs: 65, fat: 25, unit: 'suất', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
     { name: 'Bún Đậu Mắm Tôm', calories: 700, protein: 30, carbs: 60, fat: 35, unit: 'suất', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
-    { name: 'Bánh Mì Pate Xá Xíu', calories: 450, protein: 15, carbs: 50, fat: 20, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Mì Pate Xá Xíu', calories: 450, protein: 15, carbs: 50, fat: 20, fiber: 1.5, sugar: 4, sodium: 850, vitaminA: 80, vitaminC: 2, calcium: 40, iron: 2.5, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
     { name: 'Miến Lươn', calories: 380, protein: 18, carbs: 45, fat: 12, unit: 'bát', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
     { name: 'Mì Tôm Trứng', calories: 450, protein: 12, carbs: 55, fat: 20, unit: 'bát', category: 'pho_bun', foodType: 'dish', isSuggestable: true },
     { name: 'Xôi Xéo', calories: 450, protein: 10, carbs: 75, fat: 15, unit: 'gói', category: 'com', foodType: 'dish', isSuggestable: true },
@@ -404,7 +404,7 @@ const dishes = [
 
     // === ĂN VẶT / BỮA PHỤ ===
     { name: 'Bánh Tráng Nướng Phomai', calories: 280, protein: 8, carbs: 38, fat: 11, unit: 'cái', category: 'banh', foodType: 'dish', isSuggestable: true },
-    { name: 'Bánh Tráng Trộn', calories: 250, protein: 6, carbs: 42, fat: 7, unit: 'gói', category: 'banh', foodType: 'dish', isSuggestable: true },
+    { name: 'Bánh Tráng Trộn', calories: 250, protein: 6, carbs: 42, fat: 7, fiber: 1.5, sugar: 3, sodium: 520, vitaminA: 10, vitaminC: 5, calcium: 25, iron: 0.8, unit: 'gói', category: 'banh', foodType: 'dish', isSuggestable: true },
     { name: 'Khoai Lang Lắc Phô Mai', calories: 220, protein: 4, carbs: 38, fat: 7, unit: 'suất', category: 'khac', foodType: 'dish', isSuggestable: true },
     { name: 'Ngô Luộc', calories: 150, protein: 5, carbs: 32, fat: 2, unit: 'bắp', category: 'khac', foodType: 'dish', isSuggestable: true },
     { name: 'Khoai Lang Luộc', calories: 130, protein: 2, carbs: 30, fat: 0.1, unit: 'củ 150g', category: 'khac', foodType: 'dish', isSuggestable: true },
@@ -442,6 +442,12 @@ const dishes = [
     { name: 'Đậu Hũ Kho Sả Ớt', calories: 200, protein: 14, carbs: 8, fat: 12, unit: 'suất', category: 'rau_cu', foodType: 'dish', isSuggestable: true },
     { name: 'Canh Rau Củ Chay', calories: 80, protein: 3, carbs: 14, fat: 1.5, unit: 'bát', category: 'rau_cu', foodType: 'dish', isSuggestable: true },
     { name: 'Nấm Xào Rau Củ', calories: 140, protein: 5, carbs: 12, fat: 8, unit: 'đĩa', category: 'rau_cu', foodType: 'dish', isSuggestable: true },
+
+    // === MÓN MỚI BỔ SUNG ===
+    { name: 'Cá Viên Chiên', calories: 290, protein: 12, carbs: 22, fat: 18, fiber: 0.5, sugar: 2, sodium: 680, vitaminA: 5, vitaminC: 0, calcium: 30, iron: 1.2, unit: 'suất 200g', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Gà Rán (KFC-style)', calories: 320, protein: 18, carbs: 16, fat: 22, fiber: 0.5, sugar: 0.5, sodium: 780, vitaminA: 5, vitaminC: 0, calcium: 20, iron: 1.0, unit: 'miếng 150g', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Pizza Phô Mai', calories: 540, protein: 22, carbs: 58, fat: 24, fiber: 2.5, sugar: 6, sodium: 1200, vitaminA: 80, vitaminC: 3, calcium: 220, iron: 2.8, unit: '2 miếng', category: 'khac', foodType: 'dish', isSuggestable: true },
+    { name: 'Hamburger Bò Phô Mai', calories: 550, protein: 28, carbs: 40, fat: 30, fiber: 2, sugar: 8, sodium: 950, vitaminA: 30, vitaminC: 2, calcium: 180, iron: 3.5, unit: 'cái', category: 'khac', foodType: 'dish', isSuggestable: true },
 ];
 
 const beverages = [
@@ -457,7 +463,7 @@ const beverages = [
     { name: 'Nước Ép Rau Má', calories: 25, protein: 0.5, carbs: 5.5, fat: 0.1, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
     { name: 'Nước Ép Cần Tây', calories: 16, protein: 0.7, carbs: 3, fat: 0.2, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
     { name: 'Nước Ép Lựu', calories: 54, protein: 0.2, carbs: 13, fat: 0.1, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
-    { name: 'Nước Mía', calories: 73, protein: 0.3, carbs: 18, fat: 0, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
+    { name: 'Nước Mía', calories: 73, protein: 0.3, carbs: 18, fat: 0, fiber: 0, sugar: 18, sodium: 5, vitaminA: 0, vitaminC: 0.5, calcium: 12, iron: 0.4, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
 
     // --- Sinh tố / Smoothie ---
     { name: 'Sinh Tố Bơ', calories: 200, protein: 3, carbs: 18, fat: 14, unit: 'ly 300ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
@@ -480,13 +486,13 @@ const beverages = [
     // --- Trà ---
     { name: 'Trà Xanh Không Đường', calories: 2, protein: 0, carbs: 0.5, fat: 0, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
     { name: 'Trà Đào Cam Sả', calories: 90, protein: 0.3, carbs: 22, fat: 0, unit: 'ly 350ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
-    { name: 'Trà Sữa Trân Châu', calories: 350, protein: 3, carbs: 55, fat: 12, unit: 'ly 500ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
+    { name: 'Trà Sữa Trân Châu', calories: 350, protein: 3, carbs: 55, fat: 12, fiber: 0, sugar: 50, sodium: 80, vitaminA: 0, vitaminC: 0, calcium: 60, iron: 0.3, unit: 'ly 500ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
     { name: 'Trà Chanh Mật Ong', calories: 60, protein: 0.2, carbs: 15, fat: 0, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
     { name: 'Trà Gừng Mật Ong', calories: 50, protein: 0.1, carbs: 12, fat: 0, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
 
     // --- Cà phê ---
-    { name: 'Cà Phê Đen Không Đường', calories: 5, protein: 0.3, carbs: 0, fat: 0, unit: 'ly 150ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
-    { name: 'Cà Phê Sữa Đá', calories: 120, protein: 2, carbs: 18, fat: 4, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
+    { name: 'Cà Phê Đen Không Đường', calories: 5, protein: 0.3, carbs: 0, fat: 0, fiber: 0, sugar: 0, sodium: 5, vitaminA: 0, vitaminC: 0, calcium: 2, iron: 0, unit: 'ly 150ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
+    { name: 'Cà Phê Sữa Đá', calories: 120, protein: 2, carbs: 18, fat: 4, fiber: 0, sugar: 16, sodium: 30, vitaminA: 5, vitaminC: 0, calcium: 40, iron: 0.1, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
     { name: 'Cappuccino', calories: 120, protein: 4, carbs: 10, fat: 6, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
     { name: 'Latte', calories: 150, protein: 5, carbs: 15, fat: 6, unit: 'ly 300ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
 
@@ -495,6 +501,7 @@ const beverages = [
     { name: 'Nước Chanh Muối', calories: 25, protein: 0.2, carbs: 6, fat: 0, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
     { name: 'Nước Sâm Bổ Lượng', calories: 120, protein: 2, carbs: 28, fat: 0.5, unit: 'ly 350ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
     { name: 'Nước Rau Má Đậu Xanh', calories: 80, protein: 3, carbs: 16, fat: 0.5, unit: 'ly 300ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
+    { name: 'Trà Đá', calories: 2, protein: 0, carbs: 0.5, fat: 0, fiber: 0, sugar: 0, sodium: 1, vitaminA: 0, vitaminC: 0, calcium: 0, iron: 0, unit: 'ly 250ml', category: 'do_uong', foodType: 'dish', isSuggestable: true },
 ];
 
 async function seedFoods() {

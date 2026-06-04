@@ -201,6 +201,18 @@ const Food = sequelize.define('Food', {
         allowNull: true,
         defaultValue: null,
     },
+    dataSource: {
+        // Nguồn dữ liệu: 'local' = seed/manual, 'openfoodfacts' = từ API
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        defaultValue: 'local',
+    },
+    barcode: {
+        // Mã vạch sản phẩm (EAN/UPC) — dùng cho barcode scanner
+        type: DataTypes.STRING(50),
+        allowNull: true,
+        defaultValue: null,
+    },
 }, {
     tableName: 'foods',
     timestamps: true,
@@ -212,6 +224,8 @@ const Food = sequelize.define('Food', {
         { fields: ['isSuggestable'] },
         { fields: ['userId'] },
         { fields: ['isCustom'] },
+        { fields: ['dataSource'] },
+        { fields: ['barcode'] },
     ],
 });
 

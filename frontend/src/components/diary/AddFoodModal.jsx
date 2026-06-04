@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../lib/axios';
 import FoodSearchResult from './FoodSearchResult';
 import toast from 'react-hot-toast';
-import { X, Search, ChefHat } from 'lucide-react';
+import { X, Search, ChefHat, PlusCircle } from 'lucide-react';
+import { useDebounce } from '../../hooks/useDebounce';
 
 const MEAL_LABELS = {
   sang: 'Bữa sáng',
@@ -13,17 +14,18 @@ const MEAL_LABELS = {
 };
 
 // ─── Tab: Tìm kiếm ────────────────────────────────────────────────────────────
-function SearchTab({ date, defaultMeal }) {
+function SearchTab({ date, defaultMeal, onSwitchToCreate }) {
   const [q, setQ]           = useState('');
+  const debouncedQ          = useDebounce(q, 500);
   const [selected, setSelected] = useState(null);
   const [amount, setAmount] = useState('100');
   const [mealType, setMealType] = useState(defaultMeal);
   const qc = useQueryClient();
 
   const { data: searchResults, isFetching } = useQuery({
-    queryKey: ['foods', 'search', q],
-    queryFn : () => api.get(`/diary/foods/search?q=${encodeURIComponent(q)}&limit=30`).then(r => r.data.data.foods),
-    enabled : q.length >= 1,
+    queryKey: ['foods', 'search', debouncedQ],
+    queryFn : () => api.get(`/diary/foods/search?q=${encodeURIComponent(debouncedQ)}&limit=30`).then(r => r.data.data.foods),
+    enabled : debouncedQ.length >= 2,
     staleTime: 60_000,
   });
 
@@ -80,8 +82,18 @@ function SearchTab({ date, defaultMeal }) {
         </div>
       )}
 
-      {!selected && q && !isFetching && (!searchResults || searchResults.length === 0) && (
-        <p className="text-center text-base-content/40 text-sm py-4">Không tìm thấy kết quả</p>
+      {!selected && debouncedQ && !isFetching && (!searchResults || searchResults.length === 0) && (
+        <div className="flex flex-col items-center justify-center py-8 px-4 text-center border border-dashed border-base-300 rounded-xl bg-base-100">
+          <p className="text-base-content/60 text-sm mb-2">Không tìm thấy kết quả.</p>
+          <p className="text-base-content/40 text-xs mb-4">Thử tìm bằng tên ngắn hơn hoặc bằng tiếng Anh.</p>
+          <button 
+            type="button" 
+            className="btn btn-outline btn-sm btn-primary"
+            onClick={() => onSwitchToCreate(q)}
+          >
+            <PlusCircle className="w-4 h-4 mr-1" /> Tự thêm món ăn
+          </button>
+        </div>
       )}
 
       {/* Form nhập số lượng sau khi chọn */}
@@ -147,10 +159,10 @@ function SearchTab({ date, defaultMeal }) {
 }
 
 // ─── Tab: Tạo món mới ─────────────────────────────────────────────────────────
-function CreateFoodTab({ onClose }) {
+function CreateFoodTab({ onClose, prefillName }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({
-    name: '', calories: '', protein: '', carbs: '', fat: '',
+    name: prefillName || '', calories: '', protein: '', carbs: '', fat: '',
     fiber: '', sugar: '', sodium: '', vitaminA: '', vitaminC: '', calcium: '', iron: '',
     unit: '100g', category: 'khac', foodType: 'raw',
   });
@@ -280,6 +292,7 @@ function CreateFoodTab({ onClose }) {
 // ─── Main Modal ───────────────────────────────────────────────────────────────
 export default function AddFoodModal({ isOpen, onClose, date, defaultMeal = 'sang' }) {
   const [tab, setTab] = useState('search');
+  const [prefillName, setPrefillName] = useState('');
 
   if (!isOpen) return null;
 
@@ -310,16 +323,23 @@ export default function AddFoodModal({ isOpen, onClose, date, defaultMeal = 'san
           <button
             id="tab-create"
             className={`tab ${tab === 'create' ? 'tab-active' : ''}`}
-            onClick={() => setTab('create')}
+            onClick={() => { setPrefillName(''); setTab('create'); }}
           >
             <ChefHat className="w-4 h-4 mr-1" /> Tạo món mới
           </button>
         </div>
 
         {tab === 'search' ? (
-          <SearchTab date={date} defaultMeal={defaultMeal} />
+          <SearchTab 
+            date={date} 
+            defaultMeal={defaultMeal} 
+            onSwitchToCreate={(name) => {
+              setPrefillName(name);
+              setTab('create');
+            }}
+          />
         ) : (
-          <CreateFoodTab onClose={onClose} />
+          <CreateFoodTab onClose={onClose} prefillName={prefillName} />
         )}
       </div>
       <div className="modal-backdrop bg-black/40" onClick={onClose} />

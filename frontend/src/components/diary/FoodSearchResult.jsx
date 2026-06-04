@@ -51,8 +51,12 @@ export default function FoodSearchResult({ food, onSelect }) {
           )}
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
-          {food.isCustom && (
+          {food.isCustom ? (
             <span className="badge badge-xs badge-primary">Của tôi</span>
+          ) : food.dataSource === 'openfoodfacts' ? (
+            <span className="badge badge-xs badge-info badge-outline">🌐 Open Food Facts</span>
+          ) : (
+            <span className="badge badge-xs badge-ghost">📦 Nội bộ</span>
           )}
           <span className="badge badge-xs badge-ghost">
             {food.foodType === 'raw' ? 'Nguyên liệu' : 'Món ăn'}

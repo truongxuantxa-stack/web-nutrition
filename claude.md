@@ -1,7 +1,7 @@
 # CLAUDE.md - Nutrition Management System (NMS)
 
 ## 1. Project Overview
-Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt nghiệp (Graduation Project).
+Hệ thống quản lý dinh dưỡng cá nhân hóa. **Lưu ý quan trọng:** Đây là Đồ án tốt nghiệp ngành Khoa học Máy tính (Computer Science Graduation Project). Trọng tâm đánh giá là Kiến trúc hệ thống (System Architecture), thuật toán cốt lõi và Trải nghiệm người dùng (UX), ưu tiên chất lượng và tư duy thiết kế hệ thống hơn là khối lượng dữ liệu.
 - **Mục tiêu:** Tính toán chỉ số cơ thể, theo dõi nhật ký ăn uống/tập luyện, tự động hóa gợi ý thực đơn (Toán học Gauss) và điều chỉnh TDEE thích ứng (Adaptive TDEE).
 - **Vibe:** Giao diện hiện đại, tối giản (Green/Health vibe), phản hồi nhanh, UX cao cấp.
 
@@ -33,14 +33,16 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa dành cho sinh viên tốt 
 - [x] **Bước 3 (Ngày 4-5):** Cấu hình CORS ở Express Backend + Tạo các JSON API Route (`/api/v1/...`) song song + Xử lý Auth (JWT/Cookie).
 - [x] **Bước 4 (Tuần 2):** Chuyển đổi toàn bộ các trang cốt lõi (Dashboard vẽ biểu đồ, Nhật ký ăn uống, Meal Planner) sang React SPA.
 - [ ] Phase 6: Tính năng WOW-Factor & Trải nghiệm người dùng chuyên sâu (Kế hoạch sắp tới)
-  - [ ] **Quét mã vạch sản phẩm (Barcode Scanner) - Cảm hứng từ MyFitnessPal:** Tích hợp thư viện `html5-qrcode` và API Open Food Facts để nhận diện thông tin dinh dưỡng siêu tốc, giải quyết pain-point nhập liệu thủ công.
+  - [ ] **Quét nhãn dinh dưỡng bằng AI (OCR Nutrition Scanner):** Sử dụng `Tesseract.js` (Computer Vision) để chụp ảnh bảng thành phần dinh dưỡng trên bao bì. Trích xuất trực tiếp chữ/số (Calo, Đạm, Béo, Carb) để điền tự động vào nhật ký, không lệ thuộc vào bất kỳ Database bên thứ ba nào, giải quyết triệt để vấn đề dữ liệu cho thị trường Việt Nam.
   - [ ] **Biểu đồ Ruy-băng "Giải nhiễu" cân nặng (Weight Trend Chart) - Cảm hứng từ MacroFactor:** Trực quan hóa xu hướng cân nặng bằng thuật toán Trung bình động (Rolling Average) hiển thị dạng ruy-băng phát sáng (Canvas Gradient), loại bỏ tâm lý hoang mang do dao động nước hàng ngày.
   - [ ] **Bác sĩ Dinh dưỡng Ảo (Daily Smart Insights):** Tổng hợp cảnh báo thiếu/thừa dinh dưỡng (Macros, Micros, Water) dựa trên chuẩn y khoa (Context-aware sau 20:00).
+  - [ ] **Trích xuất Công thức từ URL (Recipe Importer):** Tự động cào dữ liệu (Crawl) từ các blog nấu ăn (sử dụng JSON-LD Schema), bóc tách nguyên liệu và khớp với Database để tính ra tổng Calo siêu tốc.
+  - [ ] **Quản lý Hình thể & Ảnh Before/After (Progress Photos):** Ghi nhận số đo cơ thể, upload ảnh tĩnh, tạo công cụ so sánh ghép ảnh trước/sau (Compare Slider) và xuất file (Canvas) để chia sẻ thành tích.
 
 ## 6. Changelog (Nhật ký thay đổi)
 - **[feat/ui] Landing Page v2 Redesign:** Thiết kế lại toàn bộ giao diện Landing Page theo phong cách Deep Teal & Glassmorphism chuẩn That Clean Life. Thêm CSS Mockups, Algorithm Showcase, Integration Diagram và tối ưu hóa animations.
 - **[feat/algorithm] Nutrient Density Scoring & PDF Report:** Xây dựng thuật toán chấm điểm món ăn theo mật độ dinh dưỡng (0-100đ, base 50đ) và miễn trừ ngoại lệ y khoa cho thực phẩm thô/trái cây. Tích hợp bảng điểm vi chất vào Báo cáo PDF, khắc phục lỗi font emoji, siết chặt logic đánh giá tổng quan y khoa.
-- **[feat/plan] Cập nhật Roadmap Phase 6:** Thêm kế hoạch phát triển Quét mã vạch (Barcode Scanner) và Biểu đồ Ruy-băng giải nhiễu (Weight Ribbon Chart).
+- **[feat/plan] Cập nhật Roadmap Phase 6:** Thêm kế hoạch phát triển Trích xuất công thức từ URL (Recipe Importer) và Quản lý Hình thể Before/After (Progress Photos).
 - **[fix/ui] Tối ưu hóa UI/UX & Hình ảnh:** Thêm SafeImage fallback, ImageLightbox phóng to ảnh, thu gọn lịch sử cân nặng (Collapse), sửa hiển thị gram và ảnh Whey Protein.
 - **[feat/db] Cập nhật Database:** Tạo script `fill-raw-micronutrients.js` tự động tính 7 vi chất; script tải 226 ảnh món ăn từ Wikipedia API.
 - **[feat/ui] Chuyển đổi React SPA & Bento Grid:** Hoàn tất chuyển đổi Frontend sang React 19 (Vite), tái thiết kế Dashboard chuẩn Bento Grid & Glassmorphism, áp dụng Framer Motion và Chart.js nâng cao.

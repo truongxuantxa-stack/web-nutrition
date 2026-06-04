@@ -9,6 +9,7 @@
 const { DiaryEntry, Food } = require('../models');
 const { Op }               = require('sequelize');
 const { toLocalDateString, toDateString } = require('../utils/date.helper');
+const openfoodfactsService = require('./openfoodfacts.service');
 
 // ─── Helper tính snapshot dinh dưỡng ─────────────────────────────────────────
 const calcSnapshot = (food, amountNum) => {
@@ -119,8 +120,38 @@ const searchFood = async (userId, { q, category, foodType, limit }) => {
         where     : whereClause,
         limit     : Math.min(limitNum, 100),
         order     : [['isCustom', 'DESC'], ['name', 'ASC']],
-        attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'vitaminA', 'vitaminC', 'calcium', 'iron', 'unit', 'category', 'foodType', 'isCustom', 'imageUrl'],
+        attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'vitaminA', 'vitaminC', 'calcium', 'iron', 'unit', 'category', 'foodType', 'isCustom', 'imageUrl', 'dataSource'],
     });
+
+    const hasOffResults = foods.some(f => f.dataSource === 'openfoodfacts');
+
+    // Chỉ gọi API khi kết quả local < 5 VÀ chưa có kết quả nào từ OpenFoodFacts trong list này
+    if (foods.length < 5 && !hasOffResults && q && q.trim()) {
+        try {
+            const offProducts = await openfoodfactsService.searchOpenFoodFacts(q.trim(), limitNum);
+            if (offProducts.length > 0) {
+                const savedFoods = await openfoodfactsService.saveToLocalDB(offProducts);
+                
+                const localIds = new Set(foods.map(f => f.id));
+                const newFoods = savedFoods
+                    .filter(f => !localIds.has(f.id))
+                    .map(f => ({
+                        id: f.id, name: f.name, calories: f.calories,
+                        protein: f.protein, carbs: f.carbs, fat: f.fat,
+                        fiber: f.fiber, sugar: f.sugar, sodium: f.sodium,
+                        vitaminA: f.vitaminA, vitaminC: f.vitaminC,
+                        calcium: f.calcium, iron: f.iron,
+                        unit: f.unit, category: f.category, foodType: f.foodType,
+                        isCustom: f.isCustom, imageUrl: f.imageUrl, dataSource: f.dataSource,
+                    }));
+                
+                foods.push(...newFoods);
+            }
+        } catch (err) {
+            console.warn('[HybridSearch] Fallback to Local DB only.');
+        }
+    }
+
     return { foods };
 };
 
