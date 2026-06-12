@@ -48,12 +48,12 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Link to="/register" className="btn rounded-xl px-8 text-white bg-[#003139] hover:bg-[#244348] border-none w-full sm:w-auto text-base">
+              <Link to="/register" className="tcl-btn-primary px-8 py-3 text-base w-full sm:w-auto justify-center">
                 Bắt đầu ngay
               </Link>
-              <button className="btn btn-outline rounded-xl px-8 border-[#003139] text-[#003139] hover:bg-[#003139] hover:text-white w-full sm:w-auto text-base">
+              <a href="#features" className="tcl-btn-secondary px-8 py-3 text-base w-full sm:w-auto justify-center">
                 Tìm hiểu thêm
-              </button>
+              </a>
             </motion.div>
           </motion.div>
 

@@ -98,7 +98,7 @@ export default function PricingSection() {
                 ))}
               </ul>
 
-              <Link to="/register" className="btn btn-outline border-[#003139] text-[#003139] hover:bg-[#003139] hover:text-white w-full rounded-xl gap-2 z-10 relative">
+              <Link to="/register" className="tcl-btn-secondary w-full justify-center gap-2">
                 Bắt đầu miễn phí <ArrowRight className="w-5 h-5" />
               </Link>
             </div>

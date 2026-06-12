@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
+import { Leaf, Eye, EyeOff } from 'lucide-react';
 
 export default function RegisterPage() {
   const { register } = useAuth();
   const navigate     = useNavigate();
   const [form, setForm]       = useState({ name: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -33,27 +35,29 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-base-300 to-base-100 px-4">
-      <div className="card w-full max-w-md shadow-2xl bg-base-100/80 backdrop-blur-md border border-base-300">
-        <div className="card-body gap-5">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 mb-2">
-              <span className="text-3xl">🥗</span>
-              <span className="text-2xl font-bold text-primary">NutriTrack</span>
-            </div>
-            <p className="text-base-content/60 text-sm">Tạo tài khoản miễn phí</p>
+    <div className="min-h-screen flex items-center justify-center bg-[#F0F2F3] px-4">
+      {/* Card */}
+      <div className="w-full max-w-md bg-white rounded-2xl border border-[#DFE3E4] shadow-[rgba(21,23,29,0.1)_0px_0px_15px_0px] overflow-hidden">
+        {/* Header strip */}
+        <div className="bg-gradient-to-r from-[#003139] to-[#244348] px-8 py-6 text-white text-center">
+          <div className="inline-flex items-center gap-2 mb-1">
+            <Leaf className="w-5 h-5 text-[#5FE089]" />
+            <span className="text-xl font-bold font-heading">NutriTrack</span>
           </div>
+          <p className="text-white/70 text-sm">Tạo tài khoản miễn phí</p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="form-control">
-              <label className="label" htmlFor="reg-name">
-                <span className="label-text font-medium">Họ tên</span>
-              </label>
+        {/* Body */}
+        <div className="px-8 py-8">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {/* Họ tên */}
+            <div>
+              <label className="tcl-label" htmlFor="reg-name">Họ tên</label>
               <input
                 id="reg-name"
                 type="text"
                 name="name"
-                className="input input-bordered w-full"
+                className="tcl-input"
                 placeholder="Nguyễn Văn A"
                 value={form.name}
                 onChange={handleChange}
@@ -61,15 +65,14 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="form-control">
-              <label className="label" htmlFor="reg-email">
-                <span className="label-text font-medium">Email</span>
-              </label>
+            {/* Email */}
+            <div>
+              <label className="tcl-label" htmlFor="reg-email">Email</label>
               <input
                 id="reg-email"
                 type="email"
                 name="email"
-                className="input input-bordered w-full"
+                className="tcl-input"
                 placeholder="email@example.com"
                 value={form.email}
                 onChange={handleChange}
@@ -78,36 +81,56 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="form-control">
-              <label className="label" htmlFor="reg-password">
-                <span className="label-text font-medium">Mật khẩu</span>
-              </label>
-              <input
-                id="reg-password"
-                type="password"
-                name="password"
-                className="input input-bordered w-full"
-                placeholder="Tối thiểu 6 ký tự"
-                value={form.password}
-                onChange={handleChange}
-                required
-                autoComplete="new-password"
-              />
+            {/* Password */}
+            <div>
+              <label className="tcl-label" htmlFor="reg-password">Mật khẩu</label>
+              <div className="relative">
+                <input
+                  id="reg-password"
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  className="tcl-input pr-11"
+                  placeholder="Tối thiểu 6 ký tự"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#96A5A8] hover:text-[#003139] transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {/* Password strength hint */}
+              {form.password.length > 0 && (
+                <p className={`text-xs mt-1.5 ${form.password.length >= 6 ? 'text-[#2EA850]' : 'text-[#96A5A8]'}`}>
+                  {form.password.length >= 6 ? '✓ Độ dài hợp lệ' : `Cần thêm ${6 - form.password.length} ký tự`}
+                </p>
+              )}
             </div>
 
+            {/* Submit */}
             <button
               id="reg-submit"
               type="submit"
-              className="btn btn-primary w-full mt-2"
+              className="tcl-btn-primary w-full justify-center py-3 mt-1"
               disabled={loading}
             >
-              {loading ? <span className="loading loading-spinner loading-sm" /> : 'Tạo tài khoản'}
+              {loading ? (
+                <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                'Tạo tài khoản'
+              )}
             </button>
           </form>
 
-          <p className="text-center text-sm text-base-content/60">
+          <p className="text-center text-sm text-[#96A5A8] mt-6">
             Đã có tài khoản?{' '}
-            <Link to="/login" className="link link-primary font-medium">
+            <Link to="/login" className="text-[#003139] font-semibold hover:underline">
               Đăng nhập
             </Link>
           </p>

@@ -16,10 +16,37 @@
   --landing-text-secondary: #96A5A8;
 }
 
-/* Custom theme tokens (Tailwind v4 CSS-first) */
+/* === TCL DESIGN TOKENS (That Clean Life) — Tailwind v4 CSS-first === */
 @theme {
+  /* Colors */
+  --color-tcl-primary: #003139;
+  --color-tcl-secondary: #244348;
+  --color-tcl-accent: #5FE089;
+  --color-tcl-success: #2EA850;
+  --color-tcl-navy: #01272E;
+  --color-tcl-light: #F0F2F3;
+  --color-tcl-border: #DFE3E4;
+  --color-tcl-muted: #96A5A8;
+  --color-tcl-input-border: #C1C9CB;
+
+  /* Font */
   --font-heading: 'Inter', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
+
+  /* Border Radius */
+  --radius-sharp: 0px;
+  --radius-subtle: 4px;
+  --radius-standard: 6px;
+  --radius-rounded: 16px;
+  --radius-full: 24px;
+  --radius-pill: 300px;
+
+  /* Shadows */
+  --shadow-raised: rgba(21,23,29,0.1) 0px 0px 5px 0px;
+  --shadow-elevated: rgba(21,23,29,0.25) 0px 2px 5px 0px;
+  --shadow-floating: rgba(21,23,29,0.1) 0px 0px 15px 0px;
+  --shadow-deep: rgba(21,23,29,0.35) 0px 4px 12px 0px;
+  --shadow-focus: 0px 0px 0px 2px rgba(0,49,57,0.1);
 }
 
 /* Base styles */
@@ -155,3 +182,324 @@ html { scroll-behavior: smooth; }
     box-shadow: 0 10px 15px -3px oklch(from var(--color-base-content) l c h / 0.05), 0 4px 6px -4px oklch(from var(--color-base-content) l c h / 0.05);
   }
 }
+
+/* ============================================================
+   TCL CUSTOM CLASSES — prefix "tcl-" tránh xung đột DaisyUI
+   ============================================================ */
+
+/* === BUTTONS === */
+.tcl-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background-color: #003139;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: #244348;
+    box-shadow: rgba(21,23,29,0.25) 0px 2px 5px 0px;
+    transform: translateY(-1px);
+  }
+  &:active { transform: translateY(0); }
+}
+
+.tcl-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background-color: transparent;
+  color: #003139;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border-radius: 0.5rem;
+  border: 1.5px solid #003139;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: #003139;
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+  &:active { transform: translateY(0); }
+}
+
+.tcl-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: #244348;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  text-decoration: none;
+
+  &:hover {
+    background-color: rgba(0,49,57,0.05);
+    color: #003139;
+  }
+}
+
+.tcl-btn-success {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background-color: #5FE089;
+  color: #003139;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  text-decoration: none;
+
+  &:hover {
+    background-color: #2EA850;
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+}
+
+/* === CARDS === */
+.tcl-card {
+  background-color: #ffffff;
+  border: 1px solid #DFE3E4;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: rgba(21,23,29,0.1) 0px 0px 5px 0px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover { box-shadow: rgba(21,23,29,0.15) 0px 4px 12px 0px; }
+}
+
+.tcl-card-dark {
+  background-color: #003139;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  color: #ffffff;
+  box-shadow: rgba(21,23,29,0.35) 0px 4px 12px 0px;
+}
+
+.tcl-card-light {
+  background-color: #F0F2F3;
+  border: 1px solid #DFE3E4;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background-color: #ffffff;
+    box-shadow: rgba(21,23,29,0.1) 0px 0px 15px 0px;
+  }
+}
+
+/* === FORM ELEMENTS === */
+.tcl-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  background-color: #ffffff;
+  border: 1.5px solid #C1C9CB;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  color: #003139;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &::placeholder { color: #96A5A8; }
+  &:focus {
+    border-color: #003139;
+    box-shadow: 0px 0px 0px 2px rgba(0,49,57,0.1);
+  }
+}
+
+.tcl-select {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  background-color: #ffffff;
+  border: 1.5px solid #C1C9CB;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  color: #003139;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: #003139;
+    box-shadow: 0px 0px 0px 2px rgba(0,49,57,0.1);
+  }
+}
+
+.tcl-label {
+  display: block;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #244348;
+  margin-bottom: 0.375rem;
+}
+
+/* === BADGES === */
+.tcl-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background-color: #F0F2F3;
+  color: #244348;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 300px;
+  border: 1px solid #DFE3E4;
+}
+
+.tcl-badge-success {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(95,224,137,0.12);
+  color: #2EA850;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 300px;
+  border: 1px solid rgba(95,224,137,0.3);
+}
+
+.tcl-badge-neutral {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(0,49,57,0.06);
+  color: #003139;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 300px;
+}
+
+/* === NAV LINKS === */
+.tcl-nav-link {
+  color: #244348;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.375rem;
+  transition: color 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    color: #003139;
+    background-color: rgba(0,49,57,0.05);
+  }
+}
+
+.tcl-nav-link-active {
+  color: #003139;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.375rem;
+  background-color: rgba(0,49,57,0.06);
+}
+
+/* === MODAL === */
+.tcl-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.tcl-modal-content {
+  background-color: #ffffff;
+  border: 1px solid #DFE3E4;
+  border-radius: 1rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 32rem;
+  box-shadow: rgba(21,23,29,0.35) 0px 4px 12px 0px;
+  position: relative;
+}
+
+/* === TABLE === */
+.tcl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+
+  & thead tr {
+    background-color: #F0F2F3;
+    border-bottom: 1px solid #DFE3E4;
+  }
+  & th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #244348;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  & td {
+    padding: 0.875rem 1rem;
+    color: #003139;
+    border-bottom: 1px solid #F0F2F3;
+  }
+  & tbody tr:hover td {
+    background-color: rgba(0,49,57,0.02);
+  }
+}
+
+/* === TOGGLE === */
+.tcl-toggle {
+  appearance: none;
+  width: 2.75rem;
+  height: 1.5rem;
+  background-color: #DFE3E4;
+  border-radius: 300px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0.2rem;
+    left: 0.2rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    background-color: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  &:checked { background-color: #003139; }
+  &:checked::after { transform: translateX(1.25rem); }
+}
+

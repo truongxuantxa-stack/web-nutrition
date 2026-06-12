@@ -38,9 +38,12 @@ export default function CTASection() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          <Link to="/register" className="btn btn-lg rounded-xl bg-white text-[#2EA850] hover:bg-green-50 hover:scale-105 transition-all border-none group px-8">
+          <Link
+            to="/register"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#2EA850] font-bold text-base rounded-xl hover:bg-green-50 hover:scale-105 transition-all duration-200 shadow-lg group"
+          >
             Bắt đầu trải nghiệm ngay
-            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
       </div>

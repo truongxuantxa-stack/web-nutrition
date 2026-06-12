@@ -18,7 +18,9 @@ export default function Navbar() {
   return (
     <motion.nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-base-100/80 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'
+        isScrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-[rgba(21,23,29,0.08)_0px_2px_8px] border-b border-[#DFE3E4] py-3'
+          : 'bg-white border-b border-[#DFE3E4] py-4'
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -26,45 +28,64 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-6 lg:px-12 flex justify-between items-center">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2 text-2xl font-bold font-heading text-[#003139]">
-          <Leaf className="w-8 h-8" />
+        <a href="#" className="flex items-center gap-2 text-xl font-bold font-heading text-[#003139]">
+          <Leaf className="w-6 h-6 text-[#5FE089]" />
           <span>NutriTrack</span>
         </a>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8 font-medium text-[#244348]">
-          <a href="#features" className="hover:text-[#003139] transition-colors">Tính năng</a>
-          <a href="#how-it-works" className="hover:text-[#003139] transition-colors">Cách hoạt động</a>
-          <a href="#testimonials" className="hover:text-[#003139] transition-colors">Đánh giá</a>
+        <div className="hidden md:flex items-center gap-1">
+          <a href="#features" className="tcl-nav-link">Tính năng</a>
+          <a href="#how-it-works" className="tcl-nav-link">Cách hoạt động</a>
+          <a href="#testimonials" className="tcl-nav-link">Đánh giá</a>
         </div>
 
         {/* Actions */}
-        <div className="hidden md:flex items-center gap-4">
-          <Link to="/register" className="btn btn-primary rounded-xl px-8 text-white border-none bg-[#003139] hover:bg-[#244348]">
+        <div className="hidden md:flex items-center gap-3">
+          <Link to="/login" className="tcl-btn-ghost text-sm">Đăng nhập</Link>
+          <Link to="/register" className="tcl-btn-primary text-sm px-5 py-2.5">
             Bắt đầu ngay
           </Link>
         </div>
 
         {/* Mobile menu button */}
-        <div className="md:hidden flex items-center gap-2">
-          <button 
-            className="btn btn-square btn-ghost btn-sm"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
+        <button
+          className="md:hidden p-2 rounded-lg text-[#244348] hover:bg-[#F0F2F3] transition-colors"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
 
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-base-100 shadow-lg border-t border-base-200 p-4 flex flex-col gap-4">
-          <a href="#features" className="p-2 text-[#244348] hover:text-[#003139] hover:bg-base-200 rounded-lg">Tính năng</a>
-          <a href="#how-it-works" className="p-2 text-[#244348] hover:text-[#003139] hover:bg-base-200 rounded-lg">Cách hoạt động</a>
-          <a href="#testimonials" className="p-2 text-[#244348] hover:text-[#003139] hover:bg-base-200 rounded-lg">Đánh giá</a>
-          <Link to="/register" className="btn btn-primary w-full rounded-xl text-white bg-[#003139] hover:bg-[#244348] border-none mt-2">
-            Bắt đầu ngay
-          </Link>
+        <div className="md:hidden border-t border-[#DFE3E4] bg-white px-6 py-4 flex flex-col gap-1">
+          <a
+            href="#features"
+            className="tcl-nav-link py-3"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Tính năng
+          </a>
+          <a
+            href="#how-it-works"
+            className="tcl-nav-link py-3"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Cách hoạt động
+          </a>
+          <a
+            href="#testimonials"
+            className="tcl-nav-link py-3"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Đánh giá
+          </a>
+          <div className="pt-3 border-t border-[#DFE3E4] mt-2 flex flex-col gap-2">
+            <Link to="/login" className="tcl-btn-ghost w-full justify-center">Đăng nhập</Link>
+            <Link to="/register" className="tcl-btn-primary w-full justify-center">Bắt đầu ngay</Link>
+          </div>
         </div>
       )}
     </motion.nav>

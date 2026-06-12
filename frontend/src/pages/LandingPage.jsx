@@ -13,7 +13,7 @@ import CTASection from '../components/landing/CTASection';
 
 export default function LandingPage() {
   return (
-    <div data-theme="emerald" className="min-h-screen bg-base-100 text-base-content font-sans">
+    <div className="min-h-screen bg-white text-[#003139] font-sans">
       <Navbar />
       <main>
         <HeroSection />
