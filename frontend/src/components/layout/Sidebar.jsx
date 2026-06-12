@@ -1,14 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import {
-  LayoutDashboard,
-  BookOpen,
-  CalendarDays,
-  Scale,
-  Dumbbell,
-  User,
-  LogOut,
-} from 'lucide-react';
+import { Leaf, LayoutDashboard, BookOpen, CalendarDays, Scale, Dumbbell, User, LogOut, X } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard',    label: 'Tổng quan',    icon: LayoutDashboard },
@@ -19,30 +11,43 @@ const navItems = [
   { to: '/profile',      label: 'Hồ sơ',         icon: User },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onClose }) {
   const { user, logout } = useAuth();
 
+  const userInitial = user?.name?.charAt(0)?.toUpperCase() || 'U';
+
   return (
-    <aside className="w-64 min-h-screen glass-sidebar flex flex-col">
+    <aside className="w-[260px] flex flex-col h-full">
       {/* Logo */}
-      <div className="p-6 border-b border-base-300">
+      <div className="px-6 py-5 border-b border-[#DFE3E4] flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🥗</span>
-          <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">NutriTrack</span>
+          <Leaf className="w-5 h-5 text-[#5FE089]" />
+          <span className="text-xl font-bold text-[#003139] font-heading">NutriTrack</span>
         </div>
+        {/* Mobile close button */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="lg:hidden p-1.5 rounded-lg text-[#96A5A8] hover:bg-[#F0F2F3] transition-colors"
+            aria-label="Đóng menu"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 flex flex-col gap-1">
+      <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5 overflow-y-auto">
         {navItems.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
+            onClick={onClose}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-              ${isActive
-                ? 'bg-primary/10 text-primary border-l-4 border-primary rounded-l-none'
-                : 'text-base-content/70 hover:bg-base-200/50 hover:text-base-content'
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+                isActive
+                  ? 'bg-[#003139]/8 text-[#003139] font-semibold border-l-2 border-[#003139] rounded-l-none pl-[10px]'
+                  : 'text-[#244348] hover:bg-[#003139]/5 hover:text-[#003139]'
               }`
             }
           >
@@ -53,24 +58,22 @@ export default function Sidebar() {
       </nav>
 
       {/* User + Logout */}
-      <div className="p-4 border-t border-base-300">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="avatar placeholder">
-            <div className="bg-primary/20 text-primary rounded-full w-9">
-              <span className="text-sm font-bold">
-                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-              </span>
-            </div>
+      <div className="px-3 py-4 border-t border-[#DFE3E4] flex-shrink-0">
+        <div className="flex items-center gap-3 px-3 mb-3">
+          {/* Avatar */}
+          <div className="w-9 h-9 rounded-full bg-[#003139]/15 text-[#003139] flex items-center justify-center font-bold text-sm flex-shrink-0">
+            {userInitial}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{user?.name || 'Người dùng'}</p>
-            <p className="text-xs text-base-content/50 truncate">{user?.email}</p>
+            <p className="text-sm font-semibold text-[#003139] truncate">{user?.name || 'Người dùng'}</p>
+            <p className="text-xs text-[#96A5A8] truncate">{user?.email}</p>
           </div>
         </div>
+
         <button
           id="sidebar-logout"
           onClick={logout}
-          className="btn btn-ghost btn-sm w-full justify-start gap-2 text-error hover:bg-error/10"
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-[#003139] hover:bg-[#003139]/8 transition-colors"
         >
           <LogOut className="w-4 h-4" />
           Đăng xuất

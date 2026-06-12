@@ -2,13 +2,11 @@ import { useState } from 'react';
 import { useDiaryData, useDeleteEntry } from '../hooks/useDiary';
 import { getToday } from '../lib/dayjs';
 import WeeklyCalendarStrip from '../components/diary/WeeklyCalendarStrip';
-import MealGroup      from '../components/diary/MealGroup';
-import DailyInsightsCard from '../components/common/DailyInsightsCard';
-
-import WaterTracker   from '../components/diary/WaterTracker';
-import AddFoodModal   from '../components/diary/AddFoodModal';
-import AnimatedSection from '../components/common/AnimatedSection';
-import DaySummaryWidget from '../components/diary/DaySummaryWidget';
+import MealGroup           from '../components/diary/MealGroup';
+import DailyInsightsCard   from '../components/common/DailyInsightsCard';
+import WaterTracker        from '../components/diary/WaterTracker';
+import AddFoodModal        from '../components/diary/AddFoodModal';
+import DaySummaryWidget    from '../components/diary/DaySummaryWidget';
 
 const MEAL_KEYS = ['sang', 'trua', 'toi', 'phu'];
 
@@ -21,7 +19,11 @@ export default function DiaryPage() {
   const deleteEntry = useDeleteEntry(date);
 
   if (isLoading) return <DiarySkeleton />;
-  if (error) return <div className="alert alert-error">Không thể tải nhật ký.</div>;
+  if (error) return (
+    <div className="m-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
+      Không thể tải nhật ký.
+    </div>
+  );
 
   const { consumed, metrics, healthInsights, healthScore, mealGroups = {}, mealCalories = {}, waterTotal, waterGoal, waterLogs = [] } = data;
 
@@ -35,61 +37,43 @@ export default function DiaryPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Nhật ký ăn uống</h1>
-          <p className="text-xs text-base-content/50 mt-0.5">Theo dõi chi tiết dinh dưỡng và bữa ăn trong ngày</p>
+          <h1 className="text-2xl font-bold text-[#003139]">Nhật ký ăn uống</h1>
+          <p className="text-xs text-[#96A5A8] mt-0.5">Theo dõi chi tiết dinh dưỡng và bữa ăn trong ngày</p>
         </div>
       </div>
 
-      {/* ── WEEKLY CALENDAR STRIP (full width) ── */}
-      <AnimatedSection delay={0.02}>
-        <WeeklyCalendarStrip date={date} onDateChange={setDate} />
-      </AnimatedSection>
+      {/* Weekly Calendar */}
+      <WeeklyCalendarStrip date={date} onDateChange={setDate} />
 
-      {/* ── HERO SUMMARY CARD (full width) ── */}
-      <AnimatedSection delay={0.05}>
-        <DaySummaryWidget
-          consumed={consumed.calories}
-          target={metrics?.targetCalories || 0}
-          consumedMacros={consumed}
-          targetMacros={metrics?.macros || {}}
-        />
-      </AnimatedSection>
+      {/* Day Summary */}
+      <DaySummaryWidget
+        consumed={consumed.calories}
+        target={metrics?.targetCalories || 0}
+        consumedMacros={consumed}
+        targetMacros={metrics?.macros || {}}
+      />
 
-      {/* ── WATER TRACKER — horizontal bar (full width) ── */}
-      <AnimatedSection delay={0.1}>
-        <WaterTracker
-          total={waterTotal}
-          goal={waterGoal}
-          logs={waterLogs}
-          date={date}
-        />
-      </AnimatedSection>
+      {/* Water Tracker */}
+      <WaterTracker total={waterTotal} goal={waterGoal} logs={waterLogs} date={date} />
 
-      {/* ── MEAL GROUPS — 2x2 grid (full width) ── */}
-      <AnimatedSection delay={0.15}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {MEAL_KEYS.map(mealKey => (
-            <MealGroup
-              key={mealKey}
-              mealKey={mealKey}
-              entries={mealGroups[mealKey] || []}
-              totalCalories={mealCalories[mealKey] || 0}
-              onAddFood={openAddFood}
-              onDeleteEntry={(id) => deleteEntry.mutate(id)}
-            />
-          ))}
-        </div>
-      </AnimatedSection>
+      {/* Meal Groups 2x2 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {MEAL_KEYS.map(mealKey => (
+          <MealGroup
+            key={mealKey}
+            mealKey={mealKey}
+            entries={mealGroups[mealKey] || []}
+            totalCalories={mealCalories[mealKey] || 0}
+            onAddFood={openAddFood}
+            onDeleteEntry={(id) => deleteEntry.mutate(id)}
+          />
+        ))}
+      </div>
 
-      {/* ── DAILY INSIGHTS (full width) ── */}
-      <AnimatedSection delay={0.2}>
-        <DailyInsightsCard
-          insights={healthInsights || []}
-          healthScore={healthScore}
-        />
-      </AnimatedSection>
+      {/* Daily Insights */}
+      <DailyInsightsCard insights={healthInsights || []} healthScore={healthScore} />
 
-      {/* Modal thêm món */}
+      {/* Modal */}
       <AddFoodModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -101,10 +85,10 @@ export default function DiaryPage() {
 }
 
 function DiarySkeleton() {
-  const shimmer = 'rounded-2xl bg-gradient-to-r from-base-300 via-base-200 to-base-300 bg-[length:200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]';
+  const shimmer = 'rounded-2xl bg-gradient-to-r from-[#DFE3E4] via-[#F0F2F3] to-[#DFE3E4] bg-[length:200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]';
   return (
     <div className="flex flex-col gap-5">
-      <div className="h-10 bg-base-300 rounded w-64 animate-pulse" />
+      <div className="h-10 bg-[#DFE3E4] rounded w-64 animate-pulse" />
       <div className={`h-48 ${shimmer}`} />
       <div className={`h-16 ${shimmer}`} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

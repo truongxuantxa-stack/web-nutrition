@@ -1,26 +1,55 @@
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import ErrorBoundary from '../common/ErrorBoundary';
+import { Menu } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 
 export default function AppLayout() {
-  return (
-    <div className="drawer lg:drawer-open">
-      <input id="app-drawer-toggle" type="checkbox" className="drawer-toggle" />
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-      {/* ─── Main content ─────────────────────────────────────────── */}
-      <div className="drawer-content flex flex-col min-h-screen gradient-bg">
+  return (
+    <div className="min-h-screen bg-[#F0F2F3] flex">
+
+      {/* ── Desktop Sidebar (fixed 260px, lg+) ─────────────────────── */}
+      <div className="hidden lg:block w-[260px] flex-shrink-0">
+        <div className="fixed top-0 left-0 w-[260px] h-screen bg-white border-r border-[#DFE3E4] z-30 flex flex-col overflow-y-auto">
+          <Sidebar />
+        </div>
+      </div>
+
+      {/* ── Mobile overlay backdrop ─────────────────────────────────── */}
+      {isSidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* ── Mobile Sidebar (slide-in overlay) ──────────────────────── */}
+      <div className={`lg:hidden fixed top-0 left-0 h-screen w-[260px] bg-white border-r border-[#DFE3E4] z-50 flex flex-col overflow-y-auto transition-transform duration-300 ease-in-out ${
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <Sidebar onClose={() => setIsSidebarOpen(false)} />
+      </div>
+
+      {/* ── Main Content Area ───────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col min-h-screen min-w-0">
+
         {/* Mobile topbar */}
-        <div className="navbar bg-base-100 border-b border-base-300 lg:hidden sticky top-0 z-30">
-          <label
-            htmlFor="app-drawer-toggle"
-            className="btn btn-ghost btn-square drawer-button"
+        <div className="lg:hidden sticky top-0 z-30 h-16 bg-white border-b border-[#DFE3E4] flex items-center px-4 gap-3 shadow-[rgba(21,23,29,0.06)_0px_2px_8px]">
+          <button
+            id="mobile-menu-toggle"
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 rounded-lg text-[#244348] hover:bg-[#F0F2F3] transition-colors"
             aria-label="Mở menu"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </label>
-          <span className="text-lg font-bold text-primary ml-2">🥗 NutriTrack</span>
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-1.5">
+            <Leaf className="w-5 h-5 text-[#5FE089]" />
+            <span className="text-lg font-bold text-[#003139] font-heading">NutriTrack</span>
+          </div>
         </div>
 
         {/* Page content */}
@@ -31,11 +60,6 @@ export default function AppLayout() {
         </main>
       </div>
 
-      {/* ─── Sidebar drawer ───────────────────────────────────────── */}
-      <div className="drawer-side z-40">
-        <label htmlFor="app-drawer-toggle" aria-label="Đóng menu" className="drawer-overlay" />
-        <Sidebar />
-      </div>
     </div>
   );
 }

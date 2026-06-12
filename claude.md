@@ -27,7 +27,7 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa. **Lưu ý quan trọng:** 
 - [x] Phase 1-5: Đã hoàn thành (Core Logic, Backend, React SPA, Thuật toán Gauss, TDEE, PDF Report).
 - [ ] Phase 6: Tính năng WOW-Factor & UI/UX Redesign (Kế hoạch sắp tới)
   - [x] **Quét nhãn dinh dưỡng bằng AI (Hybrid Nutrition Scanner):** Barcode + AI Vision OCR (Gemini) + Crowdsourcing DB + Physics Validation.
-  - [x] **UI Redesign - That Clean Life (Đang thực hiện):** Phase 0 (Design Tokens) ✅ · Phase 1 (Landing Page) ✅ · Phase 2 (Auth Pages) ✅ → Phase 3 tiếp theo.
+  - [x] **UI Redesign - That Clean Life:** Phase 0 ✅ · Phase 1 (Landing) ✅ · Phase 2 (Auth) ✅ · Phase 3 (Layout/Sidebar) ✅ · Phase 4 (Dashboard) ✅ · Phase 5 (Diary/Exercise/MealPlanner/Weight/Profile/NotFound) ✅ → DaisyUI migration hoàn tất toàn bộ pages.
   - [ ] **Biểu đồ Ruy-băng "Giải nhiễu" cân nặng (Weight Trend Chart) - Cảm hứng từ MacroFactor:** Trực quan hóa xu hướng cân nặng bằng thuật toán Trung bình động (Rolling Average) hiển thị dạng ruy-băng phát sáng (Canvas Gradient), loại bỏ tâm lý hoang mang do dao động nước hàng ngày.
   - [ ] **Bác sĩ Dinh dưỡng Ảo (Daily Smart Insights):** Tổng hợp cảnh báo thiếu/thừa dinh dưỡng (Macros, Micros, Water) dựa trên chuẩn y khoa (Context-aware sau 20:00).
 
