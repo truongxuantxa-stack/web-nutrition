@@ -12,6 +12,8 @@ const WaterLog    = require('./WaterLog');
 const MealTemplate = require('./MealTemplate');
 const UserMealConfig = require('./UserMealConfig');
 const AdaptiveTDEELog = require('./AdaptiveTDEELog');
+const ScannedProduct = require('./ScannedProduct');
+const ProductContribution = require('./ProductContribution');
 
 // ── Associations ──────────────────────────────────────────────────────────────
 
@@ -51,6 +53,17 @@ UserMealConfig.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 User.hasMany(AdaptiveTDEELog, { foreignKey: 'userId', as: 'adaptiveTDEELogs', onDelete: 'CASCADE', hooks: true });
 AdaptiveTDEELog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+// ScannedProduct <-> ProductContribution (1 sản phẩm có nhiều lần đóng góp)
+ScannedProduct.hasMany(ProductContribution, { foreignKey: 'scannedProductId', as: 'contributions', onDelete: 'CASCADE' });
+ProductContribution.belongsTo(ScannedProduct, { foreignKey: 'scannedProductId', as: 'product' });
+
+// User <-> ProductContribution (1 user có thể đóng góp nhiều lần)
+User.hasMany(ProductContribution, { foreignKey: 'userId', as: 'productContributions', onDelete: 'CASCADE' });
+ProductContribution.belongsTo(User, { foreignKey: 'userId', as: 'contributor' });
+
+// ScannedProduct -> Food (liên kết tùy chọn khi đã được import vào system food)
+ScannedProduct.belongsTo(Food, { foreignKey: 'foodId', as: 'linkedFood' });
+
 // ── Sync & Export ─────────────────────────────────────────────────────────────
 module.exports = {
     sequelize,
@@ -63,4 +76,6 @@ module.exports = {
     MealTemplate,
     UserMealConfig,
     AdaptiveTDEELog,
+    ScannedProduct,
+    ProductContribution,
 };

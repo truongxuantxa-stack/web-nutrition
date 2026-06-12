@@ -303,78 +303,7 @@ const validateSolution = (results) => {
 // ORCHESTRATOR: KẾT NỐI CHUỖI M1 -> M2 -> M3 -> M4
 // ============================================================================
 
-/**
- * Giải pháp thay thế (Heuristic Fallback) khi Gauss Solver giải ra nghiệm âm.
- * Đặt lượng dầu ăn (fat) cố định là 5g (nếu có nhóm fat) và tính toán Carb, Protein thực tế.
- * Lượng rau (fiber) cố định 200g.
- */
-const solveHeuristicFallback = (foods, target) => {
-    const fiberFood = foods.find(f => f.category === 'fiber' || f.role === 'fiber');
-    const fatFood = foods.find(f => f.category === 'fat' || f.role === 'fat');
-    const carbFood = foods.find(f => f.category === 'carb' || f.role === 'carb');
-    const proteinFood = foods.find(f => f.category === 'protein' || f.role === 'protein');
 
-    const results = [];
-    const adjustedTarget = { ...target };
-
-    // 1. Lượng rau cố định 200g
-    if (fiberFood) {
-        results.push({ food: fiberFood, grams: 200 });
-        adjustedTarget.protein -= fiberFood.protein * 2;
-        adjustedTarget.carbs -= fiberFood.carbs * 2;
-        adjustedTarget.fat -= fiberFood.fat * 2;
-    }
-
-    // 2. Lượng béo (nếu có nguồn fat bổ sung) cố định 5g
-    if (fatFood) {
-        results.push({ food: fatFood, grams: 5 });
-        adjustedTarget.protein -= fatFood.protein * 0.05;
-        adjustedTarget.carbs -= fatFood.carbs * 0.05;
-        adjustedTarget.fat -= fatFood.fat * 0.05;
-    }
-
-    // 3. Tính lượng đạm (Protein) dựa trên đạm mục tiêu
-    if (proteinFood) {
-        let pGrams = (adjustedTarget.protein / (proteinFood.protein || 1)) * 100;
-        pGrams = Math.max(50, Math.min(250, Math.round(pGrams))); // giới hạn thực tế 50g-250g
-        results.push({ food: proteinFood, grams: pGrams });
-        // Trừ bớt Carb/Fat nạp từ nguồn đạm
-        adjustedTarget.carbs -= proteinFood.carbs * (pGrams / 100);
-        adjustedTarget.fat -= proteinFood.fat * (pGrams / 100);
-    }
-
-    // 4. Tính lượng Carb tinh bột
-    if (carbFood) {
-        let cGrams = (adjustedTarget.carbs / (carbFood.carbs || 1)) * 100;
-        cGrams = Math.max(50, Math.min(300, Math.round(cGrams))); // giới hạn thực tế 50g-300g
-        results.push({ food: carbFood, grams: cGrams });
-        adjustedTarget.fat -= carbFood.fat * (cGrams / 100);
-    }
-
-    // Tính tổng macros thực tế nạp từ tổ hợp fallback này
-    let actualProtein = 0;
-    let actualCarbs = 0;
-    let actualFat = 0;
-    for (const item of results) {
-        actualProtein += item.food.protein * item.grams / 100;
-        actualCarbs += item.food.carbs * item.grams / 100;
-        actualFat += item.food.fat * item.grams / 100;
-    }
-    
-    const warnings = [];
-    if (actualFat - target.fat > 5) {
-        warnings.push({
-            type: 'MACRO_DEVIATION',
-            severity: 'warning',
-            message: `Do nguyên liệu đạm/tinh bột đã giàu chất béo sẵn, lượng béo thực tế là ${Math.round(actualFat)}g (vượt ${Math.round((actualFat - target.fat) / (target.fat || 1) * 100)}% so với mục tiêu ${Math.round(target.fat)}g). Hệ thống đã tự động giảm lượng dầu ăn bổ sung về 5g để tối ưu.`
-        });
-    }
-
-    return {
-        data: results,
-        warnings
-    };
-};
 
 /**
  * Hàm sinh tổ hợp bữa ăn hoàn chỉnh, có cơ chế Retry nếu vi phạm Edge Cases
@@ -435,11 +364,42 @@ const generateMealPlan = async (template, target, preferences = {}) => {
     };
 };
 
+/**
+ * Tìm các nguồn đạm nạc (lean protein) để đề xuất cho user khi bị vượt mỡ
+ * @returns {Array} Mảng các nguồn đạm nạc
+ */
+const getLeanAlternatives = async () => {
+    const leanFoods = await Food.findAll({
+        where: { category: 'protein', foodType: 'raw' },
+        attributes: ['id', 'name', 'protein', 'fat']
+    });
+
+    const mapped = leanFoods.map(f => {
+        const json = f.toJSON();
+        json.fatPerProtein = json.protein > 0 ? (json.fat / json.protein) : 999;
+        return json;
+    });
+
+    // Lọc những món có tỷ lệ mỡ thấp (fat/protein < 0.3)
+    const leanAlternatives = mapped.filter(f => f.fatPerProtein < 0.3);
+    
+    // Sắp xếp tăng dần theo tỷ lệ mỡ
+    leanAlternatives.sort((a, b) => a.fatPerProtein - b.fatPerProtein);
+
+    // Trả về top 3 gợi ý tốt nhất
+    return leanAlternatives.slice(0, 3).map(f => ({
+        id: f.id,
+        name: f.name,
+        fatPerProtein: Number(f.fatPerProtein.toFixed(2))
+    }));
+};
+
 module.exports = {
     allocateMealTargets,
     pickIngredientsForTemplate,
     solveLinearSystem3x3,
     calculateWeights,
     validateSolution,
-    generateMealPlan
+    generateMealPlan,
+    getLeanAlternatives
 };

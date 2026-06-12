@@ -3,8 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../lib/axios';
 import FoodSearchResult from './FoodSearchResult';
 import toast from 'react-hot-toast';
-import { X, Search, ChefHat, PlusCircle } from 'lucide-react';
+import { X, Search, ChefHat, PlusCircle, ScanFace } from 'lucide-react';
 import { useDebounce } from '../../hooks/useDebounce';
+import ScannerTab from './ScannerTab';
 
 const MEAL_LABELS = {
   sang: 'Bữa sáng',
@@ -327,19 +328,28 @@ export default function AddFoodModal({ isOpen, onClose, date, defaultMeal = 'san
           >
             <ChefHat className="w-4 h-4 mr-1" /> Tạo món mới
           </button>
+          <button
+            id="tab-scanner"
+            className={`tab ${tab === 'scanner' ? 'tab-active' : ''}`}
+            onClick={() => setTab('scanner')}
+          >
+            <ScanFace className="w-4 h-4 mr-1" /> Quét/Chụp
+          </button>
         </div>
 
         {tab === 'search' ? (
-          <SearchTab 
-            date={date} 
-            defaultMeal={defaultMeal} 
+          <SearchTab
+            date={date}
+            defaultMeal={defaultMeal}
             onSwitchToCreate={(name) => {
               setPrefillName(name);
               setTab('create');
             }}
           />
-        ) : (
+        ) : tab === 'create' ? (
           <CreateFoodTab onClose={onClose} prefillName={prefillName} />
+        ) : (
+          <ScannerTab date={date} defaultMeal={defaultMeal} onClose={onClose} />
         )}
       </div>
       <div className="modal-backdrop bg-black/40" onClick={onClose} />

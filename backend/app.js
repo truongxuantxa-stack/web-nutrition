@@ -9,7 +9,7 @@ const app = express();
 // Gỡ bỏ EJS view engine để chuyển sang React SPA hoàn toàn
 
 // ─── Middlewares ────────────────────────────────────────────
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Nâng limit cho base64 image (AI Vision Scanner)
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));

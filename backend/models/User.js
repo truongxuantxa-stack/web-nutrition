@@ -88,6 +88,16 @@ const User = sequelize.define('User', {
         allowNull: true,
         defaultValue: null,
     },
+    goalWeight: {
+        // Cân nặng mục tiêu (kg)
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+            min: { args: [20], msg: 'Cân nặng mục tiêu tối thiểu 20 kg.' },
+            max: { args: [300], msg: 'Cân nặng mục tiêu tối đa 300 kg.' },
+        },
+    },
     isOnboarded: {
         // Đánh dấu người dùng đã hoàn thành onboarding
         type: DataTypes.BOOLEAN,

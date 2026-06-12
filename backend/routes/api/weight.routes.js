@@ -4,6 +4,7 @@ const router = require('express').Router();
 const ctrl   = require('../../controllers/api/weight.controller');
 
 router.get('/',      ctrl.getWeight);
+router.get('/trend', ctrl.getWeightTrend);
 router.post('/',     ctrl.addWeight);
 router.delete('/:id', ctrl.deleteWeight);
 

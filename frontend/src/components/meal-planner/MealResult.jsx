@@ -19,10 +19,24 @@ export default function MealResult({ result, onSwap, pinnedFoods = {}, onToggleP
       {allIssues.map((issue, i) => (
         <div
           key={i}
-          className={`alert ${issue.severity === 'error' || issue.type === 'FATAL' ? 'alert-error' : 'alert-warning'} py-2`}
+          className={`alert ${issue.severity === 'error' || issue.type === 'FATAL' ? 'alert-error' : 'alert-warning'} py-2 flex flex-col items-start gap-1`}
         >
-          <AlertTriangle className="w-4 h-4 shrink-0" />
-          <span className="text-sm">{issue.message}</span>
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            <span className="text-sm">{issue.message}</span>
+          </div>
+          {issue.type === 'NEGATIVE_WEIGHT' && result.leanAlternatives?.length > 0 && (
+            <div className="mt-2 text-xs opacity-90 w-full pl-6">
+              <p className="font-semibold mb-1">Đề xuất thay thế sang nguồn đạm nạc (Lean Protein):</p>
+              <ul className="list-disc pl-4 space-y-0.5">
+                {result.leanAlternatives.map(alt => (
+                  <li key={alt.id}>
+                    <strong>{alt.name}</strong> - Tỷ lệ mỡ/đạm: {alt.fatPerProtein}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       ))}
 

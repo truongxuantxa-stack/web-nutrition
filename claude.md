@@ -23,7 +23,6 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa. **Lưu ý quan trọng:** 
 3. **Food Database:** Phân định rõ `foodType` là `'raw'` (nguyên liệu thô 100g) hay `'dish'` (món ăn chế biến 1 suất).
 4. **UX Philosophy:** Trao quyền quyết định cho người dùng. Cung cấp dữ liệu thô và công cụ tính toán thay vì ép buộc khuôn mẫu.
 5. **AI Rule:** Luôn sử dụng try-catch, trả JSON nhất quán. BẮT BUỘC cung cấp lệnh `git push` sau mỗi task hoàn thành.
-
 ## 5. Roadmap Status (Kế hoạch dự án - Siêu tốc độ với AI Agent)
 - [x] Phase 1-3: Khởi tạo, Database, Auth & Onboarding.
 - [x] Phase 4: Core Logic (Nhật ký ăn, uống, tập, cân nặng).
@@ -33,13 +32,14 @@ Hệ thống quản lý dinh dưỡng cá nhân hóa. **Lưu ý quan trọng:** 
 - [x] **Bước 3 (Ngày 4-5):** Cấu hình CORS ở Express Backend + Tạo các JSON API Route (`/api/v1/...`) song song + Xử lý Auth (JWT/Cookie).
 - [x] **Bước 4 (Tuần 2):** Chuyển đổi toàn bộ các trang cốt lõi (Dashboard vẽ biểu đồ, Nhật ký ăn uống, Meal Planner) sang React SPA.
 - [ ] Phase 6: Tính năng WOW-Factor & Trải nghiệm người dùng chuyên sâu (Kế hoạch sắp tới)
-  - [ ] **Quét nhãn dinh dưỡng bằng AI (OCR Nutrition Scanner):** Sử dụng `Tesseract.js` (Computer Vision) để chụp ảnh bảng thành phần dinh dưỡng trên bao bì. Trích xuất trực tiếp chữ/số (Calo, Đạm, Béo, Carb) để điền tự động vào nhật ký, không lệ thuộc vào bất kỳ Database bên thứ ba nào, giải quyết triệt để vấn đề dữ liệu cho thị trường Việt Nam.
+  - [x] **Quét nhãn dinh dưỡng bằng AI (Hybrid Nutrition Scanner):** Barcode Scanner (html5-qrcode + 4-Layer Lookup Pipeline) + AI Vision OCR (Gemini 2.0 Flash) + Crowdsourcing DB Flywheel + Physics Validation. Tab thứ 3 trong AddFoodModal.
   - [ ] **Biểu đồ Ruy-băng "Giải nhiễu" cân nặng (Weight Trend Chart) - Cảm hứng từ MacroFactor:** Trực quan hóa xu hướng cân nặng bằng thuật toán Trung bình động (Rolling Average) hiển thị dạng ruy-băng phát sáng (Canvas Gradient), loại bỏ tâm lý hoang mang do dao động nước hàng ngày.
   - [ ] **Bác sĩ Dinh dưỡng Ảo (Daily Smart Insights):** Tổng hợp cảnh báo thiếu/thừa dinh dưỡng (Macros, Micros, Water) dựa trên chuẩn y khoa (Context-aware sau 20:00).
   - [ ] **Trích xuất Công thức từ URL (Recipe Importer):** Tự động cào dữ liệu (Crawl) từ các blog nấu ăn (sử dụng JSON-LD Schema), bóc tách nguyên liệu và khớp với Database để tính ra tổng Calo siêu tốc.
   - [ ] **Quản lý Hình thể & Ảnh Before/After (Progress Photos):** Ghi nhận số đo cơ thể, upload ảnh tĩnh, tạo công cụ so sánh ghép ảnh trước/sau (Compare Slider) và xuất file (Canvas) để chia sẻ thành tích.
 
 ## 6. Changelog (Nhật ký thay đổi)
+- **[feat/scanner] Hybrid Nutrition Scanner:** Xây dựng tính năng quét dinh dưỡng kép — Tab thứ 3 trong AddFoodModal. Barcode Scanner (html5-qrcode + 4-Layer Lookup Pipeline: LocalDB verified → LocalDB unverified → OpenFoodFacts API → AI Vision fallback). AI Vision OCR (Gemini 2.0 Flash, Zero-Storage policy). Crowdsourcing DB Flywheel (ScannedProduct + ProductContribution models, auto confidence scoring). Physics Validation (Atwater check, warn/error 2 mức). Rate limit 5 req/phút cho AI Vision. Ảnh nén Canvas API (max 1280px JPEG 0.8) trước khi gửi.
 - **[feat/ui] Landing Page v2 Redesign:** Thiết kế lại toàn bộ giao diện Landing Page theo phong cách Deep Teal & Glassmorphism chuẩn That Clean Life. Thêm CSS Mockups, Algorithm Showcase, Integration Diagram và tối ưu hóa animations.
 - **[feat/algorithm] Nutrient Density Scoring & PDF Report:** Xây dựng thuật toán chấm điểm món ăn theo mật độ dinh dưỡng (0-100đ, base 50đ) và miễn trừ ngoại lệ y khoa cho thực phẩm thô/trái cây. Tích hợp bảng điểm vi chất vào Báo cáo PDF, khắc phục lỗi font emoji, siết chặt logic đánh giá tổng quan y khoa.
 - **[feat/plan] Cập nhật Roadmap Phase 6:** Thêm kế hoạch phát triển Trích xuất công thức từ URL (Recipe Importer) và Quản lý Hình thể Before/After (Progress Photos).

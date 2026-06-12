@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWeightData, useDeleteWeight } from '../hooks/useWeight';
+import { useWeightTrend } from '../hooks/useWeightTrend';
 import { useAdaptiveStatus, useAdaptiveHistory, useToggleAdaptive, useCalculateAdaptive, useSkipWeekAdaptive } from '../hooks/useAdaptiveTDEE';
 import { getToday, toDisplayDate } from '../lib/dayjs';
 import { Scale, TrendingDown, TrendingUp, Plus, Trash2, Calendar, Edit3, Zap, RefreshCw, Activity, History, ChevronDown, ChevronUp } from 'lucide-react';
@@ -7,6 +8,8 @@ import toast from 'react-hot-toast';
 import { Line } from 'react-chartjs-2';
 import AnimatedSection from '../components/common/AnimatedSection';
 import AddWeightModal from '../components/common/AddWeightModal';
+import WeightTrendChart from '../components/dashboard/WeightTrendChart';
+import TrendSummaryCard from '../components/dashboard/TrendSummaryCard';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,8 +19,6 @@ import {
   Tooltip,
   Filler,
 } from 'chart.js';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 
 export default function WeightPage() {
   const { data, isLoading, error } = useWeightData();
@@ -34,6 +35,43 @@ export default function WeightPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTdeeOpen, setIsTdeeOpen] = useState(false);
   const [showAllLogs, setShowAllLogs] = useState(false);
+
+  const [trendRange, setTrendRange] = useState(30);
+  const { data: trendData, isLoading: isTrendLoading } = useWeightTrend(trendRange);
+
+  useEffect(() => {
+    if (!trendData || !trendData.hasSufficientData || !trendData.summary) return;
+    
+    const lastToastDate = localStorage.getItem('lastWeightToastDate');
+    const todayStr = getToday();
+    
+    if (lastToastDate === todayStr) return;
+
+    const rawPoints = trendData.rawPoints;
+    if (rawPoints && rawPoints.length >= 2) {
+      const latestRaw = rawPoints[rawPoints.length - 1].weight;
+      const previousRaw = rawPoints[rawPoints.length - 2].weight;
+      
+      const trendLine = trendData.trendLine;
+      if (trendLine && trendLine.length >= 2) {
+        const currentEMA = trendLine[trendLine.length - 1].ema;
+        const previousEMA = trendLine[trendLine.length - 2].ema;
+        const currentEMA_direction = trendData.summary.direction;
+
+        if (latestRaw > previousRaw && currentEMA < previousEMA) {
+          toast('Đừng lo! Xu hướng cân nặng vẫn đang giảm. Đây chỉ là dao động nước.', {
+            icon: '💧', duration: 5000
+          });
+          localStorage.setItem('lastWeightToastDate', todayStr);
+        } else if (latestRaw - previousRaw > 1.5 && currentEMA_direction === 'down') {
+          toast('Tăng hơn 1.5kg/ngày thường do nước/muối, không phải mỡ.', {
+            icon: '🧂', duration: 5000
+          });
+          localStorage.setItem('lastWeightToastDate', todayStr);
+        }
+      }
+    }
+  }, [trendData]);
 
   if (isLoading) return <WeightSkeleton />;
   if (error) return <div className="alert alert-error">Không thể tải dữ liệu cân nặng.</div>;
@@ -136,54 +174,7 @@ export default function WeightPage() {
 
   const bmiDetails = getBmiBadge(bmiClass?.label || bmiClass);
 
-  const labels = chartData.map(d => {
-    if (!d.date || typeof d.date !== 'string') return '';
-    const parts = d.date.split('T')[0].split('-');
-    if (parts.length < 3) return d.date;
-    const [, m, day] = parts;
-    return `${day}/${m}`;
-  });
-  const weights = chartData.map(d => d.weight);
 
-  const chartJsData = {
-    labels,
-    datasets: [{
-      label: 'Cân nặng (kg)',
-      data: weights,
-      borderColor: '#22c55e',
-      backgroundColor: (context) => {
-        const { ctx, chartArea } = context.chart;
-        if (!chartArea) return 'rgba(34,197,94,0.08)';
-        const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-        gradient.addColorStop(0, 'rgba(34,197,94,0.25)');
-        gradient.addColorStop(1, 'rgba(34,197,94,0.01)');
-        return gradient;
-      },
-      borderWidth: 2.5,
-      fill: true,
-      tension: 0.35,
-      pointRadius: 4,
-      pointHoverRadius: 6,
-      pointBackgroundColor: '#22c55e',
-    }],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: (ctx) => ` ${ctx.raw} kg`,
-        },
-      },
-    },
-    scales: {
-      x: { grid: { display: false }, ticks: { font: { size: 11 } } },
-      y: { grid: { display: false }, ticks: { font: { size: 11 } } },
-    },
-  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -197,56 +188,29 @@ export default function WeightPage() {
         <div className="lg:col-span-2 flex flex-col gap-6">
           
           <AnimatedSection delay={0}>
-            <div className="glass-card">
-              <div className="card-body p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-base-content/50">Biểu đồ xu hướng (90 ngày qua)</h3>
-                  {weights.length > 0 && (
-                    <span className="text-xs font-medium text-base-content/40 bg-base-200/50 px-2 py-0.5 rounded-md">
-                      Bắt đầu: {weights[weights.length - 1]} kg → Hiện tại: {weights[0]} kg
-                    </span>
-                  )}
+            <div className="h-96 w-full">
+              {isTrendLoading ? (
+                <div className="glass-card rounded-3xl h-full flex items-center justify-center">
+                  <span className="loading loading-spinner loading-lg text-primary" />
                 </div>
-                <div className="h-80 md:h-96">
-                  {chartData.length > 0 ? (
-                    <Line data={chartJsData} options={chartOptions} />
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <p className="text-base-content/40 text-sm">Chưa có dữ liệu biểu đồ</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+              ) : (
+                <WeightTrendChart 
+                  data={trendData} 
+                  range={trendRange} 
+                  onRangeChange={setTrendRange} 
+                />
+              )}
             </div>
           </AnimatedSection>
 
           <AnimatedSection delay={0.1}>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-4">
-              <div className="glass-card stat-card p-4 flex flex-col justify-between min-h-[110px]">
-                <div className="flex items-center justify-between text-base-content/50">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[10px]">Cân nặng</span>
-                  <Scale className="w-4 h-4 text-primary" />
-                </div>
-                <div className="mt-2">
-                  <span className="text-2xl font-black text-base-content">{currentWeight || '--'}</span>
-                  <span className="text-xs text-base-content/60 ml-1">kg</span>
-                </div>
-                <div className="text-[10px] text-base-content/50 mt-1 flex items-center gap-1">
-                  {trend ? (
-                    <>
-                      {trend.direction === 'down' ? (
-                        <span className="text-success font-semibold flex items-center">↓ Giảm {Math.abs(trend.diff)} kg</span>
-                      ) : trend.direction === 'up' ? (
-                        <span className="text-error font-semibold flex items-center">↑ Tăng {trend.diff} kg</span>
-                      ) : (
-                        <span>Không đổi</span>
-                      )}
-                      <span>(30 ngày)</span>
-                    </>
-                  ) : (
-                    <span>Chưa có xu hướng</span>
-                  )}
-                </div>
+              <div className="col-span-2 sm:col-span-4 lg:col-span-2 xl:col-span-1 min-h-[140px]">
+                {isTrendLoading ? (
+                  <div className="glass-card rounded-3xl p-5 h-full animate-pulse flex flex-col justify-between" />
+                ) : (
+                  <TrendSummaryCard data={trendData} />
+                )}
               </div>
 
               <div className="glass-card stat-card p-4 flex flex-col justify-between min-h-[110px]">

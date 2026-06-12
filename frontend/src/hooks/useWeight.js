@@ -17,6 +17,7 @@ export const useAddWeight = () => {
     onSuccess: () => {
       // Invalidate cache để cập nhật UI
       qc.invalidateQueries({ queryKey: ['weight'] });
+      qc.invalidateQueries({ queryKey: ['weightTrend'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
@@ -29,6 +30,7 @@ export const useDeleteWeight = () => {
     mutationFn: (id) => api.delete(`/weight/${id}`).then((r) => r.data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['weight'] });
+      qc.invalidateQueries({ queryKey: ['weightTrend'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });

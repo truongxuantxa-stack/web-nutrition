@@ -124,11 +124,17 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
     const macros    = metrics.macros || {};
     if (!targetCal) return [];
 
+    // Empty state: Nếu chưa nhập đồ ăn và cũng chưa nhập nước -> Không hiển thị tư vấn
+    if ((!consumed || consumed.calories === 0) && waterTotal === 0) {
+        return [];
+    }
+
     const calPct      = (consumed.calories / targetCal) * 100;
     const currentHour = new Date().getHours();
 
     // Gate cảnh báo THIẾU: kích hoạt luôn nếu là dữ liệu quá khứ (isHistorical), hoặc khi đã đạt 100% calo HOẶC sau 20:00
-    const shouldWarnDeficiency = isHistorical || calPct >= 100 || currentHour >= 20;
+    // LƯU Ý: Chỉ cảnh báo thiếu chất khi người dùng ĐÃ bắt đầu ghi nhận đồ ăn (calories > 0)
+    const shouldWarnDeficiency = (isHistorical || calPct >= 100 || currentHour >= 20) && consumed.calories > 0;
 
     // ── RDI chuẩn ────────────────────────────────────────────────────────────
     const isMale      = gender !== 'female';

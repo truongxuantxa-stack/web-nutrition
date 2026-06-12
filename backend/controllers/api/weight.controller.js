@@ -7,6 +7,7 @@
 
 const { WeightLog }                    = require('../../models');
 const { calculateBMI, classifyBMI }    = require('../../services/nutrition.service');
+const weightTrendService               = require('../../services/weightTrend.service');
 
 const toLocalDateStr = (d) => {
     const year  = d.getFullYear();
@@ -65,9 +66,21 @@ exports.getWeight = async (req, res) => {
     }
 };
 
+// ─── GET /api/v1/weight/trend ─────────────────────────────────────────────────
+exports.getWeightTrend = async (req, res) => {
+    try {
+        const { range = '30' } = req.query;
+        const trendData = await weightTrendService.buildTrendResponse(req.user.id, range);
+        return res.success(trendData);
+    } catch (err) {
+        console.error('[API] getWeightTrend error:', err);
+        return res.error('Lỗi server.', 500);
+    }
+};
+
 // ─── POST /api/v1/weight ─────────────────────────────────────────────────────
 exports.addWeight = async (req, res) => {
-    const { weight, date, note } = req.body;
+    const { weight, date, note, forceConfirm } = req.body;
     const user = req.user;
 
     try {
@@ -82,6 +95,25 @@ exports.addWeight = async (req, res) => {
         const today = toLocalDateStr(new Date());
         if (date > today) {
             return res.error('Không thể ghi cân nặng cho ngày tương lai.', 400);
+        }
+
+        if (forceConfirm !== true) {
+            const latestEMA = await weightTrendService.getLatestEMA(user.id);
+            if (latestEMA !== null) {
+                const deviation = Math.abs(weightNum - latestEMA);
+                if (deviation > 3) {
+                    return res.status(409).json({
+                        success: false,
+                        requiresConfirmation: true,
+                        outlierWarning: {
+                            message: `Cân nặng chênh lệch ${deviation.toFixed(1)}kg so với xu hướng (${latestEMA.toFixed(1)}kg).`,
+                            deviation: Number(deviation.toFixed(1)),
+                            currentTrend: latestEMA,
+                            inputWeight: weightNum
+                        }
+                    });
+                }
+            }
         }
 
         const [weightRecord, created] = await WeightLog.findOrCreate({

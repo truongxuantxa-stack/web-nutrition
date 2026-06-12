@@ -16,5 +16,6 @@ router.use('/meal-planner', requireAuthApi, require('./mealPlanner.routes'));
 router.use('/profile',      requireAuthApi, require('./profile.routes'));
 router.use('/report',        requireAuthApi, require('./report.routes'));
 router.use('/adaptive-tdee', requireAuthApi, require('./adaptiveTDEE.routes'));
+router.use('/scanner',       requireAuthApi, require('./scanner.routes'));
 
 module.exports = router;
