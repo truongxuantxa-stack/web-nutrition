@@ -14,9 +14,9 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 export default function WeightChart({ chartData = [] }) {
   if (!chartData.length) {
     return (
-      <div className="glass-card rounded-3xl">
-        <div className="card-body p-5 items-center justify-center h-48">
-          <p className="text-base-content/40 text-sm">Chưa có dữ liệu cân nặng</p>
+      <div className="tcl-card rounded-2xl">
+        <div className="p-5 flex items-center justify-center h-48">
+          <p className="text-[#96A5A8] text-sm">Chưa có dữ liệu cân nặng</p>
         </div>
       </div>
     );
@@ -72,9 +72,9 @@ export default function WeightChart({ chartData = [] }) {
   };
 
   return (
-    <div className="glass-card rounded-3xl">
-      <div className="card-body p-5 gap-2">
-        <h3 className="text-xs font-semibold uppercase tracking-widest text-base-content/50">Cân nặng 7 ngày</h3>
+    <div className="tcl-card rounded-2xl">
+      <div className="p-5 flex flex-col gap-2">
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">Cân nặng 7 ngày</h3>
         <div className="h-44">
           <Line data={data} options={options} />
         </div>

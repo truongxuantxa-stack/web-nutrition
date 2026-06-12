@@ -38,12 +38,12 @@ export default function WeightTrendChart({ data, range, onRangeChange }) {
 
   if (!rawPoints || rawPoints.length === 0) {
     return (
-      <div className="glass-card rounded-3xl p-6 h-80 flex flex-col items-center justify-center text-center">
-        <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mb-4">
+      <div className="tcl-card rounded-2xl p-6 h-80 flex flex-col items-center justify-center text-center">
+        <div className="w-16 h-16 rounded-full bg-[#F0F2F3] flex items-center justify-center mb-4">
           <span className="text-2xl">⚖️</span>
         </div>
-        <h3 className="font-semibold text-lg mb-2">Chưa có dữ liệu xu hướng</h3>
-        <p className="text-sm text-base-content/60 max-w-sm">
+        <h3 className="font-semibold text-lg mb-2 text-[#003139]">Chưa có dữ liệu xu hướng</h3>
+        <p className="text-sm text-[#96A5A8] max-w-sm">
           Hãy nhập cân nặng liên tục ít nhất 5 ngày để hệ thống có thể phân tích và loại bỏ nhiễu nước, giúp bạn thấy xu hướng thực sự.
         </p>
       </div>
@@ -249,23 +249,24 @@ export default function WeightTrendChart({ data, range, onRangeChange }) {
   ];
 
   return (
-    <div className="glass-card rounded-3xl flex flex-col h-full overflow-hidden">
+    <div className="tcl-card rounded-2xl flex flex-col h-full overflow-hidden">
       <div className="px-5 pt-5 pb-2 flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-base-content/70">Biểu đồ xu hướng</h3>
-          <div className="tooltip tooltip-right font-normal normal-case before:max-w-xs before:content-[attr(data-tip)]" data-tip="Đường xu hướng (EMA) giúp lọc bỏ các dao động ảo do lượng nước/thức ăn trong ngày, cho bạn thấy lượng mỡ/cơ thực sự đang tăng hay giảm.">
-            <div className="w-4 h-4 rounded-full border border-base-content/30 flex items-center justify-center text-[10px] text-base-content/50 cursor-help">?</div>
-          </div>
+          <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">Biểu đồ xu hướng</h3>
+          <div
+            title="Đường xu hướng (EMA) giúp lọc bỏ các dao động ảo do lượng nước/thức ăn trong ngày, cho bạn thấy lượng mỡ/cơ thực sự đang tăng hay giảm."
+            className="w-4 h-4 rounded-full border border-[#DFE3E4] flex items-center justify-center text-[10px] text-[#96A5A8] cursor-help"
+          >?</div>
         </div>
-        <div className="flex bg-base-200/50 rounded-lg p-1 backdrop-blur-sm">
+        <div className="flex bg-[#F0F2F3] rounded-lg p-1">
           {tabs.map(tab => (
             <button
               key={tab.value}
               onClick={() => onRangeChange(tab.value)}
               className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                range === tab.value 
-                  ? 'bg-primary text-primary-content shadow-sm' 
-                  : 'text-base-content/60 hover:text-base-content'
+                range === tab.value
+                  ? 'bg-[#003139] text-white shadow-sm'
+                  : 'text-[#96A5A8] hover:text-[#244348]'
               }`}
             >
               {tab.label}
@@ -273,20 +274,20 @@ export default function WeightTrendChart({ data, range, onRangeChange }) {
           ))}
         </div>
       </div>
-      
+
       <div className="flex-1 p-5 pt-2 pb-0 min-h-[250px] relative">
         <Line data={{ datasets: chartDatasets }} options={options} />
       </div>
 
       {/* Custom Legend */}
-      <div className="px-5 pb-4 pt-2 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] text-base-content/70">
+      <div className="px-5 pb-4 pt-2 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] text-[#96A5A8]">
         <div className="flex items-center gap-1.5" title="Các lần bạn nhập cân nặng hằng ngày">
-          <span className="w-2 h-2 rounded-full bg-gray-500"></span>
+          <span className="w-2 h-2 rounded-full bg-[#96A5A8]"></span>
           <span>Cân thực tế (Răng cưa)</span>
         </div>
         <div className="flex items-center gap-1.5" title="Cân nặng thực sự của bạn sau khi đã lọc nhiễu nước">
           <span className={`w-4 h-1.5 rounded-full ${isGoodDirection ? 'bg-sky-500' : (summary.direction === 'stable' ? 'bg-gray-400' : 'bg-red-500')}`}></span>
-          <span className="font-medium text-base-content">Xu hướng (Chuẩn)</span>
+          <span className="font-medium text-[#244348]">Xu hướng (Chuẩn)</span>
         </div>
         <div className="flex items-center gap-1.5" title="Nếu cân nặng nằm trong vùng này thì chỉ là do nước, không phải mỡ">
           <span className={`w-4 h-3 rounded-sm ${isGoodDirection ? 'bg-sky-500/20' : (summary.direction === 'stable' ? 'bg-gray-400/20' : 'bg-red-500/20')}`}></span>

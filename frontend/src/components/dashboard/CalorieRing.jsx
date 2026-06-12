@@ -10,7 +10,7 @@ export default function CalorieRing({ consumed, target, noCard = false }) {
 
   const content = (
     <>
-      <h3 className="text-xs font-semibold uppercase tracking-widest text-base-content/50">Calo hôm nay</h3>
+      <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">Calo hôm nay</h3>
 
       <div className="relative w-48 h-48 my-2">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
@@ -24,9 +24,8 @@ export default function CalorieRing({ consumed, target, noCard = false }) {
           <circle
             cx="60" cy="60" r={radius}
             fill="none"
-            stroke="currentColor"
+            stroke="#DFE3E4"
             strokeWidth="8"
-            className="text-base-300"
           />
           {/* Progress ring */}
           <circle
@@ -52,21 +51,21 @@ export default function CalorieRing({ consumed, target, noCard = false }) {
         </svg>
         {/* Center text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className={`text-4xl font-black tracking-tight ${percent > 100 ? 'text-error' : 'text-emerald-500'}`}>{consumed}</span>
-          <span className="text-[11px] uppercase font-bold text-base-content/40 tracking-wider">kcal</span>
-          <span className="text-[11px] text-base-content/60 font-semibold mt-1 bg-base-300/40 px-2 py-0.5 rounded-full shadow-sm">
+          <span className={`text-4xl font-black tracking-tight ${percent > 100 ? 'text-red-500' : 'text-emerald-500'}`}>{consumed}</span>
+          <span className="text-[11px] uppercase font-bold text-[#96A5A8] tracking-wider">kcal</span>
+          <span className="text-[11px] text-[#244348] font-semibold mt-1 bg-[#F0F2F3] px-2 py-0.5 rounded-full">
             {percent.toFixed(0)}% mục tiêu
           </span>
         </div>
       </div>
 
       <div className="text-center">
-        <p className="text-sm text-base-content/75">
-          Mục tiêu: <span className="font-bold text-base-content">{target} kcal</span>
+        <p className="text-sm text-[#244348]">
+          Mục tiêu: <span className="font-bold text-[#003139]">{target} kcal</span>
         </p>
-        <p className="text-xs text-base-content/50 mt-1">
+        <p className="text-xs text-[#96A5A8] mt-1">
           {percent > 100 ? (
-            <span className="text-error font-semibold">Vượt mục tiêu: {consumed - target} kcal</span>
+            <span className="text-red-500 font-semibold">Vượt mục tiêu: {consumed - target} kcal</span>
           ) : (
             <span>Còn lại: <span className="font-semibold">{target - consumed} kcal</span></span>
           )}
@@ -84,8 +83,8 @@ export default function CalorieRing({ consumed, target, noCard = false }) {
   }
 
   return (
-    <div className="glass-card">
-      <div className="card-body p-6 items-center gap-3">
+    <div className="tcl-card rounded-2xl">
+      <div className="p-6 flex flex-col items-center gap-3">
         {content}
       </div>
     </div>

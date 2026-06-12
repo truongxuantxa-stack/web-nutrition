@@ -8,17 +8,16 @@ export default function AddWeightModal({ isOpen, onClose }) {
   const addWeight = useAddWeight();
 
   const [weightInput, setWeightInput] = useState('');
-  const [dateInput, setDateInput] = useState(getToday());
-  const [noteInput, setNoteInput] = useState('');
+  const [dateInput, setDateInput]     = useState(getToday());
+  const [noteInput, setNoteInput]     = useState('');
   const [outlierWarning, setOutlierWarning] = useState(null);
 
-  // Reset fields when opening modal
   useEffect(() => {
     if (isOpen) {
       setWeightInput('');
       setDateInput(getToday());
       setNoteInput('');
-      setOutlierWarning(null); // Reset cảnh báo mỗi lần mở modal
+      setOutlierWarning(null);
     }
   }, [isOpen]);
 
@@ -26,16 +25,9 @@ export default function AddWeightModal({ isOpen, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!weightInput) {
-      toast.error('Vui lòng nhập cân nặng');
-      return;
-    }
+    if (!weightInput) { toast.error('Vui lòng nhập cân nặng'); return; }
     const val = parseFloat(weightInput);
-    if (isNaN(val) || val < 10 || val > 500) {
-      toast.error('Cân nặng phải từ 10kg đến 500kg');
-      return;
-    }
-
+    if (isNaN(val) || val < 10 || val > 500) { toast.error('Cân nặng phải từ 10kg đến 500kg'); return; }
     doSubmit(false);
   };
 
@@ -54,54 +46,49 @@ export default function AddWeightModal({ isOpen, onClose }) {
             setOutlierWarning(err.response.data.outlierWarning);
             return;
           }
-          const errMsg = err.response?.data?.message || 'Có lỗi xảy ra khi ghi nhận cân nặng';
-          toast.error(errMsg);
+          toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi ghi nhận cân nặng');
         },
       }
     );
   };
 
   return (
-    <div className="modal modal-open">
-      <div className="modal-box max-w-md w-full relative bg-base-100/90 backdrop-blur-md border border-base-200 shadow-2xl rounded-2xl">
+    <div className="tcl-modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="tcl-modal-content max-w-md w-full relative">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-base-200">
-          <h3 className="font-bold text-lg flex items-center gap-2">
-            <Scale className="w-5 h-5 text-primary" />
+        <div className="flex items-center justify-between pb-3 border-b border-[#DFE3E4] mb-4">
+          <h3 className="font-bold text-lg flex items-center gap-2 text-[#003139]">
+            <Scale className="w-5 h-5 text-[#003139]" />
             Ghi nhận cân nặng
           </h3>
           <button
             id="close-weight-modal"
             onClick={onClose}
-            className="btn btn-ghost btn-sm btn-square rounded-xl"
+            className="w-8 h-8 flex items-center justify-center rounded-xl text-[#96A5A8] hover:bg-[#F0F2F3] hover:text-[#003139] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
-          <div className="form-control">
-            <label className="label py-1">
-              <span className="label-text font-medium flex items-center gap-1.5 text-xs text-base-content/75">
-                <Calendar className="w-3.5 h-3.5 text-base-content/40" /> Ngày ghi nhận
-              </span>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div>
+            <label className="tcl-label flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-[#96A5A8]" /> Ngày ghi nhận
             </label>
             <input
               id="modal-weight-date"
               type="date"
-              className="input input-bordered input-sm rounded-xl focus:ring-2 focus:ring-primary/30 focus:border-primary transition-shadow"
+              className="tcl-input"
               max={getToday()}
               value={dateInput}
               onChange={(e) => setDateInput(e.target.value)}
             />
           </div>
 
-          <div className="form-control">
-            <label className="label py-1">
-              <span className="label-text font-medium flex items-center gap-1.5 text-xs text-base-content/75">
-                <Scale className="w-3.5 h-3.5 text-base-content/40" /> Cân nặng (kg)
-              </span>
+          <div>
+            <label className="tcl-label flex items-center gap-1.5">
+              <Scale className="w-3.5 h-3.5 text-[#96A5A8]" /> Cân nặng (kg)
             </label>
             <input
               id="modal-weight-value"
@@ -110,7 +97,7 @@ export default function AddWeightModal({ isOpen, onClose }) {
               min="10"
               max="500"
               placeholder="Ví dụ: 65.5"
-              className="input input-bordered input-sm rounded-xl focus:ring-2 focus:ring-primary/30 focus:border-primary transition-shadow"
+              className="tcl-input"
               required
               value={weightInput}
               onChange={(e) => setWeightInput(e.target.value)}
@@ -118,39 +105,37 @@ export default function AddWeightModal({ isOpen, onClose }) {
             />
           </div>
 
-          <div className="form-control">
-            <label className="label py-1">
-              <span className="label-text font-medium flex items-center gap-1.5 text-xs text-base-content/75">
-                <Edit3 className="w-3.5 h-3.5 text-base-content/40" /> Ghi chú (nếu có)
-              </span>
+          <div>
+            <label className="tcl-label flex items-center gap-1.5">
+              <Edit3 className="w-3.5 h-3.5 text-[#96A5A8]" /> Ghi chú (nếu có)
             </label>
             <input
               id="modal-weight-note"
               type="text"
               placeholder="Ví dụ: Cân lúc sáng sớm ngủ dậy"
-              className="input input-bordered input-sm rounded-xl focus:ring-2 focus:ring-primary/30 focus:border-primary transition-shadow"
+              className="tcl-input"
               value={noteInput}
               onChange={(e) => setNoteInput(e.target.value)}
             />
           </div>
 
           {outlierWarning && (
-            <div className="alert alert-warning shadow-sm mt-2 p-3 text-sm rounded-xl">
-              <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <div className="flex gap-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm">
+              <span className="text-amber-500 text-lg shrink-0">⚠️</span>
               <div>
-                <h3 className="font-bold">Cảnh báo bất thường</h3>
-                <div className="text-xs">{outlierWarning.message}</div>
+                <h4 className="font-bold text-amber-700">Cảnh báo bất thường</h4>
+                <p className="text-xs text-amber-600 mt-0.5">{outlierWarning.message}</p>
               </div>
             </div>
           )}
 
-          <div className="flex gap-2 justify-end mt-4 pt-3 border-t border-base-200">
+          <div className="flex gap-2 justify-end mt-2 pt-3 border-t border-[#DFE3E4]">
             {outlierWarning ? (
               <>
                 <button
                   type="button"
                   onClick={() => setOutlierWarning(null)}
-                  className="btn btn-ghost btn-sm rounded-xl"
+                  className="tcl-btn-ghost text-sm py-2 px-4"
                 >
                   Sửa lại
                 </button>
@@ -158,9 +143,11 @@ export default function AddWeightModal({ isOpen, onClose }) {
                   type="button"
                   onClick={() => doSubmit(true)}
                   disabled={addWeight.isPending}
-                  className="btn btn-warning btn-sm rounded-xl px-4"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 text-white font-semibold text-sm rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
                 >
-                  {addWeight.isPending ? <span className="loading loading-spinner loading-xs" /> : 'Vẫn lưu'}
+                  {addWeight.isPending ? (
+                    <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : 'Vẫn lưu'}
                 </button>
               </>
             ) : (
@@ -169,7 +156,7 @@ export default function AddWeightModal({ isOpen, onClose }) {
                   id="cancel-weight-modal"
                   type="button"
                   onClick={onClose}
-                  className="btn btn-ghost btn-sm rounded-xl"
+                  className="tcl-btn-ghost text-sm py-2 px-4"
                 >
                   Hủy
                 </button>
@@ -177,10 +164,10 @@ export default function AddWeightModal({ isOpen, onClose }) {
                   id="submit-weight-modal"
                   type="submit"
                   disabled={addWeight.isPending}
-                  className="btn btn-primary btn-sm rounded-xl gap-2 px-4"
+                  className="tcl-btn-primary text-sm py-2 px-4 gap-2"
                 >
                   {addWeight.isPending ? (
-                    <span className="loading loading-spinner loading-xs" />
+                    <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     <Plus className="w-4 h-4" />
                   )}
@@ -191,7 +178,6 @@ export default function AddWeightModal({ isOpen, onClose }) {
           </div>
         </form>
       </div>
-      <div className="modal-backdrop bg-black/45 backdrop-blur-xs" onClick={onClose} />
     </div>
   );
 }

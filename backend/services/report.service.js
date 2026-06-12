@@ -179,8 +179,16 @@ const getReportData = async (userId, range = 'week') => {
         weightByDate[key] = log.weight; // Lấy cân nặng của ngày đó
     });
 
-    // ── Tổng hợp daily log (chỉ ngày CÓ diary) ──────────────────────────────
-    const dailyLog = Object.entries(diaryByDate).map(([date, entries]) => {
+    // ── Tổng hợp daily log (tất cả các ngày có bất kỳ hoạt động nào) ─────────
+    const allDates = new Set([
+        ...Object.keys(diaryByDate),
+        ...Object.keys(exerciseByDate),
+        ...Object.keys(waterByDate),
+        ...Object.keys(weightByDate)
+    ]);
+
+    const dailyLog = Array.from(allDates).sort().map(date => {
+        const entries = diaryByDate[date] || [];
         const nutrition = sumNutritionFromEntries(entries);
         const dayWater = waterByDate[date] || 0;
 

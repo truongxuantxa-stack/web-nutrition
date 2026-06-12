@@ -47,9 +47,9 @@ export default function MacrosChart({ consumed, target }) {
   };
 
   return (
-    <div className="glass-card rounded-3xl">
-      <div className="card-body p-5 gap-3">
-        <h3 className="text-xs font-semibold uppercase tracking-widest text-base-content/50">Macros</h3>
+    <div className="tcl-card rounded-2xl">
+      <div className="p-5 flex flex-col gap-3">
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">Macros</h3>
         <div className="h-48">
           <Doughnut data={chartData} options={options} />
         </div>
@@ -63,9 +63,9 @@ export default function MacrosChart({ consumed, target }) {
             <div key={label}>
               <span className={`font-bold ${color}`}>{val}g</span>
               {goal != null && (
-                <span className="text-base-content/40"> /{goal}g</span>
+                <span className="text-[#96A5A8]"> /{goal}g</span>
               )}
-              <p className="text-base-content/50">{label}</p>
+              <p className="text-[#96A5A8]">{label}</p>
             </div>
           ))}
         </div>

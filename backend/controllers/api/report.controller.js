@@ -6,7 +6,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const { getReportData }    = require('../../services/report.service');
-const { generateReportPDF } = require('../../services/pdf.service');
+const { generateReportPDF, renderAllFooters } = require('../../services/pdf.service');
 
 /**
  * GET /api/report/pdf?range=week|month
@@ -25,13 +25,25 @@ const downloadReport = async (req, res) => {
         const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
         const filename = `baocao-dinhduong-${rangeLabel}-${today}.pdf`;
 
-        // 3. Set headers trả về PDF
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        // 3. Tạo PDF và thu thập vào buffer
+        // Lý do dùng buffer thay vì stream: PDFKit với bufferPages=true cần giữ toàn bộ
+        // trang trong memory để renderAllFooters dùng switchToPage(). Pipe trực tiếp
+        // sẽ flush buffer sớm gây mất nội dung.
+        const pdfDoc = await generateReportPDF(reportData);
+        
+        const chunks = [];
+        pdfDoc.on('data', chunk => chunks.push(chunk));
+        pdfDoc.on('end', () => {
+            const pdfBuffer = Buffer.concat(chunks);
+            
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            res.setHeader('Content-Length', pdfBuffer.length);
+            res.end(pdfBuffer);
+        });
 
-        // 4. Stream PDF trực tiếp vào response (không ghi file tạm)
-        const pdfDoc = generateReportPDF(reportData);
-        pdfDoc.pipe(res);
+        renderAllFooters(pdfDoc);
+        pdfDoc.end();
 
     } catch (err) {
         console.error('[ReportController] Lỗi xuất PDF:', err);

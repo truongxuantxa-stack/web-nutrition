@@ -44,38 +44,38 @@ export default function WeeklyCalendarStrip({ date, onDateChange }) {
   const monthYearLabel = selected.format('[Tháng] MM, YYYY');
   
   return (
-    <div className="glass-card p-4 flex flex-col gap-3">
+    <div className="tcl-card p-4 flex flex-col gap-3">
       {/* Header của lịch tuần */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-emerald-500" />
-          <span className="text-sm font-bold text-base-content/85">{monthYearLabel}</span>
+          <span className="text-sm font-bold text-[#244348]">{monthYearLabel}</span>
         </div>
-        
+
         <div className="flex items-center gap-1">
           <button
             onClick={goPrevWeek}
-            className="btn btn-ghost btn-xs btn-square hover:bg-base-200"
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-[#244348] hover:bg-[#F0F2F3] transition-colors"
             title="Tuần trước"
           >
-            <ChevronLeft className="w-4.5 h-4.5" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
-          
+
           <button
             onClick={() => onDateChange(today)}
             disabled={date === today}
-            className="btn btn-xs btn-ghost px-2.5 font-bold text-[10px] uppercase tracking-wider disabled:opacity-20 hover:bg-base-200"
+            className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#244348] hover:bg-[#F0F2F3] rounded-lg disabled:opacity-20 transition-colors"
           >
             Hôm nay
           </button>
-          
+
           <button
             onClick={goNextWeek}
             disabled={selected.endOf('week').isAfter(dayjs(today)) || selected.format('YYYY-MM-DD') === today}
-            className="btn btn-ghost btn-xs btn-square disabled:opacity-20 hover:bg-base-200"
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-[#244348] hover:bg-[#F0F2F3] disabled:opacity-20 transition-colors"
             title="Tuần sau"
           >
-            <ChevronRight className="w-4.5 h-4.5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -83,13 +83,13 @@ export default function WeeklyCalendarStrip({ date, onDateChange }) {
       {/* 7 ngày trong tuần */}
       <div className="grid grid-cols-7 gap-1 sm:gap-2">
         {days.map((day) => {
-          const dayStr = day.format('YYYY-MM-DD');
+          const dayStr    = day.format('YYYY-MM-DD');
           const isSelected = dayStr === date;
-          const isToday = dayStr === today;
-          const isFuture = day.isAfter(dayjs(today));
-          const dayName = dayNamesVi[day.day()];
-          const dayNum = day.date();
-          
+          const isToday   = dayStr === today;
+          const isFuture  = day.isAfter(dayjs(today));
+          const dayName   = dayNamesVi[day.day()];
+          const dayNum    = day.date();
+
           return (
             <button
               key={dayStr}
@@ -99,24 +99,24 @@ export default function WeeklyCalendarStrip({ date, onDateChange }) {
                 isSelected
                   ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-lg shadow-emerald-500/20 scale-105 z-10'
                   : isFuture
-                  ? 'opacity-25 cursor-not-allowed text-base-content/30'
-                  : 'hover:bg-base-200/60 active:scale-95 text-base-content/80'
+                  ? 'opacity-25 cursor-not-allowed text-[#96A5A8]'
+                  : 'hover:bg-[#F0F2F3] active:scale-95 text-[#244348]'
               }`}
             >
               {/* Tên thứ */}
               <span className={`text-[9px] font-bold uppercase tracking-wider ${
-                isSelected ? 'text-white/80' : isToday ? 'text-emerald-500' : 'text-base-content/40'
+                isSelected ? 'text-white/80' : isToday ? 'text-emerald-500' : 'text-[#96A5A8]'
               }`}>
                 {dayName}
               </span>
-              
+
               {/* Số ngày */}
               <span className={`text-sm sm:text-base font-black mt-0.5 sm:mt-1 ${
-                isSelected ? 'text-white' : 'text-base-content'
+                isSelected ? 'text-white' : 'text-[#003139]'
               }`}>
                 {dayNum}
               </span>
-              
+
               {/* Dấu chấm tròn biểu thị ngày hiện tại */}
               {isToday && !isSelected && (
                 <span className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />

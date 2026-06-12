@@ -42,31 +42,31 @@ export default function DiaryEntryRow({ entry, onDelete }) {
   const emoji = getFoodEmoji(entry.foodName);
 
   return (
-    <li className="flex flex-col px-4 py-2 hover:bg-base-200/40 transition-colors group">
+    <li className="flex flex-col px-4 py-2 hover:bg-[#F0F2F3]/60 transition-colors group">
       <div className="flex items-center justify-between gap-x-3 w-full">
         {/* Cột thông tin món ăn */}
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <SafeImage
             src={entry.imageUrl}
             alt={entry.foodName}
-            className="w-6 h-6 rounded-full object-cover shrink-0 bg-base-300 border border-base-content/10 shadow-sm cursor-zoom-in hover:scale-110 active:scale-95 transition-transform"
+            className="w-6 h-6 rounded-full object-cover shrink-0 bg-[#DFE3E4] border border-[#DFE3E4] shadow-sm cursor-zoom-in hover:scale-110 active:scale-95 transition-transform"
             onClick={() => setIsLightboxOpen(true)}
             fallback={
               <span className="text-base shrink-0 select-none">{emoji}</span>
             }
           />
-          <p className="text-sm font-semibold truncate text-base-content/90" title={entry.foodName}>
+          <p className="text-sm font-semibold truncate text-[#003139]" title={entry.foodName}>
             {entry.foodName}
           </p>
-          <span className="text-base-content/30 text-xs shrink-0">·</span>
-          <span className="text-xs text-base-content/40 font-semibold whitespace-nowrap shrink-0">
+          <span className="text-[#DFE3E4] text-xs shrink-0">·</span>
+          <span className="text-xs text-[#96A5A8] font-semibold whitespace-nowrap shrink-0">
             {entry.unit === '100g' ? `${entry.amount}g` : entry.unit === '100ml' ? `${entry.amount}ml` : `${entry.amount} ${entry.unit}`}
           </span>
         </div>
 
         {/* Calo & Nút xóa */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <span className="text-xs font-extrabold text-primary min-w-[55px] text-right whitespace-nowrap">
+          <span className="text-xs font-extrabold text-[#003139] min-w-[55px] text-right whitespace-nowrap">
             {entry.caloriesSnapshot} kcal
           </span>
 
@@ -75,10 +75,10 @@ export default function DiaryEntryRow({ entry, onDelete }) {
               id={`delete-entry-${entry.id}`}
               onClick={handleDelete}
               onBlur={() => setConfirming(false)}
-              className={`btn btn-ghost btn-xs btn-square transition-all duration-200 ${
+              className={`w-6 h-6 flex items-center justify-center rounded-md transition-all duration-200 ${
                 confirming
-                  ? 'text-error bg-error/10 opacity-100'
-                  : 'text-base-content/20 hover:text-base-content/60 md:opacity-0 md:group-hover:opacity-100 opacity-100'
+                  ? 'text-red-500 bg-red-50 opacity-100'
+                  : 'text-[#DFE3E4] hover:text-[#96A5A8] md:opacity-0 md:group-hover:opacity-100 opacity-100'
               }`}
               title={confirming ? 'Bấm lần nữa để xác nhận xóa' : 'Xóa món'}
               aria-label="Xóa món"
@@ -95,20 +95,20 @@ export default function DiaryEntryRow({ entry, onDelete }) {
           {/* Macros chính */}
           <div className="pt-1.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5">
             <span className="text-blue-500/80 font-medium">P: {entry.proteinSnapshot}g</span>
-            <span className="text-base-content/20">·</span>
+            <span className="text-[#DFE3E4]">·</span>
             <span className="text-amber-500/80 font-medium">C: {entry.carbsSnapshot}g</span>
-            <span className="text-base-content/20">·</span>
+            <span className="text-[#DFE3E4]">·</span>
             <span className="text-pink-500/80 font-medium">F: {entry.fatSnapshot}g</span>
             {entry.fiberSnapshot != null && entry.fiberSnapshot > 0 && (
               <>
-                <span className="text-base-content/20">·</span>
+                <span className="text-[#DFE3E4]">·</span>
                 <span className="text-green-600/80 font-medium">Xơ: {entry.fiberSnapshot}g</span>
               </>
             )}
           </div>
           {/* Vi chất — chỉ hiện nếu có ít nhất 1 giá trị */}
           {(entry.vitaminASnapshot > 0 || entry.vitaminCSnapshot > 0 || entry.calciumSnapshot > 0 || entry.ironSnapshot > 0) && (
-            <div className="pb-0.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5 text-base-content/50">
+            <div className="pb-0.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[#96A5A8]">
               {entry.vitaminASnapshot > 0 && (
                 <span>🥕 Vitamin A: {Math.round(entry.vitaminASnapshot)}µg</span>
               )}

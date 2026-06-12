@@ -141,15 +141,16 @@ export default function WeightPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[#003139]">Theo dõi Cân nặng</h1>
-        <p className="text-[#96A5A8] text-sm">Ghi nhận chỉ số cơ thể & phân tích xu hướng</p>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Left 2/3 */}
         <div className="lg:col-span-2 flex flex-col gap-6">
+          {/* Header */}
+          <div>
+            <h1 className="text-2xl font-bold text-[#003139]">Theo dõi Cân nặng</h1>
+            <p className="text-[#96A5A8] text-sm">Ghi nhận chỉ số cơ thể & phân tích xu hướng</p>
+          </div>
+
           {/* Trend Chart */}
           <div className="h-96 w-full">
             {isTrendLoading ? (
