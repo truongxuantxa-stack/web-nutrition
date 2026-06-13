@@ -37,20 +37,20 @@ export default function WaterTracker({ total, goal, logs = [], date }) {
   };
 
   return (
-    <div className="tcl-card relative z-20">
-      <div className="p-4 flex flex-col gap-3">
+    <div className="tcl-card bg-white border border-[#DFE3E4] rounded-2xl p-6 shadow-sm relative z-20">
+      <div className="flex flex-col gap-3">
 
         {/* ── Hàng chính: icon | số liệu + bar | nút thêm nhanh | settings ── */}
         <div className="flex items-center gap-4 flex-wrap">
 
           {/* Icon + Label + số kèm tooltip */}
           <div className="flex items-center gap-2 shrink-0">
-            <Droplets className="w-5 h-5 text-sky-400" />
+            <Droplets className="w-5 h-5 text-[#3B82A0]" />
             <div className="flex items-center gap-1.5">
               <span className="text-base font-black text-[#003139]">{total.toLocaleString()}</span>
               <div
                 title="Mặc định tính theo công thức y khoa: Cân nặng × 35 ml. Có thể nhấp icon bánh răng bên phải để tùy chỉnh lại."
-                className="flex items-center gap-1 text-xs text-[#96A5A8] font-medium hover:text-sky-500 transition-colors cursor-help"
+                className="flex items-center gap-1 text-xs text-[#96A5A8] font-medium hover:text-[#3B82A0] transition-colors cursor-help"
               >
                 <span>/ {goal.toLocaleString()} ml</span>
                 <HelpCircle className="w-3.5 h-3.5 opacity-60" />
@@ -62,12 +62,12 @@ export default function WaterTracker({ total, goal, logs = [], date }) {
           <div className="flex-1 min-w-[120px] flex flex-col gap-1.5">
             <div className="h-2.5 rounded-full bg-[#DFE3E4] overflow-hidden relative">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-sky-400 to-sky-500 transition-all duration-700 ease-out"
+                className="h-full rounded-full bg-[#3B82A0] transition-all duration-700 ease-out"
                 style={{ width: `${percent}%` }}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent animate-[pulse_2.5s_infinite]" />
             </div>
-            <span className={`text-[10px] font-bold ${percent >= 100 ? 'text-sky-500 animate-bounce' : 'text-[#96A5A8]'}`}>
+            <span className={`text-[10px] font-bold ${percent >= 100 ? 'text-[#3B82A0] animate-bounce' : 'text-[#96A5A8]'}`}>
               {percent >= 100 ? '🎉 Đạt mục tiêu nước uống hôm nay!' : `Còn lại ${(goal - total).toLocaleString()} ml`}
             </span>
           </div>
@@ -80,7 +80,7 @@ export default function WaterTracker({ total, goal, logs = [], date }) {
                 id={`water-quick-${ml}`}
                 onClick={() => addWater.mutate({ amount: ml })}
                 disabled={addWater.isPending}
-                className="inline-flex items-center justify-center rounded-full border border-sky-400/40 text-sky-500 hover:bg-sky-400 hover:text-white hover:border-sky-400 hover:scale-105 active:scale-95 transition-all duration-300 px-3 py-1 text-xs font-extrabold"
+                className="inline-flex items-center justify-center rounded-full border border-[#3B82A0]/40 text-[#3B82A0] hover:bg-[#3B82A0] hover:text-white hover:border-[#3B82A0] hover:scale-105 active:scale-95 transition-all duration-300 px-3 py-1 text-xs font-extrabold"
               >
                 +{ml}
               </button>
@@ -88,7 +88,7 @@ export default function WaterTracker({ total, goal, logs = [], date }) {
             <button
               id="water-custom-toggle"
               onClick={() => setShowCustom(s => !s)}
-              className="w-7 h-7 flex items-center justify-center rounded-full text-sky-500/70 hover:text-sky-500 hover:bg-sky-500/10 transition-all duration-300"
+              className="w-7 h-7 flex items-center justify-center rounded-full text-[#3B82A0]/70 hover:text-[#3B82A0] hover:bg-[#3B82A0]/10 transition-all duration-300"
               title="Nhập ml tùy chỉnh"
             >
               <Plus className="w-4 h-4" />
@@ -158,7 +158,7 @@ export default function WaterTracker({ total, goal, logs = [], date }) {
         {showLogs && logs.length > 0 && (
           <ul className="flex flex-wrap gap-2 mt-1 pt-3 border-t border-[#DFE3E4]">
             {logs.map(log => (
-              <li key={log.id} className="flex items-center gap-1.5 bg-sky-500/10 text-sky-600 text-[11px] font-medium rounded-full px-3 py-1 group">
+              <li key={log.id} className="flex items-center gap-1.5 bg-[#3B82A0]/10 text-[#3B82A0] text-[11px] font-medium rounded-full px-3 py-1 group">
                 <span>💧 {log.amount} ml</span>
                 <button
                   id={`water-delete-${log.id}`}

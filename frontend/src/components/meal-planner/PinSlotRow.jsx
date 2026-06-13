@@ -21,7 +21,7 @@ export default function PinSlotRow({ slot, pinnedFoodId, onPinChange }) {
   const pinnedFood = foods.find(f => f.id === pinnedFoodId);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 glass-card hover:border-primary/30 transition-all">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 tcl-card transition-all">
       <div className="flex items-center gap-2.5">
         <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-semibold ${meta.color}`}>
           <span className="text-base">{meta.icon}</span>

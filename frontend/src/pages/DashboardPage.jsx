@@ -140,10 +140,10 @@ export default function DashboardPage() {
 
       {/* ── Macro Summary Cards Row ──────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MacroSummaryCard icon="🥩" label="Protein"  value={consumed.protein} unit="g"    target={metrics?.macros?.protein || 0} colorScheme="blue" />
-        <MacroSummaryCard icon="🍚" label="Carbs"    value={consumed.carbs}   unit="g"    target={metrics?.macros?.carbs   || 0} colorScheme="amber" />
-        <MacroSummaryCard icon="🥑" label="Chất béo" value={consumed.fat}     unit="g"    target={metrics?.macros?.fat     || 0} colorScheme="pink" />
-        <MacroSummaryCard icon="🔥" label="Calo đốt" value={totalBurned}      unit="kcal" target={0}                             colorScheme="emerald" />
+        <MacroSummaryCard icon="🥩" label="Protein"  value={consumed.protein} unit="g"    target={metrics?.macros?.protein || 0} colorScheme="protein" />
+        <MacroSummaryCard icon="🍚" label="Carbs"    value={consumed.carbs}   unit="g"    target={metrics?.macros?.carbs   || 0} colorScheme="carbs" />
+        <MacroSummaryCard icon="🥑" label="Chất béo" value={consumed.fat}     unit="g"    target={metrics?.macros?.fat     || 0} colorScheme="fat" />
+        <MacroSummaryCard icon="🔥" label="Calo đốt" value={totalBurned}      unit="kcal" target={0}                             colorScheme="calories" />
       </div>
 
       {/* ── Bento Grid Layout ────────────────────────────────────────── */}
@@ -167,10 +167,10 @@ export default function DashboardPage() {
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center text-sm">
                   <span className="flex items-center gap-1.5 font-medium text-[#244348]">🥩 Protein</span>
-                  <span className="font-semibold text-blue-500">{consumed.protein}g <span className="text-xs font-normal text-[#96A5A8]">/ {metrics?.macros?.protein || 0}g</span></span>
+                  <span className="font-semibold text-[#003139]">{consumed.protein}g <span className="text-xs font-normal text-[#96A5A8]">/ {metrics?.macros?.protein || 0}g</span></span>
                 </div>
                 <div className="h-2 bg-[#F0F2F3] rounded-full overflow-hidden">
-                  <div className="h-full rounded-full bg-blue-500 transition-all duration-500" style={{ width: `${Math.min(macroProgress?.protein?.percent || 0, 100)}%` }} />
+                  <div className="h-full rounded-full bg-[#003139] transition-all duration-500" style={{ width: `${Math.min(((consumed.protein || 0) / (metrics?.macros?.protein || 1)) * 100, 100)}%` }} />
                 </div>
               </div>
 
@@ -178,10 +178,10 @@ export default function DashboardPage() {
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center text-sm">
                   <span className="flex items-center gap-1.5 font-medium text-[#244348]">🍚 Carbs</span>
-                  <span className="font-semibold text-amber-500">{consumed.carbs}g <span className="text-xs font-normal text-[#96A5A8]">/ {metrics?.macros?.carbs || 0}g</span></span>
+                  <span className="font-semibold text-[#003139]">{consumed.carbs}g <span className="text-xs font-normal text-[#96A5A8]">/ {metrics?.macros?.carbs || 0}g</span></span>
                 </div>
                 <div className="h-2 bg-[#F0F2F3] rounded-full overflow-hidden">
-                  <div className="h-full rounded-full bg-amber-400 transition-all duration-500" style={{ width: `${Math.min(macroProgress?.carbs?.percent || 0, 100)}%` }} />
+                  <div className="h-full rounded-full bg-[#C87C46] transition-all duration-500" style={{ width: `${Math.min(((consumed.carbs || 0) / (metrics?.macros?.carbs || 1)) * 100, 100)}%` }} />
                 </div>
               </div>
 
@@ -189,10 +189,10 @@ export default function DashboardPage() {
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center text-sm">
                   <span className="flex items-center gap-1.5 font-medium text-[#244348]">🥑 Chất béo</span>
-                  <span className="font-semibold text-pink-500">{consumed.fat}g <span className="text-xs font-normal text-[#96A5A8]">/ {metrics?.macros?.fat || 0}g</span></span>
+                  <span className="font-semibold text-[#003139]">{consumed.fat}g <span className="text-xs font-normal text-[#96A5A8]">/ {metrics?.macros?.fat || 0}g</span></span>
                 </div>
                 <div className="h-2 bg-[#F0F2F3] rounded-full overflow-hidden">
-                  <div className="h-full rounded-full bg-pink-400 transition-all duration-500" style={{ width: `${Math.min(macroProgress?.fat?.percent || 0, 100)}%` }} />
+                  <div className="h-full rounded-full bg-[#96A5A8] transition-all duration-500" style={{ width: `${Math.min(((consumed.fat || 0) / (metrics?.macros?.fat || 1)) * 100, 100)}%` }} />
                 </div>
               </div>
             </div>
@@ -248,7 +248,7 @@ export default function DashboardPage() {
                 <span className="text-[10px] uppercase font-semibold text-[#96A5A8] tracking-wider">Xu hướng:</span>
                 <span className="text-xs font-bold text-[#003139]">{trend.latest} kg</span>
                 {trend.diff !== 0 && (
-                  <span className={`inline-flex items-center gap-0.5 text-xs font-bold px-2 py-0.5 rounded-full ${trend.isDown ? 'bg-[#5FE089]/15 text-[#2EA850]' : 'bg-red-100 text-red-600'}`}>
+                  <span className={`inline-flex items-center gap-0.5 text-xs font-bold px-2 py-0.5 rounded-full ${trend.isDown ? 'bg-[#5FE089]/15 text-[#2EA850]' : 'bg-[#DC2626]/10 text-[#DC2626]'}`}>
                     {trend.isDown ? <TrendingDown className="w-3.5 h-3.5" /> : <TrendingUp className="w-3.5 h-3.5" />}
                     {Math.abs(trend.diff)} kg
                   </span>

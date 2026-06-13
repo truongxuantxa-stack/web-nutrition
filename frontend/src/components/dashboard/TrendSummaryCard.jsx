@@ -5,7 +5,7 @@ export default function TrendSummaryCard({ data }) {
 
   if (!hasSufficientData || !summary.trendWeight) {
     return (
-      <div className="tcl-card rounded-2xl p-5 flex flex-col justify-center min-h-[140px]">
+      <div className="tcl-card rounded-2xl p-5 flex flex-col justify-center min-h-[110px] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8] mb-2">Xu hướng</h3>
         <p className="text-sm text-[#244348]">Cần thêm dữ liệu để tính toán xu hướng.</p>
       </div>
@@ -53,7 +53,7 @@ export default function TrendSummaryCard({ data }) {
   const isBadTrend  = (direction === 'up' && !isGoalGain) || (direction === 'down' && isGoalGain);
 
   return (
-    <div className="tcl-card rounded-2xl p-5 relative overflow-hidden group">
+    <div className="tcl-card rounded-2xl p-5 relative overflow-hidden group min-h-[110px] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
       {/* Background decoration */}
       <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full blur-2xl opacity-20 transition-colors duration-500 ${
         isGoodTrend ? 'bg-[#5FE089]' : isBadTrend ? 'bg-red-500' : 'bg-[#DFE3E4]'

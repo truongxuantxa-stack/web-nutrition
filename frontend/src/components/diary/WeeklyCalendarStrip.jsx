@@ -44,11 +44,11 @@ export default function WeeklyCalendarStrip({ date, onDateChange }) {
   const monthYearLabel = selected.format('[Tháng] MM, YYYY');
   
   return (
-    <div className="tcl-card p-4 flex flex-col gap-3">
+    <div className="tcl-card p-5 flex flex-col gap-3">
       {/* Header của lịch tuần */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-emerald-500" />
+          <Calendar className="w-4 h-4 text-[#003139]" />
           <span className="text-sm font-bold text-[#244348]">{monthYearLabel}</span>
         </div>
 
@@ -97,7 +97,7 @@ export default function WeeklyCalendarStrip({ date, onDateChange }) {
               disabled={isFuture}
               className={`flex flex-col items-center justify-center py-2 sm:py-3 rounded-2xl transition-all duration-300 relative ${
                 isSelected
-                  ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-lg shadow-emerald-500/20 scale-105 z-10'
+                  ? 'bg-[#003139] text-white shadow-lg shadow-[#003139]/20 scale-105 z-10'
                   : isFuture
                   ? 'opacity-25 cursor-not-allowed text-[#96A5A8]'
                   : 'hover:bg-[#F0F2F3] active:scale-95 text-[#244348]'
@@ -105,7 +105,7 @@ export default function WeeklyCalendarStrip({ date, onDateChange }) {
             >
               {/* Tên thứ */}
               <span className={`text-[9px] font-bold uppercase tracking-wider ${
-                isSelected ? 'text-white/80' : isToday ? 'text-emerald-500' : 'text-[#96A5A8]'
+                isSelected ? 'text-white/80' : isToday ? 'text-[#2EA850]' : 'text-[#96A5A8]'
               }`}>
                 {dayName}
               </span>
@@ -119,7 +119,7 @@ export default function WeeklyCalendarStrip({ date, onDateChange }) {
 
               {/* Dấu chấm tròn biểu thị ngày hiện tại */}
               {isToday && !isSelected && (
-                <span className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-[#2EA850] animate-pulse" />
               )}
             </button>
           );

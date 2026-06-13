@@ -17,8 +17,8 @@ export default function MacrosChart({ consumed, target }) {
     labels  : ['Protein', 'Carbs', 'Fat'],
     datasets: [{
       data           : [protein, carbs, fat],
-      backgroundColor: ['#3b82f6', '#f59e0b', '#ec4899'],
-      borderColor    : ['#2563eb', '#d97706', '#db2777'],
+      backgroundColor: ['#003139', '#C87C46', '#96A5A8'],
+      borderColor    : ['#002126', '#A36031', '#7E8D90'],
       borderWidth    : 2,
       hoverOffset    : 4,
     }],
@@ -49,16 +49,16 @@ export default function MacrosChart({ consumed, target }) {
   return (
     <div className="tcl-card rounded-2xl">
       <div className="p-5 flex flex-col gap-3">
-        <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">Macros</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">🍽️ Tỷ lệ dinh dưỡng</h3>
         <div className="h-48">
           <Doughnut data={chartData} options={options} />
         </div>
         {/* Text summary */}
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
           {[
-            { label: 'Protein', val: protein, goal: target?.protein, color: 'text-blue-500' },
-            { label: 'Carbs',   val: carbs,   goal: target?.carbs,   color: 'text-amber-500' },
-            { label: 'Fat',     val: fat,     goal: target?.fat,     color: 'text-pink-500' },
+            { label: 'Protein', val: protein, goal: target?.protein, color: 'text-[#003139]' },
+            { label: 'Carbs',   val: carbs,   goal: target?.carbs,   color: 'text-[#003139]' },
+            { label: 'Fat',     val: fat,     goal: target?.fat,     color: 'text-[#003139]' },
           ].map(({ label, val, goal, color }) => (
             <div key={label}>
               <span className={`font-bold ${color}`}>{val}g</span>

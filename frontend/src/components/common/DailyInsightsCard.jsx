@@ -3,29 +3,25 @@ import { ChevronDown, ChevronUp, Lock } from 'lucide-react';
 
 // ─── Config giao diện theo severity — TCL palette ────────────────────────────
 const SEVERITY_STYLE = {
-  danger:     { border: 'border-l-red-500',       bg: 'bg-red-50',              badge: 'bg-red-100 text-red-600',             label: 'Cảnh báo' },
-  warning:    { border: 'border-l-amber-500',      bg: 'bg-amber-50',            badge: 'bg-amber-100 text-amber-600',         label: 'Lưu ý'    },
-  water:      { border: 'border-l-blue-500',       bg: 'bg-blue-50',             badge: 'bg-blue-100 text-blue-600',           label: 'Nước'     },
-  suggestion: { border: 'border-l-[#5FE089]',      bg: 'bg-[#5FE089]/8',         badge: 'bg-[#5FE089]/15 text-[#2EA850]',      label: 'Gợi ý'   },
+  danger:     { border: 'border-l-[#DC2626]',       bg: 'bg-white',              badge: 'bg-[#DC2626]/10 text-[#DC2626]',             label: 'Cảnh báo' },
+  warning:    { border: 'border-l-[#F59E0B]',      bg: 'bg-white',            badge: 'bg-[#F59E0B]/10 text-[#D97706]',         label: 'Lưu ý'    },
+  water:      { border: 'border-l-[#3B82A0]',       bg: 'bg-white',             badge: 'bg-[#3B82A0]/10 text-[#3B82A0]',           label: 'Nước'     },
+  suggestion: { border: 'border-l-[#2EA850]',      bg: 'bg-white',         badge: 'bg-[#2EA850]/10 text-[#2EA850]',      label: 'Gợi ý'   },
 };
 
 // ─── Màu score circle theo điểm ─────────────────────────────────────────────
 const getScoreColor = (score) => {
   if (score === null) return { ring: '#DFE3E4', text: 'text-[#96A5A8]' };
-  if (score >= 90)   return { ring: '#22c55e',  text: 'text-[#2EA850]' };
-  if (score >= 75)   return { ring: '#3b82f6',  text: 'text-blue-600' };
-  if (score >= 60)   return { ring: '#f59e0b',  text: 'text-amber-500' };
-  if (score >= 40)   return { ring: '#f97316',  text: 'text-orange-500' };
-  return             { ring: '#ef4444',          text: 'text-red-500' };
+  if (score >= 70)    return { ring: '#2EA850', text: 'text-[#2EA850]' };
+  if (score >= 40)    return { ring: '#003139', text: 'text-[#003139]' };
+  return               { ring: '#DC2626', text: 'text-[#DC2626]' };
 };
 
 // ─── Màu gradient progress bar theo điểm ────────────────────────────────────
 const getScoreBarClass = (score) => {
-  if (score >= 90) return 'from-emerald-400 to-emerald-600';
-  if (score >= 75) return 'from-blue-400 to-blue-600';
-  if (score >= 60) return 'from-amber-400 to-amber-500';
-  if (score >= 40) return 'from-orange-400 to-orange-500';
-  return                  'from-red-400 to-red-600';
+  if (score >= 70) return 'from-[#5FE089] to-[#2EA850]';
+  if (score >= 40) return 'from-[#4A767E] to-[#003139]';
+  return                  'from-[#ef4444] to-[#DC2626]';
 };
 
 // ─── Bonus key → icon mapping ────────────────────────────────────────────────
@@ -109,12 +105,12 @@ export default function DailyInsightsCard({ insights = [], healthScore = null, m
   const strokeDashoffset = circumference - pct * circumference;
 
   return (
-    <div className="tcl-card rounded-2xl p-5 flex flex-col gap-4">
+    <div className="tcl-card bg-white border border-[#DFE3E4] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
 
       {/* Header */}
       <div className="flex items-center gap-2">
-        <span className="text-xl">🧠</span>
-        <h3 className="font-bold text-[#003139] text-sm">Góc tư vấn hôm nay</h3>
+        <span className="text-lg">🧠</span>
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">Phân tích AI</h3>
       </div>
 
       {/* Score Section */}

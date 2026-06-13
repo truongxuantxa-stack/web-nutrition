@@ -21,21 +21,21 @@ export default function WaterProgress({ total, goal, date }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8] flex items-center gap-1.5">
-          <Droplets className="w-4 h-4 text-blue-500" />
+          <Droplets className="w-4 h-4 text-[#3B82A0]" />
           Nước uống
         </h3>
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 text-[10px] font-bold">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#3B82A0]/10 text-[#3B82A0] text-[10px] font-bold">
           {percent.toFixed(0)}%
         </span>
       </div>
 
       {/* Big Visual Metric */}
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl flex-shrink-0">
-          💧
+        <div className="w-12 h-12 rounded-xl bg-[#3B82A0]/10 flex items-center justify-center flex-shrink-0">
+          <Droplets className="w-6 h-6 text-[#3B82A0]" />
         </div>
         <div>
-          <div className="text-2xl font-extrabold text-blue-600 flex items-baseline gap-0.5">
+          <div className="text-2xl font-extrabold text-[#3B82A0] flex items-baseline gap-0.5">
             {total}
             <span className="text-xs text-[#96A5A8] font-normal ml-1">/ {goal} ml</span>
           </div>
@@ -46,9 +46,9 @@ export default function WaterProgress({ total, goal, date }) {
       </div>
 
       {/* Progress bar */}
-      <div className="h-2.5 bg-blue-50 rounded-full overflow-hidden">
+      <div className="h-2.5 bg-[#F0F2F3] rounded-full overflow-hidden">
         <div
-          className="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full transition-all duration-500"
+          className="bg-[#3B82A0] h-full rounded-full transition-all duration-500"
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -61,7 +61,7 @@ export default function WaterProgress({ total, goal, date }) {
             id={`water-add-${ml}`}
             onClick={() => addWater(ml)}
             disabled={isPending}
-            className="flex-1 flex items-center justify-center gap-0.5 py-1.5 rounded-full border border-blue-200 text-blue-600 text-xs font-semibold hover:bg-blue-50 hover:scale-105 active:scale-95 transition-all duration-150 disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-0.5 py-1.5 rounded-full border border-[#DFE3E4] text-[#3B82A0] text-xs font-semibold hover:bg-[#F0F2F3] active:bg-[#DFE3E4] hover:scale-105 active:scale-95 transition-all duration-150 disabled:opacity-50"
           >
             <Plus className="w-3 h-3" />
             {ml}ml

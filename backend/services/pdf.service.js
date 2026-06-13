@@ -308,13 +308,13 @@ const drawCoverPage = (doc, user, period) => {
         "\"Chế độ ăn của bạn là một tài khoản ngân hàng. Lựa chọn thực phẩm tốt là các khoản đầu tư tốt.\" — Bethenny Frankel"
     ];
     const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-    const quoteY = doc.page.height - 65;
+    const quoteY = doc.page.height - 80;
 
     doc.font('Regular').fontSize(8.5).fillColor('#475569')
         .text(randomQuote, PAGE_MARGIN + 30, quoteY, {
             width: doc.page.width - PAGE_MARGIN * 2 - 60,
             align: 'center',
-            lineGap: 3
+            lineGap: 2
         });
 };
 
@@ -494,19 +494,30 @@ const generateReportPDF = async (reportData) => {
     }
 
     // 2. Vẽ trang bìa độc lập (Cover Page)
+    const pageCountBeforeCover = doc.bufferedPageRange().count;
     drawCoverPage(doc, user, period);
 
     // Chèn QR code góc phải dưới trang bìa (Task 1)
     if (qrBuffer) {
+        // Đảm bảo đang ở trang bìa (page 0) trước khi vẽ QR
+        doc.switchToPage(0);
         const qrX = doc.page.width - PAGE_MARGIN - 65;
         const qrY = doc.page.height - 100;
         doc.image(qrBuffer, qrX, qrY, { width: 60, height: 60 });
         doc.font('Regular').fontSize(6.5).fillColor('#94A3B8')
-            .text('Quét để truy cập ứng dụng', qrX - 5, qrY + 63, { width: 70, align: 'center' });
+            .text('Quét để truy cập', qrX - 5, qrY + 63, { width: 70, align: 'center', lineBreak: false });
     }
 
     // 3. Chuyển sang trang 2 để bắt đầu vẽ Dashboard
-    doc.addPage();
+    // Bảo vệ: nếu PDFKit auto-paginated (tạo trang thừa do text overflow),
+    // chỉ switchToPage thay vì addPage để tránh trang trắng.
+    const pageCountAfterCover = doc.bufferedPageRange().count;
+    if (pageCountAfterCover > pageCountBeforeCover) {
+        // PDFKit đã tự addPage do text overflow — dùng trang đó
+        doc.switchToPage(pageCountAfterCover - 1);
+    } else {
+        doc.addPage();
+    }
 
     // Các biến chung cho trang 2 & 3
     const targetCal = Math.round(metrics.targetCalories || 2000);
@@ -693,6 +704,10 @@ const generateReportPDF = async (reportData) => {
     }
 
     // ── Section: Dashboard Chỉ Số ────────────────────────────────────────
+    if (y + 150 > doc.page.height - PAGE_MARGIN - 40) {
+        doc.addPage();
+        y = PAGE_MARGIN;
+    }
     y = drawSectionTitle(doc, 'TIẾN ĐỘ DINH DƯỠNG TRUNG BÌNH', y);
     y += 18;
 

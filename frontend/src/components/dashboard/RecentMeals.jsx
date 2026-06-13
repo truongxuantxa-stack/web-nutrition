@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Utensils } from 'lucide-react';
+import SafeImage from '../common/SafeImage';
 
 const MEAL_EMOJI = { sang: '🌅', trua: '☀️', toi: '🌙', phu: '🍪' };
 const MEAL_NAME  = { sang: 'Bữa sáng', trua: 'Bữa trưa', toi: 'Bữa tối', phu: 'Bữa phụ' };
@@ -46,9 +47,15 @@ export default function RecentMeals({ entries = [], onAddClick }) {
                 className="flex items-center justify-between p-3 rounded-xl bg-[#F0F2F3] hover:bg-[#DFE3E4]/60 transition-colors"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-xl flex-shrink-0 w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm">
-                    {MEAL_EMOJI[entry.mealType] || '🍲'}
-                  </span>
+                  {entry.Food?.imageUrl ? (
+                    <SafeImage src={entry.Food.imageUrl} alt={entry.foodName}
+                      className="w-8 h-8 rounded-lg object-cover flex-shrink-0 shadow-sm"
+                      fallback={MEAL_EMOJI[entry.mealType] || '🍲'} />
+                  ) : (
+                    <span className="text-xl flex-shrink-0 w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm">
+                      {MEAL_EMOJI[entry.mealType] || '🍲'}
+                    </span>
+                  )}
                   <div className="min-w-0">
                     <p className="text-sm font-semibold truncate text-[#003139]">{entry.foodName}</p>
                     <p className="text-[10px] text-[#96A5A8]">

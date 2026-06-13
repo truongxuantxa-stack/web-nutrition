@@ -36,13 +36,13 @@ export default function WeightChart({ chartData = [] }) {
     datasets: [{
       label          : 'Cân nặng (kg)',
       data           : weights,
-      borderColor    : '#22c55e',
+      borderColor    : '#2EA850',
       backgroundColor: (context) => {
         const { ctx, chartArea } = context.chart;
-        if (!chartArea) return 'rgba(34,197,94,0.12)';
+        if (!chartArea) return 'rgba(46,168,80,0.12)';
         const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-        gradient.addColorStop(0, 'rgba(34,197,94,0.25)');
-        gradient.addColorStop(1, 'rgba(34,197,94,0.02)');
+        gradient.addColorStop(0, 'rgba(46,168,80,0.15)');
+        gradient.addColorStop(1, 'rgba(46,168,80,0.02)');
         return gradient;
       },
       borderWidth    : 2,
@@ -50,7 +50,7 @@ export default function WeightChart({ chartData = [] }) {
       tension        : 0.35,
       pointRadius    : 4,
       pointHoverRadius: 6,
-      pointBackgroundColor: '#22c55e',
+      pointBackgroundColor: '#2EA850',
     }],
   };
 
@@ -66,15 +66,15 @@ export default function WeightChart({ chartData = [] }) {
       },
     },
     scales: {
-      x: { grid: { display: false }, ticks: { font: { size: 11 } } },
-      y: { grid: { display: false }, ticks: { font: { size: 11 } } },
+      x: { grid: { display: true, color: '#F0F2F3' }, ticks: { font: { size: 11 } } },
+      y: { grid: { display: true, color: '#F0F2F3' }, ticks: { font: { size: 11 } } },
     },
   };
 
   return (
     <div className="tcl-card rounded-2xl">
       <div className="p-5 flex flex-col gap-2">
-        <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">Cân nặng 7 ngày</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">⚖️ Cân nặng {chartData.length} ngày</h3>
         <div className="h-44">
           <Line data={data} options={options} />
         </div>

@@ -33,7 +33,7 @@ export default function DiaryPage() {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -56,8 +56,8 @@ export default function DiaryPage() {
       {/* Water Tracker */}
       <WaterTracker total={waterTotal} goal={waterGoal} logs={waterLogs} date={date} />
 
-      {/* Meal Groups 2x2 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Meal Groups */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {MEAL_KEYS.map(mealKey => (
           <MealGroup
             key={mealKey}
@@ -87,7 +87,7 @@ export default function DiaryPage() {
 function DiarySkeleton() {
   const shimmer = 'rounded-2xl bg-gradient-to-r from-[#DFE3E4] via-[#F0F2F3] to-[#DFE3E4] bg-[length:200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]';
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
       <div className="h-10 bg-[#DFE3E4] rounded w-64 animate-pulse" />
       <div className={`h-48 ${shimmer}`} />
       <div className={`h-16 ${shimmer}`} />

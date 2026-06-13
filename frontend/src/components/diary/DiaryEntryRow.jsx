@@ -77,7 +77,7 @@ export default function DiaryEntryRow({ entry, onDelete }) {
               onBlur={() => setConfirming(false)}
               className={`w-6 h-6 flex items-center justify-center rounded-md transition-all duration-200 ${
                 confirming
-                  ? 'text-red-500 bg-red-50 opacity-100'
+                  ? 'text-[#DC2626] bg-[#DC2626]/5 opacity-100'
                   : 'text-[#DFE3E4] hover:text-[#96A5A8] md:opacity-0 md:group-hover:opacity-100 opacity-100'
               }`}
               title={confirming ? 'Bấm lần nữa để xác nhận xóa' : 'Xóa món'}
@@ -94,15 +94,15 @@ export default function DiaryEntryRow({ entry, onDelete }) {
         <div className="overflow-hidden">
           {/* Macros chính */}
           <div className="pt-1.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <span className="text-blue-500/80 font-medium">P: {entry.proteinSnapshot}g</span>
+            <span className="text-[#003139]/80 font-medium">P: {entry.proteinSnapshot}g</span>
             <span className="text-[#DFE3E4]">·</span>
-            <span className="text-amber-500/80 font-medium">C: {entry.carbsSnapshot}g</span>
+            <span className="text-[#C87C46]/80 font-medium">C: {entry.carbsSnapshot}g</span>
             <span className="text-[#DFE3E4]">·</span>
-            <span className="text-pink-500/80 font-medium">F: {entry.fatSnapshot}g</span>
+            <span className="text-[#96A5A8]/80 font-medium">F: {entry.fatSnapshot}g</span>
             {entry.fiberSnapshot != null && entry.fiberSnapshot > 0 && (
               <>
                 <span className="text-[#DFE3E4]">·</span>
-                <span className="text-green-600/80 font-medium">Xơ: {entry.fiberSnapshot}g</span>
+                <span className="text-[#2EA850]/80 font-medium">Xơ: {entry.fiberSnapshot}g</span>
               </>
             )}
           </div>

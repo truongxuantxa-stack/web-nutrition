@@ -42,7 +42,7 @@ export default function MealResult({ result, onSwap, pinnedFoods = {}, onToggleP
 
       {/* Result table */}
       {items.length > 0 && (
-        <div className="glass-card overflow-hidden">
+        <div className="tcl-card overflow-hidden p-0">
           <table className="table table-sm">
             <thead>
               <tr className="bg-base-200 text-xs text-base-content/60">
