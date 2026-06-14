@@ -9,11 +9,28 @@ export default function WaterProgress({ total, goal, date }) {
 
   const { mutate: addWater, isPending } = useMutation({
     mutationFn: (amount) => api.post('/water', { amount, date }),
-    onSuccess:  () => {
-      queryClient.invalidateQueries({ queryKey: ['dashboard', date] });
-      queryClient.invalidateQueries({ queryKey: ['diary', date] });
+    onMutate: async (amount) => {
+      // Cancel refetch đang chạy để tránh overwrite optimistic data
+      await queryClient.cancelQueries({ queryKey: ['dashboard', date] });
+      // Optimistic: cộng ngay vào cache
+      queryClient.setQueryData(['dashboard', date], (old) => {
+        if (!old) return old;
+        return { ...old, waterTotal: (old.waterTotal || 0) + amount };
+      });
     },
-    onError: () => toast.error('Không thể ghi nước. Vui lòng thử lại.'),
+    onError: (err, amount) => {
+      // Concurrent-safe: chỉ trừ đúng phần bị lỗi (không rollback toàn bộ snapshot)
+      queryClient.setQueryData(['dashboard', date], (old) => {
+        if (!old) return old;
+        return { ...old, waterTotal: Math.max(0, (old.waterTotal || 0) - amount) };
+      });
+      toast.error('Không thể ghi nước. Vui lòng thử lại.');
+    },
+    onSettled: () => {
+      // Safety net: sync lại với server
+      queryClient.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
+      queryClient.invalidateQueries({ queryKey: ['diary', date], refetchType: 'active' });
+    },
   });
 
   return (

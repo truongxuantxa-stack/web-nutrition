@@ -243,3 +243,33 @@ exports.getMyCustomFoods = async (req, res) => {
         return res.error('Lỗi server.', 500);
     }
 };
+
+// ─── GET /api/v1/diary/recent?date=YYYY-MM-DD&limit=5 ──────────────────────
+exports.getRecentEntries = async (req, res) => {
+    try {
+        const date  = toDateString(req.query.date);
+        const limit = Math.min(parseInt(req.query.limit) || 5, 20);
+
+        const entries = await DiaryEntry.findAll({
+            where  : { userId: req.user.id, date },
+            include: [{ model: Food, as: 'food', attributes: ['name', 'unit', 'imageUrl'] }],
+            order  : [['createdAt', 'DESC']],
+            limit,
+        });
+
+        return res.success({
+            entries: entries.map(e => ({
+                id              : e.id,
+                foodName        : e.food?.name || 'Đã xóa',
+                imageUrl        : e.food?.imageUrl || null,
+                amount          : e.amount,
+                unit            : e.food?.unit || '',
+                mealType        : e.mealType,
+                caloriesSnapshot: e.caloriesSnapshot,
+            })),
+        });
+    } catch (err) {
+        console.error('[API] getRecentEntries error:', err);
+        return res.error('Lỗi server.', 500);
+    }
+};

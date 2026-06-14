@@ -1,18 +1,25 @@
-import React from 'react';
+import { Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Utensils } from 'lucide-react';
 import SafeImage from '../common/SafeImage';
+import { useRecentEntries } from '../../hooks/useRecentEntries';
 
 const MEAL_EMOJI = { sang: '🌅', trua: '☀️', toi: '🌙', phu: '🍪' };
 const MEAL_NAME  = { sang: 'Bữa sáng', trua: 'Bữa trưa', toi: 'Bữa tối', phu: 'Bữa phụ' };
 
-export default function RecentMeals({ entries = [], onAddClick }) {
+// Wrapper với Suspense
+export default function RecentMeals({ date, onAddClick }) {
+  return (
+    <Suspense fallback={<RecentMealsSkeleton />}>
+      <RecentMealsContent date={date} onAddClick={onAddClick} />
+    </Suspense>
+  );
+}
+
+function RecentMealsContent({ date, onAddClick }) {
+  const { data: entries = [] } = useRecentEntries(date);
   const navigate = useNavigate();
   const isEmpty  = entries.length === 0;
-
-  const displayEntries = [...entries]
-    .sort((a, b) => new Date(b.createdAt || b.id) - new Date(a.createdAt || a.id))
-    .slice(0, 5);
 
   return (
     <div className="tcl-card rounded-2xl p-6 flex flex-col justify-between h-full min-h-[300px]">
@@ -41,7 +48,7 @@ export default function RecentMeals({ entries = [], onAddClick }) {
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            {displayEntries.map((entry) => (
+            {entries.map((entry) => (
               <div
                 key={entry.id}
                 className="flex items-center justify-between p-3 rounded-xl bg-[#F0F2F3] hover:bg-[#DFE3E4]/60 transition-colors"
@@ -83,6 +90,17 @@ export default function RecentMeals({ entries = [], onAddClick }) {
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+function RecentMealsSkeleton() {
+  return (
+    <div className="tcl-card rounded-2xl p-6 flex flex-col gap-3 min-h-[300px]">
+      <div className="h-5 w-32 bg-[#DFE3E4] rounded animate-pulse" />
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="h-14 rounded-xl bg-gradient-to-r from-[#DFE3E4] via-[#F0F2F3] to-[#DFE3E4] bg-[length:200%_100%] animate-pulse" />
+      ))}
     </div>
   );
 }

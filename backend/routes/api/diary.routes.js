@@ -5,6 +5,7 @@ const ctrl   = require('../../controllers/api/diary.controller');
 
 // Nhật ký theo ngày
 router.get('/',                ctrl.getDiary);
+router.get('/recent',          ctrl.getRecentEntries);
 
 // Entries
 router.post('/entries',        ctrl.addEntry);

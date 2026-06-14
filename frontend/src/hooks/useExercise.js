@@ -25,8 +25,8 @@ export const useAddExercise = (date) => {
   return useMutation({
     mutationFn: (payload) => api.post('/exercise', { ...payload, date }).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['exercise', date] });
-      qc.invalidateQueries({ queryKey: ['dashboard', date] });
+      qc.invalidateQueries({ queryKey: ['exercise', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
     },
   });
 };
@@ -37,8 +37,8 @@ export const useDeleteExercise = (date) => {
   return useMutation({
     mutationFn: (id) => api.delete(`/exercise/${id}`).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['exercise', date] });
-      qc.invalidateQueries({ queryKey: ['dashboard', date] });
+      qc.invalidateQueries({ queryKey: ['exercise', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
     },
   });
 };

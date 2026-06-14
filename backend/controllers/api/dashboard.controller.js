@@ -65,10 +65,11 @@ exports.getDashboard = async (req, res) => {
         });
         const weightChartData = [...weightLogs].reverse().map(l => ({ date: l.date, weight: l.weight }));
 
-        // Tổng calo đốt trong ngày
+        // Tổng calo đốt và danh sách tập luyện trong ngày
         const exerciseLogs = await ExerciseLog.findAll({
             where     : { userId: user.id, date },
-            attributes: ['caloriesBurned'],
+            attributes: ['id', 'sport', 'duration', 'caloriesBurned', 'intensity', 'createdAt'],
+            order     : [['createdAt', 'DESC']],
         });
         const totalBurned = Math.round(exerciseLogs.reduce((sum, l) => sum + l.caloriesBurned, 0));
 
@@ -101,6 +102,7 @@ exports.getDashboard = async (req, res) => {
                 iron    : consumed.iron != null ? Math.round(consumed.iron) : null,
             },
             totalBurned,
+            exerciseLogs,
             calorieProgress,
             macroProgress,
             weightChartData,

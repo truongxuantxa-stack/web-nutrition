@@ -15,10 +15,10 @@ export const useAddWeight = () => {
   return useMutation({
     mutationFn: (payload) => api.post('/weight', payload).then((r) => r.data),
     onSuccess: () => {
-      // Invalidate cache để cập nhật UI
-      qc.invalidateQueries({ queryKey: ['weight'] });
-      qc.invalidateQueries({ queryKey: ['weightTrend'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      // Invalidate cache để cập nhật UI — chỉ refetch query đang active
+      qc.invalidateQueries({ queryKey: ['weight'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['weightTrend'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
     },
   });
 };
@@ -29,9 +29,9 @@ export const useDeleteWeight = () => {
   return useMutation({
     mutationFn: (id) => api.delete(`/weight/${id}`).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['weight'] });
-      qc.invalidateQueries({ queryKey: ['weightTrend'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      qc.invalidateQueries({ queryKey: ['weight'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['weightTrend'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
     },
   });
 };

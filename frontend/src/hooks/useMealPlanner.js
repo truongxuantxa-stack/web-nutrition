@@ -39,7 +39,7 @@ export const useUpdateConfig = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (meals) => api.put('/meal-planner/config', { meals }),
-    onSuccess : () => qc.invalidateQueries({ queryKey: ['meal-planner', 'config'] }),
+    onSuccess : () => qc.invalidateQueries({ queryKey: ['meal-planner', 'config'], refetchType: 'active' }),
   });
 };
 
@@ -50,8 +50,8 @@ export const usePushToDiary = (date) => {
     mutationFn: (entries) =>
       Promise.all(entries.map(e => api.post('/diary/entries', { ...e, date }))),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['diary', date] });
-      qc.invalidateQueries({ queryKey: ['dashboard', date] });
+      qc.invalidateQueries({ queryKey: ['diary', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
     },
   });
 };

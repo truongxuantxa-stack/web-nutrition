@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDashboard } from '../hooks/useDashboard';
 import { useDownloadReport } from '../hooks/useReport';
 import { useAdaptiveStatus } from '../hooks/useAdaptiveTDEE';
-import { useDiaryData } from '../hooks/useDiary';
-import { useExerciseData } from '../hooks/useExercise';
 import { useAuth } from '../contexts/AuthContext';
 import { getToday } from '../lib/dayjs';
 
@@ -41,24 +39,8 @@ export default function DashboardPage() {
   const [activeMeal, setActiveMeal] = useState('sang');
 
   const { data, isLoading, error } = useDashboard(date);
-  const { data: diaryData, isLoading: diaryLoading } = useDiaryData(date);
-  const { data: exerciseData, isLoading: exerciseLoading } = useExerciseData(date);
   const { data: adaptiveStatus, isLoading: adaptiveLoading } = useAdaptiveStatus();
   const downloadReport = useDownloadReport();
-
-  // Gộp tất cả các bữa ăn từ diaryData.mealGroups thành một danh sách phẳng
-  const allDiaryEntries = useMemo(() => {
-    const entries = [];
-    if (diaryData && diaryData.mealGroups) {
-      Object.keys(diaryData.mealGroups).forEach((mealKey) => {
-        const groupEntries = diaryData.mealGroups[mealKey] || [];
-        groupEntries.forEach((entry) => {
-          entries.push({ ...entry, mealType: mealKey });
-        });
-      });
-    }
-    return entries;
-  }, [diaryData]);
 
   // Tính trend cân nặng gần nhất
   const trend = useMemo(() => {
@@ -76,14 +58,14 @@ export default function DashboardPage() {
     };
   }, [data?.weightChartData]);
 
-  if (isLoading || diaryLoading || exerciseLoading) return <DashboardSkeleton />;
+  if (isLoading) return <DashboardSkeleton />;
   if (error) return (
     <div className="m-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
       Không thể tải dữ liệu dashboard.
     </div>
   );
 
-  const { metrics, consumed, totalBurned, macroProgress, weightChartData, waterTotal, waterGoal, healthInsights, healthScore } = data;
+  const { metrics, consumed, totalBurned, macroProgress, weightChartData, waterTotal, waterGoal, healthInsights, healthScore, exerciseLogs = [] } = data;
 
   const handleDownloadReport = (range) => {
     downloadReport.mutate(range, {
@@ -100,7 +82,6 @@ export default function DashboardPage() {
   const targetCalories  = metrics?.targetCalories ? Math.round(metrics.targetCalories) : 0;
   const caloriePercent  = targetCalories > 0 ? Math.round((consumed.calories / targetCalories) * 100) : 0;
   const userInitial     = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
-  const exerciseLogs    = exerciseData?.logs || [];
 
   return (
     <div className="flex flex-col gap-6 pb-20">
@@ -260,7 +241,7 @@ export default function DashboardPage() {
 
           {/* Recent Meals & Activity */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <RecentMeals entries={allDiaryEntries} onAddClick={() => handleOpenAddFood('sang')} />
+            <RecentMeals date={date} onAddClick={() => handleOpenAddFood('sang')} />
             <RecentActivity logs={exerciseLogs} totalBurned={totalBurned} />
           </div>
 

@@ -15,9 +15,9 @@ export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: (payload) => api.put('/profile', payload).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['profile'] });
-      qc.invalidateQueries({ queryKey: ['auth', 'me'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      qc.invalidateQueries({ queryKey: ['profile'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['auth', 'me'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
     },
   });
 };
@@ -28,9 +28,9 @@ export const useUpdateMacros = () => {
   return useMutation({
     mutationFn: (payload) => api.put('/profile/macros', payload).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['profile'] });
-      qc.invalidateQueries({ queryKey: ['auth', 'me'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      qc.invalidateQueries({ queryKey: ['profile'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['auth', 'me'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
     },
   });
 };
@@ -49,7 +49,7 @@ export const useUpdateAllergies = () => {
   return useMutation({
     mutationFn: (foodIds) => api.put('/profile/allergies', { foodIds }).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['profile', 'allergies'] });
+      qc.invalidateQueries({ queryKey: ['profile', 'allergies'], refetchType: 'active' });
     },
   });
 };
@@ -60,7 +60,7 @@ export const useOnboard = () => {
   return useMutation({
     mutationFn: (payload) => api.post('/profile/onboarding', payload).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['auth', 'me'] });
+      qc.invalidateQueries({ queryKey: ['auth', 'me'], refetchType: 'active' });
     },
   });
 };

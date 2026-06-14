@@ -23,9 +23,9 @@ export const useToggleAdaptive = () => {
   return useMutation({
     mutationFn: (useAdaptiveTDEE) => api.put('/adaptive-tdee/toggle', { useAdaptiveTDEE }).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['adaptive-tdee'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
-      qc.invalidateQueries({ queryKey: ['profile'] });
+      qc.invalidateQueries({ queryKey: ['adaptive-tdee'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['profile'], refetchType: 'active' });
     },
   });
 };
@@ -36,10 +36,10 @@ export const useCalculateAdaptive = () => {
   return useMutation({
     mutationFn: () => api.post('/adaptive-tdee/calculate').then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['adaptive-tdee'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
-      qc.invalidateQueries({ queryKey: ['profile'] });
-      qc.invalidateQueries({ queryKey: ['weight'] });
+      qc.invalidateQueries({ queryKey: ['adaptive-tdee'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['profile'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['weight'], refetchType: 'active' });
     },
   });
 };
@@ -50,7 +50,7 @@ export const useSkipWeekAdaptive = () => {
   return useMutation({
     mutationFn: () => api.put('/adaptive-tdee/skip-week').then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['adaptive-tdee'] });
+      qc.invalidateQueries({ queryKey: ['adaptive-tdee'], refetchType: 'active' });
     },
   });
 };

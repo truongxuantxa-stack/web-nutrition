@@ -72,9 +72,10 @@ app.listen(PORT, async () => {
         const { sequelize } = require('./models');
         await sequelize.authenticate();
         console.log('✅ Kết nối MySQL thành công!');
-        // sync({ alter: true }) để cập nhật schema mà không mất dữ liệu
-        await sequelize.sync({ alter: true });
-        console.log('✅ Database đã được đồng bộ!');
+        // Development: sync nhanh không alter. Production: dùng migration.
+        const isDev = process.env.NODE_ENV !== 'production';
+        await sequelize.sync({ alter: !isDev });
+        console.log(`✅ Database đã được đồng bộ! (alter: ${!isDev})`);
 
         // Khởi động Cron Jobs
         const adaptiveCron = require('./cron/adaptive.cron');
