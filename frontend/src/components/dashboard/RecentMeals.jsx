@@ -47,8 +47,8 @@ export default function RecentMeals({ entries = [], onAddClick }) {
                 className="flex items-center justify-between p-3 rounded-xl bg-[#F0F2F3] hover:bg-[#DFE3E4]/60 transition-colors"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  {entry.Food?.imageUrl ? (
-                    <SafeImage src={entry.Food.imageUrl} alt={entry.foodName}
+                  {entry.imageUrl ? (
+                    <SafeImage src={entry.imageUrl} alt={entry.foodName}
                       className="w-8 h-8 rounded-lg object-cover flex-shrink-0 shadow-sm"
                       fallback={MEAL_EMOJI[entry.mealType] || '🍲'} />
                   ) : (
