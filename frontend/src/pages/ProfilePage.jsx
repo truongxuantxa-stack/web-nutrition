@@ -5,7 +5,7 @@ import {
 import { useDownloadReport } from '../hooks/useReport';
 import api from '../lib/axios';
 import toast from 'react-hot-toast';
-import { User, Calendar, Ruler, Scale, Dumbbell, Target, ShieldAlert, Award, Save, Plus, X, FileText } from 'lucide-react';
+import { User, Smile, Calendar, Ruler, Scale, Dumbbell, Target, ShieldAlert, Award, Save, Plus, X, FileText } from 'lucide-react';
 
 export default function ProfilePage() {
   const { data, isLoading, error } = useProfileData();
@@ -147,16 +147,17 @@ export default function ProfilePage() {
 
       {/* Bio Tab */}
       {activeTab === 'bio' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="tcl-card rounded-2xl p-6 lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          <div className="tcl-card rounded-2xl p-6 lg:col-span-2 flex flex-col h-full">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-[#96A5A8] mb-4">Cập nhật chỉ số cơ thể</h3>
-            <form onSubmit={handleUpdateBio} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleUpdateBio} className="flex flex-col flex-grow">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <label className="tcl-label">Họ và tên</label>
+                <label className="tcl-label flex items-center gap-1.5"><User className="w-4 h-4 text-[#96A5A8]" /> Họ và tên</label>
                 <input type="text" required className="tcl-input" value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div>
-                <label className="tcl-label">Giới tính</label>
+                <label className="tcl-label flex items-center gap-1.5"><Smile className="w-4 h-4 text-[#96A5A8]" /> Giới tính</label>
                 <select className="tcl-select" value={gender} onChange={(e) => setGender(e.target.value)}>
                   <option value="male">Nam</option>
                   <option value="female">Nữ</option>
@@ -192,7 +193,8 @@ export default function ProfilePage() {
                   <option value="gain_weight">Tăng cân</option>
                 </select>
               </div>
-              <div className="sm:col-span-2 pt-2">
+              </div>
+              <div className="mt-auto pt-6">
                 <button type="submit" disabled={updateProfile.isPending} className="tcl-btn-primary gap-2 py-2.5">
                   {updateProfile.isPending ? (
                     <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -204,9 +206,9 @@ export default function ProfilePage() {
           </div>
 
           {/* Stats sidebar */}
-          <div className="tcl-card rounded-2xl p-6 lg:col-span-1">
+          <div className="tcl-card rounded-2xl p-6 lg:col-span-1 flex flex-col h-full">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-[#96A5A8] mb-3">Thông số tính toán</h3>
-            <div className="space-y-4">
+            <div className="space-y-4 flex flex-col flex-grow">
               <div>
                 <span className="text-xs text-[#96A5A8]">Chỉ số BMI</span>
                 <p className="text-xl font-bold flex items-baseline gap-1.5 mt-0.5 text-[#003139]">
@@ -222,7 +224,7 @@ export default function ProfilePage() {
                 <span className="text-xs text-[#96A5A8]">Tổng tiêu hao hàng ngày (TDEE)</span>
                 <p className="text-xl font-bold mt-0.5 text-[#003139]">{metrics.tdee ? `${Math.round(metrics.tdee)} kcal` : '--'}</p>
               </div>
-              <div className="border-t border-[#DFE3E4] pt-3 bg-[#003139]/5 rounded-xl p-3 border border-[#003139]/15">
+              <div className="border-t border-[#DFE3E4] pt-3 mt-auto bg-[#003139]/5 rounded-xl p-3 border border-[#003139]/15">
                 <span className="text-xs text-[#003139] font-bold">Mục tiêu Calo nạp mỗi ngày</span>
                 <p className="text-2xl font-black text-[#003139] mt-0.5">
                   {metrics.targetCalories ? `${Math.round(metrics.targetCalories)} kcal` : '--'}

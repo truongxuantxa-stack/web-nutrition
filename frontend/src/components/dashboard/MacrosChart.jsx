@@ -51,7 +51,7 @@ export default function MacrosChart({ consumed, target }) {
       <div className="p-5 flex flex-col gap-3">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">🍽️ Tỷ lệ dinh dưỡng</h3>
         <div className="h-48">
-          <Doughnut data={chartData} options={options} />
+          <Doughnut id="macros-chart" data={chartData} options={options} />
         </div>
         {/* Text summary */}
         <div className="grid grid-cols-3 gap-2 text-center text-xs">

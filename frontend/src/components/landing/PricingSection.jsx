@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 export default function PricingSection() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-28 bg-white">
       <div className="container mx-auto px-6 lg:px-12">
         <div className="text-center mb-16">
           <motion.h2 
@@ -68,15 +68,9 @@ export default function PricingSection() {
           </div>
 
           {/* Pricing Card */}
-          <motion.div 
-            className="flex-1 w-full max-w-md"
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="flex-1 w-full max-w-md">
             <div className="bg-white rounded-3xl p-8 border border-[#DFE3E4] shadow-[0_20px_50px_rgba(0,49,57,0.08)] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#5FE089]/20 blur-3xl rounded-full"></div>
+
               
               <div className="text-center mb-8 relative z-10">
                 <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 font-medium text-sm mb-4">Gói Cơ Bản</span>
@@ -87,8 +81,17 @@ export default function PricingSection() {
                 <p className="text-[#244348]">Sử dụng vĩnh viễn, không cần thẻ tín dụng.</p>
               </div>
 
-              <ul className="space-y-4 mb-8 relative z-10">
-                {['Tính toán BMR, TDEE', 'Gauss Meal Solver (4 món)', 'Adaptive TDEE & Chart', 'Xuất báo cáo PDF không giới hạn'].map((feature, i) => (
+              <ul className="space-y-3 mb-8 relative z-10">
+                {[
+                  'Tính toán BMR & TDEE', 
+                  'Gauss Meal Solver (4 món)', 
+                  'Adaptive TDEE & Biểu đồ', 
+                  'Chấm điểm lành mạnh 0-100',
+                  'Bác sĩ dinh dưỡng AI',
+                  'Hybrid Scanner (AI Vision)',
+                  'Theo dõi Nước & Luyện tập',
+                  'Xuất báo cáo PDF'
+                ].map((feature, i) => (
                   <li key={i} className="flex items-center gap-3 text-[#244348]">
                     <div className="w-5 h-5 rounded-full bg-[#5FE089]/20 text-[#2EA850] flex items-center justify-center shrink-0">
                       <Check className="w-3.5 h-3.5" />
@@ -102,7 +105,7 @@ export default function PricingSection() {
                 Bắt đầu miễn phí <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

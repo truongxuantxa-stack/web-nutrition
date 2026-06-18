@@ -5,12 +5,9 @@ import { Link } from 'react-router-dom';
 
 export default function CTASection() {
   return (
-    <section className="py-24 relative overflow-hidden bg-gradient-to-br from-[#5FE089] to-[#2EA850]">
-      {/* Decorative blobs */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl z-0 translate-x-1/3 -translate-y-1/3"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl z-0 -translate-x-1/3 translate-y-1/3"></div>
-      <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-white/5 rounded-full blur-2xl z-0"></div>
-      <div className="absolute bottom-1/4 right-1/3 w-48 h-48 bg-yellow-300/10 rounded-full blur-3xl z-0"></div>
+    <section className="py-28 relative overflow-hidden bg-gradient-to-br from-[#5FE089] to-[#2EA850]">
+
+
 
       <div className="container mx-auto px-6 lg:px-12 text-center text-white relative z-10">
         <motion.h2 

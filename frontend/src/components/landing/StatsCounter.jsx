@@ -25,10 +25,10 @@ function Counter({ from, to, suffix = '', duration = 2 }) {
 
 export default function StatsCounter() {
   const stats = [
-    { value: 500, suffix: '+', label: 'Nguyên liệu CSDL', duration: 2 },
-    { value: 4, suffix: '', label: 'Thuật toán thông minh', duration: 1.5 },
-    { value: 100, suffix: '%', label: 'Cá nhân hóa', duration: 2 },
-    { value: 7, suffix: ' - 30', label: 'Ngày lên thực đơn', duration: 1.5 },
+    { value: 500, suffix: '+', label: 'Nguyên liệu & Món ăn', duration: 2 },
+    { value: 6, suffix: '', label: 'Thuật toán cốt lõi', duration: 1.5 },
+    { value: 7, suffix: '', label: 'Vi chất theo dõi', duration: 1.5 },
+    { value: 4, suffix: ' lớp', label: 'Pipeline quét AI', duration: 1.5 },
   ];
 
   return (

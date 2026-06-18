@@ -2,8 +2,6 @@ import React from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import HeroSection from '../components/landing/HeroSection';
-import AppShowcase from '../components/landing/AppShowcase';
-import StatsCounter from '../components/landing/StatsCounter';
 import FeaturesSection from '../components/landing/FeaturesSection';
 import AlgorithmShowcase from '../components/landing/AlgorithmShowcase';
 import IntegrationSection from '../components/landing/IntegrationSection';
@@ -17,14 +15,24 @@ export default function LandingPage() {
       <Navbar />
       <main>
         <HeroSection />
-        <AppShowcase />
-        <FeaturesSection />
-        <AlgorithmShowcase />
-        <IntegrationSection />
-        <StatsCounter />
-        <PricingSection />
-        <Testimonials />
-        <CTASection />
+        <div className="cv-auto">
+          <FeaturesSection />
+        </div>
+        <div className="cv-auto">
+          <AlgorithmShowcase />
+        </div>
+        <div className="cv-auto">
+          <IntegrationSection />
+        </div>
+        <div className="cv-auto">
+          <Testimonials />
+        </div>
+        <div className="cv-auto">
+          <PricingSection />
+        </div>
+        <div className="cv-auto">
+          <CTASection />
+        </div>
       </main>
       <Footer />
     </div>

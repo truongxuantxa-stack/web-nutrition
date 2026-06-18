@@ -1,6 +1,28 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Calculator, Database, CheckCircle2 } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { motion, useInView, animate } from 'framer-motion';
+import { ArrowRight, Calculator, TrendingUp, Award, Stethoscope } from 'lucide-react';
+
+function Counter({ from, to, suffix = '', duration = 2 }) {
+  const nodeRef = useRef(null);
+  const inView = useInView(nodeRef, { once: true });
+  
+  useEffect(() => {
+    if (inView) {
+      const node = nodeRef.current;
+      const controls = animate(from, to, {
+        duration,
+        onUpdate(value) {
+          if (node) {
+            node.textContent = Math.round(value) + suffix;
+          }
+        },
+      });
+      return () => controls.stop();
+    }
+  }, [from, to, suffix, duration, inView]);
+
+  return <span ref={nodeRef}>{from}{suffix}</span>;
+}
 
 export default function AlgorithmShowcase() {
   const containerVariants = {
@@ -16,10 +38,8 @@ export default function AlgorithmShowcase() {
   };
 
   return (
-    <section className="py-24 bg-[#003139] text-white relative overflow-hidden">
-      {/* Background blobs for glassmorphism effect */}
-      <div className="absolute top-20 left-10 w-64 h-64 bg-[#5FE089]/20 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#5FE089]/10 rounded-full blur-3xl"></div>
+    <section className="pt-16 pb-28 bg-[#01272E] text-white relative overflow-hidden">
+
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="text-center mb-16">
           <motion.h2 
@@ -28,11 +48,28 @@ export default function AlgorithmShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            Thuật toán Gauss Solver — Trái tim của hệ thống
+            Nền tảng thuật toán — Trái tim của hệ thống
           </motion.h2>
           <p className="text-white/70 max-w-2xl mx-auto">
             Hệ thống sử dụng toán học giải tích để tính toán chính xác khẩu phần ăn, đảm bảo dinh dưỡng cân bằng và tối ưu nhất cho cơ thể bạn.
           </p>
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 max-w-4xl mx-auto">
+          {[
+            { value: 500, suffix: '+', label: 'Nguyên liệu & Món ăn' },
+            { value: 6, suffix: '', label: 'Thuật toán cốt lõi' },
+            { value: 7, suffix: '', label: 'Vi chất theo dõi' },
+            { value: 4, suffix: ' lớp', label: 'Pipeline quét AI' },
+          ].map((stat, i) => (
+            <div key={i} className="text-center">
+              <div className="text-4xl md:text-5xl font-bold font-heading text-white mb-2">
+                <Counter from={0} to={stat.value} suffix={stat.suffix} duration={1.5} />
+              </div>
+              <div className="text-sm font-medium text-white/60 uppercase tracking-wider">{stat.label}</div>
+            </div>
+          ))}
         </div>
 
         {/* React-based Algorithm Visualization */}
@@ -90,53 +127,69 @@ export default function AlgorithmShowcase() {
           </motion.div>
         </motion.div>
 
-        {/* 3 Stat Mini-cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        {/* 4 Algorithm Mini-cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           <motion.div 
-            className="landing-glass p-6 flex items-center gap-4"
+            className="landing-glass p-6 flex flex-col items-center text-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#5FE089]">
-              <Database className="w-6 h-6" />
+              <Calculator className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-3xl font-bold">500+</p>
-              <p className="text-sm text-white/70">Nguyên liệu thực tế</p>
+              <p className="text-xl font-bold text-white mb-1">Gauss Solver</p>
+              <p className="text-sm text-white/70">Hệ phương trình tuyến tính 3×3</p>
             </div>
           </motion.div>
 
           <motion.div 
-            className="landing-glass p-6 flex items-center gap-4"
+            className="landing-glass p-6 flex flex-col items-center text-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
           >
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#5FE089]">
-              <Calculator className="w-6 h-6" />
+              <TrendingUp className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-3xl font-bold">4</p>
-              <p className="text-sm text-white/70">Thuật toán phân tích</p>
+              <p className="text-xl font-bold text-white mb-1">Adaptive TDEE</p>
+              <p className="text-sm text-white/70">Bộ lọc EMA + Rolling Average</p>
             </div>
           </motion.div>
 
           <motion.div 
-            className="landing-glass p-6 flex items-center gap-4"
+            className="landing-glass p-6 flex flex-col items-center text-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
           >
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#5FE089]">
-              <CheckCircle2 className="w-6 h-6" />
+              <Award className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-3xl font-bold">99.9%</p>
-              <p className="text-sm text-white/70">Độ chính xác Macro</p>
+              <p className="text-xl font-bold text-white mb-1">Food Scoring</p>
+              <p className="text-sm text-white/70">Mật độ dinh dưỡng per 100 kcal</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            className="landing-glass p-6 flex flex-col items-center text-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+          >
+            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#5FE089]">
+              <Stethoscope className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xl font-bold text-white mb-1">Health Insights</p>
+              <p className="text-sm text-white/70">Bộ quy tắc y khoa 4 cấp độ</p>
             </div>
           </motion.div>
         </div>

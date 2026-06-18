@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import dashboardScreenshot from '../../assets/images/screenshot_dashboard.png'; // To be added later
+import dashboardScreenshot from '../../assets/images/screenshot_dashboard.png';
 
 export default function HeroSection() {
   return (
-    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white">
-      {/* Background Gradient Blob */}
-      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[800px] h-[800px] bg-[#5FE089]/10 blur-3xl rounded-full -z-10 pointer-events-none"></div>
+    <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-36 overflow-hidden bg-white">
+      {/* Subtle gradient background — no blur */}
+      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[600px] h-[600px] bg-[#5FE089]/[0.06] rounded-full -z-10 pointer-events-none"></div>
 
       <div className="container mx-auto px-6 lg:px-12">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
@@ -64,11 +64,14 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
+
+
+            {/* Dots Pattern */}
+            <div className="absolute -bottom-16 -left-16 w-40 h-40 opacity-[0.08] pointer-events-none -z-10 hidden sm:block" style={{ backgroundImage: 'radial-gradient(#003139 2px, transparent 2px)', backgroundSize: '16px 16px' }} />
+
             {/* CSS Browser Mockup */}
             <motion.div 
-              className="relative bg-white rounded-xl shadow-[0_20px_50px_rgba(0,49,57,0.1)] border border-[#DFE3E4] overflow-hidden"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="relative bg-white rounded-xl shadow-[0_25px_50px_-12px_rgba(95,224,137,0.25)] border border-[#DFE3E4] overflow-hidden animate-float"
             >
               {/* Browser Header */}
               <div className="bg-[#F0F2F3] px-4 py-3 flex items-center gap-2 border-b border-[#DFE3E4]">
@@ -83,6 +86,7 @@ export default function HeroSection() {
               {/* Browser Content */}
               <div className="aspect-[16/10] bg-gray-50 relative overflow-hidden">
                 <img 
+                  fetchPriority="high"
                   src={dashboardScreenshot} 
                   alt="NutriTrack Dashboard" 
                   className="w-full h-full object-cover object-top"
@@ -95,9 +99,8 @@ export default function HeroSection() {
 
             {/* Floating Micro Cards */}
             <motion.div 
-              className="absolute -bottom-6 -left-6 lg:-bottom-8 lg:-left-12 bg-white/80 backdrop-blur-md border border-white/40 p-4 rounded-xl shadow-lg flex items-center gap-4 z-20"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute -bottom-6 -left-6 lg:-bottom-8 lg:-left-12 bg-white border border-[#DFE3E4] p-4 rounded-xl shadow-lg flex items-center gap-4 z-20 animate-float-reverse"
+              style={{ animationDelay: '1s' }}
             >
               <div className="w-12 h-12 rounded-full bg-[#5FE089]/20 flex items-center justify-center text-[#2EA850] text-xl">
                 🔥
@@ -109,9 +112,8 @@ export default function HeroSection() {
             </motion.div>
 
             <motion.div 
-              className="absolute -top-6 -right-6 lg:-top-8 lg:-right-8 bg-white/80 backdrop-blur-md border border-white/40 p-4 rounded-xl shadow-lg flex items-center gap-3 z-20 hidden sm:flex"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              className="absolute -top-6 -right-6 lg:-top-8 lg:-right-8 bg-white border border-[#DFE3E4] p-4 rounded-xl shadow-lg flex items-center gap-3 z-20 hidden sm:flex animate-float"
+              style={{ animationDuration: '5.5s', animationDelay: '0.5s' }}
             >
               <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg">
                 🥩

@@ -361,6 +361,7 @@ export default function WeightPage() {
                       </div>
                     ) : adaptiveHistory && adaptiveHistory.length > 0 ? (
                       <Line
+                        id="tdee-history-chart"
                         data={{
                           labels: adaptiveHistory.map(h => {
                             if (!h.weekStartDate) return '';

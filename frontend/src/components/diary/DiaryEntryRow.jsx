@@ -105,6 +105,12 @@ export default function DiaryEntryRow({ entry, onDelete }) {
                 <span className="text-[#2EA850]/80 font-medium">Xơ: {entry.fiberSnapshot}g</span>
               </>
             )}
+            {entry.sugarSnapshot != null && entry.sugarSnapshot > 0 && (
+              <>
+                <span className="text-[#DFE3E4]">·</span>
+                <span className="text-[#DC2626]/80 font-medium">Đường: {entry.sugarSnapshot}g</span>
+              </>
+            )}
           </div>
           {/* Vi chất — chỉ hiện nếu có ít nhất 1 giá trị */}
           {(entry.vitaminASnapshot > 0 || entry.vitaminCSnapshot > 0 || entry.calciumSnapshot > 0 || entry.ironSnapshot > 0) && (

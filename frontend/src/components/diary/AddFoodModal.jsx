@@ -103,7 +103,10 @@ function SearchTab({ date, defaultMeal, onSwitchToCreate }) {
           <div className="flex items-start justify-between">
             <div>
               <p className="font-semibold text-sm">{selected.name}</p>
-              <p className="text-xs text-base-content/50">{selected.calories} kcal/{selected.unit || '100g'}</p>
+              <p className="text-xs text-base-content/50">
+                {selected.calories} kcal/{selected.unit || '100g'}
+                {selected.sugar > 0 && <> · Đường: {selected.sugar}g</>}
+              </p>
             </div>
             <button type="button" onClick={() => setSelected(null)} className="btn btn-ghost btn-xs">
               Đổi

@@ -52,6 +52,11 @@
 /* Base styles */
 html { scroll-behavior: smooth; }
 
+/* Cho phép browser bỏ qua render nội dung chưa hiển thị trên viewport */
+@utility cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
 
 
 /* === KEYFRAMES & ANIMATIONS === */
@@ -69,6 +74,28 @@ html { scroll-behavior: smooth; }
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
+}
+
+@keyframes float-reverse {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(10px); }
+}
+
+@keyframes float-sm {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@utility animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@utility animate-float-reverse {
+  animation: float-reverse 5s ease-in-out infinite;
+}
+
+@utility animate-float-sm {
+  animation: float-sm 5s ease-in-out infinite;
 }
 
 @utility landing-glass {

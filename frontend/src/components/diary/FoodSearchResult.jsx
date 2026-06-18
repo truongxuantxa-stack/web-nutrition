@@ -40,6 +40,7 @@ export default function FoodSearchResult({ food, onSelect }) {
             {food.calories} kcal / {food.unit || '100g'} ·{' '}
             P:{food.protein}g C:{food.carbs}g F:{food.fat}g
             {food.fiber > 0 && <> · Xơ:{food.fiber}g</>}
+            {food.sugar > 0 && <> · Đường:{food.sugar}g</>}
           </p>
           {(food.vitaminA > 0 || food.vitaminC > 0 || food.calcium > 0 || food.iron > 0) && (
             <p className="text-[10px] text-base-content/40 flex flex-wrap gap-x-2 mt-0.5">

@@ -16,6 +16,7 @@ const {
     calculateDailyHealthScore,
 } = require('../../services/suggestion.service');
 const { getWaterByDate } = require('../../services/water.service');
+const { getSportInfo }   = require('../../services/exercise.service');
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 const toLocalDateString = (d) => {
@@ -68,10 +69,22 @@ exports.getDashboard = async (req, res) => {
         // Tổng calo đốt và danh sách tập luyện trong ngày
         const exerciseLogs = await ExerciseLog.findAll({
             where     : { userId: user.id, date },
-            attributes: ['id', 'sport', 'duration', 'caloriesBurned', 'intensity', 'createdAt'],
+            attributes: ['id', 'sport', 'duration', 'caloriesBurned', 'createdAt'],
             order     : [['createdAt', 'DESC']],
         });
         const totalBurned = Math.round(exerciseLogs.reduce((sum, l) => sum + l.caloriesBurned, 0));
+        const exerciseLogsFormatted = exerciseLogs.map(l => {
+            const info = getSportInfo(l.sport);
+            return {
+                id            : l.id,
+                sport         : l.sport,
+                sportLabel    : info.label,
+                sportIcon     : info.icon,
+                duration      : l.duration,
+                caloriesBurned: Math.round(l.caloriesBurned),
+                createdAt     : l.createdAt,
+            };
+        });
 
         // Nước uống — đã tính bên trên, chỉ cần lấy logs nếu cần
 
@@ -102,7 +115,7 @@ exports.getDashboard = async (req, res) => {
                 iron    : consumed.iron != null ? Math.round(consumed.iron) : null,
             },
             totalBurned,
-            exerciseLogs,
+            exerciseLogs    : exerciseLogsFormatted,
             calorieProgress,
             macroProgress,
             weightChartData,
