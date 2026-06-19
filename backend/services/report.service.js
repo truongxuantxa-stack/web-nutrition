@@ -298,13 +298,17 @@ const getReportData = async (userId, range = 'week') => {
         summary.totalExerciseCalories = Math.round(totalExercise);
 
         // Compliance: % ngày đạt ±10% calo target
+        // Chỉ tính từ các ngày thực sự có ghi diary (calories > 0)
         if (metrics.targetCalories) {
             const target = metrics.targetCalories;
-            const compliantDays = dailyLog.filter(d => {
+            const daysWithDiary = dailyLog.filter(d => d.calories > 0);
+            const compliantDays = daysWithDiary.filter(d => {
                 const pct = d.calories / target;
                 return pct >= 0.9 && pct <= 1.1;
             }).length;
-            summary.calorieCompliance = Math.round((compliantDays / daysWithData) * 100);
+            summary.calorieCompliance = daysWithDiary.length > 0
+                ? Math.round((compliantDays / daysWithDiary.length) * 100)
+                : 0;
         }
     }
 

@@ -4,6 +4,9 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
+const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_TIMEOUT_MS = 20_000; // 20 giây — vision model chậm hơn text model
+
 /**
  * Prompt bilingual để đọc bảng thành phần dinh dưỡng từ ảnh.
  * Yêu cầu Gemini trả về JSON chuẩn hóa, quy đổi về per 100g.
@@ -46,55 +49,65 @@ You are a nutrition expert. Read the Nutrition Facts label in this image and ret
  * @returns {Promise<object>} Dữ liệu dinh dưỡng đã chuẩn hóa
  */
 const extractNutritionFromImage = async (base64Image, mimeType = 'image/jpeg') => {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-    const imagePart = {
-        inlineData: {
-            data: base64Image,
-            mimeType,
-        },
-    };
-
-    const result = await model.generateContent([NUTRITION_PROMPT, imagePart]);
-    const responseText = result.response.text();
-
-    // base64Image bị discard tại đây (Zero-Storage policy)
-    // JavaScript GC sẽ thu hồi bộ nhớ sau khi function return
-
-    // Parse JSON — loại bỏ markdown code block nếu Gemini bọc vào
-    const cleanedText = responseText
-        .replace(/```json\s*/gi, '')
-        .replace(/```\s*/gi, '')
-        .trim();
-
-    let parsed;
     try {
-        parsed = JSON.parse(cleanedText);
-    } catch {
-        throw new Error(`Gemini trả về định dạng không hợp lệ: ${responseText.substring(0, 200)}`);
-    }
+        const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
 
-    // Validate các trường bắt buộc
-    const requiredFields = ['calories', 'protein', 'carbs', 'fat'];
-    for (const field of requiredFields) {
-        if (parsed[field] == null || typeof parsed[field] !== 'number') {
-            throw new Error(`Không đọc được "${field}" từ bảng dinh dưỡng. Vui lòng chụp rõ hơn.`);
+        const imagePart = {
+            inlineData: {
+                data: base64Image,
+                mimeType,
+            },
+        };
+
+        // Timeout race — Gemini vision có thể treo nếu server quá tải
+        const apiCall = model.generateContent([NUTRITION_PROMPT, imagePart]);
+        const timeout = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error(`Gemini Vision timeout sau ${GEMINI_TIMEOUT_MS / 1000}s`)), GEMINI_TIMEOUT_MS)
+        );
+        const result = await Promise.race([apiCall, timeout]);
+        const responseText = result.response.text();
+
+        // base64Image bị discard tại đây (Zero-Storage policy)
+        // JavaScript GC sẽ thu hồi bộ nhớ sau khi function return
+
+        // Parse JSON — loại bỏ markdown code block nếu Gemini bọc vào
+        const cleanedText = responseText
+            .replace(/```json\s*/gi, '')
+            .replace(/```\s*/gi, '')
+            .trim();
+
+        let parsed;
+        try {
+            parsed = JSON.parse(cleanedText);
+        } catch {
+            throw new Error(`Gemini trả về định dạng không hợp lệ: ${responseText.substring(0, 200)}`);
         }
-    }
 
-    return {
-        productName: parsed.productName || null,
-        servingSize: parsed.servingSize || null,
-        calories: Number(parsed.calories),
-        protein: Number(parsed.protein),
-        carbs: Number(parsed.carbs),
-        fat: Number(parsed.fat),
-        fiber: parsed.fiber != null ? Number(parsed.fiber) : null,
-        sugar: parsed.sugar != null ? Number(parsed.sugar) : null,
-        sodium: parsed.sodium != null ? Number(parsed.sodium) : null,
-        confidence: parsed.confidence || 'low',
-        rawText: parsed.rawText || '',
-    };
+        // Validate các trường bắt buộc
+        const requiredFields = ['calories', 'protein', 'carbs', 'fat'];
+        for (const field of requiredFields) {
+            if (parsed[field] == null || typeof parsed[field] !== 'number') {
+                throw new Error(`Không đọc được "${field}" từ bảng dinh dưỡng. Vui lòng chụp rõ hơn.`);
+            }
+        }
+
+        return {
+            productName: parsed.productName || null,
+            servingSize: parsed.servingSize || null,
+            calories: Number(parsed.calories),
+            protein: Number(parsed.protein),
+            carbs: Number(parsed.carbs),
+            fat: Number(parsed.fat),
+            fiber: parsed.fiber != null ? Number(parsed.fiber) : null,
+            sugar: parsed.sugar != null ? Number(parsed.sugar) : null,
+            sodium: parsed.sodium != null ? Number(parsed.sodium) : null,
+            confidence: parsed.confidence || 'low',
+            rawText: parsed.rawText || '',
+        };
+    } catch (err) {
+        // Re-throw với message rõ ràng để controller hiển thị cho user
+        throw new Error(`[GeminiVision] ${err.message}`);
+    }
 };
 
 module.exports = { extractNutritionFromImage };

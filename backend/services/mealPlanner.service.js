@@ -3,6 +3,16 @@
 const { Op } = require('sequelize');
 const { Food } = require('../models');
 
+// ============================================================================
+// MODULE-LEVEL CONFIG & CACHE
+// ============================================================================
+
+/** Cố định 200g rau cho bữa chính. Có thể truyền qua tham số nếu cần linh hoạt sau này. */
+const FIBER_DEFAULT_GRAMS = 200;
+
+/** Cache kết quả getLeanAlternatives — tránh query DB lặp lại mỗi lần thuật toán fail. */
+let _leanAlternativesCache = null;
+
 /**
  * ═══════════════════════════════════════════════════════════════════════════════
  * services/mealPlanner.service.js
@@ -60,7 +70,9 @@ const pickRandomFoodByRole = async (role, excludeIds = [], allowedTags = []) => 
         whereClause.id = { [Op.notIn]: excludeIds };
     }
 
-    const candidates = await Food.findAll({ where: whereClause });
+    // [FIX] Giới hạn 100 records — tránh fetch toàn bộ bảng khi DB lớn lên.
+    // Tag filtering phải thực hiện ở app-level vì tags là JSON array, không filter được ở SQL.
+    const candidates = await Food.findAll({ where: whereClause, limit: 100 });
     if (!candidates || candidates.length === 0) return null;
 
     // Lọc theo tags nếu template có yêu cầu
@@ -181,11 +193,12 @@ const calculateWeights = (foods, target) => {
     let remaining = foods;
     let adjustedTarget = { ...target };
     let fiberFood = null;
-    const FIBER_DEFAULT_GRAMS = 200; // Cố định 200g rau
+    // FIBER_DEFAULT_GRAMS được định nghĩa ở module-level để dễ cấu hình toàn cục
 
     // 1. Phân loại nguyên liệu nếu là bữa chính (có 4 nguyên liệu)
     if (foods.length === 4) {
-        fiberFood = foods.find(f => f.category === 'fiber' || f.role === 'fiber');
+        // [FIX] Bỏ điều kiện f.role === 'fiber' — object từ DB chỉ có field 'category', không có 'role'.
+        fiberFood = foods.find(f => f.category === 'fiber');
         const fiberWeight = FIBER_DEFAULT_GRAMS / 100;
 
         if (!fiberFood) {
@@ -208,14 +221,16 @@ const calculateWeights = (foods, target) => {
     }
 
     // 4. Thiết lập hệ phương trình A * W = T
-    // A: Ma trận chứa thông tin protein, carbs, fat của 3 nguyên liệu (trên 100g)
+    // A[i][j] = lượng macro i (protein/carbs/fat) có trong 100g của nguyên liệu j
+    // W[j]    = số đơn vị 100g cần dùng của nguyên liệu j (nghiệm cần tìm)
+    // T[i]    = mục tiêu macro i của bữa ăn (đã trừ phần rau)
     const A = [
-        [remaining[0].protein, remaining[1].protein, remaining[2].protein],
-        [remaining[0].carbs, remaining[1].carbs, remaining[2].carbs],
-        [remaining[0].fat, remaining[1].fat, remaining[2].fat]
+        [remaining[0].protein, remaining[1].protein, remaining[2].protein], // Hàng 0: phương trình Protein
+        [remaining[0].carbs,   remaining[1].carbs,   remaining[2].carbs  ], // Hàng 1: phương trình Carbs
+        [remaining[0].fat,     remaining[1].fat,     remaining[2].fat    ]  // Hàng 2: phương trình Fat
     ];
     
-    // T: Vector mục tiêu đã điều chỉnh
+    // T phải có cùng thứ tự với hàng của A: [protein, carbs, fat]
     const T = [adjustedTarget.protein, adjustedTarget.carbs, adjustedTarget.fat];
 
     // Giải phương trình
@@ -337,15 +352,19 @@ const generateMealPlan = async (template, target, preferences = {}) => {
                 };
             }
 
-            // Nếu Failed: Lưu lại kết quả Gauss đầu tiên (chứa nghiệm âm hoặc cảnh báo) làm phương án hiển thị lỗi
-            if (!bestAttempt) {
-                bestAttempt = {
-                    data: weights,
-                    validation: validation
-                };
+            // [FIX] Lưu attempt có ÍT LỖI NHẤT (không phải chỉ lưu attempt đầu tiên)
+            const errorCount = validation.errors.filter(e => e.severity === 'error').length;
+            if (!bestAttempt || errorCount < bestAttempt.errorCount) {
+                bestAttempt = { data: weights, validation, errorCount };
             }
         } catch (error) {
-            console.error(`Attempt ${attempt} failed:`, error.message);
+            // [FIX] Lỗi throw = lỗi nghiêm trọng (thiếu nguyên liệu trong DB, cấu hình sai template...)
+            // Đây KHÔNG phải lỗi recoverable -> dừng retry ngay, tránh lãng phí 15 vòng lặp vô ích
+            console.error(`Fatal error during meal plan generation:`, error.message);
+            return {
+                success: false,
+                errors: [{ type: 'FATAL', severity: 'error', message: error.message }]
+            };
         }
     }
 
@@ -369,6 +388,13 @@ const generateMealPlan = async (template, target, preferences = {}) => {
  * @returns {Array} Mảng các nguồn đạm nạc
  */
 const getLeanAlternatives = async () => {
+    // [FIX] Cache kết quả trong memory — danh sách protein nạc gần như không đổi.
+    // Tránh query DB lặp lại mỗi khi generateMealPlan thất bại và gọi hàm này.
+    // Nếu cần invalidate cache (ví dụ sau khi admin thêm món mới), restart server hoặc set _leanAlternativesCache = null.
+    if (_leanAlternativesCache) {
+        return _leanAlternativesCache;
+    }
+
     const leanFoods = await Food.findAll({
         where: { category: 'protein', foodType: 'raw' },
         attributes: ['id', 'name', 'protein', 'fat']
@@ -386,12 +412,14 @@ const getLeanAlternatives = async () => {
     // Sắp xếp tăng dần theo tỷ lệ mỡ
     leanAlternatives.sort((a, b) => a.fatPerProtein - b.fatPerProtein);
 
-    // Trả về top 3 gợi ý tốt nhất
-    return leanAlternatives.slice(0, 3).map(f => ({
+    // Lưu vào cache trước khi trả về
+    _leanAlternativesCache = leanAlternatives.slice(0, 3).map(f => ({
         id: f.id,
         name: f.name,
         fatPerProtein: Number(f.fatPerProtein.toFixed(2))
     }));
+
+    return _leanAlternativesCache;
 };
 
 module.exports = {

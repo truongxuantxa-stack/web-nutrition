@@ -17,7 +17,7 @@ const getDaysDifference = (date1, date2) => {
 
 // Calculate standard deviation of an array of numbers
 const calculateStdDev = (values) => {
-    if (values.length < 2) return 0.5; // Default if not enough data
+    if (values.length < 2) return MIN_RIBBON_DEV; // Dùng MIN_RIBBON_DEV thay vì magic number
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
     const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (values.length - 1);
     return Math.sqrt(variance);
@@ -116,7 +116,7 @@ const calculateRateOfChange = (emaSeries) => {
 };
 
 const calculateProjection = (currentEma, weeklyRate, lastEmaDate, weeks = 4) => {
-    if (!currentEma || weeklyRate === 0) return [];
+    if (!currentEma || weeklyRate === 0 || !lastEmaDate) return [];
     
     const projection = [];
     const startDate = new Date(lastEmaDate);
@@ -163,16 +163,19 @@ const buildTrendResponse = async (userId, range) => {
         }
     }
 
-    const logs = await WeightLog.findAll({
-        where: {
-            userId,
-            ...dateFilter
-        },
-        order: [['date', 'ASC']]
-    });
+    // Chạy song song để tránh 2 queries tuần tự
+    const [logs, totalLogsCount] = await Promise.all([
+        WeightLog.findAll({
+            where: {
+                userId,
+                ...dateFilter
+            },
+            order: [['date', 'ASC']]
+        }),
+        WeightLog.count({ where: { userId } }),
+    ]);
 
     // Check if sufficient data (at least 5 points in total history for the trend to make sense)
-    const totalLogsCount = await WeightLog.count({ where: { userId } });
     const hasSufficientData = totalLogsCount >= 5;
 
     if (!logs || logs.length === 0) {
@@ -251,9 +254,10 @@ const buildTrendResponse = async (userId, range) => {
 
 const getLatestEMA = async (userId) => {
     // Get last 15 logs to calculate EMA (14 days warm up is enough)
+    // Thêm createdAt làm tiebreaker để tránh thứ tự không xác định khi log nhiều lần/ngày
     const logs = await WeightLog.findAll({
         where: { userId },
-        order: [['date', 'DESC']],
+        order: [['date', 'DESC'], ['createdAt', 'DESC']],
         limit: 15
     });
     

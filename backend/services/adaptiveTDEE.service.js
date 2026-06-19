@@ -9,6 +9,20 @@ const EMA_ALPHA = 0.1;
 const DAYS_IN_WEEK = 7;
 const MIN_DAYS_LOGGED = 5;
 const MIN_WEIGHT_LOGS = 2;
+/** [FIX #7] Hằng số thay thế magic number 14 trong warm-up EMA */
+const EMA_WARMUP_DAYS = 14;
+
+/**
+ * Helper: Chuẩn hóa Date object hoặc string về định dạng 'YYYY-MM-DD'.
+ * [FIX #1] Sequelize có thể trả về Date object (MySQL) hoặc string (PostgreSQL) tùy dialect.
+ * So sánh trực tiếp Date >= string sẽ cho kết quả sai — luôn chuẩn hóa trước khi so sánh.
+ * @param {Date|string} date
+ * @returns {string} Chuỗi 'YYYY-MM-DD'
+ */
+const normalizeDate = (date) => {
+    if (date instanceof Date) return date.toISOString().split('T')[0];
+    return String(date).split('T')[0];
+};
 
 /**
  * 1. Calculate Average Weekly Intake
@@ -46,9 +60,9 @@ const calculateWeeklyIntake = async (userId, weekStart, weekEnd) => {
  * 2. Calculate Smoothed Weight (EMA)
  */
 const calculateSmoothedWeight = async (userId, weekStart, weekEnd) => {
-    // Lùi lại 14 ngày trước ngày bắt đầu tuần để lấy dữ liệu "Warm-up" cho EMA
+    // [FIX #7] Dùng hằng số EMA_WARMUP_DAYS thay vì magic number 14
     const startDate = new Date(weekStart);
-    startDate.setDate(startDate.getDate() - 14);
+    startDate.setDate(startDate.getDate() - EMA_WARMUP_DAYS);
     const warmUpStart = startDate.toISOString().split('T')[0];
 
     const logs = await WeightLog.findAll({
@@ -62,29 +76,36 @@ const calculateSmoothedWeight = async (userId, weekStart, weekEnd) => {
         order: [['date', 'ASC']]
     });
 
-    // Lọc riêng các log của tuần hiện tại để kiểm tra điều kiện số lượng tối thiểu
-    const currentWeekLogs = logs.filter(log => log.date >= weekStart && log.date <= weekEnd);
+    // [FIX #1] Dùng normalizeDate() để so sánh an toàn — tránh bug Date vs string tùy dialect DB
+    const currentWeekLogs = logs.filter(log => {
+        const d = normalizeDate(log.date);
+        return d >= weekStart && d <= weekEnd;
+    });
     if (currentWeekLogs.length < MIN_WEIGHT_LOGS) return null;
 
+    // [FIX #2] Khởi tạo EMA = logs[0].weight, bắt vòng lặp từ i=1.
+    // Lỗi cũ: vòng lặp từ i=0 với `if (i > 0)` → khi chỉ có 1 log, EMA không bao giờ
+    // được cập nhật, weightDelta luôn = 0 và thuật toán im lặng bỏ qua dữ liệu.
     let ema = logs[0].weight;
     let startWeight = null;
-    const targetStart = new Date(weekStart);
 
-    for (let i = 0; i < logs.length; i++) {
-        if (i > 0) {
-            ema = (EMA_ALPHA * logs[i].weight) + ((1 - EMA_ALPHA) * ema);
-        }
-        
-        // Khi bắt đầu chạm hoặc vượt qua ngày bắt đầu tuần hiện tại, ghi nhận startWeight từ EMA đã làm ấm
-        const logDate = new Date(logs[i].date);
-        if (logDate >= targetStart && startWeight === null) {
+    // Kiểm tra ngay log đầu tiên có nằm trong tuần hiện tại không
+    if (normalizeDate(logs[0].date) >= weekStart && startWeight === null) {
+        startWeight = ema;
+    }
+
+    for (let i = 1; i < logs.length; i++) {
+        ema = (EMA_ALPHA * logs[i].weight) + ((1 - EMA_ALPHA) * ema);
+
+        // Khi chạm hoặc vượt ngày bắt đầu tuần, ghi nhận startWeight từ EMA đã làm ấm
+        if (normalizeDate(logs[i].date) >= weekStart && startWeight === null) {
             startWeight = ema;
         }
     }
 
     const endWeight = ema;
 
-    // Trường hợp dự phòng nếu không tìm thấy startWeight do lệch múi giờ hoặc định dạng ngày
+    // Dự phòng nếu toàn bộ logs đều nằm trước tuần hiện tại (trường hợp dữ liệu cũ rất thưa)
     if (startWeight === null && currentWeekLogs.length > 0) {
         startWeight = currentWeekLogs[0].weight;
     }
@@ -126,6 +147,9 @@ const calculateRollingTDEE = async (userId, currentWeeklyTDEE, userGoal) => {
     let count = 1;
 
     pastLogs.forEach(log => {
+        // [NOTE #4] Dùng calculatedTDEE (giá trị tuần thô, đã clamp) — KHÔNG dùng log.rollingTDEE.
+        // Nếu dùng rollingTDEE sẽ gây "smoothing kép" (average của averages), làm thuật toán
+        // mất độ nhạy và phản ứng chậm hơn với sự thay đổi thực tế của cơ thể.
         sum += log.calculatedTDEE;
         count++;
     });
@@ -154,6 +178,12 @@ const processWeeklyAdaptation = async (userId, weekStart, weekEnd) => {
 
     const userMetrics = nutritionService.calculateAllMetrics(user);
     const staticTDEE = userMetrics.tdee;
+    // [FIX #6] Guard: Nếu user chưa đủ thông tin (chiều cao, cân nặng, tuổi),
+    // staticTDEE = NaN/undefined → clamp bounds (staticTDEE * 0.7) cũng thành NaN,
+    // toàn bộ cơ chế bảo vệ dữ liệu cực đoan bị vô hiệu hóa hoàn toàn.
+    if (!staticTDEE || isNaN(staticTDEE)) {
+        throw new Error(`Không thể tính static TDEE cho user ${userId}: thiếu thông tin cá nhân (chiều cao, cân nặng, tuổi).`);
+    }
     const targetCalories = userMetrics.targetCalories;
     const userGoal = user.goal;
 
@@ -203,9 +233,13 @@ const processWeeklyAdaptation = async (userId, weekStart, weekEnd) => {
     const rollingTDEE = await calculateRollingTDEE(userId, calculatedTDEE, userGoal);
 
     // Tính confidence
-    let confidence = 'high';
-    if (daysLogged <= 5) confidence = 'low';
+    // [FIX #3] Logic cũ: daysLogged <= 5 là 'low' — nhưng MIN_DAYS_LOGGED = 5 nên
+    // 5 ngày là ngưỡng HỢP LỆ, không hợp lý khi gán 'low' trùng với điều kiện tối thiểu.
+    // Logic mới: chỉ 7 ngày đầy đủ mới là 'high'; 6 ngày là 'medium'; 5 ngày là 'low'.
+    let confidence;
+    if (daysLogged === DAYS_IN_WEEK) confidence = 'high';
     else if (daysLogged === 6) confidence = 'medium';
+    else confidence = 'low';
 
     let savedLog;
     if (existingLog) {

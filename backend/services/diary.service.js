@@ -47,7 +47,11 @@ const addDiaryEntry = async (userId, { foodId, amount, mealType, date, note }) =
         throw { status: 400, message: 'Số lượng phải là số dương.' };
     }
 
-    const food = await Food.findByPk(parseInt(foodId));
+    const parsedFoodId = parseInt(foodId);
+    if (isNaN(parsedFoodId)) {
+        throw { status: 400, message: 'foodId không hợp lệ.' };
+    }
+    const food = await Food.findByPk(parsedFoodId);
     if (!food) {
         throw { status: 404, message: 'Không tìm thấy món ăn.' };
     }
@@ -104,7 +108,8 @@ const deleteDiaryEntry = async (userId, entryId) => {
  * @returns {{ foods: Food[] }}
  */
 const searchFood = async (userId, { q, category, foodType, limit }) => {
-    const limitNum = parseInt(limit) || 100;
+    // Clamp về [1, 100] — tránh LIMIT âm gây lỗi Sequelize
+    const limitNum = Math.min(Math.max(1, parseInt(limit) || 1), 100);
 
     const whereClause = {
         [Op.or]: [
@@ -118,7 +123,7 @@ const searchFood = async (userId, { q, category, foodType, limit }) => {
 
     const foods = await Food.findAll({
         where     : whereClause,
-        limit     : Math.min(limitNum, 100),
+        limit     : limitNum,
         order     : [['isCustom', 'DESC'], ['name', 'ASC']],
         attributes: ['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'vitaminA', 'vitaminC', 'calcium', 'iron', 'unit', 'category', 'foodType', 'isCustom', 'imageUrl', 'dataSource'],
     });
@@ -126,14 +131,14 @@ const searchFood = async (userId, { q, category, foodType, limit }) => {
     const hasOffResults = foods.some(f => f.dataSource === 'openfoodfacts');
 
     // Chỉ gọi API khi kết quả local < 5 VÀ chưa có kết quả nào từ OpenFoodFacts trong list này
+    let extraFoods = [];
     if (foods.length < 5 && !hasOffResults && q && q.trim()) {
         try {
             const offProducts = await openfoodfactsService.searchOpenFoodFacts(q.trim(), limitNum);
             if (offProducts.length > 0) {
                 const savedFoods = await openfoodfactsService.saveToLocalDB(offProducts);
-                
                 const localIds = new Set(foods.map(f => f.id));
-                const newFoods = savedFoods
+                extraFoods = savedFoods
                     .filter(f => !localIds.has(f.id))
                     .map(f => ({
                         id: f.id, name: f.name, calories: f.calories,
@@ -144,15 +149,14 @@ const searchFood = async (userId, { q, category, foodType, limit }) => {
                         unit: f.unit, category: f.category, foodType: f.foodType,
                         isCustom: f.isCustom, imageUrl: f.imageUrl, dataSource: f.dataSource,
                     }));
-                
-                foods.push(...newFoods);
             }
         } catch (err) {
             console.warn('[HybridSearch] Fallback to Local DB only.');
         }
     }
 
-    return { foods };
+    // Spread thay vì push() để không mutate mảng Sequelize instance
+    return { foods: [...foods, ...extraFoods] };
 };
 
 // ─── Validate macro fields dùng chung cho create + update ────────────────────
@@ -295,25 +299,27 @@ const updateCustomFood = async (userId, foodId, foodData) => {
         foodType: foodType || existingFood.foodType,
     });
 
-    // [QA-FIX] Dùng updatedName thay vì existingFood.name (giá trị cũ trước update)
+    // Sequelize update() cập nhật instance in-place → đọc trực tiếp, không cần reconstruct thủ công
+    // Tránh silent bug khi thêm field mới vào update nhưng quên thêm vào return
     return {
         food: {
             id      : existingFood.id,
-            name    : updatedName,
-            calories: calNum,
-            protein : proNum,
-            carbs   : carbNum,
-            fat     : fatNum,
-            fiber   : fiberNum,
-            sugar   : sugarNum,
-            sodium  : sodiumNum,
-            vitaminA: vitaminANum,
-            vitaminC: vitaminCNum,
-            calcium : calciumNum,
-            iron    : ironNum,
-            unit    : unit && unit.trim() ? unit.trim() : existingFood.unit,
-            category: category || existingFood.category,
-            foodType: foodType || existingFood.foodType,
+            name    : existingFood.name,
+            calories: existingFood.calories,
+            protein : existingFood.protein,
+            carbs   : existingFood.carbs,
+            fat     : existingFood.fat,
+            fiber   : existingFood.fiber,
+            sugar   : existingFood.sugar,
+            sodium  : existingFood.sodium,
+            vitaminA: existingFood.vitaminA,
+            vitaminC: existingFood.vitaminC,
+            calcium : existingFood.calcium,
+            iron    : existingFood.iron,
+            unit    : existingFood.unit,
+            category: existingFood.category,
+            foodType: existingFood.foodType,
+            isCustom: existingFood.isCustom,
         },
     };
 };

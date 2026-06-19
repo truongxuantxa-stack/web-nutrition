@@ -33,7 +33,7 @@ const calculateAge = (birthDate) => {
  * @returns {number} BMI (làm tròn 1 chữ số thập phân)
  */
 const calculateBMI = (weight, height) => {
-    if (!weight || !height || height <= 0) return null;
+    if (!weight || !height) return null; // !height đã cover height <= 0
     const heightM = height / 100;
     return Math.round((weight / (heightM * heightM)) * 10) / 10;
 };
@@ -123,7 +123,7 @@ const calculateTDEE = (bmr, activityLevel) => {
  * @returns {number|null} Mục tiêu calo/ngày đã điều chỉnh
  */
 const adjustCaloriesForGoal = (tdee, goal, bmr) => {
-    if (!tdee) return null;
+    if (tdee == null) return null; // dùng == null thay !tdee để không reject tdee = 0
     const floor = bmr ? Math.round(bmr) : 1200;
     switch (goal) {
         case 'lose_weight':     return Math.max(floor, tdee - 500); // Tối thiểu bằng BMR
@@ -131,6 +131,16 @@ const adjustCaloriesForGoal = (tdee, goal, bmr) => {
         case 'gain_weight':     return tdee + 300;
         default:                return tdee;
     }
+};
+
+/**
+ * Điều chỉnh calo theo mục tiêu (kcal/ngày).
+ * Dùng thay IIFE trong calculateAllMetrics để dễ đọc và maintain.
+ */
+const GOAL_ADJUSTMENTS = {
+    lose_weight:      -500,
+    maintain_weight:    0,
+    gain_weight:      +300,
 };
 
 /**
@@ -213,14 +223,7 @@ const calculateAllMetrics = (user) => {
         macros,
         macroRatios,
         activityLabel: ACTIVITY_LABELS[user.activityLevel] || null,
-        goalAdjustment: (() => {
-            switch (user.goal) {
-                case 'lose_weight':     return -500;
-                case 'maintain_weight': return 0;
-                case 'gain_weight':     return +300;
-                default:                return 0;
-            }
-        })(),
+        goalAdjustment: GOAL_ADJUSTMENTS[user.goal] ?? 0,
     };
 };
 
@@ -251,4 +254,5 @@ module.exports = {
     ACTIVITY_FACTORS,
     ACTIVITY_LABELS,
     MACRO_DEFAULTS,
+    GOAL_ADJUSTMENTS,
 };

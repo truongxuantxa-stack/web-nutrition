@@ -18,8 +18,9 @@ const { toLocalDateString, toDateString } = require('../utils/date.helper');
  */
 const getWaterByDate = async (userId, date) => {
     const logs = await WaterLog.findAll({
-        where: { userId, date },
-        order: [['createdAt', 'ASC']],
+        where     : { userId, date },
+        attributes: ['id', 'amount', 'note', 'createdAt'],
+        order     : [['createdAt', 'ASC']],
     });
     const total = logs.reduce((sum, l) => sum + l.amount, 0);
     return { total, logs };
@@ -100,19 +101,20 @@ const deleteWaterLog = async (userId, logId) => {
  * @throws {{ status: number, message: string }}
  */
 const updateWaterGoal = async (user, waterGoal) => {
-    // [QA-FIX] Dùng Number() để chặn "500abc"
+    // Dùng Number() để chặn "500abc", reject float để nhất quán với addWaterLog
     const goalRaw = Number(waterGoal);
-    const goalNum = Number.isInteger(goalRaw) ? goalRaw : Math.round(goalRaw);
 
     if (
         waterGoal === undefined || waterGoal === null || String(waterGoal).trim() === '' ||
-        isNaN(goalNum) || goalNum < 500 || goalNum > 10000
+        isNaN(goalRaw) ||
+        !Number.isInteger(goalRaw) ||
+        goalRaw < 500 || goalRaw > 10000
     ) {
-        throw { status: 400, message: 'Mục tiêu nước phải từ 500 ml đến 10000 ml.' };
+        throw { status: 400, message: 'Mục tiêu nước phải là số nguyên từ 500 ml đến 10000 ml.' };
     }
 
-    await user.update({ waterGoal: goalNum });
-    return { newGoal: goalNum };
+    await user.update({ waterGoal: goalRaw });
+    return { newGoal: goalRaw };
 };
 
 module.exports = { getWaterByDate, addWaterLog, deleteWaterLog, updateWaterGoal };

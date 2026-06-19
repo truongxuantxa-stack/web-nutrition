@@ -2,6 +2,15 @@
  * Food Scoring Service — Nutrient Density per 100 Kcal
  */
 
+// [FIX #6] Tập trung tất cả ngưỡng dinh dưỡng vào một config object duy nhất.
+// Khi chuẩn dinh dưỡng thay đổi (ví dụ WHO cập nhật), chỉ cần sửa ở đây.
+const NUTRIENT_THRESHOLDS = {
+    sodium:  { warning: 100, danger: 150 },   // mg/100kcal
+    sugar:   { warning: 2.5, danger: 5 },     // g/100kcal
+    protein: { excellent: 5,    good: 3 },    // g/100kcal
+    fiber:   { excellent: 1.25, good: 0.5 }   // g/100kcal
+};
+
 /**
  * Tính điểm cho 1 món ăn dựa trên mật độ dinh dưỡng trên 100 kcal
  * @param {Object} food - Object thông tin món ăn từ database (chứa calories, sugar, sodium, protein, fiber)
@@ -47,11 +56,13 @@ function scoreFoodItem(food) {
     let missingData = false;
     let score = 50; // Sửa điểm cơ sở thành 50 thay vì 100
     
-    // Helper to evaluate nutrient
+    // [FIX #1] evaluateNutrient là hàm PURE — không còn mutate biến 'score' bên ngoài qua closure.
+    // Thay vào đó trả về 'penaltyOrBonus' trong object để caller tích lũy tường minh.
+    // [FIX #6] Dùng NUTRIENT_THRESHOLDS thay vì magic numbers inline.
     const evaluateNutrient = (value, type) => {
         if (value === null || value === undefined) {
             missingData = true;
-            return { available: false };
+            return { available: false, penaltyOrBonus: 0 };
         }
         
         const density = value * ratio100Kcal;
@@ -61,36 +72,34 @@ function scoreFoodItem(food) {
         let threshold = 0;
         
         if (type === 'sodium') {
-            threshold = 100; // mg
+            threshold = NUTRIENT_THRESHOLDS.sodium.warning;
             const isNaturalSodium = food.foodType === 'raw' && ['rau_cu', 'trai_cay', 'thit_ca', 'protein', 'fiber', 'carb', 'fat'].includes(food.category);
             
             if (isNaturalSodium) {
                 level = 'safe'; label = '🟢 Natri tự nhiên';
-            } else if (density <= 100) { level = 'safe'; label = '🟢 Ít muối'; }
-            else if (density <= 150) { level = 'warning'; label = '🟡 Hơi mặn'; penaltyOrBonus = -10; }
-            else { level = 'danger'; label = '🔴 Rất mặn'; penaltyOrBonus = -25; }
+            } else if (density <= NUTRIENT_THRESHOLDS.sodium.warning) { level = 'safe';    label = '🟢 Ít muối'; }
+            else if (density <= NUTRIENT_THRESHOLDS.sodium.danger)    { level = 'warning'; label = '🟡 Hơi mặn';       penaltyOrBonus = -10; }
+            else                                                        { level = 'danger';  label = '🔴 Rất mặn';       penaltyOrBonus = -25; }
         } else if (type === 'sugar') {
-            threshold = 2.5; // g
+            threshold = NUTRIENT_THRESHOLDS.sugar.warning;
             const isNaturalSugar = ['trai_cay', 'rau_cu', 'fiber', 'carb'].includes(food.category);
             
             if (isNaturalSugar) {
                 level = 'safe'; label = '🟢 Đường tự nhiên';
-            } else if (density <= 2.5) { level = 'safe'; label = '🟢 Ít đường'; }
-            else if (density <= 5) { level = 'warning'; label = '🟡 Khá nhiều đường'; penaltyOrBonus = -10; }
-            else { level = 'danger'; label = '🔴 Quá nhiều đường'; penaltyOrBonus = -25; }
+            } else if (density <= NUTRIENT_THRESHOLDS.sugar.warning) { level = 'safe';    label = '🟢 Ít đường'; }
+            else if (density <= NUTRIENT_THRESHOLDS.sugar.danger)    { level = 'warning'; label = '🟡 Khá nhiều đường'; penaltyOrBonus = -10; }
+            else                                                       { level = 'danger';  label = '🔴 Quá nhiều đường'; penaltyOrBonus = -25; }
         } else if (type === 'protein') {
-            threshold = 5; // g (for excellent)
-            if (density >= 5) { level = 'excellent'; label = '🌟 Giàu đạm'; penaltyOrBonus = 25; }
-            else if (density >= 3) { level = 'good'; label = '🟢 Đủ đạm'; penaltyOrBonus = 15; }
-            else { level = 'low'; label = 'Ít đạm'; }
+            threshold = NUTRIENT_THRESHOLDS.protein.excellent;
+            if (density >= NUTRIENT_THRESHOLDS.protein.excellent) { level = 'excellent'; label = '🌟 Giàu đạm'; penaltyOrBonus = 25; }
+            else if (density >= NUTRIENT_THRESHOLDS.protein.good) { level = 'good';      label = '🟢 Đủ đạm';   penaltyOrBonus = 15; }
+            else                                                    { level = 'low';       label = 'Ít đạm'; }
         } else if (type === 'fiber') {
-            threshold = 1.25; // g (for excellent)
-            if (density >= 1.25) { level = 'excellent'; label = '🌟 Giàu xơ'; penaltyOrBonus = 25; }
-            else if (density >= 0.5) { level = 'good'; label = '🟢 Có xơ'; penaltyOrBonus = 15; }
-            else { level = 'low'; label = 'Ít xơ'; }
+            threshold = NUTRIENT_THRESHOLDS.fiber.excellent;
+            if (density >= NUTRIENT_THRESHOLDS.fiber.excellent) { level = 'excellent'; label = '🌟 Giàu xơ'; penaltyOrBonus = 25; }
+            else if (density >= NUTRIENT_THRESHOLDS.fiber.good) { level = 'good';      label = '🟢 Có xơ';    penaltyOrBonus = 15; }
+            else                                                  { level = 'low';       label = 'Ít xơ'; }
         }
-
-        score += penaltyOrBonus;
 
         return {
             available: true,
@@ -99,6 +108,7 @@ function scoreFoodItem(food) {
             ratio: threshold > 0 ? parseFloat((density / threshold).toFixed(2)) : 0,
             level,
             label,
+            penaltyOrBonus,
         };
     };
 
@@ -106,6 +116,13 @@ function scoreFoodItem(food) {
     const sugarRes = evaluateNutrient(food.sugar, 'sugar');
     const proteinRes = evaluateNutrient(food.protein, 'protein');
     const fiberRes = evaluateNutrient(food.fiber, 'fiber');
+
+    // [FIX #1] Tích lũy điểm tường minh từ penaltyOrBonus được trả về bởi evaluateNutrient.
+    // Trước đây evaluateNutrient âm thầm mutate 'score' qua closure — impure và dễ gây bug ẩn.
+    score += (sodiumRes.penaltyOrBonus  || 0);
+    score += (sugarRes.penaltyOrBonus   || 0);
+    score += (proteinRes.penaltyOrBonus || 0);
+    score += (fiberRes.penaltyOrBonus   || 0);
 
     // Khống chế điểm [0, 100]
     score = Math.max(0, Math.min(100, score));
@@ -117,11 +134,15 @@ function scoreFoodItem(food) {
     else if (score >= 60) { qualityLevel = 'good'; qualityLabel = '🟢 Khá tốt'; }
     else if (score >= 40) { qualityLevel = 'moderate'; qualityLabel = '🟡 Trung bình'; }
 
-    // Determine badge icon based on worst nutrient
-    let badgeIcon = '🟢';
+    // [FIX #2] Derive badgeIcon mặc định từ qualityLevel — không hardcode '🟢'.
+    // Trước đây: food có qualityLevel 'poor' nhưng không có sodium/sugar issue
+    // vẫn hiển thị badge '🟢' (xanh) — mâu thuẫn UX nghiêm trọng.
+    const defaultBadgeIcons = { excellent: '🌟', good: '🟢', moderate: '🟡', poor: '🔴' };
+    let badgeIcon = defaultBadgeIcons[qualityLevel] || '🟢';
     let badgeTooltip = 'Tốt';
     let worstLabel = '';
-    
+
+    // Nutrient-specific override: cảnh báo cụ thể luôn ưu tiên hơn badge mặc định từ qualityLevel
     if (sodiumRes.level === 'danger' || sugarRes.level === 'danger') {
         badgeIcon = '🔴';
         if (sodiumRes.level === 'danger' && sugarRes.level === 'danger') {
@@ -132,7 +153,9 @@ function scoreFoodItem(food) {
             worstLabel = sugarRes.label;
         }
     } else if (sodiumRes.level === 'warning' || sugarRes.level === 'warning') {
-        if (badgeIcon === '🟢') badgeIcon = '🟡';
+        // [FIX #3] Bỏ `if (badgeIcon === '🟢')` — điều kiện này luôn đúng tại đây
+        // vì block 'danger' phía trên đã xử lý badge đỏ rồi. Assign trực tiếp.
+        badgeIcon = '🟡';
         if (sodiumRes.level === 'warning' && sugarRes.level === 'warning') {
             worstLabel = `${sodiumRes.label}, ${sugarRes.label}`;
         } else if (sodiumRes.level === 'warning') {
@@ -151,11 +174,8 @@ function scoreFoodItem(food) {
         }
     }
 
-    if (badgeIcon === '🔴' || badgeIcon === '🟡') {
-        badgeTooltip = worstLabel;
-    } else if (badgeIcon === '🌟') {
-        badgeTooltip = worstLabel;
-    }
+    // [FIX #4] Gộp 3 nhánh if/else-if cùng làm badgeTooltip = worstLabel thành 1 dòng.
+    if (worstLabel) badgeTooltip = worstLabel;
 
     return {
         skipped: false,
@@ -192,16 +212,16 @@ function buildWeeklyFoodReport(diaryEntries, range) {
                 foodId: fId,
                 name: entry.food.name,
                 count: 0,
-                totalCaloriesPerServing: 0,
+                // [FIX #5] Đổi tên từ 'totalCaloriesPerServing' → 'totalCaloriesPer100g'.
+                // food.calories là calo trên 100g (chuẩn DB), KHÔNG phải calo per serving thực tế.
+                totalCaloriesPer100g: 0,
                 foodObj: entry.food
             });
         }
         
         const f = foodMap.get(fId);
         f.count += 1;
-        // Chúng ta tính calo trung bình trên mỗi serving (không phải tổng calo đã ăn)
-        // Dùng data chuẩn từ món ăn (food.calories), không phải entry.calories
-        f.totalCaloriesPerServing += entry.food.calories || 0; 
+        f.totalCaloriesPer100g += entry.food.calories || 0;
     });
 
     const scoredFoods = [];
@@ -214,14 +234,14 @@ function buildWeeklyFoodReport(diaryEntries, range) {
     let countScored = 0;
 
     for (const [fId, data] of foodMap.entries()) {
-        const avgCalories = data.totalCaloriesPerServing / data.count;
+        const avgCalories = data.totalCaloriesPer100g / data.count;
         const scoring = scoreFoodItem(data.foodObj);
         
         scoredFoods.push({
             foodId: data.foodId,
             name: data.name,
             count: data.count,
-            avgCaloriesPerServing: Math.round(avgCalories),
+            avgCaloriesPer100g: Math.round(avgCalories), // [FIX #5] Tên chính xác: calo/100g
             scoring
         });
     }

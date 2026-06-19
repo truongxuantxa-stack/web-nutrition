@@ -17,6 +17,10 @@
  */
 const sumNutritionFromEntries = (entries) => {
     return entries.reduce((acc, entry) => {
+        // [FIX #6] Guard: Bỏ qua entry có amount không hợp lệ (0, âm, null/undefined)
+        // Để tránh những entry ghi nhầm làm ô nhiễm tổng dinh dưỡng trong ngày.
+        if (!entry.amount || entry.amount <= 0) return acc;
+
         // Ưu tiên snapshot (bảo toàn dữ liệu lịch sử)
         const isRaw = entry.food && entry.food.foodType === 'raw';
         const factor = isRaw ? entry.amount / 100 : entry.amount;
@@ -76,9 +80,12 @@ const groupEntriesByMeal = (entries) => {
  * @param {number} target    - Calo mục tiêu
  * @returns {number} Phần trăm (0-100, làm tròn)
  */
-const getCalorieProgress = (consumed, target) => {
+// [FIX #2] Thêm tham số allowOverflow: khi true, trả về % thực tế (có thể > 100)
+// giúp UI hiển thị progress bar overflow màu đỏ khi vượt mục tiêu (thay vì bị cắp cứng ở 100%).
+const getCalorieProgress = (consumed, target, allowOverflow = false) => {
     if (!target || target <= 0) return 0;
-    return Math.min(100, Math.round((consumed / target) * 100));
+    const pct = Math.round((consumed / target) * 100);
+    return allowOverflow ? pct : Math.min(100, pct);
 };
 
 /**
@@ -87,8 +94,14 @@ const getCalorieProgress = (consumed, target) => {
  * @param {Object} targets   - { protein, carbs, fat }
  * @returns {Object} { protein: %, carbs: %, fat: % }
  */
-const getMacroProgress = (consumed, targets) => {
-    const pct = (c, t) => (t > 0 ? Math.min(100, Math.round((c / t) * 100)) : 0);
+// [FIX #5] Thêm allowOverflow — tương tự getCalorieProgress.
+// UI cần biết khi nào macro bị vượt để hiển thị cảnh báo trực quan (thanh tiến trình đỏ).
+const getMacroProgress = (consumed, targets, allowOverflow = false) => {
+    const pct = (c, t) => {
+        if (t <= 0) return 0;
+        const p = Math.round((c / t) * 100);
+        return allowOverflow ? p : Math.min(100, p);
+    };
     return {
         protein: pct(consumed.protein, targets.protein),
         carbs:   pct(consumed.carbs,   targets.carbs),
@@ -96,7 +109,31 @@ const getMacroProgress = (consumed, targets) => {
     };
 };
 
-// ─── Bộ quy tắc y khoa cho Health Insights ───────────────────────────────────
+/** [FIX #7] Hằng số cho ngưỡng calo tối thiểu kiểm tra tỷ lệ fat — thay magic number 500.
+ * Lý do: Khi mới ăn bữa sáng nhỏ (<500kcal), cảnh báo "thiếu chất béo" là không có nghĩa vì ngày còn dài. */
+const MIN_CALORIES_FOR_FAT_CHECK = 500;
+
+/**
+ * [FIX #4] Helper trích xuất RDI theo giới tính — dùng chung cho getHealthInsights
+ * và calculateDailyHealthScore, tránh duplicate logic vi phạm nguyên tắc DRY.
+ * Khi chuẩn RDI thay đổi (WHO/AHA cập nhật), chỉ cần sửa ở đây.
+ * @param {string} gender - 'male' | 'female'
+ * @returns {Object} { isMale, sugarLimit, sodiumLimit, fiberRDI, calciumRDI, ironRDI, vitaminCRDI }
+ */
+const getRDIByGender = (gender) => {
+    const isMale = gender !== 'female';
+    return {
+        isMale,
+        sugarLimit:  isMale ? 36 : 25,    // AHA
+        sodiumLimit: 2300,                  // WHO/AHA
+        fiberRDI:    isMale ? 38 : 25,
+        calciumRDI:  1000,
+        ironRDI:     isMale ? 8 : 18,
+        vitaminCRDI: isMale ? 90 : 75,
+    };
+};
+
+// ─── Bộ quy tắc y khoa cho Health Insights ──────────────────────────────────────────────────────────────
 // AHA Sugar threshold: 36g (Nam) / 25g (Nữ)
 // Phân loại severity: danger > warning > water > suggestion
 // Context-Awareness: shouldWarnDeficiency = (calPct >= 100 || currentHour >= 20)
@@ -108,13 +145,14 @@ const getMacroProgress = (consumed, targets) => {
  * @param {Object} metrics       - { targetCalories, macros: { protein, carbs, fat } }
  * @param {Object} mealGroups    - { sang: [], trua: [], toi: [], phu: [] }
  * @param {number} waterTotal    - Lượng nước đã uống (ml)
- * @param {number} waterGoal     - Mục tiêu nước (ml)
+ * @param {number} waterGoal     - [FIX #8] waterGoal mặc định 2000ml — chỉ là fallback. Luôn truyền goal cá nhân của user để cảnh báo chính xác.
  * @param {string} gender        - 'male' | 'female' (cho ngưỡng AHA đường)
  * @param {boolean} isHistorical - cờ đánh dấu dữ liệu quá khứ (ví dụ: báo cáo PDF) để không bị ảnh hưởng bởi giờ hiện tại
+ * @param {number} clientHour    - [FIX #3] clientHour: Giờ từ phía client — tránh sai múi giờ server vs user.
  * @returns {Array} Mảng { severity, icon, title, message }
  *   severity: 'danger' | 'warning' | 'suggestion' | 'water'
  */
-const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, waterGoal = 2000, gender = 'male', isHistorical = false) => {
+const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, waterGoal = 2000, gender = 'male', isHistorical = false, clientHour = null) => {
     const dangerInsights     = [];
     const warningInsights    = [];
     const waterInsights      = [];
@@ -129,8 +167,10 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
         return [];
     }
 
-    const calPct      = (consumed.calories / targetCal) * 100;
-    const currentHour = new Date().getHours();
+    const calPct = (consumed.calories / targetCal) * 100;
+    // [FIX #3] Dùng clientHour nếu được truyền từ client, tránh sai múi giờ server vs user.
+    // Ví dụ: server UTC 13:30 nhưng user VN đang là 20:30 → cảnh báo tối sẽ không kích hoạt nếu dùng giờ server.
+    const currentHour = (clientHour !== null && Number.isInteger(clientHour)) ? clientHour : new Date().getHours();
 
     // Gate cảnh báo THIẾU: kích hoạt luôn nếu là dữ liệu quá khứ (isHistorical), hoặc khi đã đạt 100% calo HOẶC sau 20:00
     // LƯU Ý: Chỉ cảnh báo thiếu chất khi người dùng ĐÃ bắt đầu ghi nhận đồ ăn (calories > 0)
@@ -230,7 +270,7 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
         // Fat < 20% tổng calo đã nạp
         if (consumed.calories > 0) {
             const fatCalRatio = (consumed.fat * 9 / consumed.calories) * 100;
-            if (fatCalRatio < 20 && consumed.calories > 500) {
+            if (fatCalRatio < 20 && consumed.calories > MIN_CALORIES_FOR_FAT_CHECK) {
                 warningInsights.push({
                     severity: 'warning',
                     icon: '🫒',
@@ -241,7 +281,9 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
         }
 
         // Chất xơ < 25g (ngưỡng tối thiểu WHO)
-        if (consumed.fiber != null && consumed.fiber < 25) {
+        // [FIX #1] Dùng fiberRDI thay vì hardcode 25 — tránh bỏ sót cảnh báo cho nam (RDI = 38g).
+        // Lỗi cũ: đàn ông ăn 35g xơ vẫn không bị cảnh báo dù thiếu 3g so với chuẩn.
+        if (consumed.fiber != null && consumed.fiber < fiberRDI) {
             warningInsights.push({
                 severity: 'warning',
                 icon: '🥦',
@@ -317,8 +359,8 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
         return { score: null, label: 'Chưa có dữ liệu', emoji: '🍽️', bonuses: [] };
     }
 
-    const isMale   = gender !== 'female';
-    const fiberRDI = isMale ? 38 : 25;
+    // [FIX #4] Dùng getRDIByGender() thay vì tính lại inline — trước đây duplicate logic từ getHealthInsights.
+    const { fiberRDI } = getRDIByGender(gender);
     const targetCal = metrics.targetCalories || 0;
     const calPct    = targetCal > 0 ? (consumed.calories / targetCal) * 100 : 0;
 

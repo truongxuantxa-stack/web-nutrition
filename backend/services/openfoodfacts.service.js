@@ -9,10 +9,10 @@ const { Food } = require('../models');
  * @returns {Array} Mảng các sản phẩm đã chuẩn hóa
  */
 const searchOpenFoodFacts = async (query, limit = 10) => {
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
 
+    try {
         const url = new URL('https://world.openfoodfacts.org/cgi/search.pl');
         url.searchParams.append('search_terms', query);
         url.searchParams.append('json', '1');
@@ -27,7 +27,6 @@ const searchOpenFoodFacts = async (query, limit = 10) => {
                 'User-Agent': 'WebDinhDuong - Node.js Backend - Graduation Project'
             }
         });
-        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error(`Open Food Facts API error: ${response.status}`);
@@ -52,11 +51,11 @@ const searchOpenFoodFacts = async (query, limit = 10) => {
                     fat: nutriments['fat_100g'] || 0,
                     fiber: nutriments['fiber_100g'] || null,
                     sugar: nutriments['sugars_100g'] || null,
-                    sodium: nutriments['sodium_100g'] ? (nutriments['sodium_100g'] * 1000) : null,
-                    vitaminA: nutriments['vitamin-a_100g'] ? (nutriments['vitamin-a_100g'] * 1000000) : null,
-                    vitaminC: nutriments['vitamin-c_100g'] ? (nutriments['vitamin-c_100g'] * 1000) : null,
-                    calcium: nutriments['calcium_100g'] ? (nutriments['calcium_100g'] * 1000) : null,
-                    iron: nutriments['iron_100g'] ? (nutriments['iron_100g'] * 1000) : null,
+                    sodium: nutriments['sodium_100g'] ? (nutriments['sodium_100g'] * 1000) : null,         // kg → mg
+                    vitaminA: nutriments['vitamin-a_100g'] ? (nutriments['vitamin-a_100g'] * 1000) : null, // mg → µg RAE
+                    vitaminC: nutriments['vitamin-c_100g'] ? (nutriments['vitamin-c_100g'] * 1000) : null, // kg → mg
+                    calcium: nutriments['calcium_100g'] ? (nutriments['calcium_100g'] * 1000) : null,      // kg → mg
+                    iron: nutriments['iron_100g'] ? (nutriments['iron_100g'] * 1000) : null,               // kg → mg
                     imageUrl: p.image_front_small_url || null,
                     foodType: 'raw',
                     category: 'khac',
@@ -69,7 +68,9 @@ const searchOpenFoodFacts = async (query, limit = 10) => {
         return normalizedProducts;
     } catch (error) {
         console.warn('[HybridSearch] OFF API failed/timeout:', error.message);
-        throw error;
+        return []; // Nhất quán với lookupByBarcode — caller không cần try/catch
+    } finally {
+        clearTimeout(timeoutId); // Luôn dọn timer dù fetch thành công hay lỗi
     }
 };
 
@@ -118,10 +119,10 @@ const saveToLocalDB = async (products) => {
  * @returns {Promise<object|null>} Dữ liệu sản phẩm chuẩn hóa hoặc null
  */
 const lookupByBarcode = async (barcode) => {
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
 
+    try {
         const url = `https://world.openfoodfacts.org/api/v2/product/${barcode}?fields=product_name,nutriments,image_front_small_url`;
         const response = await fetch(url, {
             signal: controller.signal,
@@ -129,7 +130,6 @@ const lookupByBarcode = async (barcode) => {
                 'User-Agent': 'WebDinhDuong - Node.js Backend - Graduation Project'
             }
         });
-        clearTimeout(timeoutId);
 
         if (!response.ok) return null;
 
@@ -156,12 +156,14 @@ const lookupByBarcode = async (barcode) => {
             fat: n['fat_100g'],
             fiber: n['fiber_100g'] || null,
             sugar: n['sugars_100g'] || null,
-            sodium: n['sodium_100g'] ? (n['sodium_100g'] * 1000) : null, // kg→mg
+            sodium: n['sodium_100g'] ? (n['sodium_100g'] * 1000) : null, // kg → mg
             imageUrl: p.image_front_small_url || null,
         };
     } catch (err) {
         console.warn('[OFF] lookupByBarcode error:', err.message);
         return null;
+    } finally {
+        clearTimeout(timeoutId); // Luôn dọn timer dù fetch thành công hay lỗi
     }
 };
 

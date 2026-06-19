@@ -10,6 +10,9 @@ const path = require('path');
 const https = require('https');
 const QRCode = require('qrcode');
 
+// URL ứng dụng — được dùng cho QR Code trang bìa
+const APP_URL = process.env.APP_URL || 'https://nms-nutrition.vercel.app';
+
 // ── QuickChart.io helper (Task 5) ────────────────────────────────────────────
 /**
  * Fetch một chart image từ QuickChart.io về dạng Buffer.
@@ -19,6 +22,12 @@ const fetchChartImage = (chartConfig, width = 400, height = 250) => {
     return new Promise((resolve) => {
         const url = `https://quickchart.io/chart?c=${encodeURIComponent(JSON.stringify(chartConfig))}&w=${width}&h=${height}&f=png&bkg=white`;
         const req = https.get(url, { timeout: 8000 }, (res) => {
+            if (res.statusCode !== 200) {
+                console.warn(`[PDF Chart] QuickChart trả HTTP ${res.statusCode}`);
+                res.resume(); // Xả drain socket
+                resolve(null);
+                return;
+            }
             const chunks = [];
             res.on('data', chunk => chunks.push(chunk));
             res.on('end', () => {
@@ -478,7 +487,7 @@ const generateReportPDF = async (reportData) => {
     // Fetch tất cả song song (race với QR)
     try {
         const [qrDataUrl, macBuf, calBuf, wgtBuf] = await Promise.all([
-            QRCode.toDataURL('https://nms-nutrition.vercel.app', {
+            QRCode.toDataURL(APP_URL, {
                 width: 120, margin: 1, color: { dark: '#065F46', light: '#FFFFFF' }
             }),
             fetchChartImage(macroChartConfig, 200, 200),
@@ -900,6 +909,20 @@ const generateReportPDF = async (reportData) => {
             });
             y += 15;
 
+            // Hàm format ngày — khai báo một lần ngoài vòng lặp
+            const fmtDate = (d) => {
+                if (!d) return '–';
+                const dt = new Date(d);
+                return `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}`;
+            };
+
+            const STATUS_LABELS = {
+                applied: 'Hợp lệ',
+                clamped: 'Cập giới hạn',
+                skipped_low_data: 'Thiếu dữ liệu',
+                skipped_by_user: 'Bỏ qua',
+            };
+
             const sortedLogs = [...adaptiveTDEE].reverse();
             sortedLogs.forEach((log, idx) => {
                 if (y + 14 > doc.page.height - PAGE_MARGIN - 40) {
@@ -928,19 +951,6 @@ const generateReportPDF = async (reportData) => {
                         .fill()
                         .restore();
                 }
-
-                const fmtDate = (d) => {
-                    if (!d) return '–';
-                    const dt = new Date(d);
-                    return `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}`;
-                };
-
-                const STATUS_LABELS = {
-                    applied: 'Hợp lệ',
-                    clamped: 'Cập giới hạn',
-                    skipped_low_data: 'Thiếu dữ liệu',
-                    skipped_by_user: 'Bỏ qua',
-                };
 
                 const vals = [
                     fmtDate(log.weekStart),
@@ -1047,32 +1057,17 @@ const generateReportPDF = async (reportData) => {
         const leftX = PAGE_MARGIN;
         const rightX = PAGE_MARGIN + halfW + 12;
         
-        // Hàng 1: Calories (trái) | Protein (phải)
-        const y1Left  = topFoods.calories && topFoods.calories.length > 0
-            ? drawTopFoodsTable(doc, 'Calories', '', topFoods.calories, 'kcal', leftX, y, halfW) : y;
-        const y1Right = topFoods.protein && topFoods.protein.length > 0
-            ? drawTopFoodsTable(doc, 'Protein', '', topFoods.protein, 'g', rightX, y, halfW) : y;
-        let yRow1 = Math.max(y1Left, y1Right);
-        if (yRow1 > y) y = yRow1 + 8;
-        
-        // Hàng 2: Sugar (trái) | Sodium (phải)
+        // Chỉ render Sugar (trái) và Sodium (phải)
         if ((topFoods.sugar && topFoods.sugar.length > 0) || (topFoods.sodium && topFoods.sodium.length > 0)) {
             if (y + 110 > doc.page.height - PAGE_MARGIN - 40) { doc.addPage(); y = PAGE_MARGIN; }
             const y2Left  = topFoods.sugar && topFoods.sugar.length > 0
                 ? drawTopFoodsTable(doc, 'Đường (Sugar)', '', topFoods.sugar, 'g', leftX, y, halfW) : y;
             const y2Right = topFoods.sodium && topFoods.sodium.length > 0
                 ? drawTopFoodsTable(doc, 'Natri (Sodium)', '', topFoods.sodium, 'mg', rightX, y, halfW) : y;
-            let yRow2 = Math.max(y2Left, y2Right);
-            if (yRow2 > y) y = yRow2 + 8;
+            let yRow = Math.max(y2Left, y2Right);
+            if (yRow > y) y = yRow + 8;
         }
-        
-        // Hàng 3: Fiber (full-width, căn giữa)
-        if (topFoods.fiber && topFoods.fiber.length > 0) {
-            if (y + 110 > doc.page.height - PAGE_MARGIN - 40) { doc.addPage(); y = PAGE_MARGIN; }
-            y = drawTopFoodsTable(doc, 'Chất xơ', '', topFoods.fiber, 'g', leftX, y, doc.page.width - PAGE_MARGIN * 2);
-            y += 12;
-        }
-        
+
         y += 10;
     }
 

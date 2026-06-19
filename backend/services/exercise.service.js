@@ -145,7 +145,8 @@ const calculateExerciseCalories = (sport, duration, weightKg) => {
     return Math.round(sportData.defaultMet * weightKg * hours * 10) / 10;
 };
 
-// Alias giữ nguyên để không phá vỡ code cũ (nếu có nơi khác dùng)
+// Giữ alias để không phá vỡ import cũ (deprecated — dùng calculateExerciseCalories trực tiếp)
+// TODO: xóa sau khi xác nhận không còn có nơi nào import calculateExerciseCaloriesDefault
 const calculateExerciseCaloriesDefault = calculateExerciseCalories;
 
 // ─── Lấy thông tin chi tiết 1 môn (label, icon) ──────────────────────────────
@@ -173,8 +174,12 @@ const getTotalBurnedByDate = async (userId, date) => {
  * @throws {{ status: number, message: string }}
  */
 const addExerciseLog = async (userId, { sport, duration, date }, weightKg) => {
-    if (!sport || !duration) {
-        throw { status: 400, message: 'Vui lòng chọn môn và nhập số phút.' };
+    // Validate sport trước tiên — tra bảng MET ngay đầu, không để phân mảnh
+    if (!sport || !MET_TABLE[sport]) {
+        throw { status: 400, message: 'Môn thể thao không hợp lệ.' };
+    }
+    if (!duration) {
+        throw { status: 400, message: 'Vui lòng nhập số phút.' };
     }
 
     const durationNum = parseInt(duration);
@@ -188,10 +193,13 @@ const addExerciseLog = async (userId, { sport, duration, date }, weightKg) => {
         throw { status: 400, message: 'Không thể ghi nhật ký cho ngày tương lai.' };
     }
 
-    const caloriesBurned = calculateExerciseCalories(sport, durationNum, weightKg || 60);
-    if (caloriesBurned === 0) {
-        throw { status: 400, message: 'Môn thể thao không hợp lệ.' };
+    // Cảnh báo nếu phải dùng cân nặng mặc định (user chưa nhập)
+    const effectiveWeight = weightKg || 60;
+    if (!weightKg) {
+        console.warn(`[exercise] userId=${userId} chưa có cân nặng, dùng mặc định 60kg để tính calo.`);
     }
+
+    const caloriesBurned = calculateExerciseCalories(sport, durationNum, effectiveWeight);
 
     const log  = await ExerciseLog.create({ userId, sport, duration: durationNum, caloriesBurned, date: entryDate });
     const info = getSportInfo(sport);

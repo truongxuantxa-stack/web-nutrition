@@ -130,93 +130,97 @@ const formatProduct = (product) => ({
  * @returns {Promise<{ scannedProduct: object, food: object, physicsResult: object }>}
  */
 const processAiVisionResult = async (userId, barcode, nutritionData) => {
-    const { productName, calories, protein, carbs, fat, fiber, sugar, sodium, unit } = nutritionData;
-    const resolvedUnit = unit && unit.toLowerCase().includes('ml') ? '100ml' : '100g';
+    try {
+        const { productName, calories, protein, carbs, fat, fiber, sugar, sodium, unit } = nutritionData;
+        const resolvedUnit = unit && unit.toLowerCase().includes('ml') ? '100ml' : '100g';
 
-    // Bước 1: Physics Validation
-    const physicsResult = validateNutritionPhysics({ calories, protein, carbs, fat, fiber, sugar, sodium });
-    if (!physicsResult.valid) {
-        return { physicsResult, scannedProduct: null, food: null };
-    }
-
-    let scannedProduct = null;
-    let contribution = null;
-
-    if (barcode) {
-        const normalizedBarcode = normalizeBarcode(barcode);
-
-        // Bước 2: Tạo hoặc cập nhật ScannedProduct
-        const [sp, created] = await ScannedProduct.findOrCreate({
-            where: { barcode: normalizedBarcode },
-            defaults: {
-                barcode: normalizedBarcode,
-                name: productName || 'Sản phẩm chưa đặt tên',
-                calories, protein, carbs, fat, fiber, sugar, sodium,
-                unit: resolvedUnit,
-                confidenceScore: 0.3,
-                contributionCount: 1,
-                status: 'unverified',
-                dataSource: 'community',
-            },
-        });
-
-        scannedProduct = sp;
-
-        // Bước 3: Tạo ProductContribution record
-        contribution = await ProductContribution.create({
-            scannedProductId: sp.id,
-            userId,
-            rawCalories: calories,
-            rawProtein: protein,
-            rawCarbs: carbs,
-            rawFat: fat,
-            rawFiber: fiber,
-            rawSugar: sugar,
-            rawSodium: sodium,
-            rawUnit: resolvedUnit,
-            source: 'ai_vision',
-            isRejected: false,
-        });
-
-        // Bước 4: Tính lại confidence score (chỉ khi product đã có rồi)
-        if (!created) {
-            await recalculateConfidence(sp.id);
-            await sp.reload();
+        // Bước 1: Physics Validation
+        const physicsResult = validateNutritionPhysics({ calories, protein, carbs, fat, fiber, sugar, sodium });
+        if (!physicsResult.valid) {
+            return { physicsResult, scannedProduct: null, food: null };
         }
+
+        let scannedProduct = null;
+
+        if (barcode) {
+            const normalizedBarcode = normalizeBarcode(barcode);
+
+            // Bước 2: Tạo hoặc cập nhật ScannedProduct
+            const [sp, created] = await ScannedProduct.findOrCreate({
+                where: { barcode: normalizedBarcode },
+                defaults: {
+                    barcode: normalizedBarcode,
+                    name: productName || 'Sản phẩm chưa đặt tên',
+                    calories, protein, carbs, fat, fiber, sugar, sodium,
+                    unit: resolvedUnit,
+                    confidenceScore: 0.3,
+                    contributionCount: 1,
+                    status: 'unverified',
+                    dataSource: 'community',
+                },
+            });
+
+            scannedProduct = sp;
+
+            // Bước 3: Tạo ProductContribution record
+            await ProductContribution.create({
+                scannedProductId: sp.id,
+                userId,
+                rawCalories: calories,
+                rawProtein: protein,
+                rawCarbs: carbs,
+                rawFat: fat,
+                rawFiber: fiber,
+                rawSugar: sugar,
+                rawSodium: sodium,
+                rawUnit: resolvedUnit,
+                source: 'ai_vision',
+                isRejected: false,
+            });
+
+            // Bước 4: Tính lại confidence score (chỉ khi product đã có rồi)
+            if (!created) {
+                await recalculateConfidence(sp.id);
+                await sp.reload();
+            }
+        }
+
+        // Bước 5: Tạo Food record tạm cho user thêm vào diary
+        const food = await Food.create({
+            userId,
+            isCustom: true,
+            name: productName || 'Sản phẩm quét AI',
+            calories,
+            protein,
+            carbs,
+            fat,
+            fiber: fiber || null,
+            sugar: sugar || null,
+            sodium: sodium || null,
+            unit: resolvedUnit,
+            category: resolvedUnit === '100ml' ? 'do_uong' : 'khac',
+            foodType: 'raw',
+            dataSource: 'community',
+            barcode: barcode ? normalizeBarcode(barcode) : null,
+        });
+
+        return {
+            physicsResult,
+            scannedProduct: scannedProduct ? formatProduct(scannedProduct) : null,
+            food: {
+                id: food.id,
+                name: food.name,
+                calories: food.calories,
+                protein: food.protein,
+                carbs: food.carbs,
+                fat: food.fat,
+                unit: food.unit,
+            },
+        };
+    } catch (err) {
+        console.error('[Scanner] processAiVisionResult error:', err.message);
+        throw err;
     }
-
-    // Bước 5: Tạo Food record tạm cho user thêm vào diary
-    const food = await Food.create({
-        userId,
-        isCustom: true,
-        name: productName || 'Sản phẩm quét AI',
-        calories,
-        protein,
-        carbs,
-        fat,
-        fiber: fiber || null,
-        sugar: sugar || null,
-        sodium: sodium || null,
-        unit: resolvedUnit,
-        category: resolvedUnit === '100ml' ? 'do_uong' : 'khac',
-        foodType: 'raw',
-        dataSource: 'community',
-        barcode: barcode ? normalizeBarcode(barcode) : null,
-    });
-
-    return {
-        physicsResult,
-        scannedProduct: scannedProduct ? formatProduct(scannedProduct) : null,
-        food: {
-            id: food.id,
-            name: food.name,
-            calories: food.calories,
-            protein: food.protein,
-            carbs: food.carbs,
-            fat: food.fat,
-            unit: food.unit,
-        },
-    };
 };
 
 /**
@@ -248,12 +252,13 @@ const recalculateConfidence = async (scannedProductId) => {
     // Tính trung bình calo của tất cả contributions
     const avgCalories = contributions.reduce((sum, c) => sum + c.rawCalories, 0) / count;
 
-    // Đếm số contributions tương đồng (<15% sai lệch so với trung bình)
-    const similarCount = contributions.filter(c => {
+    // Filter 1 lần — dùng chung cho similarCount VÀ aggregation
+    const validContributions = contributions.filter(c => {
         if (avgCalories === 0) return true;
         const dev = Math.abs(c.rawCalories - avgCalories) / avgCalories;
         return dev < 0.15;
-    }).length;
+    });
+    const similarCount = validContributions.length;
 
     let newScore;
     let newStatus;
@@ -269,23 +274,18 @@ const recalculateConfidence = async (scannedProductId) => {
         newStatus = 'unverified';
     }
 
-    // Tính aggregated nutrition từ tất cả contributions tương đồng
-    const validContributions = contributions.filter(c => {
-        if (avgCalories === 0) return true;
-        const dev = Math.abs(c.rawCalories - avgCalories) / avgCalories;
-        return dev < 0.15;
-    });
-
+    // Tính aggregated nutrition từ validContributions
     const aggregate = (field) => {
         const vals = validContributions.map(c => c[field]).filter(v => v != null);
         return vals.length > 0 ? vals.reduce((s, v) => s + v, 0) / vals.length : null;
     };
 
     await product.update({
-        calories: aggregate('rawCalories') || product.calories,
-        protein: aggregate('rawProtein') || product.protein,
-        carbs: aggregate('rawCarbs') || product.carbs,
-        fat: aggregate('rawFat') || product.fat,
+        // Dùng ?? (nullish) thay || để không bỏ qua giá trị 0 hợp lệ (vd: nước lọc 0 calo)
+        calories: aggregate('rawCalories') ?? product.calories,
+        protein: aggregate('rawProtein') ?? product.protein,
+        carbs: aggregate('rawCarbs') ?? product.carbs,
+        fat: aggregate('rawFat') ?? product.fat,
         fiber: aggregate('rawFiber'),
         sugar: aggregate('rawSugar'),
         sodium: aggregate('rawSodium'),
@@ -306,8 +306,11 @@ const reportProduct = async (userId, scannedProductId, reason) => {
     if (!product) {
         throw new Error('Không tìm thấy sản phẩm.');
     }
-    await product.update({ status: 'disputed' });
-    // Ghi log contribution bị reject (không lưu contribution mới, chỉ log)
+    // Hạ confidenceScore về 0.3 để nhất quán với status disputed
+    await product.update({
+        status: 'disputed',
+        confidenceScore: Math.min(product.confidenceScore, 0.3),
+    });
     console.info(`[Scanner] Product ${scannedProductId} reported by user ${userId}: ${reason}`);
 };
 

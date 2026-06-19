@@ -6,14 +6,25 @@ Báo cáo này phân tích cơ chế hoạt động của thuật toán **Adapti
 
 ## 1. Vấn đề và Ý tưởng Cốt lõi
 
-### 1.1. Hạn chế của các công thức tĩnh
-Hầu hết các ứng dụng dinh dưỡng hiện nay sử dụng công thức tĩnh (như **Mifflin-St Jeor**) để tính TDEE. Tuy nhiên, công thức này chỉ đúng ở thời điểm ban đầu. Sự trao đổi chất của cơ thể luôn biến động (Metabolic Adaptation):
-* **Khi ăn kiêng giảm cân:** Cơ thể tự động giảm tốc độ trao đổi chất để bảo tồn năng lượng, làm TDEE thực tế giảm xuống, khiến người dùng bị "chững cân".
-* **Khi tập luyện (đặc biệt là Gym/Tập tạ):** Việc gia tăng khối lượng cơ bắp và cường độ vận động sẽ khiến quá trình trao đổi chất tăng mạnh, làm TDEE thực tế cao hơn dự tính.
+### 1.1. Vấn đề thực tiễn: Sự sụp đổ của các công thức tĩnh (Tại sao người ta hay bị "chững cân"?)
 
-Dù TDEE tăng hay giảm, công thức tĩnh đều không thể tự động bám sát được những sự thay đổi liên tục này của cơ địa.
+Hầu hết các ứng dụng theo dõi dinh dưỡng và sức khỏe trên thị trường hiện nay (như MyFitnessPal, YAZIO...) đều khởi đầu bằng việc yêu cầu người dùng nhập thông số: Chiều cao, Cân nặng, Tuổi, Giới tính và Mức độ vận động. Từ đó, họ dùng một **công thức toán học tĩnh** (phổ biến nhất là Mifflin-St Jeor) để tính ra **TDEE (Tổng lượng calo cơ thể tiêu thụ mỗi ngày)**.
 
-### 1.2. Giải pháp dựa trên Nhiệt động lực học
+Dựa trên con số TDEE tĩnh này, ứng dụng sẽ lên một thực đơn ví dụ như: *"Để giảm cân, bạn cần ăn 1500 calo/ngày"*.
+
+**Vấn đề lớn nhất ở đây là: Cơ thể con người không phải là một cỗ máy tĩnh với mức tiêu hao năng lượng cố định.** 
+
+Thực tế, cơ thể chúng ta có một cơ chế sinh tồn vô cùng thông minh gọi là **Sự thích ứng trao đổi chất (Metabolic Adaptation)**:
+
+* **Ví dụ khi giảm cân (Quá trình trao đổi chất chậm lại):** Khi bạn bắt đầu ăn ít đi (ví dụ ăn 1500 calo trong khi cơ thể cần 2000 calo), bạn sẽ giảm cân rất nhanh trong những tuần đầu. Nhưng ngay sau đó, não bộ sẽ nhận tín hiệu rằng *"Cơ thể đang bị thiếu thốn thức ăn/đói kém"*. Để sinh tồn, nó tự động **bật chế độ tiết kiệm năng lượng**: giảm thân nhiệt một chút, nhịp tim chậm lại, các cơ quan hoạt động cầm chừng hơn, và khiến bạn ít muốn vận động hơn. Hậu quả là, mức tiêu thụ calo (TDEE) thực tế của bạn đã tự động giảm từ 2000 xuống chỉ còn 1500 calo. Lúc này, dù bạn vẫn kiên trì ăn đúng 1500 calo như ứng dụng chỉ dẫn, bạn **không còn giảm cân được nữa**. Đây chính là hiện tượng **"đứng cân" hay "chững cân" (Plateau)** vô cùng phổ biến khiến 90% người ăn kiêng chán nản và bỏ cuộc.
+* **Ví dụ khi tăng cơ/tập luyện (Quá trình trao đổi chất tăng vọt):** Ngược lại, khi một người bắt đầu đi tập tạ, lượng cơ bắp của họ tăng lên. Cơ bắp là mô sống tiêu hao rất nhiều năng lượng. Một người có nhiều cơ bắp, dù chỉ nằm ngủ cũng đốt cháy nhiều calo hơn người bình thường. TDEE thực tế của họ đang tăng lên từng ngày, nhưng công thức tĩnh ban đầu không hề biết điều đó để tăng thêm khẩu phần ăn, khiến họ bị thiếu dinh dưỡng để phát triển.
+
+**Hậu quả:** 
+Nếu chỉ dùng một công thức tĩnh tính ra từ ngày đầu tiên, đến tuần thứ 3, thứ 4, con số đó đã trở nên **hoàn toàn sai lệch** so với thực tế của cơ thể. Các ứng dụng truyền thống trở nên vô dụng vì chúng vẫn bắt người dùng tuân theo một mức calo cũ kỹ không còn phù hợp, dẫn đến thất bại trong hành trình thay đổi vóc dáng.
+
+Điều này đòi hỏi một giải pháp công nghệ có khả năng "lắng nghe" và "cập nhật" sự thay đổi của cơ thể một cách liên tục và tự động, và đó là lý do thuật toán **Adaptive TDEE** ra đời.
+
+### 1.2. Giải pháp: Thuật toán Adaptive TDEE (Nội suy ngược từ dữ liệu thực tế)
 Thuật toán Adaptive TDEE đảo ngược lại bài toán: Thay vì cố gắng "đoán" TDEE bằng chiều cao/cân nặng, hệ thống dùng **dữ liệu thực tế** (lượng calo đã ăn và sự thay đổi cân nặng) để nội suy ra TDEE thực tế.
 
 Nguyên lý cơ bản (với giả định 1kg mỡ cơ thể chứa khoảng 7700 kcal):
