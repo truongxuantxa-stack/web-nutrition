@@ -91,7 +91,7 @@ const tagMap = {
     'Bánh thuyền gạo lứt': ['carb', 'healthy_bowl', 'snack'],
     'Sữa đậu nành không đường': ['snack', 'healthy_bowl'],
     'Chuối (Thô)': ['snack'],
-    'Táo đỏ': ['snack'],
+    'Táo đỏ (Thô)': ['snack'],
     'Quả Việt quất': ['snack'],
     'Quả Dâu tây': ['snack'],
     'Hạt Hướng dương': ['fat', 'healthy_bowl', 'snack'],
@@ -179,16 +179,16 @@ const rawFoods = [
 
     // 2.3. Nhóm Vitamin (Vitamin & Khoáng chất / Trái cây) -> category: 'vitamin'
     { name: 'Chuối (Thô)', calories: 89, protein: 1.1, carbs: 22.8, fat: 0.3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
-    { name: 'Táo đỏ', calories: 52, protein: 0.3, carbs: 13.8, fat: 0.2, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
+    { name: 'Táo đỏ (Thô)', calories: 52, protein: 0.3, carbs: 13.8, fat: 0.2, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
     { name: 'Quả Việt quất', calories: 57, protein: 0.7, carbs: 14.5, fat: 0.3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
     { name: 'Quả Dâu tây', calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3, unit: '100g', category: 'carb', foodType: 'raw', isSuggestable: false },
     { name: 'Đu đủ (Chín)', calories: 43, protein: 0.5, carbs: 10.8, fat: 0.3, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
     { name: 'Xoài (Chín)', calories: 60, protein: 0.8, carbs: 15, fat: 0.4, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Dưa hấu', calories: 30, protein: 0.6, carbs: 7.6, fat: 0.2, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Thanh long', calories: 60, protein: 1.2, carbs: 13, fat: 0.7, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Bưởi', calories: 38, protein: 0.7, carbs: 9.6, fat: 0, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Ổi', calories: 68, protein: 2.6, carbs: 14.3, fat: 1, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Nho tươi', calories: 69, protein: 0.7, carbs: 18.1, fat: 0.2, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
+    { name: 'Dưa hấu (Thô)', calories: 30, protein: 0.6, carbs: 7.6, fat: 0.2, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
+    { name: 'Thanh long (Thô)', calories: 60, protein: 1.2, carbs: 13, fat: 0.7, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
+    { name: 'Bưởi (Thô)', calories: 38, protein: 0.7, carbs: 9.6, fat: 0, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
+    { name: 'Ổi (Thô)', calories: 68, protein: 2.6, carbs: 14.3, fat: 1, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
+    { name: 'Nho tươi (Thô)', calories: 69, protein: 0.7, carbs: 18.1, fat: 0.2, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
 
     // 3. Nhóm Fat (Chất béo tốt) -> category: 'fat'
     { name: 'Quả Bơ (Thô)', calories: 160, protein: 2, carbs: 8.5, fat: 14.7, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false },
@@ -232,12 +232,12 @@ const rawFoods = [
     // === BỔ SUNG: Vitamin (Trái cây) ===
     { name: 'Cam (Thô)', calories: 47, protein: 0.9, carbs: 12, fat: 0.1, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
     { name: 'Quýt (Thô)', calories: 53, protein: 0.8, carbs: 13.3, fat: 0.3, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Kiwi', calories: 61, protein: 1.1, carbs: 15, fat: 0.5, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Lê', calories: 57, protein: 0.4, carbs: 15, fat: 0.1, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
+    { name: 'Kiwi (Thô)', calories: 61, protein: 1.1, carbs: 15, fat: 0.5, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
+    { name: 'Lê (Thô)', calories: 57, protein: 0.4, carbs: 15, fat: 0.1, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
     { name: 'Mận (Thô)', calories: 46, protein: 0.7, carbs: 11.4, fat: 0.3, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
     { name: 'Dứa (Thơm)', calories: 50, protein: 0.5, carbs: 13.1, fat: 0.1, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Măng cụt', calories: 73, protein: 0.4, carbs: 18, fat: 0.6, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
-    { name: 'Chôm chôm', calories: 82, protein: 0.7, carbs: 20.9, fat: 0.2, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
+    { name: 'Măng cụt (Thô)', calories: 73, protein: 0.4, carbs: 18, fat: 0.6, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
+    { name: 'Chôm chôm (Thô)', calories: 82, protein: 0.7, carbs: 20.9, fat: 0.2, unit: '100g', category: 'vitamin', foodType: 'raw', isSuggestable: false },
 
     // === BỔ SUNG: Fat ===
     { name: 'Hạt Hướng dương', calories: 584, protein: 20.8, carbs: 20, fat: 51.5, unit: '100g', category: 'fat', foodType: 'raw', isSuggestable: false },
