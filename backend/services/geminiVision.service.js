@@ -16,7 +16,7 @@ Bạn là chuyên gia dinh dưỡng. Hãy đọc bảng thành phần dinh dư�
 
 Yêu cầu:
 1. Trả về JSON với các trường sau (không thêm markdown, chỉ JSON thuần)
-2. Tất cả giá trị dinh dưỡng phải quy đổi về chuẩn per 100g (nếu là đồ ăn rắn) hoặc per 100ml (nếu là thức uống/chất lỏng)
+2. Tất cả giá trị dinh dưỡng phải quy đổi về chuẩn per 100g hoặc per 100ml (DỰA TUYỆT ĐỐI vào đơn vị ghi trên bảng thành phần trong ảnh, nếu bảng ghi 100ml thì quy đổi theo 100ml, nếu ghi 100g thì quy đổi theo 100g). Tuyệt đối không tự suy đoán loại sản phẩm.
 3. Sodium đơn vị là mg
 4. Nếu không tìm thấy thông tin → trả về null cho trường đó
 5. Trường "confidence": "high" nếu ảnh rõ nét; "medium" nếu một số chữ mờ; "low" nếu khó đọc
@@ -25,7 +25,7 @@ JSON format:
 {
   "productName": "tên sản phẩm hoặc null",
   "servingSize": "mô tả serving size gốc (vd: 30g, 1 gói, 250ml) hoặc null",
-  "unit": "100g" hoặc "100ml" (dựa vào loại sản phẩm),
+  "unit": "100g" hoặc "100ml" (Ghi chính xác theo đơn vị g hay ml có trong ảnh),
   "calories": số_kcal_per_100_donvi,
   "protein": số_g_per_100_donvi,
   "carbs": số_g_per_100_donvi,
@@ -94,6 +94,7 @@ const extractNutritionFromImage = async (base64Image, mimeType = 'image/jpeg') =
         return {
             productName: parsed.productName || null,
             servingSize: parsed.servingSize || null,
+            unit: parsed.unit || '100g', // '100g' hoặc '100ml' — Gemini tự phán đoán từ ảnh
             calories: Number(parsed.calories),
             protein: Number(parsed.protein),
             carbs: Number(parsed.carbs),
@@ -110,4 +111,62 @@ const extractNutritionFromImage = async (base64Image, mimeType = 'image/jpeg') =
     }
 };
 
-module.exports = { extractNutritionFromImage };
+/**
+ * Prompt để đọc MÃ VẠCH (barcode number) từ ảnh sản phẩm.
+ * Gemini chỉ cần trả về dãy số barcode.
+ */
+const BARCODE_PROMPT = `
+Look at this image. Find any barcode (EAN-13, EAN-8, UPC-A, UPC-E, Code 128, or similar).
+Read the NUMBER printed below/above the barcode lines.
+
+Rules:
+1. Return ONLY a JSON object, no markdown.
+2. If you find a barcode number, return: {"barcode": "the_number_string", "format": "EAN_13"}
+3. If no barcode is visible, return: {"barcode": null, "format": null}
+4. The barcode field must contain ONLY digits (no spaces, no dashes).
+5. Common formats: EAN-13 (13 digits), EAN-8 (8 digits), UPC-A (12 digits).
+`;
+
+/**
+ * Gọi Gemini Vision API để đọc số barcode từ ảnh sản phẩm.
+ * Fallback khi client-side barcode detection thất bại.
+ *
+ * @param {string} base64Image - Ảnh dạng base64
+ * @param {string} [mimeType='image/jpeg']
+ * @returns {Promise<{ barcode: string|null, format: string|null }>}
+ */
+const extractBarcodeFromImage = async (base64Image, mimeType = 'image/jpeg') => {
+    try {
+        const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+
+        const imagePart = {
+            inlineData: { data: base64Image, mimeType },
+        };
+
+        const apiCall = model.generateContent([BARCODE_PROMPT, imagePart]);
+        const timeout = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Gemini timeout')), GEMINI_TIMEOUT_MS)
+        );
+        const result = await Promise.race([apiCall, timeout]);
+        const responseText = result.response.text();
+
+        const cleanedText = responseText
+            .replace(/```json\s*/gi, '')
+            .replace(/```\s*/gi, '')
+            .trim();
+
+        const parsed = JSON.parse(cleanedText);
+
+        // Validate: barcode phải là chuỗi chỉ chứa chữ số
+        if (parsed.barcode && /^\d+$/.test(parsed.barcode)) {
+            return { barcode: parsed.barcode, format: parsed.format || null };
+        }
+
+        return { barcode: null, format: null };
+    } catch (err) {
+        console.warn('[GeminiVision] extractBarcodeFromImage failed:', err.message);
+        return { barcode: null, format: null };
+    }
+};
+
+module.exports = { extractNutritionFromImage, extractBarcodeFromImage };

@@ -6,7 +6,7 @@ const {
     reportProduct,
     formatProduct,
 } = require('../../services/scanner.service');
-const { extractNutritionFromImage } = require('../../services/geminiVision.service');
+const { extractNutritionFromImage, extractBarcodeFromImage } = require('../../services/geminiVision.service');
 const { validateNutritionPhysics } = require('../../services/physicsValidation.service');
 const { ScannedProduct } = require('../../models');
 
@@ -146,4 +146,36 @@ const reportProductCtrl = async (req, res) => {
     }
 };
 
-module.exports = { barcodeLookup, aiVision, confirmContribution, reportProduct: reportProductCtrl };
+/**
+ * POST /api/v1/scanner/decode-barcode-image
+ * Body: { image: "base64...", mimeType?: "image/jpeg" }
+ * Response: { barcode: "8934563...", format: "EAN_13" }
+ * Fallback khi client-side barcode detection thất bại.
+ */
+const decodeBarcodeImage = async (req, res) => {
+    try {
+        const { image, mimeType } = req.body;
+        if (!image || typeof image !== 'string') {
+            return res.status(400).json({ success: false, message: 'Vui lòng cung cấp ảnh hợp lệ.' });
+        }
+
+        const result = await extractBarcodeFromImage(image, mimeType || 'image/jpeg');
+
+        if (!result.barcode) {
+            return res.json({
+                success: true,
+                data: { found: false, barcode: null, format: null },
+            });
+        }
+
+        return res.json({
+            success: true,
+            data: { found: true, barcode: result.barcode, format: result.format },
+        });
+    } catch (err) {
+        console.error('[Scanner] decodeBarcodeImage error:', err.message);
+        return res.status(500).json({ success: false, message: 'Lỗi khi đọc mã vạch từ ảnh.' });
+    }
+};
+
+module.exports = { barcodeLookup, aiVision, confirmContribution, reportProduct: reportProductCtrl, decodeBarcodeImage };

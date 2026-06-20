@@ -123,7 +123,7 @@ const lookupByBarcode = async (barcode) => {
     const timeoutId = setTimeout(() => controller.abort(), 3000);
 
     try {
-        const url = `https://world.openfoodfacts.org/api/v2/product/${barcode}?fields=product_name,nutriments,image_front_small_url`;
+        const url = `https://world.openfoodfacts.org/api/v2/product/${barcode}?fields=product_name,nutriments,image_front_small_url,quantity,serving_size`;
         const response = await fetch(url, {
             signal: controller.signal,
             headers: {
@@ -158,6 +158,10 @@ const lookupByBarcode = async (barcode) => {
             sugar: n['sugars_100g'] || null,
             sodium: n['sodium_100g'] ? (n['sodium_100g'] * 1000) : null, // kg → mg
             imageUrl: p.image_front_small_url || null,
+            // Thể tích/khối lượng thực của sản phẩm (vd: "330ml", "180 ml", "500g")
+            // OFF có thể trả null nếu sản phẩm chưa đủ dữ liệu
+            quantity: p.quantity || null,
+            servingSize: p.serving_size || null,
         };
     } catch (err) {
         console.warn('[OFF] lookupByBarcode error:', err.message);

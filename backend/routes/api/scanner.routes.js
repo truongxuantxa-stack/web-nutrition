@@ -21,9 +21,10 @@ const aiVisionLimiter = rateLimit({
 });
 
 // Các route đều yêu cầu auth (requireAuthApi được apply ở routes/api/index.js)
-router.post('/barcode-lookup',       ctrl.barcodeLookup);
-router.post('/ai-vision',            aiVisionLimiter, ctrl.aiVision);
-router.post('/confirm-contribution', ctrl.confirmContribution);
-router.post('/report',               ctrl.reportProduct);
+router.post('/barcode-lookup',          ctrl.barcodeLookup);
+router.post('/ai-vision',               aiVisionLimiter, ctrl.aiVision);
+router.post('/decode-barcode-image',     aiVisionLimiter, ctrl.decodeBarcodeImage);
+router.post('/confirm-contribution',     ctrl.confirmContribution);
+router.post('/report',                   ctrl.reportProduct);
 
 module.exports = router;

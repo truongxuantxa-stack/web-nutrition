@@ -61,6 +61,19 @@ const ScannedProduct = sequelize.define('ScannedProduct', {
         allowNull: false,
         defaultValue: '100g', // '100g' hoặc '100ml'
     },
+    // Thể tích/khối lượng thực của sản phẩm — từ OpenFoodFacts (vd: "330ml", "500g")
+    // null nếu nguồn là community (AI Vision / người dùng tự nhập)
+    quantity: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+        defaultValue: null,
+    },
+    // Serving size gốc ghi trên bảng dinh dưỡng (vd: "1 lon 330ml", "30g")
+    servingSize: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        defaultValue: null,
+    },
 
     // Metadata
     imageUrl: {

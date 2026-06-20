@@ -24,7 +24,6 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
     // uiState là state machine của UI
     const [uiState, setUiState] = useState('idle');
     const [currentBarcode, setCurrentBarcode] = useState(null);
-    const [barcodeUnit, setBarcodeUnit] = useState('100g');
 
     const scanner = useScanner({ date, defaultMeal, onClose });
 
@@ -93,7 +92,7 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
             fiber: product.fiber,
             sugar: product.sugar,
             sodium: product.sodium,
-            unit: barcodeUnit,
+            unit: product.unit || '100g',
         }, product.barcode).then(() => {
             setUiState('done');
         });
@@ -218,24 +217,12 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
                         ))}
                     </div>
 
-                    <p className="text-xs text-base-content/50 text-center mb-1">per {barcodeUnit}</p>
-
-                    {/* Chọn đơn vị cho mã vạch */}
-                    <div className="flex justify-center gap-4 mb-2">
-                        <label className="cursor-pointer flex items-center gap-2">
-                            <input type="radio" className="radio radio-xs radio-primary" value="100g" checked={barcodeUnit === '100g'} onChange={e => setBarcodeUnit(e.target.value)} />
-                            <span className="text-xs">100g</span>
-                        </label>
-                        <label className="cursor-pointer flex items-center gap-2">
-                            <input type="radio" className="radio radio-xs radio-primary" value="100ml" checked={barcodeUnit === '100ml'} onChange={e => setBarcodeUnit(e.target.value)} />
-                            <span className="text-xs">100ml</span>
-                        </label>
-                    </div>
-
+                    <p className="text-xs text-base-content/50 text-center mb-4">per {product.unit || '100g'}</p>
+                    
                     {/* Chọn bữa + số lượng */}
                     <div className="grid grid-cols-2 gap-2">
                         <div className="form-control">
-                            <label className="label py-0"><span className="label-text text-xs">Số lượng (g)</span></label>
+                            <label className="label py-0"><span className="label-text text-xs">Số lượng</span></label>
                             <input
                                 type="number"
                                 className="input input-bordered input-sm"
@@ -386,7 +373,7 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
                 {/* Chọn bữa + số lượng */}
                 <div className="grid grid-cols-2 gap-2 w-full max-w-xs">
                     <div className="form-control">
-                        <label className="label py-0"><span className="label-text text-xs">Số lượng (g)</span></label>
+                        <label className="label py-0"><span className="label-text text-xs">Số lượng</span></label>
                         <input
                             type="number"
                             className="input input-bordered input-sm"

@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { Camera, Barcode } from 'lucide-react';
 import toast from 'react-hot-toast';
+import api from '../../lib/axios';
 
 const SUPPORTED_FORMATS = [
     Html5QrcodeSupportedFormats.EAN_13,
@@ -73,20 +74,116 @@ export default function BarcodeScanner({ onDetected, isActive }) {
         return () => { stopScanner(); };
     }, [isActive, mode, startScanner, stopScanner]);
 
-    // ── Photo Scanner (Camera gốc) ───────────────────────────────────────────
+    // ── Helper: tạo ImageBitmap từ File ─────────────────────────────────────
+    const fileToImageBitmap = (file) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                URL.revokeObjectURL(url);
+                // Tạo canvas để vẽ ảnh (ImageBitmap không dùng được trực tiếp trên mọi platform)
+                resolve(img);
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                reject(new Error('Không đọc được ảnh'));
+            };
+            img.src = url;
+        });
+    };
+
+    // ── Helper: resize ảnh về kích thước cụ thể ──────────────────────────────
+    const resizeToCanvas = (img, maxDimension) => {
+        const { width, height } = img;
+        const scale = Math.min(maxDimension / Math.max(width, height), 1);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        return canvas;
+    };
+
+    // ── Strategy 1: BarcodeDetector API (native, rất chính xác) ──────────────
+    const tryNativeDetector = async (img) => {
+        if (!('BarcodeDetector' in window)) return null;
+
+        const detector = new window.BarcodeDetector({
+            formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code', 'itf'],
+        });
+
+        // Thử nhiều kích thước: gốc → 1024px → 640px
+        const sizes = [null, 1024, 640];
+        for (const size of sizes) {
+            const source = size ? resizeToCanvas(img, size) : img;
+            const barcodes = await detector.detect(source);
+            if (barcodes.length > 0) {
+                return barcodes[0].rawValue;
+            }
+        }
+        return null;
+    };
+
+    // ── Strategy 2: html5-qrcode scanFile (fallback) ─────────────────────────
+    const tryZxingFallback = async (file, img) => {
+        // Tạo file đã resize để ZXing xử lý tốt hơn
+        const canvas = resizeToCanvas(img, 1024);
+        const resizedFile = await new Promise((resolve) => {
+            canvas.toBlob((blob) => {
+                resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+            }, 'image/jpeg', 0.92);
+        });
+
+        const tempScanner = new Html5Qrcode('barcode-file-decoder');
+        try {
+            const result = await tempScanner.scanFile(resizedFile, true);
+            return result;
+        } finally {
+            tempScanner.clear();
+        }
+    };
+
+    // ── Strategy 3: Gemini Vision (gửi ảnh lên backend AI đọc số) ──────────
+    const tryGeminiVision = async (img) => {
+        // Resize xuống 800px để giảm payload
+        const canvas = resizeToCanvas(img, 800);
+        const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+
+        const { data } = await api.post('/scanner/decode-barcode-image', {
+            image: base64,
+            mimeType: 'image/jpeg',
+        });
+
+        if (data?.data?.found && data.data.barcode) {
+            return data.data.barcode;
+        }
+        return null;
+    };
+
+    // ── Photo Scanner (Camera gốc) — 3 strategies chạy SONG SONG ──────────────
     const handlePhotoDecode = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        e.target.value = ''; // reset để chọn lại được
+        e.target.value = '';
 
         setIsDecoding(true);
         try {
-            // Tạo scanner tạm để decode ảnh
-            const tempScanner = new Html5Qrcode('barcode-file-decoder');
-            const result = await tempScanner.scanFile(file, /* showImage */ false);
-            tempScanner.clear();
-            onDetected(result);
+            const img = await fileToImageBitmap(file);
+
+            // Chạy cả 3 strategy song song — ai thắng trước lấy trước
+            const strategies = [
+                // Strategy 1: Native BarcodeDetector
+                tryNativeDetector(img).then(r => { if (r) return r; throw new Error('no result'); }),
+                // Strategy 2: ZXing
+                tryZxingFallback(file, img).then(r => { if (r) return r; throw new Error('no result'); }),
+                // Strategy 3: Gemini Vision AI
+                tryGeminiVision(img).then(r => { if (r) return r; throw new Error('no result'); }),
+            ];
+
+            const barcode = await Promise.any(strategies);
+            onDetected(barcode);
         } catch (err) {
+            // AggregateError = tất cả strategies đều fail
             toast.error('Không tìm thấy mã vạch trong ảnh. Hãy chụp rõ hơn và căn thẳng mã vạch.');
         } finally {
             setIsDecoding(false);
@@ -181,8 +278,8 @@ export default function BarcodeScanner({ onDetected, isActive }) {
                 </div>
             )}
 
-            {/* Hidden container cho file decoder */}
-            <div id="barcode-file-decoder" style={{ display: 'none' }} />
+            {/* Container cho file decoder — cần kích thước thực để ZXing hoạt động */}
+            <div id="barcode-file-decoder" style={{ position: 'absolute', left: '-9999px', width: '600px' }} />
         </div>
     );
 }

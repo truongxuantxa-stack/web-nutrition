@@ -76,6 +76,8 @@ const lookupByBarcode = async (barcode) => {
                     sugar: offProduct.sugar,
                     sodium: offProduct.sodium,
                     imageUrl: offProduct.imageUrl,
+                    quantity: offProduct.quantity || null,
+                    servingSize: offProduct.servingSize || null,
                     confidenceScore: 1.0, // OFF là trusted source
                     contributionCount: 1,
                     status: 'verified',
@@ -120,6 +122,8 @@ const formatProduct = (product) => ({
     status: product.status,
     dataSource: product.dataSource,
     unit: product.unit || '100g',
+    quantity: product.quantity || null,     // Thể tích/kl thực (vd: "330ml") — từ OFF hoặc null
+    servingSize: product.servingSize || null, // Serving size gốc (vd: "1 lon 330ml") — từ OFF hoặc null
 });
 
 /**
