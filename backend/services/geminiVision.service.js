@@ -2,10 +2,82 @@
 
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+// Lấy danh sách API keys từ biến môi trường, phân tách bằng dấu phẩy
+const apiKeys = process.env.GOOGLE_API_KEY 
+    ? process.env.GOOGLE_API_KEY.split(',').map(k => k.trim()).filter(k => k) 
+    : [];
+let currentKeyIndex = 0;
+
+if (apiKeys.length === 0) {
+    console.warn('[GeminiVision] Không tìm thấy GOOGLE_API_KEY trong biến môi trường!');
+}
+
+const getGenAI = () => {
+    const key = apiKeys.length > 0 ? apiKeys[currentKeyIndex] : '';
+    return new GoogleGenerativeAI(key);
+};
 
 const GEMINI_MODEL = 'gemini-2.5-flash';
 const GEMINI_TIMEOUT_MS = 30_000; // Tăng lên 30s làm đệm an toàn
+
+const isQuotaError = (err) => {
+    const msg = err.message || '';
+    // 429: Too Many Requests / Quota Exceeded
+    return msg.includes('429') || msg.toLowerCase().includes('quota') || msg.toLowerCase().includes('exhausted');
+};
+
+const executeWithKeyRotation = async (prompt, imagePart, contextName = 'GeminiVision') => {
+    let attempts = 0;
+    const maxAttempts = Math.max(1, apiKeys.length);
+    let lastError;
+
+    while (attempts < maxAttempts) {
+        const genAI = getGenAI();
+        try {
+            let result;
+            try {
+                const model = genAI.getGenerativeModel({ 
+                    model: GEMINI_MODEL,
+                    generationConfig: {
+                        thinkingConfig: { thinkingBudget: 0 }
+                    }
+                });
+
+                const apiCall = model.generateContent([prompt, imagePart]);
+                const timeout = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error(`${contextName} timeout sau ${GEMINI_TIMEOUT_MS / 1000}s`)), GEMINI_TIMEOUT_MS)
+                );
+                result = await Promise.race([apiCall, timeout]);
+                return result;
+            } catch (err) {
+                if (isQuotaError(err)) {
+                    throw err; // Quota error, bubble up để trigger key rotation
+                }
+                
+                console.warn(`[${contextName}] Lỗi với ${GEMINI_MODEL}: ${err.message}. Đang thử dùng model dự phòng (gemini-2.5-flash)...`);
+                const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+                const apiCallFallback = fallbackModel.generateContent([prompt, imagePart]);
+                const timeoutFallback = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error(`${contextName} fallback timeout sau ${GEMINI_TIMEOUT_MS / 1000}s`)), GEMINI_TIMEOUT_MS)
+                );
+                result = await Promise.race([apiCallFallback, timeoutFallback]);
+                return result;
+            }
+        } catch (err) {
+            lastError = err;
+            if (isQuotaError(err) && apiKeys.length > 1) {
+                console.warn(`[${contextName}] API Key ở index ${currentKeyIndex} gặp lỗi Quota/429. ${attempts + 1 < apiKeys.length ? 'Chuyển sang key tiếp theo...' : 'Đã thử hết tất cả các key.'}`);
+                currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+                attempts++;
+            } else {
+                // Lỗi khác (không phải quota) hoặc chỉ có 1 key, ném lỗi luôn
+                break;
+            }
+        }
+    }
+    
+    throw lastError;
+};
 
 /**
  * Prompt bilingual để đọc bảng thành phần dinh dưỡng từ ảnh.
@@ -53,41 +125,14 @@ JSON format:
  */
 const extractNutritionFromImage = async (base64Image, mimeType = 'image/jpeg') => {
     try {
-        let result;
-        try {
-            const model = genAI.getGenerativeModel({ 
-                model: GEMINI_MODEL,
-                generationConfig: {
-                    thinkingConfig: { thinkingBudget: 0 }
-                }
-            });
+        const imagePart = {
+            inlineData: {
+                data: base64Image,
+                mimeType,
+            },
+        };
 
-            const imagePart = {
-                inlineData: {
-                    data: base64Image,
-                    mimeType,
-                },
-            };
-
-            // Timeout race — Gemini vision có thể treo nếu server quá tải
-            const apiCall = model.generateContent([NUTRITION_PROMPT, imagePart]);
-            const timeout = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error(`Gemini Vision timeout sau ${GEMINI_TIMEOUT_MS / 1000}s`)), GEMINI_TIMEOUT_MS)
-            );
-            result = await Promise.race([apiCall, timeout]);
-        } catch (err) {
-            console.warn(`[GeminiVision] Lỗi với ${GEMINI_MODEL}: ${err.message}. Đang thử dùng model dự phòng (gemini-2.5-flash)...`);
-            const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-            const fallbackImagePart = {
-                inlineData: { data: base64Image, mimeType },
-            };
-            const apiCallFallback = fallbackModel.generateContent([NUTRITION_PROMPT, fallbackImagePart]);
-            const timeoutFallback = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error(`Gemini Vision fallback timeout sau ${GEMINI_TIMEOUT_MS / 1000}s`)), GEMINI_TIMEOUT_MS)
-            );
-            result = await Promise.race([apiCallFallback, timeoutFallback]);
-        }
-
+        const result = await executeWithKeyRotation(NUTRITION_PROMPT, imagePart, 'GeminiVision_Nutrition');
         const responseText = result.response.text();
 
         // base64Image bị discard tại đây (Zero-Storage policy)
@@ -164,37 +209,11 @@ Rules:
  */
 const extractBarcodeFromImage = async (base64Image, mimeType = 'image/jpeg') => {
     try {
-        let result;
-        try {
-            const model = genAI.getGenerativeModel({ 
-                model: GEMINI_MODEL,
-                generationConfig: {
-                    thinkingConfig: { thinkingBudget: 0 }
-                }
-            });
+        const imagePart = {
+            inlineData: { data: base64Image, mimeType },
+        };
 
-            const imagePart = {
-                inlineData: { data: base64Image, mimeType },
-            };
-
-            const apiCall = model.generateContent([BARCODE_PROMPT, imagePart]);
-            const timeout = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Gemini timeout')), GEMINI_TIMEOUT_MS)
-            );
-            result = await Promise.race([apiCall, timeout]);
-        } catch (err) {
-            console.warn(`[GeminiVision] Barcode: Lỗi với ${GEMINI_MODEL}: ${err.message}. Đang thử dùng model dự phòng (gemini-2.5-flash)...`);
-            const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-            const fallbackImagePart = {
-                inlineData: { data: base64Image, mimeType },
-            };
-            const apiCallFallback = fallbackModel.generateContent([BARCODE_PROMPT, fallbackImagePart]);
-            const timeoutFallback = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Gemini fallback timeout')), GEMINI_TIMEOUT_MS)
-            );
-            result = await Promise.race([apiCallFallback, timeoutFallback]);
-        }
-
+        const result = await executeWithKeyRotation(BARCODE_PROMPT, imagePart, 'GeminiVision_Barcode');
         const responseText = result.response.text();
 
         const cleanedText = responseText

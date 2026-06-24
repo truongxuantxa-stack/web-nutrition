@@ -7,48 +7,78 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }
 const https = require('https');
 const { sequelize, Food } = require('../models');
 
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+const apiKeys = process.env.GOOGLE_API_KEY 
+    ? process.env.GOOGLE_API_KEY.split(',').map(k => k.trim()).filter(k => k) 
+    : [];
+let currentKeyIndex = 0;
+
 const GOOGLE_CX = process.env.GOOGLE_CX;
 
-if (!GOOGLE_API_KEY || !GOOGLE_CX) {
-    console.error('❌ Lỗi: Cần cung cấp GOOGLE_API_KEY và GOOGLE_CX trong file .env');
+if (apiKeys.length === 0 || !GOOGLE_CX) {
+    console.error('❌ Lỗi: Cần cung cấp ít nhất 1 GOOGLE_API_KEY và GOOGLE_CX trong file .env');
     process.exit(1);
 }
 
-// Hàm helper gọi Google Custom Search API
-const searchGoogleImage = (query) => {
-    return new Promise((resolve, reject) => {
-        // Thêm chữ "món ăn" hoặc "đẹp" để Google ưu tiên trả về ảnh món ăn đẹp
+const getApiKey = () => apiKeys[currentKeyIndex];
+
+// Hàm helper gọi Google Custom Search API hỗ trợ tự động đổi key
+const searchGoogleImage = async (query) => {
+    let attempts = 0;
+    const maxAttempts = Math.max(1, apiKeys.length);
+    
+    while (attempts < maxAttempts) {
+        const currentKey = getApiKey();
         const searchQuery = `${query} món ăn`;
+        const url = `https://www.googleapis.com/customsearch/v1?key=${currentKey}&cx=${GOOGLE_CX}&q=${encodeURIComponent(searchQuery)}&searchType=image&imgSize=large&num=1`;
         
-        // searchType=image để chỉ lấy hình ảnh
-        // imgSize=large hoặc medium để lấy ảnh chất lượng tốt
-        const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(searchQuery)}&searchType=image&imgSize=large&num=1`;
-        
-        https.get(url, (res) => {
-            let data = '';
-            res.on('data', chunk => data += chunk);
-            res.on('end', () => {
-                try {
-                    const json = JSON.parse(data);
-                    if (json.error) {
-                        console.error('\nLỗi API:', json.error.message);
-                    }
-                    if (json.items && json.items.length > 0) {
-                        resolve(json.items[0].link);
-                    } else {
-                        resolve(null);
-                    }
-                } catch (e) {
-                    console.error('Lỗi parse JSON:', e.message);
+        try {
+            const result = await new Promise((resolve, reject) => {
+                https.get(url, (res) => {
+                    let data = '';
+                    res.on('data', chunk => data += chunk);
+                    res.on('end', () => {
+                        try {
+                            const json = JSON.parse(data);
+                            if (json.error) {
+                                // Nếu là lỗi quota (429 Too Many Requests hoặc quota exceeded)
+                                if (json.error.code === 429 || json.error.message.toLowerCase().includes('quota')) {
+                                    reject(new Error('QUOTA_EXCEEDED'));
+                                } else {
+                                    console.error('\nLỗi API:', json.error.message);
+                                    resolve(null);
+                                }
+                            } else if (json.items && json.items.length > 0) {
+                                resolve(json.items[0].link);
+                            } else {
+                                resolve(null);
+                            }
+                        } catch (e) {
+                            console.error('Lỗi parse JSON:', e.message);
+                            resolve(null);
+                        }
+                    });
+                }).on('error', (err) => {
+                    console.error('Lỗi network khi gọi Google API:', err.message);
                     resolve(null);
-                }
+                });
             });
-        }).on('error', (err) => {
-            console.error('Lỗi khi gọi Google API:', err.message);
-            resolve(null);
-        });
-    });
+            return result; 
+        } catch (err) {
+            if (err.message === 'QUOTA_EXCEEDED') {
+                console.log(`\n⚠️ API Key index ${currentKeyIndex} đã hết Quota. ${attempts + 1 < apiKeys.length ? 'Chuyển sang key tiếp theo...' : 'Đã thử hết tất cả các key.'}`);
+                currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    console.error('\n❌ Tất cả API keys đều đã hết Quota Google Custom Search.');
+                    return null;
+                }
+                // Thử lại vòng lặp với key mới
+            } else {
+                return null;
+            }
+        }
+    }
+    return null;
 };
 
 // Hàm delay để tránh bị rate limit (Google giới hạn 100 req/ngày miễn phí, tốc độ không quá gắt nhưng nên có delay)
