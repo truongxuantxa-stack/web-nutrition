@@ -10,7 +10,7 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const { sequelize, Food } = require('../models');
 
-// [tên, fiber, sugar, sodium]
+// [tên, fiber, sugar, sodium, vitaminA, vitaminC, calcium, iron]
 const updates = [
     // ── PROTEIN RAW ─────────────────────────────────────
     ['Ức gà (Thô)',              0,    0,   74],
@@ -155,7 +155,8 @@ const updates = [
     ['Cải Bó Xôi Xào Tỏi',      2,    0.4, 350],
 
     // ── ĐỒ UỐNG ─────────────────────────────────────
-    ['Nước Ép Cam Tươi',         0.2,  8.4,   1],
+    ['Nước Ép Cam Tươi',         0.2,  8.4,   1,    10,  40, 11, 0.2],
+    ['Cam (Thô)',                2.4,  9.4,   0,    11,  53, 40, 0.1],
     ['Nước Ép Dưa Hấu',          0.2,  6.2,   1],
     ['Sinh Tố Bơ',               5,    6,     15],
     ['Sinh Tố Chuối Sữa',        1.5, 20,     45],
@@ -177,14 +178,14 @@ async function run() {
         let updated = 0;
         let notFound = 0;
 
-        for (const [name, fiber, sugar, sodium] of updates) {
+        for (const [name, fiber, sugar, sodium, vitaminA = null, vitaminC = null, calcium = null, iron = null] of updates) {
             const food = await Food.findOne({ where: { name } });
             if (!food) {
                 console.log(`   ⚠️  Không tìm thấy: "${name}"`);
                 notFound++;
                 continue;
             }
-            await food.update({ fiber, sugar, sodium });
+            await food.update({ fiber, sugar, sodium, vitaminA, vitaminC, calcium, iron });
             updated++;
         }
 

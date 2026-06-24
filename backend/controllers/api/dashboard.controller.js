@@ -14,6 +14,7 @@ const {
     getMacroProgress,
     getHealthInsights,
     calculateDailyHealthScore,
+    groupEntriesByMeal,
 } = require('../../services/suggestion.service');
 const { getWaterByDate } = require('../../services/water.service');
 const { getSportInfo }   = require('../../services/exercise.service');
@@ -44,6 +45,7 @@ exports.getDashboard = async (req, res) => {
             include: [{ model: Food, as: 'food' }],
         });
         const consumed        = sumNutritionFromEntries(entries);
+        const mealGroups      = groupEntriesByMeal(entries);
         const calorieProgress = getCalorieProgress(consumed.calories, metrics.targetCalories || 0);
         const macroProgress   = getMacroProgress(consumed, metrics.macros || {});
 
@@ -54,13 +56,16 @@ exports.getDashboard = async (req, res) => {
         const { total: waterTotal } = await getWaterByDate(user.id, date);
         const waterGoal = user.waterGoal || calculateWaterGoal(user.weight);
 
+        // Client hour
+        const clientHour = req.query.clientHour ? parseInt(req.query.clientHour) : null;
+
         // Health Insights + Score
         const healthInsights = getHealthInsights(
-            consumed, metrics, {},
-            waterTotal, waterGoal, user.gender, isHistorical
+            consumed, metrics, mealGroups,
+            waterTotal, waterGoal, user.gender, isHistorical, clientHour
         );
         const healthScore = calculateDailyHealthScore(
-            consumed, metrics, waterTotal, waterGoal, healthInsights, user.gender, {}, null, isHistorical
+            consumed, metrics, waterTotal, waterGoal, healthInsights, user.gender, mealGroups, clientHour, isHistorical
         );
         const weightLogs = await WeightLog.findAll({
             where: { userId: user.id },

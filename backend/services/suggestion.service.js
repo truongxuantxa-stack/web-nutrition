@@ -130,6 +130,7 @@ const getRDIByGender = (gender) => {
         calciumRDI:  1000,
         ironRDI:     isMale ? 8 : 18,
         vitaminCRDI: isMale ? 90 : 75,
+        vitaminARDI: isMale ? 900 : 700,  // µg RAE (WHO/NIH)
     };
 };
 
@@ -172,19 +173,16 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
     // Ví dụ: server UTC 13:30 nhưng user VN đang là 20:30 → cảnh báo tối sẽ không kích hoạt nếu dùng giờ server.
     const currentHour = (clientHour !== null && Number.isInteger(clientHour)) ? clientHour : new Date().getHours();
 
-    const isDayComplete = isHistorical || currentHour >= 20;
+    const hasSang = mealGroups?.sang?.length > 0;
+    const hasTrua = mealGroups?.trua?.length > 0;
+    const hasToi  = mealGroups?.toi?.length > 0;
+    const isDayComplete = isHistorical || currentHour >= 20 || (hasSang && hasTrua && hasToi);
 
-    // Gate cảnh báo THIẾU: kích hoạt khi calPct >= 100, qua 20h, hoặc dữ liệu lịch sử
-    const shouldWarnDeficiency = (isHistorical || calPct >= 100 || currentHour >= 20) && consumed.calories > 0;
+    // Gate cảnh báo THIẾU: kích hoạt khi đủ bữa, qua 20h, hoặc dữ liệu lịch sử
+    const shouldWarnDeficiency = isDayComplete && consumed.calories > 0;
 
     // ── RDI chuẩn ────────────────────────────────────────────────────────────
-    const isMale      = gender !== 'female';
-    const sugarLimit  = isMale ? 36 : 25;    // AHA
-    const sodiumLimit = 2300;                  // WHO/AHA
-    const fiberRDI    = isMale ? 38 : 25;
-    const calciumRDI  = 1000;
-    const ironRDI     = isMale ? 8 : 18;
-    const vitaminCRDI = isMale ? 90 : 75;
+    const { isMale, sugarLimit, sodiumLimit, fiberRDI, calciumRDI, ironRDI, vitaminCRDI, vitaminARDI } = getRDIByGender(gender);
 
     // ════════════════════════════════════════════════════════════════════════════
     // NHÓM THỪA — kích hoạt MỌI LÚC (ăn mặn lúc sáng vẫn cần cảnh báo)
@@ -281,46 +279,160 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
             }
         }
 
-        // Chất xơ < 25g (ngưỡng tối thiểu WHO)
-        // [FIX #1] Dùng fiberRDI thay vì hardcode 25 — tránh bỏ sót cảnh báo cho nam (RDI = 38g).
-        // Lỗi cũ: đàn ông ăn 35g xơ vẫn không bị cảnh báo dù thiếu 3g so với chuẩn.
-        if (consumed.fiber != null && consumed.fiber < fiberRDI) {
-            warningInsights.push({
-                severity: 'warning',
-                icon: '🥦',
-                title: `Hệ tiêu hóa đang thiếu chất xơ (${Math.round(consumed.fiber * 10) / 10}g/${fiberRDI}g)`,
-                message: 'Hãy bổ sung ngay 1 đĩa rau xanh hoặc trái cây! Chất xơ nuôi vi khuẩn có lợi trong ruột.',
-            });
+        // Chất xơ — phân cấp theo % RDI
+        if (consumed.fiber != null) {
+            const fiberPct = consumed.fiber / fiberRDI;
+            const fiberDisplay = `${Math.round(consumed.fiber * 10) / 10}g/${fiberRDI}g`;
+            
+            if (fiberPct < 0.30) {
+                dangerInsights.push({
+                    severity: 'danger', icon: '🥦',
+                    title: `Báo động: Chất xơ cực thấp (${fiberDisplay})`,
+                    message: 'Chỉ đạt dưới 30% nhu cầu! Nguy cơ táo bón và mất cân bằng vi khuẩn đường ruột. Bổ sung rau xanh ngay.',
+                });
+            } else if (fiberPct < 0.80) {
+                warningInsights.push({
+                    severity: 'warning', icon: '🥦',
+                    title: `Hệ tiêu hóa đang thiếu chất xơ (${fiberDisplay})`,
+                    message: 'Hãy bổ sung ngay 1 đĩa rau xanh hoặc trái cây! Chất xơ nuôi vi khuẩn có lợi trong ruột.',
+                });
+            } else if (fiberPct < 1.0) {
+                suggestionInsights.push({
+                    severity: 'suggestion', icon: '🥦',
+                    title: `Chất xơ gần đạt mục tiêu (${fiberDisplay})`,
+                    message: 'Chỉ cần thêm 1 phần rau hoặc trái cây nữa là đủ! Cố lên!',
+                });
+            }
         }
 
-        // Vi chất — Canxi
-        if (consumed.calcium != null && consumed.calcium < calciumRDI * 0.8) {
-            suggestionInsights.push({
-                severity: 'suggestion',
-                icon: '🥛',
-                title: isHistorical ? 'Canxi chưa đạt 80% mức khuyến nghị' : 'Canxi hôm nay chưa đạt 80% mức khuyến nghị',
-                message: isHistorical ? 'Cân nhắc uống 1 ly sữa ít béo hoặc ăn thêm rau cải xanh, hạnh nhân.' : 'Cân nhắc uống 1 ly sữa ít béo hoặc ăn thêm rau cải xanh, hạnh nhân vào ngày mai.',
-            });
+        // Canxi — phân cấp theo % RDI
+        if (consumed.calcium != null) {
+            const calciumPct = consumed.calcium / calciumRDI;
+            const calciumDisplay = `${Math.round(consumed.calcium)}mg/${calciumRDI}mg`;
+
+            if (calciumPct < 0.30) {
+                dangerInsights.push({
+                    severity: 'danger', icon: '🥛',
+                    title: isHistorical
+                        ? `Thiếu hụt Canxi trầm trọng (${calciumDisplay})`
+                        : `Thiếu hụt Canxi trầm trọng hôm nay (${calciumDisplay})`,
+                    message: 'Mới đạt dưới 30% nhu cầu! Xương và răng đang bị thiếu nguyên liệu. Uống sữa, ăn phô mai hoặc rau cải xanh ngay.',
+                });
+            } else if (calciumPct < 0.70) {
+                warningInsights.push({
+                    severity: 'warning', icon: '🥛',
+                    title: isHistorical
+                        ? `Canxi ở mức thấp (${calciumDisplay})`
+                        : `Canxi hôm nay ở mức thấp (${calciumDisplay})`,
+                    message: 'Cân nhắc uống 1 ly sữa ít béo hoặc ăn thêm rau cải xanh, hạnh nhân.',
+                });
+            } else if (calciumPct < 1.0) {
+                suggestionInsights.push({
+                    severity: 'suggestion', icon: '🥛',
+                    title: isHistorical
+                        ? `Canxi gần đạt mục tiêu (${calciumDisplay})`
+                        : `Canxi hôm nay gần đạt mục tiêu (${calciumDisplay})`,
+                    message: isHistorical
+                        ? 'Chỉ cần thêm 1 ly sữa hoặc 1 phần phô mai nữa.'
+                        : 'Chỉ cần thêm 1 ly sữa hoặc 1 phần phô mai nữa vào ngày mai.',
+                });
+            }
         }
 
-        // Vi chất — Sắt
-        if (consumed.iron != null && consumed.iron < ironRDI * 0.8) {
-            suggestionInsights.push({
-                severity: 'suggestion',
-                icon: '🫀',
-                title: isHistorical ? 'Lượng Sắt còn thiếu' : 'Lượng Sắt hôm nay còn thiếu',
-                message: 'Sắt cần cho máu và năng lượng. Bổ sung thịt đỏ, gan, hoặc rau chân vịt kết hợp Vitamin C để tăng hấp thụ.',
-            });
+        // Sắt — phân cấp theo % RDI
+        if (consumed.iron != null) {
+            const ironPct = consumed.iron / ironRDI;
+            const ironDisplay = `${Math.round(consumed.iron * 10) / 10}mg/${ironRDI}mg`;
+
+            if (ironPct < 0.30) {
+                dangerInsights.push({
+                    severity: 'danger', icon: '🫀',
+                    title: isHistorical
+                        ? `Thiếu hụt Sắt trầm trọng (${ironDisplay})`
+                        : `Thiếu hụt Sắt trầm trọng hôm nay (${ironDisplay})`,
+                    message: 'Nguy cơ thiếu máu, mệt mỏi và suy giảm miễn dịch. Bổ sung thịt đỏ, gan, hoặc rau chân vịt kết hợp Vitamin C.',
+                });
+            } else if (ironPct < 0.70) {
+                warningInsights.push({
+                    severity: 'warning', icon: '🫀',
+                    title: isHistorical
+                        ? `Lượng Sắt ở mức thấp (${ironDisplay})`
+                        : `Lượng Sắt hôm nay ở mức thấp (${ironDisplay})`,
+                    message: 'Sắt cần cho máu và năng lượng. Bổ sung thịt đỏ, gan, hoặc rau chân vịt kết hợp Vitamin C để tăng hấp thụ.',
+                });
+            } else if (ironPct < 1.0) {
+                suggestionInsights.push({
+                    severity: 'suggestion', icon: '🫀',
+                    title: isHistorical
+                        ? `Sắt gần đạt mục tiêu (${ironDisplay})`
+                        : `Sắt hôm nay gần đạt mục tiêu (${ironDisplay})`,
+                    message: 'Chỉ cần thêm 1 phần thịt đỏ hoặc rau lá xanh đậm nữa.',
+                });
+            }
         }
 
-        // Vi chất — Vitamin C
-        if (consumed.vitaminC != null && consumed.vitaminC < vitaminCRDI * 0.8) {
-            suggestionInsights.push({
-                severity: 'suggestion',
-                icon: '🍊',
-                title: isHistorical ? 'Vitamin C chưa đủ' : 'Vitamin C hôm nay chưa đủ',
-                message: 'Vitamin C tăng đề kháng và giúp hấp thụ Sắt. Ăn cam, ổi, ớt chuông hoặc kiwi là đủ nhu cầu ngay.',
-            });
+        // Vitamin C — phân cấp theo % RDI
+        if (consumed.vitaminC != null) {
+            const vitCPct = consumed.vitaminC / vitaminCRDI;
+            const vitCDisplay = `${Math.round(consumed.vitaminC)}mg/${vitaminCRDI}mg`;
+
+            if (vitCPct < 0.30) {
+                dangerInsights.push({
+                    severity: 'danger', icon: '🍊',
+                    title: isHistorical
+                        ? `Thiếu hụt Vitamin C trầm trọng (${vitCDisplay})`
+                        : `Thiếu hụt Vitamin C trầm trọng hôm nay (${vitCDisplay})`,
+                    message: 'Hệ miễn dịch đang yếu! Ăn cam, ổi, ớt chuông hoặc kiwi là đủ nhu cầu ngay.',
+                });
+            } else if (vitCPct < 0.70) {
+                warningInsights.push({
+                    severity: 'warning', icon: '🍊',
+                    title: isHistorical
+                        ? `Vitamin C ở mức thấp (${vitCDisplay})`
+                        : `Vitamin C hôm nay ở mức thấp (${vitCDisplay})`,
+                    message: 'Vitamin C tăng đề kháng và giúp hấp thụ Sắt. Ăn cam, ổi, ớt chuông hoặc kiwi.',
+                });
+            } else if (vitCPct < 1.0) {
+                suggestionInsights.push({
+                    severity: 'suggestion', icon: '🍊',
+                    title: isHistorical
+                        ? `Vitamin C gần đạt mục tiêu (${vitCDisplay})`
+                        : `Vitamin C hôm nay gần đạt mục tiêu (${vitCDisplay})`,
+                    message: 'Chỉ cần thêm 1 quả cam hoặc nửa quả ổi nữa thôi!',
+                });
+            }
+        }
+
+        // Vitamin A — MỚI: Trước đây hệ thống không kiểm tra Vitamin A
+        if (consumed.vitaminA != null) {
+            const vitAPct = consumed.vitaminA / vitaminARDI;
+            const vitADisplay = `${Math.round(consumed.vitaminA)}µg/${vitaminARDI}µg`;
+
+            if (vitAPct < 0.30) {
+                dangerInsights.push({
+                    severity: 'danger', icon: '🥕',
+                    title: isHistorical
+                        ? `Thiếu hụt Vitamin A trầm trọng (${vitADisplay})`
+                        : `Thiếu hụt Vitamin A trầm trọng hôm nay (${vitADisplay})`,
+                    message: 'Vitamin A cần cho thị lực, da và hệ miễn dịch. Ăn cà rốt, khoai lang, rau lá xanh đậm hoặc gan.',
+                });
+            } else if (vitAPct < 0.70) {
+                warningInsights.push({
+                    severity: 'warning', icon: '🥕',
+                    title: isHistorical
+                        ? `Vitamin A ở mức thấp (${vitADisplay})`
+                        : `Vitamin A hôm nay ở mức thấp (${vitADisplay})`,
+                    message: 'Bổ sung cà rốt, bí đỏ, rau lá xanh đậm hoặc trứng để tăng Vitamin A.',
+                });
+            } else if (vitAPct < 1.0) {
+                suggestionInsights.push({
+                    severity: 'suggestion', icon: '🥕',
+                    title: isHistorical
+                        ? `Vitamin A gần đạt mục tiêu (${vitADisplay})`
+                        : `Vitamin A hôm nay gần đạt mục tiêu (${vitADisplay})`,
+                    message: 'Chỉ cần thêm 1 phần rau xanh hoặc cà rốt nữa!',
+                });
+            }
         }
     }
 
@@ -376,7 +488,11 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
     }
 
     const currentHour = (clientHour !== null && Number.isInteger(clientHour)) ? clientHour : new Date().getHours();
-    const isDayComplete = isHistorical || currentHour >= 20;
+    
+    const hasSang = mealGroups?.sang?.length > 0;
+    const hasTrua = mealGroups?.trua?.length > 0;
+    const hasToi  = mealGroups?.toi?.length > 0;
+    const isDayComplete = isHistorical || currentHour >= 20 || (hasSang && hasTrua && hasToi);
 
     // Nếu chưa hết ngày và chưa đủ 3 bữa thì treo điểm ở trạng thái Pending
     if (!isDayComplete) {
@@ -384,7 +500,7 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
     }
 
     // [FIX #4] Dùng getRDIByGender() thay vì tính lại inline — trước đây duplicate logic từ getHealthInsights.
-    const { fiberRDI } = getRDIByGender(gender);
+    const { fiberRDI, calciumRDI, ironRDI, vitaminCRDI, vitaminARDI } = getRDIByGender(gender);
     const targetCal = metrics.targetCalories || 0;
     const calPct    = targetCal > 0 ? (consumed.calories / targetCal) * 100 : 0;
 
@@ -415,6 +531,39 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
         bonuses.push({ key: 'fiber', label: 'Đạt mục tiêu Chất xơ', points: 2 });
     }
 
+    // ── [MỚI] Hard Cap — Điểm liệt Ngày ──────────────────────────────────────
+    let hardCapApplied = null;
+    const scoreBeforeCaps = score;
+
+    // Tính avgMicroRatio: Trung bình % đạt RDI của 4 vi chất (chỉ tính vi chất có dữ liệu)
+    // Mỗi ratio được cap ở 1.0 để tránh 1 vi chất quá cao (VD Vitamin C 500%) kéo trung bình lên
+    const microEntries = [];
+    if (consumed.vitaminA != null) microEntries.push(Math.min(consumed.vitaminA / vitaminARDI, 1.0));
+    if (consumed.vitaminC != null) microEntries.push(Math.min(consumed.vitaminC / vitaminCRDI, 1.0));
+    if (consumed.calcium  != null) microEntries.push(Math.min(consumed.calcium  / calciumRDI,  1.0));
+    if (consumed.iron     != null) microEntries.push(Math.min(consumed.iron     / ironRDI,     1.0));
+
+    const avgMicroRatio = microEntries.length > 0
+        ? microEntries.reduce((a, b) => a + b, 0) / microEntries.length
+        : null; // null = không có dữ liệu vi chất, bỏ qua Hard Cap
+
+    // Hard Cap 50: Vi chất ngày quá kém
+    if (avgMicroRatio !== null && avgMicroRatio < 0.20) {
+        if (score > 50) {
+            score = 50;
+            hardCapApplied = 'micro_50';
+        }
+    }
+
+    // Hard Cap 60: Thiếu chất xơ nghiêm trọng
+    const fiberRatio = consumed.fiber != null ? consumed.fiber / fiberRDI : null;
+    if (fiberRatio !== null && fiberRatio < 0.30) {
+        if (hardCapApplied !== 'micro_50' && score > 60) {
+            score = 60;
+            hardCapApplied = 'fiber_60';
+        }
+    }
+
     score = Math.max(0, Math.min(100, score));
 
     // ── Phân loại điểm ───────────────────────────────────────────────────────
@@ -425,7 +574,13 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
     else if (score >= 40) { label = 'Cần cải thiện';    emoji = '⚡'; }
     else                  { label = 'Đáng lo ngại';     emoji = '⚠️'; }
 
-    return { score, label, emoji, bonuses };
+    return {
+        score, label, emoji, bonuses,
+        hardCapApplied,
+        scoreBeforeCaps,
+        avgMicroRatio: avgMicroRatio !== null ? parseFloat(avgMicroRatio.toFixed(2)) : null,
+        fiberRatio: fiberRatio !== null ? parseFloat(fiberRatio.toFixed(2)) : null,
+    };
 };
 
 

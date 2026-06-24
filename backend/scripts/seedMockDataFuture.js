@@ -212,6 +212,10 @@ async function seed() {
                     fiberSnapshot: getVal(override.fiber, food.fiber),
                     sugarSnapshot: getVal(override.sugar, food.sugar),
                     sodiumSnapshot: getVal(override.sodium, food.sodium),
+                    vitaminASnapshot: getVal(override.vitaminA, food.vitaminA),
+                    vitaminCSnapshot: getVal(override.vitaminC, food.vitaminC),
+                    calciumSnapshot: getVal(override.calcium, food.calcium),
+                    ironSnapshot: getVal(override.iron, food.iron),
                     note: 'Seed chiến lược'
                 });
             };

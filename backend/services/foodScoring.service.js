@@ -15,6 +15,8 @@ const NUTRIENT_THRESHOLDS = {
     iron:     { excellent: 1.5, good: 0.8 },  // mg/100kcal
 };
 
+const FIBER_EXEMPT_CATEGORIES = ['thit_ca', 'protein', 'fat', 'vitamin', 'fiber'];
+
 /**
  * Tính điểm cho 1 món ăn dựa trên mật độ dinh dưỡng trên 100 kcal
  * @param {Object} food - Object thông tin món ăn từ database (chứa calories, sugar, sodium, protein, fiber)
@@ -174,6 +176,58 @@ function scoreFoodItem(food) {
     score += (calciumRes.penaltyOrBonus || 0);
     score += (ironRes.penaltyOrBonus    || 0);
 
+    const scoreBeforeCaps = score;
+
+    // Xác định xem món ăn có được MIỄN TRỪ hình phạt vi chất (Empty Calories) hay không.
+    // Thực phẩm dồi dào Đạm (excellent) hoặc bản chất là nhóm Thịt/Protein thì KHÔNG phải là "Calo rỗng".
+    const isExemptFromMicroPenalty = 
+        ['thit_ca', 'protein'].includes(food.category) || 
+        proteinRes.level === 'excellent';
+
+    // Lớp 1: Micronutrient Penalty
+    const micros = [vitaminARes, vitaminCRes, calciumRes, ironRes];
+    const availableMicros = micros.filter(m => m.available);
+    let micronutrientStarvingCount = 0;
+    let microDataSufficient = availableMicros.length > 0;
+    let emptyCaloriesPenaltyApplied = false;
+    let avgMicroRatio = 0;
+
+    if (microDataSufficient) {
+        let totalRatio = 0;
+        availableMicros.forEach(m => {
+            totalRatio += m.ratio;
+            if (m.ratio < 0.10) micronutrientStarvingCount++;
+        });
+        avgMicroRatio = totalRatio / availableMicros.length;
+
+        if (micronutrientStarvingCount >= 3 && !isExemptFromMicroPenalty) {
+            score -= 15;
+            emptyCaloriesPenaltyApplied = true;
+        }
+    }
+
+    // Lớp 2: Hard Caps
+    let hardCapApplied = null;
+    
+    // 2a: Hard Cap 50 - Vi chất quá kém
+    if (microDataSufficient && avgMicroRatio < 0.20 && !isExemptFromMicroPenalty) {
+        if (score > 50) {
+            score = 50;
+            hardCapApplied = 'micro_50';
+        }
+    }
+
+    // 2b: Hard Cap 60 - Thiếu chất xơ
+    const fiberRatio = fiberRes.available ? fiberRes.ratio : 0;
+    if (!FIBER_EXEMPT_CATEGORIES.includes(food.category)) {
+        if (hardCapApplied !== 'micro_50' && fiberRes.available && fiberRatio < 0.30) {
+            if (score > 60) {
+                score = 60;
+                hardCapApplied = 'fiber_60';
+            }
+        }
+    }
+
     // Khống chế điểm [0, 100]
     score = Math.max(0, Math.min(100, score));
 
@@ -193,7 +247,10 @@ function scoreFoodItem(food) {
     let worstLabel = '';
 
     // Nutrient-specific override: cảnh báo cụ thể luôn ưu tiên hơn badge mặc định từ qualityLevel
-    if (sodiumRes.level === 'danger' || sugarRes.level === 'danger') {
+    if (emptyCaloriesPenaltyApplied) {
+        badgeIcon = '🔴';
+        worstLabel = 'Báo động: Rỗng vi chất';
+    } else if (sodiumRes.level === 'danger' || sugarRes.level === 'danger') {
         badgeIcon = '🔴';
         if (sodiumRes.level === 'danger' && sugarRes.level === 'danger') {
             worstLabel = `${sodiumRes.label}, ${sugarRes.label}`;
@@ -243,7 +300,14 @@ function scoreFoodItem(food) {
         qualityLevel,
         qualityLabel,
         badgeIcon,
-        badgeTooltip
+        badgeTooltip,
+        micronutrientStarvingCount,
+        microDataSufficient,
+        emptyCaloriesPenaltyApplied,
+        hardCapApplied,
+        avgMicroRatio: microDataSufficient ? parseFloat(avgMicroRatio.toFixed(2)) : 0,
+        fiberRatio: parseFloat(fiberRatio.toFixed(2)),
+        scoreBeforeCaps
     };
 }
 

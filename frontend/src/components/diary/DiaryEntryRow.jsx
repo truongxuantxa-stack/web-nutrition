@@ -89,9 +89,9 @@ export default function DiaryEntryRow({ entry, onDelete }) {
         </div>
       </div>
 
-      {/* Macros hidden by default, visible on hover */}
-      <div className="grid grid-rows-[0fr] md:group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-200 ease-in-out pl-[34px]">
-        <div className="overflow-hidden">
+      {/* Macros luôn hiển thị để mobile cũng xem được */}
+      <div className="pl-[34px]">
+        <div>
           {/* Macros chính */}
           <div className="pt-1.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5">
             <span className="text-[#003139]/80 font-medium">P: {entry.proteinSnapshot}g</span>
@@ -109,6 +109,12 @@ export default function DiaryEntryRow({ entry, onDelete }) {
               <>
                 <span className="text-[#DFE3E4]">·</span>
                 <span className="text-[#DC2626]/80 font-medium">Đường: {entry.sugarSnapshot}g</span>
+              </>
+            )}
+            {entry.sodiumSnapshot != null && entry.sodiumSnapshot > 0 && (
+              <>
+                <span className="text-[#DFE3E4]">·</span>
+                <span className="text-[#96A5A8]/80 font-medium">Natri: {Math.round(entry.sodiumSnapshot)}mg</span>
               </>
             )}
           </div>
