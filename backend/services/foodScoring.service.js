@@ -8,7 +8,11 @@ const NUTRIENT_THRESHOLDS = {
     sodium:  { warning: 100, danger: 150 },   // mg/100kcal
     sugar:   { warning: 2.5, danger: 5 },     // g/100kcal
     protein: { excellent: 5,    good: 3 },    // g/100kcal
-    fiber:   { excellent: 1.25, good: 0.5 }   // g/100kcal
+    fiber:   { excellent: 1.25, good: 0.5 },  // g/100kcal
+    vitaminA: { excellent: 150, good: 75 },   // IU/100kcal
+    vitaminC: { excellent: 10,  good: 5  },   // mg/100kcal
+    calcium:  { excellent: 50,  good: 25 },   // mg/100kcal
+    iron:     { excellent: 1.5, good: 0.8 },  // mg/100kcal
 };
 
 /**
@@ -31,6 +35,10 @@ function scoreFoodItem(food) {
             sugar: { available: false },
             protein: { available: false },
             fiber: { available: false },
+            vitaminA: { available: false },
+            vitaminC: { available: false },
+            calcium: { available: false },
+            iron: { available: false },
         };
     }
 
@@ -48,6 +56,10 @@ function scoreFoodItem(food) {
             sugar: { available: false },
             protein: { available: false },
             fiber: { available: false },
+            vitaminA: { available: false },
+            vitaminC: { available: false },
+            calcium: { available: false },
+            iron: { available: false },
             dataCompleteness: 'skipped',
         };
     }
@@ -73,7 +85,7 @@ function scoreFoodItem(food) {
         
         if (type === 'sodium') {
             threshold = NUTRIENT_THRESHOLDS.sodium.warning;
-            const isNaturalSodium = food.foodType === 'raw' && ['rau_cu', 'trai_cay', 'thit_ca', 'protein', 'fiber', 'carb', 'fat'].includes(food.category);
+            const isNaturalSodium = food.foodType === 'raw' && ['rau_cu', 'trai_cay', 'thit_ca', 'protein', 'fiber', 'carb', 'fat', 'vitamin'].includes(food.category);
             
             if (isNaturalSodium) {
                 level = 'safe'; label = '🟢 Natri tự nhiên';
@@ -82,7 +94,7 @@ function scoreFoodItem(food) {
             else                                                        { level = 'danger';  label = '🔴 Rất mặn';       penaltyOrBonus = -25; }
         } else if (type === 'sugar') {
             threshold = NUTRIENT_THRESHOLDS.sugar.warning;
-            const isNaturalSugar = ['trai_cay', 'rau_cu', 'fiber', 'carb'].includes(food.category);
+            const isNaturalSugar = ['trai_cay', 'rau_cu', 'fiber', 'carb', 'vitamin'].includes(food.category);
             
             if (isNaturalSugar) {
                 level = 'safe'; label = '🟢 Đường tự nhiên';
@@ -112,10 +124,44 @@ function scoreFoodItem(food) {
         };
     };
 
+    const evaluateMicronutrient = (value, type, nameLabel) => {
+        if (value === null || value === undefined) {
+            return { available: false, penaltyOrBonus: 0 };
+        }
+        
+        const density = value * ratio100Kcal;
+        let level = '';
+        let label = '';
+        let penaltyOrBonus = 0;
+        let threshold = NUTRIENT_THRESHOLDS[type]?.excellent || 0;
+        
+        if (density >= NUTRIENT_THRESHOLDS[type].excellent) {
+            level = 'excellent'; label = `🌟 Giàu ${nameLabel}`; penaltyOrBonus = 10;
+        } else if (density >= NUTRIENT_THRESHOLDS[type].good) {
+            level = 'good'; label = `🟢 Có ${nameLabel}`; penaltyOrBonus = 5;
+        } else {
+            level = 'low'; label = `Ít ${nameLabel}`; penaltyOrBonus = 0;
+        }
+
+        return {
+            available: true,
+            density: parseFloat(density.toFixed(2)),
+            threshold,
+            ratio: threshold > 0 ? parseFloat((density / threshold).toFixed(2)) : 0,
+            level,
+            label,
+            penaltyOrBonus,
+        };
+    };
+
     const sodiumRes = evaluateNutrient(food.sodium, 'sodium');
     const sugarRes = evaluateNutrient(food.sugar, 'sugar');
     const proteinRes = evaluateNutrient(food.protein, 'protein');
     const fiberRes = evaluateNutrient(food.fiber, 'fiber');
+    const vitaminARes = evaluateMicronutrient(food.vitaminA, 'vitaminA', 'Vitamin A');
+    const vitaminCRes = evaluateMicronutrient(food.vitaminC, 'vitaminC', 'Vitamin C');
+    const calciumRes = evaluateMicronutrient(food.calcium, 'calcium', 'Canxi');
+    const ironRes = evaluateMicronutrient(food.iron, 'iron', 'Sắt');
 
     // [FIX #1] Tích lũy điểm tường minh từ penaltyOrBonus được trả về bởi evaluateNutrient.
     // Trước đây evaluateNutrient âm thầm mutate 'score' qua closure — impure và dễ gây bug ẩn.
@@ -123,6 +169,10 @@ function scoreFoodItem(food) {
     score += (sugarRes.penaltyOrBonus   || 0);
     score += (proteinRes.penaltyOrBonus || 0);
     score += (fiberRes.penaltyOrBonus   || 0);
+    score += (vitaminARes.penaltyOrBonus || 0);
+    score += (vitaminCRes.penaltyOrBonus || 0);
+    score += (calciumRes.penaltyOrBonus || 0);
+    score += (ironRes.penaltyOrBonus    || 0);
 
     // Khống chế điểm [0, 100]
     score = Math.max(0, Math.min(100, score));
@@ -185,6 +235,10 @@ function scoreFoodItem(food) {
         sugar: sugarRes,
         protein: proteinRes,
         fiber: fiberRes,
+        vitaminA: vitaminARes,
+        vitaminC: vitaminCRes,
+        calcium: calciumRes,
+        iron: ironRes,
         qualityScore: score,
         qualityLevel,
         qualityLabel,

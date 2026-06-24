@@ -53,12 +53,15 @@ exports.getDiary = async (req, res) => {
         const { total: waterTotal, logs: waterLogs } = await getWaterByDate(user.id, date);
         const waterGoal = user.waterGoal || calculateWaterGoal(user.weight);
 
+        const clientHour = req.query.clientHour ? parseInt(req.query.clientHour) : null;
+        const isHistorical = date !== toDateString(new Date());
+
         const healthInsights  = getHealthInsights(
             consumed, metrics, mealGroups,
-            waterTotal, waterGoal, user.gender
+            waterTotal, waterGoal, user.gender, isHistorical, clientHour
         );
         const healthScore     = calculateDailyHealthScore(
-            consumed, metrics, waterTotal, waterGoal, healthInsights, user.gender
+            consumed, metrics, waterTotal, waterGoal, healthInsights, user.gender, mealGroups, clientHour, isHistorical
         );
 
         const mealCalories = { sang: 0, trua: 0, toi: 0, phu: 0 };

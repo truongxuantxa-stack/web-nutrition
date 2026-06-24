@@ -172,7 +172,9 @@ export default function DailyInsightsCard({ insights = [], healthScore = null, m
             </>
           ) : (
             <p className="text-[11px] text-[#96A5A8] leading-relaxed">
-              Điểm sức khỏe sẽ được tính sau khi bạn nhập bữa ăn đầu tiên trong ngày!
+              {label === 'Chưa có dữ liệu'
+                ? 'Điểm sức khỏe sẽ được tính sau khi bạn nhập bữa ăn đầu tiên trong ngày!'
+                : 'AI đang thu thập dữ liệu... Điểm số sẽ có mặt sau khi bạn ăn đủ 3 bữa chính hoặc sau 20h!'}
             </p>
           )}
         </div>

@@ -5,7 +5,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 const GEMINI_MODEL = 'gemini-2.5-flash';
-const GEMINI_TIMEOUT_MS = 20_000; // 20 giây — vision model chậm hơn text model
+const GEMINI_TIMEOUT_MS = 30_000; // Tăng lên 30s làm đệm an toàn
 
 /**
  * Prompt bilingual để đọc bảng thành phần dinh dưỡng từ ảnh.
@@ -26,18 +26,23 @@ JSON format:
   "productName": "tên sản phẩm hoặc null",
   "servingSize": "mô tả serving size gốc (vd: 30g, 1 gói, 250ml) hoặc null",
   "unit": "100g" hoặc "100ml" (Ghi chính xác theo đơn vị g hay ml có trong ảnh),
-  "calories": số_kcal_per_100_donvi,
+  "calories": số_kcal_per_100_donvi (CHÚ Ý: Bắt buộc là Kcal / Calories. TUYỆT ĐỐI KHÔNG đọc chỉ số kJ / Kilojoules. Nếu bảng chỉ có kJ, hãy chia cho 4.184 để ra kcal),
   "protein": số_g_per_100_donvi,
   "carbs": số_g_per_100_donvi,
   "fat": số_g_per_100_donvi,
   "fiber": số_g_per_100_donvi_hoặc_null,
   "sugar": số_g_per_100_donvi_hoặc_null,
   "sodium": số_mg_per_100_donvi_hoặc_null,
+  "vitaminA": số_IU_hoặc_mcg_per_100_donvi_hoặc_null,
+  "vitaminC": số_mg_per_100_donvi_hoặc_null,
+  "calcium": số_mg_per_100_donvi_hoặc_null,
+  "iron": số_mg_per_100_donvi_hoặc_null,
   "confidence": "high" | "medium" | "low",
   "rawText": "toàn bộ text đọc được từ bảng dinh dưỡng"
 }
 
 You are a nutrition expert. Read the Nutrition Facts label in this image and return a JSON object exactly as specified above. Convert from per serving to per 100g or 100ml if necessary.
+CRITICAL: Do NOT guess or estimate any value. If a micronutrient (vitaminA, vitaminC, calcium, iron) is NOT clearly printed on the label, you MUST return null for that field. Guessing is strictly forbidden.
 `;
 
 /**
@@ -50,21 +55,41 @@ You are a nutrition expert. Read the Nutrition Facts label in this image and ret
  */
 const extractNutritionFromImage = async (base64Image, mimeType = 'image/jpeg') => {
     try {
-        const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+        let result;
+        try {
+            const model = genAI.getGenerativeModel({ 
+                model: GEMINI_MODEL,
+                generationConfig: {
+                    thinkingConfig: { thinkingBudget: 0 }
+                }
+            });
 
-        const imagePart = {
-            inlineData: {
-                data: base64Image,
-                mimeType,
-            },
-        };
+            const imagePart = {
+                inlineData: {
+                    data: base64Image,
+                    mimeType,
+                },
+            };
 
-        // Timeout race — Gemini vision có thể treo nếu server quá tải
-        const apiCall = model.generateContent([NUTRITION_PROMPT, imagePart]);
-        const timeout = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error(`Gemini Vision timeout sau ${GEMINI_TIMEOUT_MS / 1000}s`)), GEMINI_TIMEOUT_MS)
-        );
-        const result = await Promise.race([apiCall, timeout]);
+            // Timeout race — Gemini vision có thể treo nếu server quá tải
+            const apiCall = model.generateContent([NUTRITION_PROMPT, imagePart]);
+            const timeout = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error(`Gemini Vision timeout sau ${GEMINI_TIMEOUT_MS / 1000}s`)), GEMINI_TIMEOUT_MS)
+            );
+            result = await Promise.race([apiCall, timeout]);
+        } catch (err) {
+            console.warn(`[GeminiVision] Lỗi với ${GEMINI_MODEL}: ${err.message}. Đang thử dùng model dự phòng (gemini-1.5-flash)...`);
+            const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+            const fallbackImagePart = {
+                inlineData: { data: base64Image, mimeType },
+            };
+            const apiCallFallback = fallbackModel.generateContent([NUTRITION_PROMPT, fallbackImagePart]);
+            const timeoutFallback = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error(`Gemini Vision fallback timeout sau ${GEMINI_TIMEOUT_MS / 1000}s`)), GEMINI_TIMEOUT_MS)
+            );
+            result = await Promise.race([apiCallFallback, timeoutFallback]);
+        }
+
         const responseText = result.response.text();
 
         // base64Image bị discard tại đây (Zero-Storage policy)
@@ -102,6 +127,10 @@ const extractNutritionFromImage = async (base64Image, mimeType = 'image/jpeg') =
             fiber: parsed.fiber != null ? Number(parsed.fiber) : null,
             sugar: parsed.sugar != null ? Number(parsed.sugar) : null,
             sodium: parsed.sodium != null ? Number(parsed.sodium) : null,
+            vitaminA: parsed.vitaminA != null ? Number(parsed.vitaminA) : null,
+            vitaminC: parsed.vitaminC != null ? Number(parsed.vitaminC) : null,
+            calcium:  parsed.calcium  != null ? Number(parsed.calcium)  : null,
+            iron:     parsed.iron     != null ? Number(parsed.iron)     : null,
             confidence: parsed.confidence || 'low',
             rawText: parsed.rawText || '',
         };
@@ -137,17 +166,37 @@ Rules:
  */
 const extractBarcodeFromImage = async (base64Image, mimeType = 'image/jpeg') => {
     try {
-        const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+        let result;
+        try {
+            const model = genAI.getGenerativeModel({ 
+                model: GEMINI_MODEL,
+                generationConfig: {
+                    thinkingConfig: { thinkingBudget: 0 }
+                }
+            });
 
-        const imagePart = {
-            inlineData: { data: base64Image, mimeType },
-        };
+            const imagePart = {
+                inlineData: { data: base64Image, mimeType },
+            };
 
-        const apiCall = model.generateContent([BARCODE_PROMPT, imagePart]);
-        const timeout = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Gemini timeout')), GEMINI_TIMEOUT_MS)
-        );
-        const result = await Promise.race([apiCall, timeout]);
+            const apiCall = model.generateContent([BARCODE_PROMPT, imagePart]);
+            const timeout = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Gemini timeout')), GEMINI_TIMEOUT_MS)
+            );
+            result = await Promise.race([apiCall, timeout]);
+        } catch (err) {
+            console.warn(`[GeminiVision] Barcode: Lỗi với ${GEMINI_MODEL}: ${err.message}. Đang thử dùng model dự phòng (gemini-1.5-flash)...`);
+            const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+            const fallbackImagePart = {
+                inlineData: { data: base64Image, mimeType },
+            };
+            const apiCallFallback = fallbackModel.generateContent([BARCODE_PROMPT, fallbackImagePart]);
+            const timeoutFallback = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Gemini fallback timeout')), GEMINI_TIMEOUT_MS)
+            );
+            result = await Promise.race([apiCallFallback, timeoutFallback]);
+        }
+
         const responseText = result.response.text();
 
         const cleanedText = responseText

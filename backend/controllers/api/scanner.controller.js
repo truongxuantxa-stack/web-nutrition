@@ -9,6 +9,7 @@ const {
 const { extractNutritionFromImage, extractBarcodeFromImage } = require('../../services/geminiVision.service');
 const { validateNutritionPhysics } = require('../../services/physicsValidation.service');
 const { ScannedProduct } = require('../../models');
+const { uploadImage } = require('../../services/cloudinary.service');
 
 /**
  * POST /api/v1/scanner/barcode-lookup
@@ -72,13 +73,25 @@ const aiVision = async (req, res) => {
 const confirmContribution = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { barcode, name, calories, protein, carbs, fat, fiber, sugar, sodium, unit } = req.body;
+        const { barcode, name, calories, protein, carbs, fat, fiber, sugar, sodium, vitaminA, vitaminC, calcium, iron, base64Image, unit } = req.body;
 
         // Validate input cơ bản
         const numFields = { calories, protein, carbs, fat };
         for (const [key, val] of Object.entries(numFields)) {
             if (val == null || isNaN(Number(val))) {
                 return res.status(400).json({ success: false, message: `Trường "${key}" không hợp lệ.` });
+            }
+        }
+
+        let imageUrl = null;
+        if (base64Image) {
+            try {
+                // Thêm prefix nếu chưa có
+                const imageData = base64Image.startsWith('data:image') ? base64Image : `data:image/jpeg;base64,${base64Image}`;
+                imageUrl = await uploadImage(imageData);
+            } catch (err) {
+                console.error('[Scanner] Cloudinary upload failed:', err);
+                // Bỏ qua lỗi upload ảnh, vẫn cho phép lưu dữ liệu
             }
         }
 
@@ -91,6 +104,11 @@ const confirmContribution = async (req, res) => {
             fiber: fiber != null ? Number(fiber) : null,
             sugar: sugar != null ? Number(sugar) : null,
             sodium: sodium != null ? Number(sodium) : null,
+            vitaminA: vitaminA != null ? Number(vitaminA) : null,
+            vitaminC: vitaminC != null ? Number(vitaminC) : null,
+            calcium: calcium != null ? Number(calcium) : null,
+            iron: iron != null ? Number(iron) : null,
+            imageUrl,
             unit,
         };
 

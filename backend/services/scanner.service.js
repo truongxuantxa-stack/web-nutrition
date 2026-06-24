@@ -135,7 +135,7 @@ const formatProduct = (product) => ({
  */
 const processAiVisionResult = async (userId, barcode, nutritionData) => {
     try {
-        const { productName, calories, protein, carbs, fat, fiber, sugar, sodium, unit } = nutritionData;
+        const { productName, calories, protein, carbs, fat, fiber, sugar, sodium, vitaminA, vitaminC, calcium, iron, imageUrl, unit } = nutritionData;
         const resolvedUnit = unit && unit.toLowerCase().includes('ml') ? '100ml' : '100g';
 
         // Bước 1: Physics Validation
@@ -156,6 +156,7 @@ const processAiVisionResult = async (userId, barcode, nutritionData) => {
                     barcode: normalizedBarcode,
                     name: productName || 'Sản phẩm chưa đặt tên',
                     calories, protein, carbs, fat, fiber, sugar, sodium,
+                    vitaminA, vitaminC, calcium, iron, imageUrl,
                     unit: resolvedUnit,
                     confidenceScore: 0.3,
                     contributionCount: 1,
@@ -177,6 +178,10 @@ const processAiVisionResult = async (userId, barcode, nutritionData) => {
                 rawFiber: fiber,
                 rawSugar: sugar,
                 rawSodium: sodium,
+                rawVitaminA: vitaminA,
+                rawVitaminC: vitaminC,
+                rawCalcium: calcium,
+                rawIron: iron,
                 rawUnit: resolvedUnit,
                 source: 'ai_vision',
                 isRejected: false,
@@ -201,6 +206,10 @@ const processAiVisionResult = async (userId, barcode, nutritionData) => {
             fiber: fiber || null,
             sugar: sugar || null,
             sodium: sodium || null,
+            vitaminA: vitaminA || null,
+            vitaminC: vitaminC || null,
+            calcium: calcium || null,
+            iron: iron || null,
             unit: resolvedUnit,
             category: resolvedUnit === '100ml' ? 'do_uong' : 'khac',
             foodType: 'raw',
@@ -293,6 +302,10 @@ const recalculateConfidence = async (scannedProductId) => {
         fiber: aggregate('rawFiber'),
         sugar: aggregate('rawSugar'),
         sodium: aggregate('rawSodium'),
+        vitaminA: aggregate('rawVitaminA'),
+        vitaminC: aggregate('rawVitaminC'),
+        calcium: aggregate('rawCalcium'),
+        iron: aggregate('rawIron'),
         confidenceScore: newScore,
         contributionCount: count,
         status: newStatus,

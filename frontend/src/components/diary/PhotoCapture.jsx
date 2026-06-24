@@ -10,7 +10,8 @@ const compressImage = (file) => {
         reader.onload = (e) => {
             const img = new Image();
             img.onload = () => {
-                const MAX = 1280;
+                // Giảm xuống 800px + quality 0.7 để tăng tốc đáng kể tốc độ upload và xử lý của AI
+                const MAX = 800;
                 let { width, height } = img;
                 if (width > MAX || height > MAX) {
                     const ratio = Math.min(MAX / width, MAX / height);
@@ -21,7 +22,7 @@ const compressImage = (file) => {
                 canvas.width = width;
                 canvas.height = height;
                 canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                 resolve({
                     base64: dataUrl.split(',')[1],
                     mimeType: 'image/jpeg',

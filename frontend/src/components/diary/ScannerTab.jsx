@@ -39,7 +39,6 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
         setUiState('barcode_processing');
         const result = await scanner.lookupBarcode(barcode);
         if (result?.found) {
-            setBarcodeUnit(result.product?.unit || '100g');
             setUiState('barcode_found');
         } else {
             // Không tìm thấy → chuyển sang chụp bảng thành phần

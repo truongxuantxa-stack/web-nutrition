@@ -172,9 +172,13 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
     // Ví dụ: server UTC 13:30 nhưng user VN đang là 20:30 → cảnh báo tối sẽ không kích hoạt nếu dùng giờ server.
     const currentHour = (clientHour !== null && Number.isInteger(clientHour)) ? clientHour : new Date().getHours();
 
-    // Gate cảnh báo THIẾU: kích hoạt luôn nếu là dữ liệu quá khứ (isHistorical), hoặc khi đã đạt 100% calo HOẶC sau 20:00
-    // LƯU Ý: Chỉ cảnh báo thiếu chất khi người dùng ĐÃ bắt đầu ghi nhận đồ ăn (calories > 0)
-    const shouldWarnDeficiency = (isHistorical || calPct >= 100 || currentHour >= 20) && consumed.calories > 0;
+    const hasSang = mealGroups?.sang?.length > 0;
+    const hasTrua = mealGroups?.trua?.length > 0;
+    const hasToi  = mealGroups?.toi?.length > 0;
+    const isDayComplete = isHistorical || currentHour >= 20 || (hasSang && hasTrua && hasToi);
+
+    // Gate cảnh báo THIẾU: kích hoạt khi đủ bữa, qua 20h, hoặc dữ liệu lịch sử
+    const shouldWarnDeficiency = isDayComplete && consumed.calories > 0;
 
     // ── RDI chuẩn ────────────────────────────────────────────────────────────
     const isMale      = gender !== 'female';
@@ -351,12 +355,26 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
  * @param {number} waterGoal   - ml nước mục tiêu
  * @param {Array}  insights    - mảng insights đã tính từ getHealthInsights
  * @param {string} gender      - 'male' | 'female'
+ * @param {Object} mealGroups  - Các bữa ăn trong ngày
+ * @param {number} clientHour  - Giờ hiện tại từ client
+ * @param {boolean} isHistorical - Có phải dữ liệu ngày cũ không
  * @returns {{ score: number|null, label: string, emoji: string, bonuses: Array }}
  */
-const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, insights, gender = 'male') => {
+const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, insights, gender = 'male', mealGroups = {}, clientHour = null, isHistorical = false) => {
     // ── Empty State: chưa ăn gì → không tính điểm ────────────────────────────
     if (!consumed || consumed.calories === 0) {
         return { score: null, label: 'Chưa có dữ liệu', emoji: '🍽️', bonuses: [] };
+    }
+
+    const currentHour = (clientHour !== null && Number.isInteger(clientHour)) ? clientHour : new Date().getHours();
+    const hasSang = mealGroups?.sang?.length > 0;
+    const hasTrua = mealGroups?.trua?.length > 0;
+    const hasToi  = mealGroups?.toi?.length > 0;
+    const isDayComplete = isHistorical || currentHour >= 20 || (hasSang && hasTrua && hasToi);
+
+    // Nếu chưa hết ngày và chưa đủ 3 bữa thì treo điểm ở trạng thái Pending
+    if (!isDayComplete) {
+        return { score: null, label: 'Đang thu thập...', emoji: '⏳', bonuses: [] };
     }
 
     // [FIX #4] Dùng getRDIByGender() thay vì tính lại inline — trước đây duplicate logic từ getHealthInsights.

@@ -22,6 +22,10 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
         fiber: initialData?.fiber != null ? String(initialData.fiber) : '',
         sugar: initialData?.sugar != null ? String(initialData.sugar) : '',
         sodium: initialData?.sodium != null ? String(initialData.sodium) : '',
+        vitaminA: initialData?.vitaminA != null ? String(initialData.vitaminA) : '',
+        vitaminC: initialData?.vitaminC != null ? String(initialData.vitaminC) : '',
+        calcium: initialData?.calcium != null ? String(initialData.calcium) : '',
+        iron: initialData?.iron != null ? String(initialData.iron) : '',
         unit: initialData?.unit || '100g', // Thêm state unit
     });
 
@@ -61,7 +65,12 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
         if (cal > 0 && estCal > 0) {
             const dev = Math.abs(cal - estCal) / cal;
             if (dev > 0.15) {
-                errs.push(`Atwater: Calo ghi ${cal}, ước tính ${estCal.toFixed(0)} (sai ${(dev * 100).toFixed(0)}%).`);
+                // Nếu sai lệch quá lớn (gấp ~4.2 lần), khả năng rất cao là AI hoặc User nhập nhầm kJ thay vì kcal
+                if (cal / estCal > 3.5 && cal / estCal < 4.8) {
+                    errs.push(`Calo đang là ${cal}, nhưng ước tính chỉ khoảng ${estCal.toFixed(0)} kcal. Có vẻ bạn/AI đã nhập nhầm chỉ số kJ. Vui lòng sửa lại thành ${estCal.toFixed(0)} (kcal).`);
+                } else {
+                    errs.push(`Tổng Calo (${cal}) không khớp với tổng Protein/Carb/Fat (ước tính ${estCal.toFixed(0)} kcal). Vui lòng kiểm tra lại.`);
+                }
             }
         }
         if (fiber != null && fiber > carb) {
@@ -89,6 +98,10 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
             fiber: form.fiber ? parseFloat(form.fiber) : null,
             sugar: form.sugar ? parseFloat(form.sugar) : null,
             sodium: form.sodium ? parseFloat(form.sodium) : null,
+            vitaminA: form.vitaminA ? parseFloat(form.vitaminA) : null,
+            vitaminC: form.vitaminC ? parseFloat(form.vitaminC) : null,
+            calcium: form.calcium ? parseFloat(form.calcium) : null,
+            iron: form.iron ? parseFloat(form.iron) : null,
             unit: form.unit,
         });
     };
@@ -125,18 +138,13 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
                 />
             </div>
 
-            {/* Chọn đơn vị */}
+            {/* Chọn đơn vị (Read-only, do AI tự động trích xuất) */}
             <div className="form-control">
-                <label className="label py-0"><span className="label-text text-xs">Đơn vị chuẩn</span></label>
-                <div className="flex gap-4 mt-1">
-                    <label className="cursor-pointer flex items-center gap-2">
-                        <input type="radio" name="unit" className="radio radio-sm radio-primary" value="100g" checked={form.unit === '100g'} onChange={e => set('unit', e.target.value)} />
-                        <span className="label-text text-sm">100g (Đồ ăn)</span>
-                    </label>
-                    <label className="cursor-pointer flex items-center gap-2">
-                        <input type="radio" name="unit" className="radio radio-sm radio-primary" value="100ml" checked={form.unit === '100ml'} onChange={e => set('unit', e.target.value)} />
-                        <span className="label-text text-sm">100ml (Đồ uống)</span>
-                    </label>
+                <label className="label py-0"><span className="label-text text-xs">Đơn vị chuẩn (AI trích xuất từ nhãn)</span></label>
+                <div className="mt-1">
+                    <span className="badge badge-primary font-semibold">
+                        {form.unit === '100ml' ? '100ml (Đồ uống)' : '100g (Đồ ăn)'}
+                    </span>
                 </div>
             </div>
 
@@ -165,11 +173,15 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
             </div>
 
             {/* Vi chất tùy chọn */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {[
-                    { k: 'fiber',  label: 'Xơ (g)' },
-                    { k: 'sugar',  label: 'Đường (g)' },
-                    { k: 'sodium', label: 'Natri (mg)' },
+                    { k: 'fiber',    label: 'Xơ (g)' },
+                    { k: 'sugar',    label: 'Đường (g)' },
+                    { k: 'sodium',   label: 'Natri (mg)' },
+                    { k: 'vitaminA', label: 'Vitamin A (µg)' },
+                    { k: 'vitaminC', label: 'Vitamin C (mg)' },
+                    { k: 'calcium',  label: 'Canxi (mg)' },
+                    { k: 'iron',     label: 'Sắt (mg)' },
                 ].map(({ k, label }) => (
                     <div key={k} className="form-control">
                         <label className="label py-0"><span className="label-text text-[10px]">{label}</span></label>
