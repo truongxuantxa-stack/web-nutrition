@@ -233,7 +233,7 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                 severity: 'danger',
                 icon: '🍚',
                 title: `Tinh bột vượt mức ${Math.round(carbPct - 100)}% so với mục tiêu`,
-                message: 'Nguy cơ tăng đường huyết và buồn ngủ sau ăn. Hãy bù đắp bằng rau xanh và vận động nhẹ.',
+                message: 'Nguy cơ tăng đường huyết và buồn ngủ sau ăn. Hãy ưu tiên ăn thêm rau xanh vào các bữa tiếp theo để làm chậm hấp thu đường, và tăng cường vận động để tiêu hao năng lượng.',
             });
         }
     }

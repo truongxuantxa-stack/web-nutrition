@@ -1,15 +1,5 @@
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Filler,
-} from 'chart.js';
 import { Line } from 'react-chartjs-2';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
+// ChartJS đã register tập trung ở main.jsx via chartSetup.js
 
 export default function WeightChart({ chartData = [] }) {
   if (!chartData.length) {
@@ -76,7 +66,7 @@ export default function WeightChart({ chartData = [] }) {
       <div className="p-5 flex flex-col gap-2">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">⚖️ Cân nặng {chartData.length} ngày</h3>
         <div className="h-44">
-          <Line key={JSON.stringify(data)} data={data} options={options} />
+          <Line data={data} options={options} />
         </div>
       </div>
     </div>

@@ -1,27 +1,8 @@
-import {
-  Chart as ChartJS,
-  TimeScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Filler,
-  Legend
-} from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import 'chartjs-adapter-dayjs-4';
-
-ChartJS.register(
-  TimeScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
-  Tooltip, 
-  Filler, 
-  Legend, 
-  annotationPlugin
-);
+// ChartJS đã register tập trung ở main.jsx via chartSetup.js
+// (bao gồm cả annotationPlugin trong chartSetup.js)
 
 export default function WeightTrendChart({ data, range, onRangeChange }) {
   if (!data) return null;
@@ -276,7 +257,7 @@ export default function WeightTrendChart({ data, range, onRangeChange }) {
       </div>
 
       <div className="flex-1 p-5 pt-2 pb-0 min-h-[250px] relative">
-        <Line key={JSON.stringify(chartDatasets)} data={{ datasets: chartDatasets }} options={options} />
+        <Line data={{ datasets: chartDatasets }} options={options} />
       </div>
 
       {/* Custom Legend */}
