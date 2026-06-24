@@ -27,6 +27,7 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
         calcium: initialData?.calcium != null ? String(initialData.calcium) : '',
         iron: initialData?.iron != null ? String(initialData.iron) : '',
         unit: initialData?.unit || '100g', // Thêm state unit
+        netWeight: '', // Thể tích / Khối lượng thực của cả hộp/gói
     });
 
     const [physicsErrors, setPhysicsErrors] = useState([]);
@@ -103,6 +104,7 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
             calcium: form.calcium ? parseFloat(form.calcium) : null,
             iron: form.iron ? parseFloat(form.iron) : null,
             unit: form.unit,
+            netWeight: form.netWeight ? parseFloat(form.netWeight) : null,
         });
     };
 
@@ -139,12 +141,35 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
             </div>
 
             {/* Chọn đơn vị (Read-only, do AI tự động trích xuất) */}
-            <div className="form-control">
-                <label className="label py-0"><span className="label-text text-xs">Đơn vị chuẩn (AI trích xuất từ nhãn)</span></label>
-                <div className="mt-1">
-                    <span className="badge badge-primary font-semibold">
-                        {form.unit === '100ml' ? '100ml (Đồ uống)' : '100g (Đồ ăn)'}
-                    </span>
+            <div className="grid grid-cols-2 gap-2">
+                <div className="form-control">
+                    <label className="label py-0"><span className="label-text text-xs">Đơn vị chuẩn từ AI</span></label>
+                    <div className="mt-1">
+                        <span className="badge badge-primary font-semibold">
+                            {form.unit === '100ml' ? '100ml (Đồ uống)' : '100g (Đồ ăn)'}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Khối lượng / Thể tích thực (Net Weight) */}
+                <div className="form-control">
+                    <label className="label py-0">
+                        <span className="label-text text-xs text-primary font-medium">K.Lượng thực SP (tùy chọn)</span>
+                    </label>
+                    <div className="join w-full">
+                        <input
+                            type="number"
+                            className="input input-bordered input-sm join-item w-full"
+                            value={form.netWeight}
+                            onChange={e => set('netWeight', e.target.value)}
+                            placeholder="VD: 700"
+                            min="0"
+                            step="any"
+                        />
+                        <div className="btn btn-sm btn-disabled join-item px-2">
+                            {form.unit === '100ml' ? 'ml' : 'g'}
+                        </div>
+                    </div>
                 </div>
             </div>
 

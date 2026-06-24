@@ -1,0 +1,3260 @@
+[
+  {
+    "id": 3609,
+    "vietnamese": "Ức gà (Thô)",
+    "english": "Raw chicken breast",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "uc-ga-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3610,
+    "vietnamese": "Thịt bò thăn (Thô)",
+    "english": "Raw beef tenderloin",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "thit-bo-than-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3611,
+    "vietnamese": "Cá hồi tươi (Thô)",
+    "english": "Raw fresh salmon",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ca-hoi-tuoi-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3612,
+    "vietnamese": "Cá rô phi (Thô)",
+    "english": "Raw tilapia",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ca-ro-phi-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3613,
+    "vietnamese": "Tôm tươi (Thô)",
+    "english": "Raw fresh shrimp",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "tom-tuoi-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3615,
+    "vietnamese": "Đậu phụ (Thô)",
+    "english": "Raw tofu",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "dau-phu-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3616,
+    "vietnamese": "Sữa chua Hy Lạp (Thô)",
+    "english": "Greek yogurt",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "sua-chua-hy-lap-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3617,
+    "vietnamese": "Thịt đùi gà (Bỏ da)",
+    "english": "Raw skinless chicken thigh",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "thit-dui-ga-bo-da.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3618,
+    "vietnamese": "Thịt lợn thăn (Nạc)",
+    "english": "Raw lean pork tenderloin",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "thit-lon-than-nac.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3619,
+    "vietnamese": "Bắp bò (Nạc)",
+    "english": "Raw lean beef shank",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "bap-bo-nac.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3620,
+    "vietnamese": "Cá ngừ đại dương",
+    "english": "Raw ocean tuna",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ca-ngu-dai-duong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3621,
+    "vietnamese": "Mực ống tươi",
+    "english": "Raw fresh squid",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "muc-ong-tuoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3622,
+    "vietnamese": "Bạch tuộc",
+    "english": "Raw octopus",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "bach-tuoc.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3623,
+    "vietnamese": "Lòng đỏ trứng (Thô)",
+    "english": "Raw egg yolk",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "long-do-trung-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3624,
+    "vietnamese": "Đậu nành (Hạt khô)",
+    "english": "Dried soybeans",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "dau-nanh-hat-kho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3625,
+    "vietnamese": "Đậu Hà Lan",
+    "english": "Green peas",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "dau-ha-lan.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3626,
+    "vietnamese": "Phô mai tươi (Cottage Cheese)",
+    "english": "Cottage cheese",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "pho-mai-tuoi-cottage-cheese.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3627,
+    "vietnamese": "Hàu tươi",
+    "english": "Raw fresh oyster",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "hau-tuoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3628,
+    "vietnamese": "Cua biển",
+    "english": "Raw mud crab",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "cua-bien.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3629,
+    "vietnamese": "Cá basa",
+    "english": "Raw basa fish",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ca-basa.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3630,
+    "vietnamese": "Hạnh nhân sữa (Milk Almond)",
+    "english": "Almond milk",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "hanh-nhan-sua-milk-almond.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3631,
+    "vietnamese": "Tempeh (Tương nén)",
+    "english": "Raw tempeh",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "tempeh-tuong-nen.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3632,
+    "vietnamese": "Lươn (Thô)",
+    "english": "Raw eel",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "luon-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3633,
+    "vietnamese": "Ếch (Thô)",
+    "english": "Raw frog meat",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ech-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3634,
+    "vietnamese": "Sò huyết",
+    "english": "Raw blood cockle",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "so-huyet.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3635,
+    "vietnamese": "Ngao (Nghêu)",
+    "english": "Raw clam",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ngao-ngheu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3636,
+    "vietnamese": "Cá lóc (Thô)",
+    "english": "Raw snakehead fish",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ca-loc-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3637,
+    "vietnamese": "Cá diêu hồng (Thô)",
+    "english": "Raw red tilapia",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ca-dieu-hong-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3638,
+    "vietnamese": "Hến",
+    "english": "Raw baby clams",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "hen.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3639,
+    "vietnamese": "Đậu hũ non (Thô)",
+    "english": "Raw silken tofu",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "dau-hu-non-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3642,
+    "vietnamese": "Trứng vịt (Thô)",
+    "english": "Raw duck egg",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "trung-vit-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3645,
+    "vietnamese": "Sữa đậu nành không đường",
+    "english": "Unsweetened soy milk",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "sua-dau-nanh-khong-duong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3646,
+    "vietnamese": "Cơm trắng (Thô/Chín)",
+    "english": "White rice",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "com-trang-thochin.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3647,
+    "vietnamese": "Yến mạch khô (Thô)",
+    "english": "Dry rolled oats",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "yen-mach-kho-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3648,
+    "vietnamese": "Gạo lứt (Thô)",
+    "english": "Raw brown rice",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "gao-lut-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3649,
+    "vietnamese": "Khoai lang (Thô)",
+    "english": "Raw sweet potato",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "khoai-lang-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3650,
+    "vietnamese": "Hạt Quinoa (Thô)",
+    "english": "Raw quinoa",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "hat-quinoa-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3651,
+    "vietnamese": "Ngô ngọt (Bắp)",
+    "english": "Sweet corn",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "ngo-ngot-bap.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3652,
+    "vietnamese": "Bí đỏ (Bí ngô)",
+    "english": "Raw pumpkin",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "bi-do-bi-ngo.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3653,
+    "vietnamese": "Đậu đỏ (Hạt khô)",
+    "english": "Dried red beans",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "dau-do-hat-kho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3654,
+    "vietnamese": "Đậu xanh (Hạt khô)",
+    "english": "Dried mung beans",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "dau-xanh-hat-kho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3655,
+    "vietnamese": "Sắn (Khoai mì)",
+    "english": "Raw cassava",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "san-khoai-mi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3656,
+    "vietnamese": "Bánh mì nguyên cám",
+    "english": "Whole wheat bread",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "banh-mi-nguyen-cam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3657,
+    "vietnamese": "Bánh mì đen",
+    "english": "Dark rye bread",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "banh-mi-den.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3658,
+    "vietnamese": "Bánh thuyền gạo lứt",
+    "english": "Brown rice boat cake",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "banh-thuyen-gao-lut.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3659,
+    "vietnamese": "Bún tươi (Thô)",
+    "english": "Fresh rice vermicelli",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "bun-tuoi-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3660,
+    "vietnamese": "Bánh phở tươi",
+    "english": "Fresh pho noodles",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "banh-pho-tuoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3661,
+    "vietnamese": "Miến dong (Thô)",
+    "english": "Dry arrowroot vermicelli",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "mien-dong-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3662,
+    "vietnamese": "Gạo nếp (Thô)",
+    "english": "Raw glutinous rice",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "gao-nep-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3663,
+    "vietnamese": "Bột sắn dây",
+    "english": "Cassava flour",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "bot-san-day.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3664,
+    "vietnamese": "Bông cải xanh (Thô)",
+    "english": "Raw broccoli",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "bong-cai-xanh-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3665,
+    "vietnamese": "Măng tây",
+    "english": "Raw asparagus",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "mang-tay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3666,
+    "vietnamese": "Rau cải chíp",
+    "english": "Raw bok choy",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "rau-cai-chip.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3667,
+    "vietnamese": "Rau muống",
+    "english": "Raw water spinach",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "rau-muong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3668,
+    "vietnamese": "Nấm kim châm",
+    "english": "Raw enoki mushrooms",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "nam-kim-cham.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3669,
+    "vietnamese": "Nấm đùi gà",
+    "english": "Raw king oyster mushrooms",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "nam-dui-ga.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3670,
+    "vietnamese": "Củ cải trắng",
+    "english": "Raw white radish",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "cu-cai-trang.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3671,
+    "vietnamese": "Dưa chuột",
+    "english": "Raw cucumber",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "dua-chuot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3672,
+    "vietnamese": "Cà chua",
+    "english": "Raw tomato",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "ca-chua.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3673,
+    "vietnamese": "Rau ngót",
+    "english": "Raw katuk leaves",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "rau-ngot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3674,
+    "vietnamese": "Rau dền",
+    "english": "Raw amaranth leaves",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "rau-den.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3675,
+    "vietnamese": "Rau mồng tơi",
+    "english": "Raw malabar spinach",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "rau-mong-toi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3676,
+    "vietnamese": "Cải bẹ xanh",
+    "english": "Raw mustard greens",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "cai-be-xanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3677,
+    "vietnamese": "Cải thảo",
+    "english": "Raw napa cabbage",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "cai-thao.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3678,
+    "vietnamese": "Mướp đắng (Khổ qua)",
+    "english": "Raw bitter melon",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "muop-dang-kho-qua.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3679,
+    "vietnamese": "Bầu",
+    "english": "Raw bottle gourd",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "bau.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3680,
+    "vietnamese": "Bí xanh (Bí đao)",
+    "english": "Raw winter melon",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "bi-xanh-bi-dao.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3681,
+    "vietnamese": "Giá đỗ",
+    "english": "Raw bean sprouts",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "gia-do.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3682,
+    "vietnamese": "Su hào",
+    "english": "Raw kohlrabi",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "su-hao.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3683,
+    "vietnamese": "Củ dền",
+    "english": "Raw beetroot",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "cu-den.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3684,
+    "vietnamese": "Cà rốt",
+    "english": "Raw carrot",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "ca-rot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3685,
+    "vietnamese": "Bắp cải (Thô)",
+    "english": "Raw cabbage",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "bap-cai-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3686,
+    "vietnamese": "Đậu cô ve (Thô)",
+    "english": "Raw green beans",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "dau-co-ve-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3687,
+    "vietnamese": "Đậu bắp (Thô)",
+    "english": "Raw okra",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "dau-bap-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3688,
+    "vietnamese": "Nấm rơm (Thô)",
+    "english": "Raw straw mushrooms",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "nam-rom-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3689,
+    "vietnamese": "Súp lơ trắng (Thô)",
+    "english": "Raw cauliflower",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "sup-lo-trang-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3690,
+    "vietnamese": "Mộc nhĩ (Nấm mèo khô)",
+    "english": "Dried wood ear mushrooms",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "moc-nhi-nam-meo-kho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3691,
+    "vietnamese": "Cà tím (Thô)",
+    "english": "Raw eggplant",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "ca-tim-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3692,
+    "vietnamese": "Chuối (Thô)",
+    "english": "Fresh banana",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "chuoi-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3693,
+    "vietnamese": "Táo đỏ (Thô)",
+    "english": "Fresh apple",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "tao-do-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3694,
+    "vietnamese": "Quả Việt quất",
+    "english": "Fresh blueberries",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "qua-viet-quat.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3695,
+    "vietnamese": "Quả Dâu tây",
+    "english": "Fresh strawberries",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "qua-dau-tay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3696,
+    "vietnamese": "Đu đủ (Chín)",
+    "english": "Ripe papaya",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "du-du-chin.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3697,
+    "vietnamese": "Xoài (Chín)",
+    "english": "Ripe mango",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "xoai-chin.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3698,
+    "vietnamese": "Dưa hấu (Thô)",
+    "english": "Fresh watermelon",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "dua-hau-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3699,
+    "vietnamese": "Thanh long (Thô)",
+    "english": "Fresh dragon fruit",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "thanh-long-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3700,
+    "vietnamese": "Bưởi (Thô)",
+    "english": "Fresh pomelo",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "buoi-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3701,
+    "vietnamese": "Ổi (Thô)",
+    "english": "Fresh guava",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "oi-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3702,
+    "vietnamese": "Nho tươi (Thô)",
+    "english": "Fresh grapes",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "nho-tuoi-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3703,
+    "vietnamese": "Quả Bơ (Thô)",
+    "english": "Fresh avocado",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "qua-bo-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3704,
+    "vietnamese": "Hạt Hạnh nhân (Thô)",
+    "english": "Raw almonds",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "hat-hanh-nhan-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3705,
+    "vietnamese": "Hạt Chia (Thô)",
+    "english": "Raw chia seeds",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "hat-chia-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3706,
+    "vietnamese": "Dầu Olive (Thô)",
+    "english": "Olive oil",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "dau-olive-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3707,
+    "vietnamese": "Hạt Óc chó",
+    "english": "Raw walnuts",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "hat-oc-cho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3708,
+    "vietnamese": "Hạt Điều",
+    "english": "Raw cashews",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "hat-dieu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3709,
+    "vietnamese": "Hạt Bí",
+    "english": "Raw pumpkin seeds",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "hat-bi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3710,
+    "vietnamese": "Bơ đậu phộng (Nguyên chất)",
+    "english": "Pure peanut butter",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "bo-dau-phong-nguyen-chat.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3713,
+    "vietnamese": "Đậu phộng (Lạc thô)",
+    "english": "Raw peanuts",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "dau-phong-lac-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3714,
+    "vietnamese": "Mỡ heo (Thô)",
+    "english": "Raw pork fat",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "mo-heo-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3715,
+    "vietnamese": "Hạt Macca",
+    "english": "Raw macadamia nuts",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "hat-macca.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3716,
+    "vietnamese": "Quả Ô liu",
+    "english": "Olives",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "qua-o-liu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3717,
+    "vietnamese": "Thịt vịt (Nạc)",
+    "english": "Raw duck meat",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "thit-vit-nac.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3718,
+    "vietnamese": "Cá thu (Thô)",
+    "english": "Raw mackerel",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ca-thu-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3719,
+    "vietnamese": "Cá chép (Thô)",
+    "english": "Raw carp",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ca-chep-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3720,
+    "vietnamese": "Thịt thỏ (Thô)",
+    "english": "Raw rabbit meat",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "thit-tho-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3721,
+    "vietnamese": "Tôm sú (Thô)",
+    "english": "Raw tiger prawn",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "tom-su-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3722,
+    "vietnamese": "Cá trích (Thô)",
+    "english": "Raw herring",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "ca-trich-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3723,
+    "vietnamese": "Sữa tươi không đường",
+    "english": "Unsweetened fresh milk",
+    "foodType": "raw",
+    "category": "protein",
+    "filename": "sua-tuoi-khong-duong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3724,
+    "vietnamese": "Khoai tây (Thô)",
+    "english": "Raw potato",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "khoai-tay-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3725,
+    "vietnamese": "Khoai môn (Thô)",
+    "english": "Raw taro",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "khoai-mon-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3726,
+    "vietnamese": "Bún khô (Thô)",
+    "english": "Dried rice vermicelli",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "bun-kho-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3727,
+    "vietnamese": "Mì sợi khô (Thô)",
+    "english": "Dried noodles",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "mi-soi-kho-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3728,
+    "vietnamese": "Bánh tráng (Thô)",
+    "english": "Rice paper",
+    "foodType": "raw",
+    "category": "carb",
+    "filename": "banh-trang-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3729,
+    "vietnamese": "Rau xà lách",
+    "english": "Raw lettuce",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "rau-xa-lach.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3730,
+    "vietnamese": "Cải xoăn (Kale)",
+    "english": "Raw kale",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "cai-xoan-kale.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3731,
+    "vietnamese": "Ớt chuông",
+    "english": "Raw bell pepper",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "ot-chuong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3732,
+    "vietnamese": "Rau chân vịt (Spinach)",
+    "english": "Raw spinach",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "rau-chan-vit-spinach.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3733,
+    "vietnamese": "Nấm hương khô",
+    "english": "Dried shiitake mushrooms",
+    "foodType": "raw",
+    "category": "fiber",
+    "filename": "nam-huong-kho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3734,
+    "vietnamese": "Cam (Thô)",
+    "english": "Fresh orange",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "cam-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3735,
+    "vietnamese": "Quýt (Thô)",
+    "english": "Fresh mandarin",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "quyt-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3736,
+    "vietnamese": "Kiwi (Thô)",
+    "english": "Fresh kiwi",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "kiwi-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3737,
+    "vietnamese": "Lê (Thô)",
+    "english": "Fresh pear",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "le-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3738,
+    "vietnamese": "Mận (Thô)",
+    "english": "Fresh plum",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "man-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3739,
+    "vietnamese": "Dứa (Thơm)",
+    "english": "Fresh pineapple",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "dua-thom.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3740,
+    "vietnamese": "Măng cụt (Thô)",
+    "english": "Fresh mangosteen",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "mang-cut-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3741,
+    "vietnamese": "Chôm chôm (Thô)",
+    "english": "Fresh rambutan",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "chom-chom-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3742,
+    "vietnamese": "Hạt Hướng dương",
+    "english": "Sunflower seeds",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "hat-huong-duong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3743,
+    "vietnamese": "Hạt Lanh (Flaxseed)",
+    "english": "Flaxseeds",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "hat-lanh-flaxseed.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3744,
+    "vietnamese": "Mít (Thô)",
+    "english": "Fresh jackfruit",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "mit-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3745,
+    "vietnamese": "Sầu riêng (Thô)",
+    "english": "Fresh durian",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "sau-rieng-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3746,
+    "vietnamese": "Nhãn (Thô)",
+    "english": "Fresh longan",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "nhan-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3747,
+    "vietnamese": "Vải (Thô)",
+    "english": "Fresh lychee",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "vai-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3748,
+    "vietnamese": "Dưa lưới (Thô)",
+    "english": "Fresh cantaloupe",
+    "foodType": "raw",
+    "category": "vitamin",
+    "filename": "dua-luoi-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3749,
+    "vietnamese": "Dầu đậu nành (Thô)",
+    "english": "Soybean oil",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "dau-dau-nanh-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3750,
+    "vietnamese": "Dầu hướng dương (Thô)",
+    "english": "Sunflower oil",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "dau-huong-duong-tho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3751,
+    "vietnamese": "Bơ thực vật (Margarine)",
+    "english": "Margarine",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "bo-thuc-vat-margarine.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3752,
+    "vietnamese": "Nước cốt dừa",
+    "english": "Coconut milk",
+    "foodType": "raw",
+    "category": "fat",
+    "filename": "nuoc-cot-dua.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3753,
+    "vietnamese": "Salad Ức gà áp chảo",
+    "english": "Pan-seared chicken breast salad",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "salad-uc-ga-ap-chao.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3754,
+    "vietnamese": "Cơm gạo lứt thịt bò",
+    "english": "Brown rice with beef",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-gao-lut-thit-bo.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3755,
+    "vietnamese": "Bánh mì ngũ cốc trứng",
+    "english": "Multigrain bread with egg",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-mi-ngu-coc-trung.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3756,
+    "vietnamese": "Phở Gà",
+    "english": "Chicken pho",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "pho-ga.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3757,
+    "vietnamese": "Bún Bò Huế",
+    "english": "Spicy beef noodle soup",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-bo-hue.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3758,
+    "vietnamese": "Cơm Tấm Sườn",
+    "english": "Vietnamese broken rice with grilled pork chop",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-tam-suon.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3759,
+    "vietnamese": "Bún Chả",
+    "english": "Vietnamese grilled pork with vermicelli",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-cha.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3760,
+    "vietnamese": "Bún Đậu Mắm Tôm",
+    "english": "Vermicelli with fried tofu and shrimp paste",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-dau-mam-tom.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3761,
+    "vietnamese": "Bánh Mì Pate Xá Xíu",
+    "english": "Vietnamese banh mi with pate and char siu",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-mi-pate-xa-xiu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3762,
+    "vietnamese": "Miến Lươn",
+    "english": "Glass noodle soup with eel",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "mien-luon.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3763,
+    "vietnamese": "Mì Tôm Trứng",
+    "english": "Instant noodles with egg",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "mi-tom-trung.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3764,
+    "vietnamese": "Xôi Xéo",
+    "english": "Sticky rice with mung bean and fried shallots",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "xoi-xeo.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3765,
+    "vietnamese": "Gỏi Cuốn Tôm Thịt",
+    "english": "Vietnamese fresh spring rolls with pork and shrimp",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "goi-cuon-tom-thit.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3766,
+    "vietnamese": "Cháo Lòng",
+    "english": "Pork offal congee",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "chao-long.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3767,
+    "vietnamese": "Bún Riêu Cua",
+    "english": "Crab paste vermicelli soup",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-rieu-cua.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3768,
+    "vietnamese": "Cơm Rang Dưa Bò",
+    "english": "Fried rice with beef and pickled mustard greens",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-rang-dua-bo.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3769,
+    "vietnamese": "Bánh Cuốn Thịt",
+    "english": "Steamed rice rolls with minced pork",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-cuon-thit.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3770,
+    "vietnamese": "Nộm Bò Khô",
+    "english": "Dried beef salad",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "nom-bo-kho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3771,
+    "vietnamese": "Bún Mọc",
+    "english": "Porkball vermicelli soup",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-moc.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3772,
+    "vietnamese": "Miến Gà",
+    "english": "Glass noodle soup with chicken",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "mien-ga.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3773,
+    "vietnamese": "Cháo Yến Mạch Sữa Tươi",
+    "english": "Oatmeal congee with fresh milk",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "chao-yen-mach-sua-tuoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3774,
+    "vietnamese": "Bánh Cuốn Thanh Trì",
+    "english": "Thanh Tri steamed rice rolls",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-cuon-thanh-tri.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3775,
+    "vietnamese": "Bánh Mì Trứng Ốp La",
+    "english": "Banh mi with sunny-side up eggs",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-mi-trung-op-la.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3776,
+    "vietnamese": "Ức Gà Áp Chảo Sốt Chanh Dây",
+    "english": "Pan-seared chicken breast with passion fruit sauce",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "uc-ga-ap-chao-sot-chanh-day.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3777,
+    "vietnamese": "Cá Hồi Nướng Măng Tây",
+    "english": "Grilled salmon with asparagus",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ca-hoi-nuong-mang-tay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3778,
+    "vietnamese": "Salad Bơ Tôm",
+    "english": "Avocado and shrimp salad",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "salad-bo-tom.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3779,
+    "vietnamese": "Cơm Gà Hải Nam",
+    "english": "Hainanese chicken rice",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-ga-hai-nam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3780,
+    "vietnamese": "Phở Bò Tái Lăn",
+    "english": "Pho with stir-fried beef",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "pho-bo-tai-lan.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3781,
+    "vietnamese": "Bún Chả Cá",
+    "english": "Fish cake vermicelli soup",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-cha-ca.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3782,
+    "vietnamese": "Canh Chua Cá Lóc",
+    "english": "Sour soup with snakehead fish",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "canh-chua-ca-loc.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3783,
+    "vietnamese": "Thịt Kho Trứng",
+    "english": "Caramelized pork and eggs",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "thit-kho-trung.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3784,
+    "vietnamese": "Đậu Hũ Nhồi Thịt Sốt Cà",
+    "english": "Stuffed tofu with tomato sauce",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "dau-hu-nhoi-thit-sot-ca.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3785,
+    "vietnamese": "Gà Xào Sả Ớt",
+    "english": "Stir-fried chicken with lemongrass and chili",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ga-xao-sa-ot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3786,
+    "vietnamese": "Bò Xào Cần Tây",
+    "english": "Stir-fried beef with celery",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "bo-xao-can-tay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3787,
+    "vietnamese": "Canh Khổ Qua Nhồi Thịt",
+    "english": "Stuffed bitter melon soup",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "canh-kho-qua-nhoi-thit.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3788,
+    "vietnamese": "Rau Muống Xào Tỏi",
+    "english": "Stir-fried water spinach with garlic",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "rau-muong-xao-toi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3789,
+    "vietnamese": "Trứng Đúc Thịt",
+    "english": "Vietnamese steamed egg meatloaf",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "trung-duc-thit.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3790,
+    "vietnamese": "Đùi Gà Rô Ti",
+    "english": "Vietnamese roasted chicken thigh",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "dui-ga-ro-ti.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3791,
+    "vietnamese": "Bowl Cơm Lứt Cá Hồi Bơ",
+    "english": "Brown rice bowl with salmon and avocado",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "bowl-com-lut-ca-hoi-bo.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3792,
+    "vietnamese": "Salad Quinoa Rau Củ",
+    "english": "Quinoa vegetable salad",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "salad-quinoa-rau-cu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3793,
+    "vietnamese": "Ức Gà Nướng Mật Ong",
+    "english": "Honey grilled chicken breast",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "uc-ga-nuong-mat-ong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3794,
+    "vietnamese": "Cá Ngừ Áp Chảo Salad",
+    "english": "Seared tuna salad",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ca-ngu-ap-chao-salad.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3795,
+    "vietnamese": "Súp Bí Đỏ Kem Tươi",
+    "english": "Creamy pumpkin soup",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "sup-bi-do-kem-tuoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3796,
+    "vietnamese": "Cơm Lứt Gà Xé Rau Củ",
+    "english": "Brown rice with shredded chicken and vegetables",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-lut-ga-xe-rau-cu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3797,
+    "vietnamese": "Bún Gạo Lứt Tôm Hấp",
+    "english": "Brown rice vermicelli with steamed shrimp",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-gao-lut-tom-hap.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3798,
+    "vietnamese": "Salad Trứng Luộc Rau Mầm",
+    "english": "Boiled egg and microgreens salad",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "salad-trung-luoc-rau-mam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3799,
+    "vietnamese": "Tôm Hấp Sả",
+    "english": "Steamed shrimp with lemongrass",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "tom-hap-sa.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3800,
+    "vietnamese": "Cá Diêu Hồng Hấp Hành",
+    "english": "Steamed red tilapia with scallions",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ca-dieu-hong-hap-hanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3801,
+    "vietnamese": "Gà Luộc Lá Chanh",
+    "english": "Boiled chicken with lime leaves",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ga-luoc-la-chanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3802,
+    "vietnamese": "Bò Cuốn Lá Lốt Nướng",
+    "english": "Grilled beef wrapped in lolot leaves",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "bo-cuon-la-lot-nuong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3803,
+    "vietnamese": "Đậu Hũ Sốt Nấm",
+    "english": "Tofu with mushroom sauce",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "dau-hu-sot-nam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3804,
+    "vietnamese": "Cải Bó Xôi Xào Tỏi",
+    "english": "Stir-fried spinach with garlic",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "cai-bo-xoi-xao-toi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3805,
+    "vietnamese": "Bông Cải Xanh Luộc",
+    "english": "Boiled broccoli",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "bong-cai-xanh-luoc.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3806,
+    "vietnamese": "Măng Tây Xào Tôm",
+    "english": "Stir-fried asparagus with shrimp",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "mang-tay-xao-tom.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3807,
+    "vietnamese": "Canh Rau Ngót Thịt Bằm",
+    "english": "Katuk leaves soup with minced pork",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "canh-rau-ngot-thit-bam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3808,
+    "vietnamese": "Canh Bí Đao Tôm Khô",
+    "english": "Winter melon soup with dried shrimp",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "canh-bi-dao-tom-kho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3809,
+    "vietnamese": "Cháo Gà Gạo Lứt",
+    "english": "Brown rice chicken congee",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "chao-ga-gao-lut.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3810,
+    "vietnamese": "Yến Mạch Trái Cây Hạt",
+    "english": "Oatmeal with fruits and nuts",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "yen-mach-trai-cay-hat.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3811,
+    "vietnamese": "Cơm Cuộn Rong Biển (Kimbap)",
+    "english": "Kimbap",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-cuon-rong-bien-kimbap.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3812,
+    "vietnamese": "Bò Bít Tết Rau Nướng",
+    "english": "Beefsteak with grilled vegetables",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "bo-bit-tet-rau-nuong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3813,
+    "vietnamese": "Cá Basa Hấp Gừng",
+    "english": "Steamed basa fish with ginger",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ca-basa-hap-gung.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3814,
+    "vietnamese": "Salad Caesar Gà Nướng",
+    "english": "Grilled chicken Caesar salad",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "salad-caesar-ga-nuong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3815,
+    "vietnamese": "Wrap Gà Rau Củ",
+    "english": "Chicken and vegetable wrap",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "wrap-ga-rau-cu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3816,
+    "vietnamese": "Cơm Chiên Trứng Rau Củ",
+    "english": "Egg and vegetable fried rice",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-chien-trung-rau-cu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3817,
+    "vietnamese": "Phở Chay Rau Nấm",
+    "english": "Vegetarian pho with mushrooms",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "pho-chay-rau-nam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3818,
+    "vietnamese": "Bún Chả Giò Chay",
+    "english": "Vegetarian spring rolls with vermicelli",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-cha-gio-chay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3819,
+    "vietnamese": "Cá Lóc Nướng Trui",
+    "english": "Grilled snakehead fish",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ca-loc-nuong-trui.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3820,
+    "vietnamese": "Thịt Heo Luộc Chấm Mắm",
+    "english": "Boiled pork with fish sauce",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "thit-heo-luoc-cham-mam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3821,
+    "vietnamese": "Cơm Gạo Lứt Cá Kho",
+    "english": "Brown rice with caramelized fish",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-gao-lut-ca-kho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3822,
+    "vietnamese": "Bowl Poke Cá Hồi",
+    "english": "Salmon poke bowl",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "bowl-poke-ca-hoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3823,
+    "vietnamese": "Bún Bò Xào Rau Củ",
+    "english": "Stir-fried beef and vegetables with vermicelli",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-bo-xao-rau-cu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3824,
+    "vietnamese": "Súp Gà Ngô Non",
+    "english": "Chicken and sweet corn soup",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "sup-ga-ngo-non.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3825,
+    "vietnamese": "Súp Hành Tây Phô Mai",
+    "english": "French onion soup with cheese",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "sup-hanh-tay-pho-mai.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3826,
+    "vietnamese": "Trứng Hấp Nấm",
+    "english": "Steamed egg with mushrooms",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "trung-hap-nam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3827,
+    "vietnamese": "Sandwich Ức Gà Rau Xanh",
+    "english": "Chicken breast sandwich with greens",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "sandwich-uc-ga-rau-xanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3828,
+    "vietnamese": "Cá Hấp Xì Dầu Gừng",
+    "english": "Steamed fish with soy sauce and ginger",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ca-hap-xi-dau-gung.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3829,
+    "vietnamese": "Gà Nướng Ngũ Vị",
+    "english": "Five-spice grilled chicken",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ga-nuong-ngu-vi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3830,
+    "vietnamese": "Nấm Đùi Gà Xào Bơ Tỏi",
+    "english": "Stir-fried king oyster mushrooms with garlic butter",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "nam-dui-ga-xao-bo-toi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3831,
+    "vietnamese": "Mì Ý Sốt Cà Chua Thịt Bò",
+    "english": "Spaghetti bolognese",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "mi-y-sot-ca-chua-thit-bo.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3832,
+    "vietnamese": "Cơm Gạo Lứt Tôm Rang",
+    "english": "Brown rice with roasted shrimp",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-gao-lut-tom-rang.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3833,
+    "vietnamese": "Canh Cải Thảo Nấu Tôm",
+    "english": "Napa cabbage soup with shrimp",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "canh-cai-thao-nau-tom.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3834,
+    "vietnamese": "Đậu Hũ Chiên Sả Ớt",
+    "english": "Fried tofu with lemongrass and chili",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "dau-hu-chien-sa-ot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3835,
+    "vietnamese": "Gỏi Bưởi Tôm Thịt",
+    "english": "Pomelo salad with shrimp and pork",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "goi-buoi-tom-thit.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3836,
+    "vietnamese": "Mì Udon Hải Sản",
+    "english": "Seafood udon",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "mi-udon-hai-san.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3837,
+    "vietnamese": "Bún Thịt Nướng Chả Giò",
+    "english": "Grilled pork and spring rolls with vermicelli",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-thit-nuong-cha-gio.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3838,
+    "vietnamese": "Cơm Trộn Hàn Quốc (Bibimbap)",
+    "english": "Bibimbap",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-tron-han-quoc-bibimbap.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3839,
+    "vietnamese": "Gà Hấp Muối Sả",
+    "english": "Steamed chicken with salt and lemongrass",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ga-hap-muoi-sa.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3840,
+    "vietnamese": "Canh Bầu Nấu Tôm",
+    "english": "Bottle gourd soup with shrimp",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "canh-bau-nau-tom.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3841,
+    "vietnamese": "Bắp Cải Cuốn Thịt Hấp",
+    "english": "Steamed cabbage rolls with pork",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "bap-cai-cuon-thit-hap.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3842,
+    "vietnamese": "Cá Rô Phi Chiên Giòn",
+    "english": "Crispy fried tilapia",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ca-ro-phi-chien-gion.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3843,
+    "vietnamese": "Salad Bò Thái Lan",
+    "english": "Thai beef salad",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "salad-bo-thai-lan.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3844,
+    "vietnamese": "Cơm Nấm Hấp Lá Sen",
+    "english": "Steamed rice with mushrooms in lotus leaf",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-nam-hap-la-sen.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3845,
+    "vietnamese": "Mì Soba Lạnh Rau Củ",
+    "english": "Cold soba noodles with vegetables",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "mi-soba-lanh-rau-cu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3846,
+    "vietnamese": "Tôm Nướng Muối Ớt",
+    "english": "Grilled shrimp with chili salt",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "tom-nuong-muoi-ot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3847,
+    "vietnamese": "Canh Mồng Tơi Mướp",
+    "english": "Malabar spinach and luffa soup",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "canh-mong-toi-muop.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3848,
+    "vietnamese": "Cơm Chiên Kimchi",
+    "english": "Kimchi fried rice",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-chien-kimchi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3849,
+    "vietnamese": "Thịt Bò Xào Ớt Chuông",
+    "english": "Stir-fried beef with bell peppers",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "thit-bo-xao-ot-chuong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3850,
+    "vietnamese": "Cá Thu Nướng Nghệ",
+    "english": "Grilled mackerel with turmeric",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ca-thu-nuong-nghe.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3851,
+    "vietnamese": "Soup Rau Củ Detox",
+    "english": "Detox vegetable soup",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "soup-rau-cu-detox.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3852,
+    "vietnamese": "Ức Vịt Áp Chảo Sốt Cam",
+    "english": "Pan-seared duck breast with orange sauce",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "uc-vit-ap-chao-sot-cam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3853,
+    "vietnamese": "Cơm Lứt Đậu Hũ Rong Biển",
+    "english": "Brown rice with tofu and seaweed",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-lut-dau-hu-rong-bien.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3854,
+    "vietnamese": "Bún Măng Gà",
+    "english": "Chicken and bamboo shoot vermicelli soup",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-mang-ga.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3855,
+    "vietnamese": "Cá Chẽm Hấp Hồng Kông",
+    "english": "Hong Kong style steamed sea bass",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ca-chem-hap-hong-kong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3856,
+    "vietnamese": "Bánh Pancake Chuối Yến Mạch",
+    "english": "Banana oat pancakes",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-pancake-chuoi-yen-mach.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3857,
+    "vietnamese": "Bowl Açaí Trái Cây",
+    "english": "Acai fruit bowl",
+    "foodType": "dish",
+    "category": "trai_cay",
+    "filename": "bowl-acai-trai-cay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3858,
+    "vietnamese": "Rau Củ Hấp Chấm Mắm Nêm",
+    "english": "Steamed vegetables with fermented anchovy sauce",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "rau-cu-hap-cham-mam-nem.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3859,
+    "vietnamese": "Thịt Bò Hầm Khoai Tây Cà Rốt",
+    "english": "Beef stew with potatoes and carrots",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "thit-bo-ham-khoai-tay-ca-rot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3860,
+    "vietnamese": "Tôm Xào Bông Cải Xanh",
+    "english": "Stir-fried shrimp with broccoli",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "tom-xao-bong-cai-xanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3861,
+    "vietnamese": "Cháo Cá Lóc Rau Đắng",
+    "english": "Snakehead fish congee with bitter herbs",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "chao-ca-loc-rau-dang.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3862,
+    "vietnamese": "Bún Nước Lèo Sóc Trăng",
+    "english": "Soc Trang style noodle soup",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-nuoc-leo-soc-trang.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3863,
+    "vietnamese": "Sườn Non Om Sấu",
+    "english": "Braised pork ribs with dracontomelon",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "suon-non-om-sau.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3864,
+    "vietnamese": "Gà Xào Hạt Điều",
+    "english": "Stir-fried chicken with cashews",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ga-xao-hat-dieu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3865,
+    "vietnamese": "Canh Su Hào Nấu Sườn",
+    "english": "Kohlrabi soup with pork ribs",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "canh-su-hao-nau-suon.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3866,
+    "vietnamese": "Chả Cá Lã Vọng",
+    "english": "La Vong grilled fish",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "cha-ca-la-vong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3867,
+    "vietnamese": "Mì Quảng",
+    "english": "Mi Quang noodle",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "mi-quang.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3868,
+    "vietnamese": "Bún Cá Châu Đốc",
+    "english": "Chau Doc fish noodle soup",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-ca-chau-doc.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3869,
+    "vietnamese": "Hủ Tiếu Nam Vang",
+    "english": "Nam Vang noodle soup",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "hu-tieu-nam-vang.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3870,
+    "vietnamese": "Cơm Chiên Dương Châu",
+    "english": "Yangzhou fried rice",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-chien-duong-chau.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3871,
+    "vietnamese": "Gỏi Cuốn Chay",
+    "english": "Vegetarian fresh spring rolls",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "goi-cuon-chay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3872,
+    "vietnamese": "Salad Kale Hạt Quinoa",
+    "english": "Kale quinoa salad",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "salad-kale-hat-quinoa.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3873,
+    "vietnamese": "Bánh Mì Thịt Nguội",
+    "english": "Banh mi with cold cuts",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-mi-thit-nguoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3874,
+    "vietnamese": "Bánh Mì Ốp La",
+    "english": "Banh mi with fried eggs",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-mi-op-la.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3875,
+    "vietnamese": "Bánh Mì Chảo (Hết thứ)",
+    "english": "Vietnamese sizzling banh mi pan",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-mi-chao-het-thu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3876,
+    "vietnamese": "Xôi Gà",
+    "english": "Sticky rice with chicken",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "xoi-ga.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3877,
+    "vietnamese": "Xôi Đậu Xanh",
+    "english": "Sticky rice with mung bean",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "xoi-dau-xanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3878,
+    "vietnamese": "Xôi Lạc",
+    "english": "Sticky rice with peanuts",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "xoi-lac.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3879,
+    "vietnamese": "Xôi Ngô Mỡ Hành",
+    "english": "Sticky rice with corn and scallion oil",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "xoi-ngo-mo-hanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3880,
+    "vietnamese": "Cháo Đậu Xanh",
+    "english": "Mung bean congee",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "chao-dau-xanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3881,
+    "vietnamese": "Cháo Thịt Bằm",
+    "english": "Minced pork congee",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "chao-thit-bam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3882,
+    "vietnamese": "Bánh Giò",
+    "english": "Pyramid meat dumpling",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-gio.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3883,
+    "vietnamese": "Bánh Bao Thịt",
+    "english": "Pork bun",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-bao-thit.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3884,
+    "vietnamese": "Bánh Bao Chay",
+    "english": "Vegetarian steamed bun",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-bao-chay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3885,
+    "vietnamese": "Bánh Ướt Chả Lụa",
+    "english": "Steamed rice paper with Vietnamese sausage",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-uot-cha-lua.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3886,
+    "vietnamese": "Hủ Tiếu Khô Thịt",
+    "english": "Dry noodle with pork",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "hu-tieu-kho-thit.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3887,
+    "vietnamese": "Mì Khô Xá Xíu",
+    "english": "Dry egg noodles with char siu",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "mi-kho-xa-xiu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3888,
+    "vietnamese": "Bún Bò Nam Bộ",
+    "english": "Southern style beef vermicelli",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-bo-nam-bo.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3889,
+    "vietnamese": "Cơm Sườn Cải",
+    "english": "Rice with grilled pork chop and mustard greens",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-suon-cai.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3890,
+    "vietnamese": "Cơm Gà Chiên Nước Mắm",
+    "english": "Rice with fish sauce fried chicken",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-ga-chien-nuoc-mam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3891,
+    "vietnamese": "Cơm Bò Kho",
+    "english": "Rice with beef stew",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-bo-kho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3892,
+    "vietnamese": "Cơm Canh Chua Cá",
+    "english": "Rice with sour fish soup",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-canh-chua-ca.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3893,
+    "vietnamese": "Cơm Thịt Kho Tiêu",
+    "english": "Rice with caramelized pork with pepper",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-thit-kho-tieu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3894,
+    "vietnamese": "Cơm Cá Kho Tộ",
+    "english": "Rice with braised fish in clay pot",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-ca-kho-to.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3895,
+    "vietnamese": "Cơm Trắng + Rau Xào",
+    "english": "White rice with stir-fried vegetables",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-trang-rau-xao.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3896,
+    "vietnamese": "Cơm Đùi Gà Nướng",
+    "english": "Rice with grilled chicken thigh",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-dui-ga-nuong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3897,
+    "vietnamese": "Cơm Chả Trứng",
+    "english": "Rice with Vietnamese steamed egg meatloaf",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-cha-trung.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3898,
+    "vietnamese": "Bún Bò Xào Sả",
+    "english": "Vermicelli with lemongrass beef",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-bo-xao-sa.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3899,
+    "vietnamese": "Canh Chua Tôm",
+    "english": "Sour soup with shrimp",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "canh-chua-tom.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3900,
+    "vietnamese": "Đậu Phụ Sốt Thịt Bằm",
+    "english": "Tofu with minced pork sauce",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "dau-phu-sot-thit-bam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3901,
+    "vietnamese": "Rau Cải Luộc Chấm Mắm",
+    "english": "Boiled mustard greens with fish sauce",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "rau-cai-luoc-cham-mam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3902,
+    "vietnamese": "Bánh Tráng Nướng Phomai",
+    "english": "Vietnamese grilled rice paper with cheese",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-trang-nuong-phomai.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3903,
+    "vietnamese": "Bánh Tráng Trộn",
+    "english": "Vietnamese mixed rice paper salad",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-trang-tron.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3904,
+    "vietnamese": "Khoai Lang Lắc Phô Mai",
+    "english": "Cheese shaken sweet potatoes",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "khoai-lang-lac-pho-mai.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3905,
+    "vietnamese": "Ngô Luộc",
+    "english": "Boiled corn",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "ngo-luoc.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3906,
+    "vietnamese": "Khoai Lang Luộc",
+    "english": "Boiled sweet potato",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "khoai-lang-luoc.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3907,
+    "vietnamese": "Chuối Lán",
+    "english": "Fried banana",
+    "foodType": "dish",
+    "category": "trai_cay",
+    "filename": "chuoi-lan.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3908,
+    "vietnamese": "Ổi Xanh Chấm Muối Ớt",
+    "english": "Green guava with chili salt",
+    "foodType": "dish",
+    "category": "trai_cay",
+    "filename": "oi-xanh-cham-muoi-ot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3909,
+    "vietnamese": "Chè Đậu Xanh",
+    "english": "Mung bean sweet soup",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "che-dau-xanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3910,
+    "vietnamese": "Chè Ba Màu",
+    "english": "Three-color sweet dessert",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "che-ba-mau.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3911,
+    "vietnamese": "Chè Bưởi Sương Sáo",
+    "english": "Pomelo and grass jelly sweet soup",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "che-buoi-suong-sao.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3912,
+    "vietnamese": "Sữa Chua Nếp Cẩm",
+    "english": "Yogurt with black glutinous rice",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "sua-chua-nep-cam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3913,
+    "vietnamese": "Hạt Điều Rang Muối",
+    "english": "Salt roasted cashews",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "hat-dieu-rang-muoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3914,
+    "vietnamese": "Trái Cây Dầm",
+    "english": "Mixed fruit dessert",
+    "foodType": "dish",
+    "category": "trai_cay",
+    "filename": "trai-cay-dam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3915,
+    "vietnamese": "Bánh Flan",
+    "english": "Flan cake",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "banh-flan.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3916,
+    "vietnamese": "Sữa Chua Hoa Quả",
+    "english": "Fruit yogurt",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "sua-chua-hoa-qua.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3917,
+    "vietnamese": "Bún Thái Hải Sản",
+    "english": "Thai seafood vermicelli",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-thai-hai-san.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3918,
+    "vietnamese": "Bánh Xèo Tôm Thịt",
+    "english": "Vietnamese sizzling pancake with shrimp and pork",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-xeo-tom-thit.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3919,
+    "vietnamese": "Mì Quảng Gà",
+    "english": "Mi Quang with chicken",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "mi-quang-ga.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3920,
+    "vietnamese": "Cao Lầu Hội An",
+    "english": "Hoi An Cao Lau noodles",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "cao-lau-hoi-an.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3921,
+    "vietnamese": "Bún Kèn Phú Quốc",
+    "english": "Phu Quoc Ken noodles",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-ken-phu-quoc.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3922,
+    "vietnamese": "Cơm Niêu Sài Gòn",
+    "english": "Saigon clay pot rice",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-nieu-sai-gon.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3923,
+    "vietnamese": "Lẩu Mắm",
+    "english": "Fermented fish hot pot",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "lau-mam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3924,
+    "vietnamese": "Lẩu Thái Hải Sản",
+    "english": "Thai seafood hot pot",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "lau-thai-hai-san.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3925,
+    "vietnamese": "Lẩu Gà Lá Giang",
+    "english": "Chicken hot pot with river-creeper leaves",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "lau-ga-la-giang.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3926,
+    "vietnamese": "Thịt Nướng BBQ Mỡ Hành",
+    "english": "BBQ meat with scallion oil",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "thit-nuong-bbq-mo-hanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3927,
+    "vietnamese": "Gà Nướng Muối Ớt",
+    "english": "Chili salt grilled chicken",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "ga-nuong-muoi-ot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3928,
+    "vietnamese": "Sườn Nướng Mật Ong",
+    "english": "Honey grilled pork ribs",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "filename": "suon-nuong-mat-ong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3929,
+    "vietnamese": "Cơm Chay Thập Cẩm",
+    "english": "Mixed vegetarian rice",
+    "foodType": "dish",
+    "category": "com",
+    "filename": "com-chay-thap-cam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3930,
+    "vietnamese": "Bún Chay Sốt Nấm",
+    "english": "Vegetarian vermicelli with mushroom sauce",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "filename": "bun-chay-sot-nam.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3931,
+    "vietnamese": "Bánh Mì Chay",
+    "english": "Vegetarian banh mi",
+    "foodType": "dish",
+    "category": "banh",
+    "filename": "banh-mi-chay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3932,
+    "vietnamese": "Đậu Hũ Kho Sả Ớt",
+    "english": "Braised tofu with lemongrass and chili",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "dau-hu-kho-sa-ot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3933,
+    "vietnamese": "Canh Rau Củ Chay",
+    "english": "Vegetarian vegetable soup",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "canh-rau-cu-chay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3934,
+    "vietnamese": "Nấm Xào Rau Củ",
+    "english": "Stir-fried mushrooms and vegetables",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "filename": "nam-xao-rau-cu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3935,
+    "vietnamese": "Cá Viên Chiên",
+    "english": "Fried fish balls",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "ca-vien-chien.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3936,
+    "vietnamese": "Gà Rán (KFC-style)",
+    "english": "Fried chicken",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "ga-ran-kfc-style.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3937,
+    "vietnamese": "Pizza Phô Mai",
+    "english": "Cheese pizza",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "pizza-pho-mai.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3938,
+    "vietnamese": "Hamburger Bò Phô Mai",
+    "english": "Beef cheeseburger",
+    "foodType": "dish",
+    "category": "khac",
+    "filename": "hamburger-bo-pho-mai.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3939,
+    "vietnamese": "Nước Ép Cam Tươi",
+    "english": "Fresh orange juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-ep-cam-tuoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3940,
+    "vietnamese": "Nước Ép Dưa Hấu",
+    "english": "Watermelon juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-ep-dua-hau.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3941,
+    "vietnamese": "Nước Ép Táo",
+    "english": "Apple juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-ep-tao.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3942,
+    "vietnamese": "Nước Ép Cà Rốt",
+    "english": "Carrot juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-ep-ca-rot.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3943,
+    "vietnamese": "Nước Ép Dứa",
+    "english": "Pineapple juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-ep-dua.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3944,
+    "vietnamese": "Nước Ép Ổi",
+    "english": "Guava juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-ep-oi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3945,
+    "vietnamese": "Nước Ép Bưởi",
+    "english": "Pomelo juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-ep-buoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3946,
+    "vietnamese": "Nước Ép Rau Má",
+    "english": "Pennywort juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-ep-rau-ma.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3947,
+    "vietnamese": "Nước Ép Cần Tây",
+    "english": "Celery juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-ep-can-tay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3948,
+    "vietnamese": "Nước Ép Lựu",
+    "english": "Pomegranate juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-ep-luu.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3949,
+    "vietnamese": "Nước Mía",
+    "english": "Sugarcane juice",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-mia.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3950,
+    "vietnamese": "Sinh Tố Bơ",
+    "english": "Avocado smoothie",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sinh-to-bo.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3951,
+    "vietnamese": "Sinh Tố Chuối Sữa",
+    "english": "Banana milk smoothie",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sinh-to-chuoi-sua.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3952,
+    "vietnamese": "Sinh Tố Xoài",
+    "english": "Mango smoothie",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sinh-to-xoai.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3953,
+    "vietnamese": "Sinh Tố Dâu Tây",
+    "english": "Strawberry smoothie",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sinh-to-dau-tay.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3954,
+    "vietnamese": "Smoothie Protein Chuối Yến Mạch",
+    "english": "Banana oat protein smoothie",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "smoothie-protein-chuoi-yen-mach.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3955,
+    "vietnamese": "Smoothie Bowl Việt Quất",
+    "english": "Blueberry smoothie bowl",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "smoothie-bowl-viet-quat.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3956,
+    "vietnamese": "Sinh Tố Thanh Long Sữa Chua",
+    "english": "Dragon fruit yogurt smoothie",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sinh-to-thanh-long-sua-chua.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3957,
+    "vietnamese": "Sữa Milo Nóng",
+    "english": "Hot Milo",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sua-milo-nong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3958,
+    "vietnamese": "Sữa Milo Đá",
+    "english": "Iced Milo",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sua-milo-da.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3959,
+    "vietnamese": "Sữa Đậu Nành",
+    "english": "Soy milk",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sua-dau-nanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3960,
+    "vietnamese": "Sữa Tươi Có Đường",
+    "english": "Sweetened fresh milk",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sua-tuoi-co-duong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3961,
+    "vietnamese": "Sữa Chua Uống",
+    "english": "Drinking yogurt",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sua-chua-uong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3962,
+    "vietnamese": "Sữa Hạt Óc Chó",
+    "english": "Walnut milk",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sua-hat-oc-cho.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3963,
+    "vietnamese": "Sữa Yến Mạch (Oat Milk)",
+    "english": "Oat milk",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "sua-yen-mach-oat-milk.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3964,
+    "vietnamese": "Trà Xanh Không Đường",
+    "english": "Unsweetened green tea",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "tra-xanh-khong-duong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3965,
+    "vietnamese": "Trà Đào Cam Sả",
+    "english": "Peach orange lemongrass tea",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "tra-dao-cam-sa.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3966,
+    "vietnamese": "Trà Sữa Trân Châu",
+    "english": "Bubble milk tea",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "tra-sua-tran-chau.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3967,
+    "vietnamese": "Trà Chanh Mật Ong",
+    "english": "Honey lemon tea",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "tra-chanh-mat-ong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3968,
+    "vietnamese": "Trà Gừng Mật Ong",
+    "english": "Honey ginger tea",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "tra-gung-mat-ong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3969,
+    "vietnamese": "Cà Phê Đen Không Đường",
+    "english": "Black coffee no sugar",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "ca-phe-den-khong-duong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3970,
+    "vietnamese": "Cà Phê Sữa Đá",
+    "english": "Vietnamese iced milk coffee",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "ca-phe-sua-da.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3971,
+    "vietnamese": "Cappuccino",
+    "english": "Cappuccino",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "cappuccino.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3972,
+    "vietnamese": "Latte",
+    "english": "Latte",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "latte.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3973,
+    "vietnamese": "Nước Dừa Tươi",
+    "english": "Fresh coconut water",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-dua-tuoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3974,
+    "vietnamese": "Nước Chanh Muối",
+    "english": "Salted lemonade",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-chanh-muoi.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3975,
+    "vietnamese": "Nước Sâm Bổ Lượng",
+    "english": "Ching bo leung sweet soup",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-sam-bo-luong.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3976,
+    "vietnamese": "Nước Rau Má Đậu Xanh",
+    "english": "Pennywort juice with mung bean",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "nuoc-rau-ma-dau-xanh.webp",
+    "shared_with_ids": []
+  },
+  {
+    "id": 3977,
+    "vietnamese": "Trà Đá",
+    "english": "Iced tea",
+    "foodType": "dish",
+    "category": "do_uong",
+    "filename": "tra-da.webp",
+    "shared_with_ids": []
+  }
+]

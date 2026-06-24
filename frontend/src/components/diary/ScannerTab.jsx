@@ -68,6 +68,10 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
     const handleConfirm = async (nutritionData) => {
         const result = await scanner.confirmAndSave(nutritionData, currentBarcode);
         if (result) {
+            if (nutritionData.netWeight) {
+                const multiplier = nutritionData.netWeight / 100;
+                scanner.setAmount(multiplier.toString());
+            }
             setUiState('done');
         }
     };
@@ -372,7 +376,7 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
                 {/* Chọn bữa + số lượng */}
                 <div className="grid grid-cols-2 gap-2 w-full max-w-xs">
                     <div className="form-control">
-                        <label className="label py-0"><span className="label-text text-xs">Số lượng</span></label>
+                        <label className="label py-0"><span className="label-text text-xs">Số lượng (x{scanner.confirmedFood?.unit || '100g'})</span></label>
                         <input
                             type="number"
                             className="input input-bordered input-sm"

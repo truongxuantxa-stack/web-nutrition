@@ -1,0 +1,2954 @@
+[
+  {
+    "id": 3609,
+    "name": "Ức gà (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://thichgym.com/wp-content/uploads/2023/05/image-13.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3610,
+    "name": "Thịt bò thăn (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://cdn11.dienmaycholon.vn/filewebdmclnew/public/userupload/files/Knms/gia-dung/meo-de-chon-thit-than-bo-ngon.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3611,
+    "name": "Cá hồi tươi (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://binhdienonline.com.vn/thumbs_size/product/2020_11/ca-hoi/nguyen-con/[1200x1200-cr]ca-hoi-3.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3612,
+    "name": "Cá rô phi (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://dacsantaybac.vn/wp-content/uploads/2024/09/Thit-ca-ro-phi-tuoi-ngon-chat-luong-Anh-tu-Thao-Tran.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3613,
+    "name": "Tôm tươi (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/tom_tuoi_41d3996954.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3614,
+    "name": "Lòng trắng trứng (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "/images/foods/long_trang_trung.webp",
+    "status": "KEEP"
+  },
+  {
+    "id": 3615,
+    "name": "Đậu phụ (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/05/CookProduct/dauhunonnglieu-1200x676.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3616,
+    "name": "Sữa chua Hy Lạp (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://suabest.net/wp-content/uploads/2022/11/cach-lam-sua-chua-hy-lap-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3617,
+    "name": "Thịt đùi gà (Bỏ da)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://mekoong.com/wp-content/uploads/2023/07/7-8.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3618,
+    "name": "Thịt lợn thăn (Nạc)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://bakafood.com/wp-content/uploads/2023/03/thit-than-heo-lam-gi-ngon-1-01.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3619,
+    "name": "Bắp bò (Nạc)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://bepmina.vn/wp-content/uploads/2022/01/nguyen-lieu-lam-bap-bo-ngam-mam.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3620,
+    "name": "Cá ngừ đại dương",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://haisansaigon.com.vn/wp-content/uploads/2020/10/cá-ngừ-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3621,
+    "name": "Mực ống tươi",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://phucfood.vn/wp-content/uploads/2023/08/Muc-tuoi-29.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3622,
+    "name": "Bạch tuộc",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://www.lottemart.vn/media/catalog/product/cache/0x0/2/2/2275520000009-1.jpg.webp",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3623,
+    "name": "Lòng đỏ trứng (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://nguyenlieubotthiennhien.vn/wp-content/uploads/2020/11/long-do-1-min.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3624,
+    "name": "Đậu nành (Hạt khô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://down-vn.img.susercontent.com/file/9ba8b5e6a6e7cd5b85efe474f66595a2",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3625,
+    "name": "Đậu Hà Lan",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://binhdienonline.com/thumbs_size/product/2021_02/dau-ha-lan/[1200x1200-cr]u-ha-lan-13.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3626,
+    "name": "Phô mai tươi (Cottage Cheese)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://cdn.tgdd.vn/2020/08/CookProduct/Untitled-1-1200x676-7.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3627,
+    "name": "Hàu tươi",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://vuongquococ.net/wp-content/uploads/2023/02/cach-so-che-hau-2-min.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3628,
+    "name": "Cua biển",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://tiki.vn/blog/wp-content/uploads/2023/12/cach-bao-quan-cua-song-lau.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3629,
+    "name": "Cá basa",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://agifish.com.vn/media/product_img/2021/01/27/Cabasanguyencon.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3630,
+    "name": "Hạnh nhân sữa (Milk Almond)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://vn-test-11.slatic.net/p/c203dccb38134daac7025374c7f0a1cc.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3631,
+    "name": "Tempeh (Tương nén)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://file.hstatic.net/1000282430/file/nguon-goc-cua-tempeh_a0c970d6c2d048fca869fe128527c5e3_grande.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3632,
+    "name": "Lươn (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://dacsantaybac.vn/wp-content/uploads/2024/09/Luon-dong-tuoi-song-Anh-suu-tam.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3633,
+    "name": "Ếch (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/lau_ech_la_giang_2_d6ff6f0d80.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3634,
+    "name": "Sò huyết",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://crabseafood.vn/wp-content/uploads/2020/12/48-15-2048x2048.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3635,
+    "name": "Ngao (Nghêu)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://bizweb.dktcdn.net/100/447/979/files/cach-bao-quan-ngao-hieu-qua.jpg?v=1732006403426",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3636,
+    "name": "Cá lóc (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://www.cet.edu.vn/wp-content/uploads/2018/12/ca-loc.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3637,
+    "name": "Cá diêu hồng (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://blueseafoods.com.vn/wp-content/uploads/2024/10/img_20231222_181323_81f1dd4cd1f14761be9d869d2b2f104c_1024x1024.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3638,
+    "name": "Hến",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://cdn.eva.vn/upload/3-2020/images/2020-09-01/1598953236-194-thumbnail-width640height480_schema_article.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3639,
+    "name": "Đậu hũ non (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://img-global.cpcdn.com/recipes/e54807970b102330/680x482cq70/canh-cải-thảo-nấu-dậu-hu-non-chay-recipe-main-photo.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3640,
+    "name": "Trứng cút (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "/images/foods/trung_cut.webp",
+    "status": "KEEP"
+  },
+  {
+    "id": 3641,
+    "name": "Trứng gà (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "/images/foods/trung_ga.webp",
+    "status": "KEEP"
+  },
+  {
+    "id": 3642,
+    "name": "Trứng vịt (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://www.lorca.vn/wp-content/uploads/2023/06/nl-7.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3643,
+    "name": "Sữa Tăng Cơ (Whey Protein)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "/images/foods/sua_tang_co.jfif",
+    "status": "KEEP"
+  },
+  {
+    "id": 3644,
+    "name": "Thanh Protein (Protein Bar)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "/images/foods/thanh_protein.jfif",
+    "status": "KEEP"
+  },
+  {
+    "id": 3645,
+    "name": "Sữa đậu nành không đường",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://www.lottemart.vn/media/catalog/product/cache/0x0/8/9/8934673701303-1-1.jpg.webp",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3646,
+    "name": "Cơm trắng (Thô/Chín)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://dailanhsonngan.com/wp-content/uploads/2025/04/ca-com-trong-kho-2.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3647,
+    "name": "Yến mạch khô (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2022/1/5/yen-mach-16413940733491350365277.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3648,
+    "name": "Gạo lứt (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://skfoods.vn/wp-content/uploads/2022/05/nui-gao-lut-duoc-san-xuat-tu-nguon-nguyen-lieu-tuoi-ngon.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3649,
+    "name": "Khoai lang (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://vietanagri.com/wp-content/uploads/2025/09/Logo-cac-sp-Viet-An-600-x600-9.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3650,
+    "name": "Hạt Quinoa (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://santorino.org/wp-content/uploads/2020/11/6-dieu-can-biet-khi-mua-hat-diem-mach-quinoa-holaandina.vn-feature-1600x1317-1.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3651,
+    "name": "Ngô ngọt (Bắp)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://media-cdn-v2.laodong.vn/storage/newsportal/2023/4/28/1185802/Ngo.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3652,
+    "name": "Bí đỏ (Bí ngô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://tepbac.com/upload/news/ge_image/2024/06/bi-do (2)_1718332912.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3653,
+    "name": "Đậu đỏ (Hạt khô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://bizweb.dktcdn.net/thumb/1024x1024/100/365/460/products/50046989-2183686018560511-3783357053762797568-n-jpeg.jpg?v=1627403711350",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3654,
+    "name": "Đậu xanh (Hạt khô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://dauxanhducphuong.com.vn/wp-content/uploads/2023/04/z4825341778338_7ad8c4820439fa5a3e4887ed5475c83b.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3655,
+    "name": "Sắn (Khoai mì)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "http://hiephoisanvietnam.org.vn/admin/webroot/upload/image/images/20231025_091730.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3656,
+    "name": "Bánh mì nguyên cám",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://product.hstatic.net/200000825329/product/2452_dfd231a93610e8e08682f759f53b796b_834ac287c2f444f6a883a42c4a59f199_c2fc952a20ee49eb9da23cd31681e9ed_grande.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3657,
+    "name": "Bánh mì đen",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://cf.shopee.vn/file/32e19b7b9156d2617bed03ba5196873d",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3658,
+    "name": "Bánh thuyền gạo lứt",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://lidafa.vn/wp-content/uploads/2024/10/Cong-dung-cua-banh-thuyen-gao-lut-cha-bong-an-kieng.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3659,
+    "name": "Bún tươi (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://alltop.vn/backend/media/images/posts/695/Bun_tuoi_Pure_Cau_Tre-130961.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3660,
+    "name": "Bánh phở tươi",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/11/CookDish/cach-lam-banh-pho-tuoi-tai-nha-cuc-de-lam-pho-dai-ngon-khong-avt-1200x676.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3661,
+    "name": "Miến dong (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/2023_12_8_638376574915373341_mien-dong-bao-nhieu-calo-0.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3662,
+    "name": "Gạo nếp (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://gaonambinh.vn/wp-content/uploads/2020/05/gao-nep-dac-san-nam-binh.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3663,
+    "name": "Bột sắn dây",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://befresh.vn/wp-content/uploads/2023/04/av-39-e1680755545658-600x421.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3664,
+    "name": "Bông cải xanh (Thô)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "http://vegespring.vn/uploads/product/1614_1669780319.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3665,
+    "name": "Măng tây",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/07/CookRecipe/GalleryStep/so-che-nguyen-lieu-565.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3666,
+    "name": "Rau cải chíp",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://images.elipsport.vn/anh-seo-tin-tuc/2024/4/11/rau-cai-chip-bao-nhieu-calo-nhung-loi-ich-bat-ngo-cua-cai-chip-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3667,
+    "name": "Rau muống",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://cdn.tgdd.vn/Files/2020/05/11/1254829/cach-lam-rau-muong-chua-ngot-gion-ngon-hap-dan-202209061557542498.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3668,
+    "name": "Nấm kim châm",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://namxanh.vn/wp-content/uploads/2020/03/nam-kim-cham-tuoi-0-1000x1000.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3669,
+    "name": "Nấm đùi gà",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://paradisefood.vn/wp-content/uploads/2025/06/nam-dui-ga.webp",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3670,
+    "name": "Củ cải trắng",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://sunsay.vn/wp-content/uploads/2021/09/cu-cai-trang.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3671,
+    "name": "Dưa chuột",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/03/CookProduct/1200-1200x676-15.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3672,
+    "name": "Cà chua",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://i.ytimg.com/vi/HCxNo0fN_1A/hq720.jpg?sqp=-oaymwE7CK4FEIIDSFryq4qpAy0IARUAAAAAGAElAADIQj0AgKJD8AEB-AH-CYAC0AWKAgwIABABGE4gZSgoMA8=&amp;rs=AOn4CLBlLtaZozPiwHwjGCjpRNVFd2T5uA",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3673,
+    "name": "Rau ngót",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://tamanhhospital.vn/wp-content/uploads/2025/10/dia-rau-ngot-tuoi-xanh.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3674,
+    "name": "Rau dền",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://i.ebayimg.com/images/g/7qcAAOSwwOtjrJ~A/s-l1200.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3675,
+    "name": "Rau mồng tơi",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://bepmina.vn/wp-content/uploads/2021/11/rau-mong-toi.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3676,
+    "name": "Cải bẹ xanh",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://cdn.tgdd.vn/Products/Images/8820/271522/bhx/cai-be-xanh-450g-550g-202310201717473311.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3677,
+    "name": "Cải thảo",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://vegafood.vn/storage/2021/09/363/mceu-98071050311630738689411.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3678,
+    "name": "Mướp đắng (Khổ qua)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://file.hstatic.net/1000394081/article/muop-dang_02ac9beb3b6f4aa4bf53b74d3f3b1632.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3679,
+    "name": "Bầu",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://h2tfood.vn/wp-content/uploads/2023/03/thuc-pham-tuoi-song.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3680,
+    "name": "Bí xanh (Bí đao)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m60onezyq4uba6",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3681,
+    "name": "Giá đỗ",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://afamilycdn.com/150157425591193600/2021/8/18/gia-do-2-16293019794092090173821.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3682,
+    "name": "Su hào",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://product.hstatic.net/200000460455/product/su_20hao_63c199dbfb7b48f5bec17694ce81e17c_master.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3683,
+    "name": "Củ dền",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://media.loveitopcdn.com/25/farm-cu-den-01.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3684,
+    "name": "Cà rốt",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://salt.tikicdn.com/cache/w1200/ts/product/f5/82/fb/9bbde240fbc6455c3061021914bb84d2.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3685,
+    "name": "Bắp cải (Thô)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://www.miklix.com/static/images/b7/77/miklix_b7773424-0d1f-49e1-842c-a9c05f0209e9.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3686,
+    "name": "Đậu cô ve (Thô)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://binhdienonline.com/thumbs_size/product/2021_02/dau-cove/[1200x630-fmi]u-que-42.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3687,
+    "name": "Đậu bắp (Thô)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://www.vegespring.vn/uploads/product/1597_11669790661.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3688,
+    "name": "Nấm rơm (Thô)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-asm/posts/nam-rom-11.webp",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3689,
+    "name": "Súp lơ trắng (Thô)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://dalatberries.com/wp-content/uploads/2023/12/Sup-lo-trang-3.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3690,
+    "name": "Mộc nhĩ (Nấm mèo khô)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://cdnv2.tgdd.vn/bhx-static/bhx/News/Images/2025/02/20/1575197/1_202502201400213834.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3691,
+    "name": "Cà tím (Thô)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/Uploads/images/tin-tuc/164194/Originals/ca-tim-nuong-7.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3692,
+    "name": "Chuối (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://kinhdofood.com/wp-content/uploads/2022/08/img_6304e2fc29f7e.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3693,
+    "name": "Táo đỏ (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://nguyenlieukimtinh.com/wp-content/uploads/2023/02/44-1.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3694,
+    "name": "Quả Việt quất",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://login.medlatec.vn/ImagePath/images/20221027/20221027_viet-quat-2.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3695,
+    "name": "Quả Dâu tây",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://antimatter.vn/wp-content/uploads/2022/05/anh-qua-dau-tay.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3696,
+    "name": "Đu đủ (Chín)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://bananaminhchau.com/wp-content/uploads/2025/07/WhatsApp-Image-2025-07-28-at-13.52.08.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3697,
+    "name": "Xoài (Chín)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://cdn.tgdd.vn/2020/10/CookProduct/1-1200x676-46.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3698,
+    "name": "Dưa hấu (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://vantaiachau.vn/wp-content/uploads/2025/06/anh-co-logo-.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3699,
+    "name": "Thanh long (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://vietanagri.com/wp-content/uploads/2025/09/Logo-cac-sp-Viet-An-600-x600-13.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3700,
+    "name": "Bưởi (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://h2tfood.vn/wp-content/uploads/2023/03/thuc-pham-tuoi-song-1536x1225.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3701,
+    "name": "Ổi (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://goodprice.vn/files/common/huong-oi-nguyen-lieu-an-toan-dung-trong-thuc-pham-ekslf.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3702,
+    "name": "Nho tươi (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://hoaquafuji.com/storage/app/media/gia-nho-sua-han-quoc-fuji-7.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3703,
+    "name": "Quả Bơ (Thô)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/2023_10_17_638331788287584892_bo-bao-nhie-u-calo-0.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3704,
+    "name": "Hạt Hạnh nhân (Thô)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://www.vikhoang.com/wp-content/uploads/2016/11/hat-hanh-nhan-nguyen-vo.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3705,
+    "name": "Hạt Chia (Thô)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://xuongbanhtpn.com/wp-content/uploads/2025/08/a1_99adc9bc2e2e4a4aa1c86ae62ea0cad2_master.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3706,
+    "name": "Dầu Olive (Thô)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://nguyenhafood.vn/uploads/files/dau-olive-can-5lit-mua-o-dau-gia-khuyen-mai (5).png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3707,
+    "name": "Hạt Óc chó",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lx3qbl22d7mj1c",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3708,
+    "name": "Hạt Điều",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://vinanuts.com.vn/wp-content/uploads/2022/02/hat-dieu-song-con-vo-lua-3.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3709,
+    "name": "Hạt Bí",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpok9khraqihf0",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3710,
+    "name": "Bơ đậu phộng (Nguyên chất)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://tanlamfood.vn/wp-content/uploads/2024/08/Bao-quan-bo-dau-phong-1000x565.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3711,
+    "name": "Dầu Dừa",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "/images/foods/dau_dua.webp",
+    "status": "KEEP"
+  },
+  {
+    "id": 3712,
+    "name": "Vừng (Mè)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "/images/foods/vung_me.jfif",
+    "status": "KEEP"
+  },
+  {
+    "id": 3713,
+    "name": "Đậu phộng (Lạc thô)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://product.hstatic.net/200000460455/product/mau__7789cb0c8edd443ca30e9fdcd44ad596_master.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3714,
+    "name": "Mỡ heo (Thô)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://cdn.hellobacsi.com/wp-content/uploads/2023/07/cach-nau-bun-bo-hue-1-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3715,
+    "name": "Hạt Macca",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://nugafood.vn/wp-content/uploads/2023/06/hat-macca-viet-nam-1-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3716,
+    "name": "Quả Ô liu",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://bancuanhanong.com/img/products/cay-o-liu0-850x775-2.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3717,
+    "name": "Thịt vịt (Nạc)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://cdn.tiemchunglongchau.com.vn/sau_sinh_mo_an_thit_vit_duoc_khong_huong_dan_dinh_duong_an_toan_cho_me_bim_1_b743ffba90.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3718,
+    "name": "Cá thu (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://onggiau.com.vn/wp-content/uploads/2024/12/ca-thu-nguyen-con-4-1.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3719,
+    "name": "Cá chép (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://cookbeo.com/media/2021/07/ca-chep-om-dua/thumbnails/nguyen-lieu-lam-ca-chep-om-dua-1200.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3720,
+    "name": "Thịt thỏ (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://dienmayhoki.com/wp-content/uploads/2023/10/cach-lam-thit-tho-quay-2.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3721,
+    "name": "Tôm sú (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://binhdienonline.com/thumbs_size/product/2020_10/tom-su/[1200x1200-cr]tom-su-76.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3722,
+    "name": "Cá trích (Thô)",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://www.btaskee.com/wp-content/uploads/2023/06/ca-trich-tuoi.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3723,
+    "name": "Sữa tươi không đường",
+    "foodType": "raw",
+    "category": "protein",
+    "currentImageUrl": "https://nguyenlieukimtinh.com/wp-content/uploads/2022/07/web-2024-2.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3724,
+    "name": "Khoai tây (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://nld.mediacdn.vn/291774122806476800/2023/4/26/photo-1-1682472736243689238785.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3725,
+    "name": "Khoai môn (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://lypham.vn/wp-content/uploads/2025/01/nguyen-lieu-lam-sot-khoai-mon-tuoi.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3726,
+    "name": "Bún khô (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://mikiri.com.vn/wp-content/uploads/2024/12/bun-mikiri-6fae2440-c018-470a-811b-3508340a3a74-2.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3727,
+    "name": "Mì sợi khô (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://shop.chenlin.vn/wp-content/uploads/2023/12/mi-kho-soi-nho-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3728,
+    "name": "Bánh tráng (Thô)",
+    "foodType": "raw",
+    "category": "carb",
+    "currentImageUrl": "https://cooponline.vn/tin-tuc/wp-content/uploads/2025/12/kham-pha-banh-trang-viet-nam-nguyen-lieu-da-nang-cua-am-thuc.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3729,
+    "name": "Rau xà lách",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/800x0/rau_xa_lach_9_ba1ee87a9c.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3730,
+    "name": "Cải xoăn (Kale)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/Cai_xoan_la_gi_a1b772394b.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3731,
+    "name": "Ớt chuông",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://cdn.lottemart.vn/media/description/product/cache/8936231020338-DT-2.jpg.webp",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3732,
+    "name": "Rau chân vịt (Spinach)",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/08/CookProduct/dau-do-52-1200x676.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3733,
+    "name": "Nấm hương khô",
+    "foodType": "raw",
+    "category": "fiber",
+    "currentImageUrl": "https://bakafood.com/wp-content/uploads/2023/01/fe-1.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3734,
+    "name": "Cam (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://h2tfood.vn/wp-content/uploads/2023/03/thuc-pham-tuoi-song.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3735,
+    "name": "Quýt (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/800x0/sinh_to_buoi_quyt_1_92f3e357c2.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3736,
+    "name": "Kiwi (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://kdpmachinery.com/wp-content/uploads/2025/05/huong-dan-lam-kem-tuoi-vi-kiwi-voi-may-lam-kem-tuoi-2-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3737,
+    "name": "Lê (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://h2tfood.vn/wp-content/uploads/2023/03/thuc-pham-tuoi-song.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3738,
+    "name": "Mận (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://truonghaofood.vn/upload/images/lam-mut-man-1.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3739,
+    "name": "Dứa (Thơm)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://vn-test-11.slatic.net/shop/17142a7df1f76817daf8923ae593d8e8.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3740,
+    "name": "Măng cụt (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://images2.thanhnien.vn/528068263637045248/2023/5/22/hd-1684743832930764046313.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3741,
+    "name": "Chôm chôm (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://caygiong.tiendatbanme.com/wp-content/uploads/2025/05/giong_chom_chom_nhan_troc_hat.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3742,
+    "name": "Hạt Hướng dương",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://hanoixua.com.vn/wp-content/uploads/2020/01/PHU-HUONG-DUONG-VI-DUA-3.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3743,
+    "name": "Hạt Lanh (Flaxseed)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1COG9z.img?w=784&amp;h=476&amp;m=4&amp;q=84",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3744,
+    "name": "Mít (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://cdn.tgdd.vn/2025/04/CookRecipe/CookUtensilandNotes/cach-ngam-ruou-mit-tuoi-note-1200x676.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3745,
+    "name": "Sầu riêng (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://product.hstatic.net/200000325223/product/sau_rieng_new-01_63392fbb5c3d449e913faebc332ae80f_master.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3746,
+    "name": "Nhãn (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://h2tfood.vn/wp-content/uploads/2023/03/thuc-pham-tuoi-song.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3747,
+    "name": "Vải (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://ptaste.vn/uploads/source/hinh-san-pham/do-hop-yifon/vai-dong-hop-trai.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3748,
+    "name": "Dưa lưới (Thô)",
+    "foodType": "raw",
+    "category": "vitamin",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/Uploads/images/tin-tuc/173254/Originals/cach-chon-dua-luoi-ngon-ngot-vang-uom-va-nhung-luu-y-can-nho-khi-bao-quan-dua-luoi1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3749,
+    "name": "Dầu đậu nành (Thô)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://vegespring.vn/uploads/product/1624_11665632914.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3750,
+    "name": "Dầu hướng dương (Thô)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://alltop.vn/backend/media/images/posts/695/Dau_huong_duong_nguyen_chat_Meizan-120308.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3751,
+    "name": "Bơ thực vật (Margarine)",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://daynghebanh.vn/wp-content/uploads/2023/03/bo-dong-vat-va-bo-thuc-vat-banner.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3752,
+    "name": "Nước cốt dừa",
+    "foodType": "raw",
+    "category": "fat",
+    "currentImageUrl": "https://nguyenlieuphachedanang.com/wp-content/uploads/2025/10/nuoc-cot-dua-vico-rich.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3753,
+    "name": "Salad Ức gà áp chảo",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://monngonmoingay.com/wp-content/uploads/2018/01/salad-uc-ga-500.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3754,
+    "name": "Cơm gạo lứt thịt bò",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/oO-FnBc99Ns/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3755,
+    "name": "Bánh mì ngũ cốc trứng",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://cdn.tgdd.vn/Files/2021/08/28/1378474/tong-hop-12-mon-an-nhanh-gon-don-gian-cho-bua-sang-ban-ron-202201151526036964.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3756,
+    "name": "Phở Gà",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://i.ytimg.com/vi/Ildv1ncLJig/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3757,
+    "name": "Bún Bò Huế",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://static.vinwonders.com/production/bun-bo-hue-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3758,
+    "name": "Cơm Tấm Sườn",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/cJu6tFJe_Gc/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3759,
+    "name": "Bún Chả",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://www.seriouseats.com/thmb/J0g7JWjk9r6CHESo1CIrD1BfGd0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/20231204-SEA-VyTran-BunChaHanoi-19-f623913c6ef34a9185bcd6e5680c545f.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3760,
+    "name": "Bún Đậu Mắm Tôm",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://img5.thuthuatphanmem.vn/uploads/2021/11/24/hinh-anh-met-bun-dau-mam-tom-ngon-ngat-ngay_101913146.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3761,
+    "name": "Bánh Mì Pate Xá Xíu",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://yummyday.vn/uploads/images/banh-mi-xa-xiu-3.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3762,
+    "name": "Miến Lươn",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://media.urbanistnetwork.com/saigoneer/article-images/2018/07/mien-luon/MienluonBenThanh0b.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3763,
+    "name": "Mì Tôm Trứng",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://img6.thuthuatphanmem.vn/uploads/2023/03/28/hinh-anh-bat-mi-tom-trung-dep_091734789.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3764,
+    "name": "Xôi Xéo",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://luhanhvietnam.com.vn/du-lich/vnt_upload/news/09_2022/xoi-xeo-ha-noi-2.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3765,
+    "name": "Gỏi Cuốn Tôm Thịt",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/2023_10_23_638336957766719361_cach-lam-goi-cuon.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3766,
+    "name": "Cháo Lòng",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://www.lorca.vn/wp-content/uploads/2023/07/menueditor_item_7a5a45784b004d8481e0b4c596ca8a47_1658502740016819622.webp",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3767,
+    "name": "Bún Riêu Cua",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://media.phunutoday.vn/files/news/2024/10/12/cach-nau-bun-rieu-cua-ngon-nhu-nha-hang-5-sao-093001.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3768,
+    "name": "Cơm Rang Dưa Bò",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://file.hstatic.net/200000700229/article/com-rang-dua-bo-1_c78e1d6016584fad95b103c52b999856.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3769,
+    "name": "Bánh Cuốn Thịt",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://beptueu.vn/hinhanh/tintuc/banh-cuon-hinh-anh-mon-an-dac-san-viet-nam.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3770,
+    "name": "Nộm Bò Khô",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://tomimarkets.net/wp-content/uploads/2020/08/Nom-bo-kho-Tomimarkets.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3771,
+    "name": "Bún Mọc",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://www.btaskee.com/wp-content/uploads/2023/04/bun-moc.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3772,
+    "name": "Miến Gà",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://i.ytimg.com/vi/ko0YRS3Tc2I/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3773,
+    "name": "Cháo Yến Mạch Sữa Tươi",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:quality(100)/2024_1_15_638409360357789931_cach-an-yen-mach-voi-sua-tuoi-cuc-ngon-tien-loi-va-day-du-dinh-duong-cho-bua-sang5.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3774,
+    "name": "Bánh Cuốn Thanh Trì",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://dulichviet.com.vn/images/bandidau/banh-cuon-thanh-tri-thi-du-khach-an-o-dau-se-ngon.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3775,
+    "name": "Bánh Mì Trứng Ốp La",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://cooponline.vn/tin-tuc/wp-content/uploads/2025/10/Banh-mi-op-la.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3776,
+    "name": "Ức Gà Áp Chảo Sốt Chanh Dây",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://i.ytimg.com/vi/_pcs_rBBILQ/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3777,
+    "name": "Cá Hồi Nướng Măng Tây",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://amthucvungmien.com.vn/uploads/images/auto/2025/09/30/ca-hoi-mang-tay-09301821.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3778,
+    "name": "Salad Bơ Tôm",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://image.bephoa.vn/Data/images/product/2023/02/202302220927543607.png.thumbw.750.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3779,
+    "name": "Cơm Gà Hải Nam",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://tiki.vn/blog/wp-content/uploads/2023/09/com-ga-hai-nam-thumb.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3780,
+    "name": "Phở Bò Tái Lăn",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://lh7-us.googleusercontent.com/h_wmfuM7ilUjRFYBoYTJbUuAvUkh9rHp5r94ZDE26Z2z2-FzrAL_1wYhU-48-Iy7fJPLPrmeq8loBPn7JqBoAMgpH7lofudjakL4BCprCzilMfB6ZRZNckVcp-m8Se_RbXqmxHXZfPTPfGu1YFG-la0",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3781,
+    "name": "Bún Chả Cá",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://cooponline.vn/tin-tuc/wp-content/uploads/2025/10/bi-quyet-nau-bun-cha-ca-nha-trang-dai-ngon-nuoc-dung-trong-vat.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3782,
+    "name": "Canh Chua Cá Lóc",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://afamilycdn.com/150157425591193600/2024/5/15/cach-lam-canh-chua-ca-loc-thanh-mat-giai-nhiet-cho-ngay-he2-09533778-1715743884323-1715743884544805270152.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3783,
+    "name": "Thịt Kho Trứng",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn.24h.com.vn/upload/2-2024/images/2024-06-07/Ky-thi-tot-nghiep-sap-den-gan-chi-em-nau-mon-nay-de-boi-bo-tri-nao-cho-con-minh-0-1717742740-520-widthheight.webp",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3784,
+    "name": "Đậu Hũ Nhồi Thịt Sốt Cà",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://yummyday.vn/uploads/images/cach-lam-dau-hu-nhoi-thit-7.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3785,
+    "name": "Gà Xào Sả Ớt",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://i.ytimg.com/vi/v4Y7fejDFc4/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3786,
+    "name": "Bò Xào Cần Tây",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/05/CookRecipe/Avatar/thit-bo-xao-can-tay-thumbnail.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3787,
+    "name": "Canh Khổ Qua Nhồi Thịt",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://thucthan.com/media/2019/08/canh-kho-qua/mon-canh-kho-qua-nhoi-thit.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3788,
+    "name": "Rau Muống Xào Tỏi",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://www.nauco29.com/uploads/content/rau-muong-xao-toi.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3789,
+    "name": "Trứng Đúc Thịt",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://beptruong.edu.vn/wp-content/uploads/2021/01/gia-tri-dinh-duong-co-trong-mon-trung-duc-thit-hap.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3790,
+    "name": "Đùi Gà Rô Ti",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://anh.24h.com.vn/upload/4-2017/images/2017-12-19/1513674451-759-tuyet-chieu-lam-dui-ga-ro-ti-sanh-vang-ngon-com-den-mieng-cuoi-cung-_mg_7618-1513674231-width660height440.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3791,
+    "name": "Bowl Cơm Lứt Cá Hồi Bơ",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://mrecohealthy.com/wp-content/uploads/2022/10/FRAME-08.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3792,
+    "name": "Salad Quinoa Rau Củ",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://cdn.24h.com.vn/upload/4-2022/images/2022-12-27/quinoa-and-winter-vegetable-salad-bowl-1-1672125208-709-width1200height1200.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3793,
+    "name": "Ức Gà Nướng Mật Ong",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://i.ytimg.com/vi/1bNCDh1Xwgc/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGFcgXyhlMA8=&amp;rs=AOn4CLDMfY0CfpZWmlX0yE2Vd3ce_oA7-Q",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3794,
+    "name": "Cá Ngừ Áp Chảo Salad",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://vuabien.com/datafiles/3/2018-01-22/15166144097562_SALAD-CA-NGU-AP-CHAO-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3795,
+    "name": "Súp Bí Đỏ Kem Tươi",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://bepmina.vn/wp-content/uploads/2021/07/cach-nau-sup-bi-do-kem-tuoi.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3796,
+    "name": "Cơm Lứt Gà Xé Rau Củ",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://www.lorca.vn/wp-content/uploads/2024/05/436209513_3437037716442147_4139657918258779785_n.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3797,
+    "name": "Bún Gạo Lứt Tôm Hấp",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://i.ytimg.com/vi/O9ViLTg06TU/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3798,
+    "name": "Salad Trứng Luộc Rau Mầm",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://bepmina.vn/wp-content/uploads/2021/08/salad-trung-luoc-rau-mam.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3799,
+    "name": "Tôm Hấp Sả",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn.tgdd.vn/Files/2020/03/04/1239983/3-cach-che-bien-mon-tom-hap-ngon-don-gian-nhanh-chong-26-760x367.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3800,
+    "name": "Cá Diêu Hồng Hấp Hành",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/Uploads/images/tin-tuc/180697/Originals/ca-dieu-hong-hap-12.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3801,
+    "name": "Gà Luộc Lá Chanh",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:quality(100)/2024_1_20_638413550421954857_cach-luoc-ga-gia-nhanh-mem-va-meo-nau-ga-giu-duoc-huong-vi-da-vang-ong-khong-bi-rach.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3802,
+    "name": "Bò Cuốn Lá Lốt Nướng",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://bepmina.vn/wp-content/uploads/2021/10/cach-lam-bo-cuon-la-lot.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3803,
+    "name": "Đậu Hũ Sốt Nấm",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://i.ytimg.com/vi/ZMcVtg503Vs/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3804,
+    "name": "Cải Bó Xôi Xào Tỏi",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://santorino.org/wp-content/uploads/2020/10/Cai-Bo-Xoi-Xao-Toi-Stir-fried-Spinach-with-Garlic-1-1030x687-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3805,
+    "name": "Bông Cải Xanh Luộc",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://i.ytimg.com/vi/vvwQHLyWsxQ/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3806,
+    "name": "Măng Tây Xào Tôm",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://bepxua.vn/wp-content/uploads/2022/10/6.tom-non-xao-mang-tay.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3807,
+    "name": "Canh Rau Ngót Thịt Bằm",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://s1.media.ngoisao.vn/resize_580/news/2021/12/04/canh-rau-ngot-tom-thit-070048_258-ngoisaovn-w1080-h648.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3808,
+    "name": "Canh Bí Đao Tôm Khô",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://camona.net/wp-content/uploads/2025/04/nau-canh-bi-voi-tom-kho-5.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3809,
+    "name": "Cháo Gà Gạo Lứt",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://bazaarvietnam.vn/wp-content/uploads/2022/02/harper-bazaar-cach-nau-chao-gao-lut-giam-can-7.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3810,
+    "name": "Yến Mạch Trái Cây Hạt",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://nhatthangltd.com/wp-content/uploads/2021/11/yen-mach-trai-cay-hat-dinh-duong-300g.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3811,
+    "name": "Cơm Cuộn Rong Biển (Kimbap)",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://cookbeo.com/media/2024/01/com-cuon/thumbnails/com-cuon-16x9-1200.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3812,
+    "name": "Bò Bít Tết Rau Nướng",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://i.ytimg.com/vi/AVPKSVnyQQk/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3813,
+    "name": "Cá Basa Hấp Gừng",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://haisancoto.com/uploads/images/cach-hap-ca-ngon.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3814,
+    "name": "Salad Caesar Gà Nướng",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://monngonmoingay.com/wp-content/smush-webp/2025/01/16.-SALAD-GA-NUONG-THUOM.png.webp",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3815,
+    "name": "Wrap Gà Rau Củ",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:quality(100)/2024_1_20_638413550421954857_cach-luoc-ga-gia-nhanh-mem-va-meo-nau-ga-giu-duoc-huong-vi-da-vang-ong-khong-bi-rach.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3816,
+    "name": "Cơm Chiên Trứng Rau Củ",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/SedJIcu9u10/sddefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3817,
+    "name": "Phở Chay Rau Nấm",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/03/CookRecipe/Avatar/pho-tron-rau-cu-chay-thumbnail.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3818,
+    "name": "Bún Chả Giò Chay",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://cdn.hstatic.net/files/200000700229/file/bun-cha-gio-chay-04.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3819,
+    "name": "Cá Lóc Nướng Trui",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://file.hstatic.net/1000105320/file/image2_3e5a1688ed274a6a86ad2bb915c9f180.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3820,
+    "name": "Thịt Heo Luộc Chấm Mắm",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://i.ytimg.com/vi/2H7FA174Qj4/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3821,
+    "name": "Cơm Gạo Lứt Cá Kho",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/edg2BZCxNNw/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3822,
+    "name": "Bowl Poke Cá Hồi",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://img-global.cpcdn.com/recipes/a73eb321f85b036e/1200x630cq70/photo.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3823,
+    "name": "Bún Bò Xào Rau Củ",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://i.ytimg.com/vi/HbAhByyxj2k/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&amp;rs=AOn4CLBdl9awKf7GZfUMv5qIxiW5uflNlA",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3824,
+    "name": "Súp Gà Ngô Non",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "http://cdn.tgdd.vn/Files/2021/08/05/1373270/cach-nau-sup-ga-ngo-non-thom-ngon-bo-duong-202201141412125884.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3825,
+    "name": "Súp Hành Tây Phô Mai",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://www.hoidaubepaau.com/wp-content/uploads/2016/06/sup-hanh-tay-kieu-phap.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3826,
+    "name": "Trứng Hấp Nấm",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://toquoc.mediacdn.vn/280518851207290880/2024/1/16/nam-hap-trung-1-17053378529701887728160-1705392830452-17053928307102100255723.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3827,
+    "name": "Sandwich Ức Gà Rau Xanh",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://www.tiktok.com/api/img/?itemId=7535816973079596295&amp;location=0&amp;aid=1988",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3828,
+    "name": "Cá Hấp Xì Dầu Gừng",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn.tgdd.vn/Files/2020/02/14/1236363/ca-hap-xi-dau-thom-ngot-cuc-ky-de-lam-202103251602566288.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3829,
+    "name": "Gà Nướng Ngũ Vị",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://lauga109.com/wp-content/uploads/2023/09/1562040285_es-ganuongnguvi.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3830,
+    "name": "Nấm Đùi Gà Xào Bơ Tỏi",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://i.ytimg.com/vi/UWz3T6cUmc8/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3831,
+    "name": "Mì Ý Sốt Cà Chua Thịt Bò",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://tiki.vn/blog/wp-content/uploads/2023/04/fiJmBl6FJawibII-8EUinczTNhiLdUP3ecgTUi15NbqXesz6Up1zgvp7CTTLcIauUn5Gj3-dFcCqfeJfoOSyg9Fl8XjxrFdvhTDXNYisWLwqALU5r-dYJGgrjxPBsMGD4AbZmSWH1VNBRvXP64AOmsE.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3832,
+    "name": "Cơm Gạo Lứt Tôm Rang",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/edg2BZCxNNw/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3833,
+    "name": "Canh Cải Thảo Nấu Tôm",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://afamilycdn.com/150157425591193600/2021/9/7/thanh-pham-9-16310051861701834285953.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3834,
+    "name": "Đậu Hũ Chiên Sả Ớt",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://i.ytimg.com/vi/1FpJY7Wuw-o/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3835,
+    "name": "Gỏi Bưởi Tôm Thịt",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "http://www.savourydays.com/wp-content/uploads/2019/01/goitombuoi_final.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3836,
+    "name": "Mì Udon Hải Sản",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://img-global.cpcdn.com/recipes/06726c3d44d3f5f8/1200x630cq80/photo.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3837,
+    "name": "Bún Thịt Nướng Chả Giò",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://file.hstatic.net/200000700229/article/bun-thit-nuong-cha-gio-1_049ecb6eac20407ab13217579cdb1c73.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3838,
+    "name": "Cơm Trộn Hàn Quốc (Bibimbap)",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://meta.vn/Data/image/2021/06/22/cach-lam-com-tron-han-quoc-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3839,
+    "name": "Gà Hấp Muối Sả",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/03/CookProduct/thumb-1200x676-30.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3840,
+    "name": "Canh Bầu Nấu Tôm",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://i.ytimg.com/vi/mtxhiJvB31w/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3841,
+    "name": "Bắp Cải Cuốn Thịt Hấp",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://cellphones.com.vn/sforum/wp-content/uploads/2023/09/mon-an-ngon-la-mieng-9.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3842,
+    "name": "Cá Rô Phi Chiên Giòn",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://nuocmamlegia.com/wp-content/uploads/2019/08/1566885502-7672-ca20ro20phi20chien20gion.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3843,
+    "name": "Salad Bò Thái Lan",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://i.ytimg.com/vi/neWjNsYOFI0/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3844,
+    "name": "Cơm Nấm Hấp Lá Sen",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/04/CookRecipe/Avatar/com-gao-lut-hap-la-sen-thumbnail.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3845,
+    "name": "Mì Soba Lạnh Rau Củ",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/800x0/mi_soba_lanh_10_c77c0593e7.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3846,
+    "name": "Tôm Nướng Muối Ớt",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://thucthan.com/media/2018/06/tom-nuong-muoi-ot/tom-nuong-muoi-ot.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3847,
+    "name": "Canh Mồng Tơi Mướp",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/2024_1_21_638414341487558108_canh-muop-mong-toi.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3848,
+    "name": "Cơm Chiên Kimchi",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://www.huongnghiepaau.com/wp-content/uploads/2019/01/com-rang-kim-chi.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3849,
+    "name": "Thịt Bò Xào Ớt Chuông",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://i.ytimg.com/vi/E17uGpA1XrM/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3850,
+    "name": "Cá Thu Nướng Nghệ",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://phucfood.vn/wp-content/uploads/2023/10/ca-thu-nuong-7.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3851,
+    "name": "Soup Rau Củ Detox",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://veggie.vn/uploads/images/2021/08/1627837664-single_news1-cachnausupraucuchay4.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3852,
+    "name": "Ức Vịt Áp Chảo Sốt Cam",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn.tgdd.vn/2020/09/CookRecipe/Avatar/uc-vit-ap-chao-sot-cam-thumbnail.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3853,
+    "name": "Cơm Lứt Đậu Hũ Rong Biển",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://static-images.vnncdn.net/files/publish/2022/8/26/1-com-cuon-428.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3854,
+    "name": "Bún Măng Gà",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://i.ytimg.com/vi/PUV9ZZLkjkI/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3855,
+    "name": "Cá Chẽm Hấp Hồng Kông",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn.tgdd.vn/Files/2021/11/02/1395156/huong-dan-lam-ca-chem-hap-hong-kong-ngon-nhu-nha-hang-202111020105243466.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3856,
+    "name": "Bánh Pancake Chuối Yến Mạch",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://drinkocany.com/wp-content/uploads/2023/08/pancake-chuoi-yen-mach-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3857,
+    "name": "Bowl Açaí Trái Cây",
+    "foodType": "dish",
+    "category": "trai_cay",
+    "currentImageUrl": "https://media.istockphoto.com/id/1295521759/vi/anh/trái-cây-tươi-và-đầy-màu-sắc-acai-bowl-với-chuối-thái-lát-dâu-tây-xoài-quả-việt-quất-hạt-chia.jpg?s=612x612&amp;w=0&amp;k=20&amp;c=-Kd5WJVOJqHIDvKTzgfKgCqVv26g6ZirRncTN6x3Sw4=",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3858,
+    "name": "Rau Củ Hấp Chấm Mắm Nêm",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://unie.com.vn/wp-content/uploads/2021/12/rau-cu-hap-2.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3859,
+    "name": "Thịt Bò Hầm Khoai Tây Cà Rốt",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn.tgdd.vn/2020/12/CookProduct/thunb-1200x676.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3860,
+    "name": "Tôm Xào Bông Cải Xanh",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://i.ytimg.com/vi/rxox_Y_1oOs/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3861,
+    "name": "Cháo Cá Lóc Rau Đắng",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://cdn.tgdd.vn/Files/2017/05/17/983325/cach-nau-chao-ca-loc-rau-dang-dam-chat-mien-tay-202002250947321647.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3862,
+    "name": "Bún Nước Lèo Sóc Trăng",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://www.lorca.vn/wp-content/uploads/2025/04/2-18-scaled.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3863,
+    "name": "Sườn Non Om Sấu",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn11.dienmaycholon.vn/filewebdmclnew/public/userupload/files/suon-heo-nau-gi-ngon/suon-heo-nau-gi-ngon-22.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3864,
+    "name": "Gà Xào Hạt Điều",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://i.ytimg.com/vi/VTAHJMntghs/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3865,
+    "name": "Canh Su Hào Nấu Sườn",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://noithatphuongdong.vn/images/mon-an/canh-suon-su-hao-3.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3866,
+    "name": "Chả Cá Lã Vọng",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://monngon-danang.com/content/images/2024/10/tp-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3867,
+    "name": "Mì Quảng",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://tomate.com.vn/wp-content/uploads/2023/09/z4681739015091_dbdfd1abbd08e272a1366415b1361f2e.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3868,
+    "name": "Bún Cá Châu Đốc",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://i.ytimg.com/vi/_JxnGh1hg9o/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3869,
+    "name": "Hủ Tiếu Nam Vang",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "http://file.hstatic.net/1000394081/article/hu-tieu-nam-vang_99ed2f754c2447eab5519e338e3d165f.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3870,
+    "name": "Cơm Chiên Dương Châu",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://cdn.hstatic.net/files/200000700229/file/com-chien-duong-chau-chay-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3871,
+    "name": "Gỏi Cuốn Chay",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://i.ytimg.com/vi/FLK26I2fvlw/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3872,
+    "name": "Salad Kale Hạt Quinoa",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://thewillowskitchen.com/wp-content/uploads/2022/04/03.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3873,
+    "name": "Bánh Mì Thịt Nguội",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://phanthietstore.com/wp-content/uploads/2024/03/unnamed-6-1.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3874,
+    "name": "Bánh Mì Ốp La",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://www.cooking-therapy.com/wp-content/uploads/2025/09/Banh-Mi-Op-La-5-1456x2184.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3875,
+    "name": "Bánh Mì Chảo (Hết thứ)",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://canthoriviu.vn/wp-content/uploads/2022/09/banh-mi-chao-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3876,
+    "name": "Xôi Gà",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/gZt9CsZCpDM/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3877,
+    "name": "Xôi Đậu Xanh",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://tiki.vn/blog/wp-content/uploads/2023/04/cach-nau-xoi-dau-xanh.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3878,
+    "name": "Xôi Lạc",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://cdn.pastaxi-manager.onepas.vn/content/uploads/articles/0011. le- mon ngon cong thuc/000 cach lam xoi lac/1-cach-lam-xoi-lac-ngon.gif",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3879,
+    "name": "Xôi Ngô Mỡ Hành",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/6PV4S4BQAhI/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3880,
+    "name": "Cháo Đậu Xanh",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://ttol.vietnamnetjsc.vn/images/2022/10/01/16/13/chao-dau-ca-001.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3881,
+    "name": "Cháo Thịt Bằm",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://yeutre.vn/cdn/medias/uploads/136/136359-cach-nau-chao-thit-bam.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3882,
+    "name": "Bánh Giò",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://nuchinh.com/wp-content/uploads/2022/08/banh-gio-lam-tu-gi.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3883,
+    "name": "Bánh Bao Thịt",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://phunugioi.com/wp-content/uploads/2020/11/cach-lam-banh-bao-nhan-thit-ngon-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3884,
+    "name": "Bánh Bao Chay",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/07/CookProduct/BeFunky-collage(3)-1200x676-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3885,
+    "name": "Bánh Ướt Chả Lụa",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://bepnhatoi.net/wp-content/uploads/2025/04/banh-uot-va-cha-lua-su-ket-hop-hoan-hao-trong-am-thuc-viet-nam.webp",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3886,
+    "name": "Hủ Tiếu Khô Thịt",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/09/CookRecipe/GalleryStep/5(4).jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3887,
+    "name": "Mì Khô Xá Xíu",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://i.ytimg.com/vi/ahR-XRNh7l4/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3888,
+    "name": "Bún Bò Nam Bộ",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://bepxua.vn/wp-content/uploads/2021/06/maxresdefault-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3889,
+    "name": "Cơm Sườn Cải",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://giadinh.mediacdn.vn/296230595582509056/2023/1/4/thuc-don-7-16728446337821341768000.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3890,
+    "name": "Cơm Gà Chiên Nước Mắm",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/8SmhJ_1z7GU/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3891,
+    "name": "Cơm Bò Kho",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://static-images.vnncdn.net/files/publish/2022/9/16/bo-kho-2-312.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3892,
+    "name": "Cơm Canh Chua Cá",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/canh_chua_ca_bong_lau_1_7e63517315.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3893,
+    "name": "Cơm Thịt Kho Tiêu",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/RT4B6e6tKz4/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3894,
+    "name": "Cơm Cá Kho Tộ",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/lU9gEDFdfZY/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3895,
+    "name": "Cơm Trắng + Rau Xào",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://giadinh.mediacdn.vn/296230595582509056/2023/1/4/thuc-don-7-16728446337821341768000.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3896,
+    "name": "Cơm Đùi Gà Nướng",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/dENhf0VxyUo/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3897,
+    "name": "Cơm Chả Trứng",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://dienmaynewsun.com/wp-content/uploads/2019/08/quan-com-tam-ngon.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3898,
+    "name": "Bún Bò Xào Sả",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://i.ytimg.com/vi/xSAOt_oJukM/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3899,
+    "name": "Canh Chua Tôm",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://i.ytimg.com/vi/lXuFxzrOIEA/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3900,
+    "name": "Đậu Phụ Sốt Thịt Bằm",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://img-global.cpcdn.com/recipes/af4a00ea96579b35/1200x630cq70/photo.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3901,
+    "name": "Rau Cải Luộc Chấm Mắm",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://scov.gov.vn/upload/2005660/fck/admin97/rauluoc.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3902,
+    "name": "Bánh Tráng Nướng Phomai",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://sieuthitana.vn/mediacenter/media/images/2864/news/ava/s1000_1000/27820836247120533089008058168080231698671268n-1658375433.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3903,
+    "name": "Bánh Tráng Trộn",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://i.pinimg.com/originals/1d/62/25/1d6225c0382eb0adf51533f7e3ffb244.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3904,
+    "name": "Khoai Lang Lắc Phô Mai",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://i.ytimg.com/vi/9aXdX2uvd9s/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3905,
+    "name": "Ngô Luộc",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/04/CookProduct/kikoki-1200x676.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3906,
+    "name": "Khoai Lang Luộc",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://i.ytimg.com/vi/ybF0RQdDAK8/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3907,
+    "name": "Chuối Lán",
+    "foodType": "dish",
+    "category": "trai_cay",
+    "currentImageUrl": "https://cookbeo.com/media/2022/11/nom-hoa-chuoi/thumbnails/nom-hoa-chuoi-768.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3908,
+    "name": "Ổi Xanh Chấm Muối Ớt",
+    "foodType": "dish",
+    "category": "trai_cay",
+    "currentImageUrl": "https://bizweb.dktcdn.net/thumb/1024x1024/100/440/079/products/22-12-30-03-muoi-cham-xanh-do-6-3cced1e7-ac6f-4edc-8f43-23b69f62d4fe.jpg?v=1672366474887",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3909,
+    "name": "Chè Đậu Xanh",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://cdn.eva.vn/upload/3-2023/images/2023-07-06/9-cach-nau-che-dau-xanh-don-gian-thom-ngon-ai-an-cung-tam-tac-khen-cach-nau-che-dau-xanh-eva-001-1688615870-986-width780height558.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3910,
+    "name": "Chè Ba Màu",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://imperialpdx.com/wp-content/uploads/2025/10/che-ba-mau-vietnamese-three-color-dessert-closeup-559x1024.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3911,
+    "name": "Chè Bưởi Sương Sáo",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://befresh.vn/wp-content/uploads/2023/03/che-suong-sao.jpeg.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3912,
+    "name": "Sữa Chua Nếp Cẩm",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://dulichmocchau.net/uploads/news/2018_02/sua-chua-nep-cam-moc-chau2.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3913,
+    "name": "Hạt Điều Rang Muối",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://down-vn.img.susercontent.com/file/sg-11134201-23020-1anj37m91fnv85",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3914,
+    "name": "Trái Cây Dầm",
+    "foodType": "dish",
+    "category": "trai_cay",
+    "currentImageUrl": "https://i.ytimg.com/vi/u2tC98qpnqY/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3915,
+    "name": "Bánh Flan",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://blogcdn.muaban.net/wp-content/uploads/2022/02/cach-lam-banh-flan.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3916,
+    "name": "Sữa Chua Hoa Quả",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://i.ytimg.com/vi/-LS_XGiCJn0/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3917,
+    "name": "Bún Thái Hải Sản",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://i.ytimg.com/vi/WGsot2QL7m8/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&amp;rs=AOn4CLBYnPm-YiF89n4imOnnBnMABuHl0A",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3918,
+    "name": "Bánh Xèo Tôm Thịt",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvpQ4yMkvzhqm7QRXVN9-tQQjRIsmu-Qa0Cx9fu_q2gezZwy440rRw36X9W-9b9L_eJEITdn8DSb7ujbiN7zvP1SYXlxEbnZCIDjX7v1BCRAV8D7QxuIVojFpryQY-HFmx6SpCRPTyvi9Yna4VOsEO0bN1tn-CHNjSPSsz9OchayntRGUCFbPtnwqdKA/w1200-h630-p-k-no-nu/banh xeo tom thit.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3919,
+    "name": "Mì Quảng Gà",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://i.ytimg.com/vi/g3V_oNeMdHs/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3920,
+    "name": "Cao Lầu Hội An",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://cdn2.fptshop.com.vn/unsafe/800x0/cach_nau_cao_lau_1_54face7fc3.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3921,
+    "name": "Bún Kèn Phú Quốc",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://static.vinwonders.com/production/bun-ken-phu-quoc-anh-thumb-1-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3922,
+    "name": "Cơm Niêu Sài Gòn",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://statics.vinpearl.com/com-nieu-sai-gon_1733293964.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3923,
+    "name": "Lẩu Mắm",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://i.ytimg.com/vi/h_uu9BLihDs/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3924,
+    "name": "Lẩu Thái Hải Sản",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://storage.quannhautudo.com/data/thumb_1200/Data/images/product/2023/11/202311280950003415.webp",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3925,
+    "name": "Lẩu Gà Lá Giang",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://giadinh.mediacdn.vn/296230595582509056/2024/5/16/lau-ga-17158803273981435674847.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3926,
+    "name": "Thịt Nướng BBQ Mỡ Hành",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://i.ytimg.com/vi/DWAdlGKcTG0/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3927,
+    "name": "Gà Nướng Muối Ớt",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cdn.dealtoday.vn/43982cb7928347269c3f83166ac832d2.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3928,
+    "name": "Sườn Nướng Mật Ong",
+    "foodType": "dish",
+    "category": "thit_ca",
+    "currentImageUrl": "https://cellphones.com.vn/sforum/wp-content/uploads/2023/09/cach-lam-suon-nuong-mat-ong-11.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3929,
+    "name": "Cơm Chay Thập Cẩm",
+    "foodType": "dish",
+    "category": "com",
+    "currentImageUrl": "https://i.ytimg.com/vi/rEiuUYbfsic/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3930,
+    "name": "Bún Chay Sốt Nấm",
+    "foodType": "dish",
+    "category": "pho_bun",
+    "currentImageUrl": "https://cdn.tgdd.vn/Files/2021/09/06/1380674/cach-lam-bun-chay-nam-sa-te-dau-hu-ca-chua-ngon-de-lam-tai-nha-202208251704112759.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3931,
+    "name": "Bánh Mì Chay",
+    "foodType": "dish",
+    "category": "banh",
+    "currentImageUrl": "https://i.ytimg.com/vi/6_03GYiahv4/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3932,
+    "name": "Đậu Hũ Kho Sả Ớt",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://i.ytimg.com/vi/1FpJY7Wuw-o/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3933,
+    "name": "Canh Rau Củ Chay",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://i.ytimg.com/vi/0nVi3uNvfDY/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3934,
+    "name": "Nấm Xào Rau Củ",
+    "foodType": "dish",
+    "category": "rau_cu",
+    "currentImageUrl": "https://cdn.tgdd.vn/Files/2022/12/29/1499730/cach-lam-nam-dui-ga-xao-rau-cu-cho-ngay-chay-them-ngon-202212291652072974.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3935,
+    "name": "Cá Viên Chiên",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://i.ytimg.com/vi/6ZbHIAIGdc0/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3936,
+    "name": "Gà Rán (KFC-style)",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://img5.thuthuatphanmem.vn/uploads/2021/12/14/hinh-ga-ran-dep_024414263.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3937,
+    "name": "Pizza Phô Mai",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://happyfoodvn.com/upload/images/pizza-pho-mai-keo-soi.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3938,
+    "name": "Hamburger Bò Phô Mai",
+    "foodType": "dish",
+    "category": "khac",
+    "currentImageUrl": "https://chianui.vn/wp-content/uploads/2019/06/BÒ-2-TẦNG_resize_min-800x800.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3939,
+    "name": "Nước Ép Cam Tươi",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://raumamix.com.vn/wp-content/uploads/2025/03/Nuoc-ep-Cam-Thom-Tuoi.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3940,
+    "name": "Nước Ép Dưa Hấu",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://cdn.pastaxi-manager.onepas.vn/content/uploads/articles/hoamkt35/Blog/Nước ép/New folder (2)/nuoc-ep-dua-hau.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3941,
+    "name": "Nước Ép Táo",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://tandoorvietnam.com/wp-content/uploads/2020/06/Apple-juice1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3942,
+    "name": "Nước Ép Cà Rốt",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://file.hstatic.net/200000868155/file/1603-post-5-cach-lam-nuoc-ep-ca-rot-thom-ngon-dep-da-tai-nha-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3943,
+    "name": "Nước Ép Dứa",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://product.hstatic.net/200000325223/product/dovico-_dan_trang__23__fb75efd3b1d64eabb59dc7f70e963f0c_master.jpeg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3944,
+    "name": "Nước Ép Ổi",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://pacificcross.com.vn/wp-content/uploads/2023/04/1-coc-nuoc-oi-bao-nhieu-calo.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3945,
+    "name": "Nước Ép Bưởi",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://truejuice.vn/articles/wp-content/uploads/2021/05/nuoc-ep-buoi-xanh-truejuice.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3946,
+    "name": "Nước Ép Rau Má",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://truejuice.vn/articles/wp-content/uploads/2021/04/tac-dung-nuoc-ep-rau-ma.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3947,
+    "name": "Nước Ép Cần Tây",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://nutrihome.vn/wp-content/uploads/2023/03/nuoc-ep-can-tay-nguyen-chat.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3948,
+    "name": "Nước Ép Lựu",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://truejuice.vn/articles/wp-content/uploads/2021/03/nuoc-ep-luu-truejuice.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3949,
+    "name": "Nước Mía",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://i.pinimg.com/originals/e7/58/3e/e7583e04edf55f6b9db9f1be0e9ab296.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3950,
+    "name": "Sinh Tố Bơ",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://barona.vn/storage/meo-vat/183/cach-lam-sinh-to-bo.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3951,
+    "name": "Sinh Tố Chuối Sữa",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://bizweb.dktcdn.net/100/004/714/articles/sinh-to-chuoi-ngon.jpg?v=1569555254917",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3952,
+    "name": "Sinh Tố Xoài",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://cdn.tgdd.vn/2021/04/CookRecipe/Avatar/sinh-to-xoai-sua-chua-thumbnail.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3953,
+    "name": "Sinh Tố Dâu Tây",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://www.hoidaubepaau.com/wp-content/uploads/2015/12/sinh-to-dau.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3954,
+    "name": "Smoothie Protein Chuối Yến Mạch",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://thuytinhocean.com/wp-content/uploads/2024/12/Nguyen-lieu-can-chuan-bi-cho-mon-Smoothie-dau-tay-chuoi-yen-mach-.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3955,
+    "name": "Smoothie Bowl Việt Quất",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://img-global.cpcdn.com/recipes/bfcd15f3e1edc8b0/1200x630cq80/photo.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3956,
+    "name": "Sinh Tố Thanh Long Sữa Chua",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://afamilycdn.com/2017/sinh-to-sua-thanh-long-4-1511169610954.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3957,
+    "name": "Sữa Milo Nóng",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://nguyenlieukimtinh.com/wp-content/uploads/2023/12/milo-dam-sua-chua.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3958,
+    "name": "Sữa Milo Đá",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://befresh.vn/wp-content/uploads/2023/04/tu-lam-milo-dam-sua-tuoi-da-bao-cho-ki-nghi-tai-gia-4.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3959,
+    "name": "Sữa Đậu Nành",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://cdn11.dienmaycholon.vn/filewebdmclnew/public/userupload/files/KNMS/cong-dung-cua-sua-dau-nanh.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3960,
+    "name": "Sữa Tươi Có Đường",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://d8um25gjecm9v.cloudfront.net/cms/STTT_co_duong_MCC_180ml_2_05e497da4f.png",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3961,
+    "name": "Sữa Chua Uống",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://i.ytimg.com/vi/-LS_XGiCJn0/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3962,
+    "name": "Sữa Hạt Óc Chó",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://befresh.vn/wp-content/uploads/2023/04/cach-lam-sua-oc-cho-01-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3963,
+    "name": "Sữa Yến Mạch (Oat Milk)",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://cdn.tgdd.vn/News/Thumb/1449569/thuc-don-giam-can-bang-yen-mach-Pexels-Pixabay--1--1200x628.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3964,
+    "name": "Trà Xanh Không Đường",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-manz6gc3jmc899",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3965,
+    "name": "Trà Đào Cam Sả",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://lypham.vn/wp-content/uploads/2024/09/cach-lam-tra-dao-cam-sa.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3966,
+    "name": "Trà Sữa Trân Châu",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://www.chuphinhsanpham.vn/wp-content/uploads/2017/08/chup-anh-tra-sua-concept-dep-2020_0002.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3967,
+    "name": "Trà Chanh Mật Ong",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://file.hstatic.net/1000135323/file/c1_a8c0faa291c84594bf0939034d1b5bdd_grande.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3968,
+    "name": "Trà Gừng Mật Ong",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/3/13/1022948/_-4.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3969,
+    "name": "Cà Phê Đen Không Đường",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://globalfoodsource.vn/watermark/product/800x750x2/upload/product/11cafe-instant-7588.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3970,
+    "name": "Cà Phê Sữa Đá",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://asianinspirations.com.au/wp-content/uploads/2018/12/R01583_Vietnamese_Iced_Coffee.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3971,
+    "name": "Cappuccino",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://c.pxhere.com/photos/12/f8/coffee_coffee_shop_cafe_drink_caffeine_brown_espresso_refreshment-1058872.jpg!d",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3972,
+    "name": "Latte",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://i.pinimg.com/736x/7b/98/b8/7b98b8a47f0d60006de8bef7ae1ef54b.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3973,
+    "name": "Nước Dừa Tươi",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://i.ytimg.com/vi/UvGAF2vWAis/maxresdefault.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3974,
+    "name": "Nước Chanh Muối",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://truonghaofood.vn/upload/images/mon-an-duoc-lam-tu-qua-chanh-5.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3975,
+    "name": "Nước Sâm Bổ Lượng",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://www.btaskee.com/wp-content/uploads/2021/08/Sam-bo-luong.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3976,
+    "name": "Nước Rau Má Đậu Xanh",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://lypham.vn/wp-content/uploads/2024/10/cach-lam-rau-ma-dau-xanh-sua-dua-1.jpg",
+    "status": "REPLACE"
+  },
+  {
+    "id": 3977,
+    "name": "Trà Đá",
+    "foodType": "dish",
+    "category": "do_uong",
+    "currentImageUrl": "https://i.ytimg.com/vi/n7eihIjDCXk/maxresdefault.jpg",
+    "status": "REPLACE"
+  }
+]

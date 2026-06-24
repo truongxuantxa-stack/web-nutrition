@@ -41,6 +41,19 @@ export default function DiaryEntryRow({ entry, onDelete }) {
 
   const emoji = getFoodEmoji(entry.foodName);
 
+  // Tính toán tổng dinh dưỡng thực tế dựa trên amount
+  const tCal = Math.round(entry.caloriesSnapshot);
+  const tPro = Math.round(entry.proteinSnapshot * 10) / 10;
+  const tCarb = Math.round(entry.carbsSnapshot * 10) / 10;
+  const tFat = Math.round(entry.fatSnapshot * 10) / 10;
+  const tFib = entry.fiberSnapshot != null ? Math.round(entry.fiberSnapshot * 10) / 10 : null;
+  const tSug = entry.sugarSnapshot != null ? Math.round(entry.sugarSnapshot * 10) / 10 : null;
+  const tSod = entry.sodiumSnapshot != null ? Math.round(entry.sodiumSnapshot) : null;
+  const tVitA = entry.vitaminASnapshot != null ? Math.round(entry.vitaminASnapshot) : 0;
+  const tVitC = entry.vitaminCSnapshot != null ? Math.round(entry.vitaminCSnapshot * 10) / 10 : 0;
+  const tCa = entry.calciumSnapshot != null ? Math.round(entry.calciumSnapshot) : 0;
+  const tFe = entry.ironSnapshot != null ? Math.round(entry.ironSnapshot * 10) / 10 : 0;
+
   return (
     <li className="flex flex-col px-4 py-2 hover:bg-[#F0F2F3]/60 transition-colors group">
       <div className="flex items-center justify-between gap-x-3 w-full">
@@ -67,7 +80,7 @@ export default function DiaryEntryRow({ entry, onDelete }) {
         {/* Calo & Nút xóa */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <span className="text-xs font-extrabold text-[#003139] min-w-[55px] text-right whitespace-nowrap">
-            {entry.caloriesSnapshot} kcal
+            {tCal} kcal
           </span>
 
           <div className="w-6 h-6 flex items-center justify-center shrink-0">
@@ -94,44 +107,44 @@ export default function DiaryEntryRow({ entry, onDelete }) {
         <div>
           {/* Macros chính */}
           <div className="pt-1.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <span className="text-[#003139]/80 font-medium">P: {entry.proteinSnapshot}g</span>
+            <span className="text-[#003139]/80 font-medium">P: {tPro}g</span>
             <span className="text-[#DFE3E4]">·</span>
-            <span className="text-[#C87C46]/80 font-medium">C: {entry.carbsSnapshot}g</span>
+            <span className="text-[#C87C46]/80 font-medium">C: {tCarb}g</span>
             <span className="text-[#DFE3E4]">·</span>
-            <span className="text-[#96A5A8]/80 font-medium">F: {entry.fatSnapshot}g</span>
-            {entry.fiberSnapshot != null && entry.fiberSnapshot > 0 && (
+            <span className="text-[#96A5A8]/80 font-medium">F: {tFat}g</span>
+            {tFib != null && tFib > 0 && (
               <>
                 <span className="text-[#DFE3E4]">·</span>
-                <span className="text-[#2EA850]/80 font-medium">Xơ: {entry.fiberSnapshot}g</span>
+                <span className="text-[#2EA850]/80 font-medium">Xơ: {tFib}g</span>
               </>
             )}
-            {entry.sugarSnapshot != null && entry.sugarSnapshot > 0 && (
+            {tSug != null && tSug > 0 && (
               <>
                 <span className="text-[#DFE3E4]">·</span>
-                <span className="text-[#DC2626]/80 font-medium">Đường: {entry.sugarSnapshot}g</span>
+                <span className="text-[#DC2626]/80 font-medium">Đường: {tSug}g</span>
               </>
             )}
-            {entry.sodiumSnapshot != null && entry.sodiumSnapshot > 0 && (
+            {tSod != null && tSod > 0 && (
               <>
                 <span className="text-[#DFE3E4]">·</span>
-                <span className="text-[#96A5A8]/80 font-medium">Natri: {Math.round(entry.sodiumSnapshot)}mg</span>
+                <span className="text-[#96A5A8]/80 font-medium">Natri: {tSod}mg</span>
               </>
             )}
           </div>
           {/* Vi chất — chỉ hiện nếu có ít nhất 1 giá trị */}
-          {(entry.vitaminASnapshot > 0 || entry.vitaminCSnapshot > 0 || entry.calciumSnapshot > 0 || entry.ironSnapshot > 0) && (
+          {(tVitA > 0 || tVitC > 0 || tCa > 0 || tFe > 0) && (
             <div className="pb-0.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[#96A5A8]">
-              {entry.vitaminASnapshot > 0 && (
-                <span>🥕 Vitamin A: {Math.round(entry.vitaminASnapshot)}µg</span>
+              {tVitA > 0 && (
+                <span>🥕 Vitamin A: {tVitA}µg</span>
               )}
-              {entry.vitaminCSnapshot > 0 && (
-                <span>🍊 Vitamin C: {Math.round(entry.vitaminCSnapshot * 10) / 10}mg</span>
+              {tVitC > 0 && (
+                <span>🍊 Vitamin C: {tVitC}mg</span>
               )}
-              {entry.calciumSnapshot > 0 && (
-                <span>🦴 Canxi: {Math.round(entry.calciumSnapshot)}mg</span>
+              {tCa > 0 && (
+                <span>🦴 Canxi: {tCa}mg</span>
               )}
-              {entry.ironSnapshot > 0 && (
-                <span>🩸 Sắt: {Math.round(entry.ironSnapshot * 10) / 10}mg</span>
+              {tFe > 0 && (
+                <span>🩸 Sắt: {tFe}mg</span>
               )}
             </div>
           )}

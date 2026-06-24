@@ -12,37 +12,34 @@ const GEMINI_TIMEOUT_MS = 30_000; // Tăng lên 30s làm đệm an toàn
  * Yêu cầu Gemini trả về JSON chuẩn hóa, quy đổi về per 100g.
  */
 const NUTRITION_PROMPT = `
-Bạn là chuyên gia dinh dưỡng. Hãy đọc bảng thành phần dinh dưỡng (Nutrition Facts / Thành phần dinh dưỡng) trong ảnh này.
+Bạn là chuyên gia dinh dưỡng. Hãy đọc bảng thành phần dinh dưỡng (Nutrition Facts) trong ảnh này.
 
 Yêu cầu:
-1. Trả về JSON với các trường sau (không thêm markdown, chỉ JSON thuần)
-2. Tất cả giá trị dinh dưỡng phải quy đổi về chuẩn per 100g hoặc per 100ml (DỰA TUYỆT ĐỐI vào đơn vị ghi trên bảng thành phần trong ảnh, nếu bảng ghi 100ml thì quy đổi theo 100ml, nếu ghi 100g thì quy đổi theo 100g). Tuyệt đối không tự suy đoán loại sản phẩm.
-3. Sodium đơn vị là mg
-4. Nếu không tìm thấy thông tin → trả về null cho trường đó
-5. Trường "confidence": "high" nếu ảnh rõ nét; "medium" nếu một số chữ mờ; "low" nếu khó đọc
+1. Trả về JSON thuần (không markdown).
+2. Quy đổi TẤT CẢ chỉ số về chuẩn "per 100g" hoặc "per 100ml" (tìm cột "per 100g/ml" nếu có). KHÔNG lấy cột "per serve".
+3. CHÚ Ý ĐẶC BIỆT: Các vi chất (Vitamins, Canxi, Sắt) thường nằm ở nửa dưới bảng. Hãy quét kỹ từng dòng để không bỏ sót Vitamin A (có thể ghi là µgRE, µg, mcg, IU), Vitamin C, Calcium/Canxi, Iron/Sắt.
+4. Sodium đơn vị là mg.
+5. Nếu không thấy dòng đó trên bảng → null. Tuyệt đối không bịa số liệu.
 
 JSON format:
 {
   "productName": "tên sản phẩm hoặc null",
-  "servingSize": "mô tả serving size gốc (vd: 30g, 1 gói, 250ml) hoặc null",
-  "unit": "100g" hoặc "100ml" (Ghi chính xác theo đơn vị g hay ml có trong ảnh),
-  "calories": số_kcal_per_100_donvi (CHÚ Ý: Bắt buộc là Kcal / Calories. TUYỆT ĐỐI KHÔNG đọc chỉ số kJ / Kilojoules. Nếu bảng chỉ có kJ, hãy chia cho 4.184 để ra kcal),
-  "protein": số_g_per_100_donvi,
-  "carbs": số_g_per_100_donvi,
-  "fat": số_g_per_100_donvi,
-  "fiber": số_g_per_100_donvi_hoặc_null,
-  "sugar": số_g_per_100_donvi_hoặc_null,
-  "sodium": số_mg_per_100_donvi_hoặc_null,
-  "vitaminA": số_IU_hoặc_mcg_per_100_donvi_hoặc_null,
-  "vitaminC": số_mg_per_100_donvi_hoặc_null,
-  "calcium": số_mg_per_100_donvi_hoặc_null,
-  "iron": số_mg_per_100_donvi_hoặc_null,
+  "servingSize": "mô tả serving size gốc (vd: 30g, 1 gói) hoặc null",
+  "unit": "100g" hoặc "100ml",
+  "calories": số_kcal_per_100 (Bắt buộc Kcal. Nếu chỉ có kJ, chia cho 4.184),
+  "protein": số_g_per_100,
+  "carbs": số_g_per_100,
+  "fat": số_g_per_100,
+  "fiber": số_g_per_100_hoặc_null,
+  "sugar": số_g_per_100_hoặc_null,
+  "sodium": số_mg_per_100_hoặc_null,
+  "vitaminA": số_mcg_hoặc_IU_per_100_hoặc_null,
+  "vitaminC": số_mg_per_100_hoặc_null,
+  "calcium": số_mg_per_100_hoặc_null,
+  "iron": số_mg_per_100_hoặc_null,
   "confidence": "high" | "medium" | "low",
-  "rawText": "toàn bộ text đọc được từ bảng dinh dưỡng"
+  "rawText": "toàn bộ text đọc được"
 }
-
-You are a nutrition expert. Read the Nutrition Facts label in this image and return a JSON object exactly as specified above. Convert from per serving to per 100g or 100ml if necessary.
-CRITICAL: Do NOT guess or estimate any value. If a micronutrient (vitaminA, vitaminC, calcium, iron) is NOT clearly printed on the label, you MUST return null for that field. Guessing is strictly forbidden.
 `;
 
 /**
