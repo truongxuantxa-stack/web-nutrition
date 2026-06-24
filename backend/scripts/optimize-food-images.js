@@ -1,51 +1,91 @@
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
-
-const artifactsDir = 'C:\\Users\\Hi Windows 10\\.gemini\\antigravity-ide\\brain\\95d4f449-fd3c-4d93-a716-737cdda6b0ff';
-const mappingFile = path.resolve(__dirname, '../scratch/food_name_mapping.json');
-const publicFoodsDir = path.resolve(__dirname, '../public/images/foods');
-
-if (!fs.existsSync(publicFoodsDir)) {
-    fs.mkdirSync(publicFoodsDir, { recursive: true });
-}
-
-const mapping = JSON.parse(fs.readFileSync(mappingFile, 'utf-8'));
+const glob = require('glob'); // maybe not installed? Let's use pure JS or fs.readdir
+const { execSync } = require('child_process');
 
 async function main() {
-    const files = fs.readdirSync(artifactsDir);
-    const pngFiles = files.filter(f => f.startsWith('food_') && f.endsWith('.png'));
-    
-    let processedCount = 0;
-    for (const file of pngFiles) {
-        const match = file.match(/^food_(\d+)_/);
-        if (!match) continue;
+    try {
+        console.log('--- Step 4: Optimize Food Images ---');
         
-        const id = parseInt(match[1]);
-        const mappedItem = mapping.find(item => item.id === id);
-        
-        if (!mappedItem) {
-            console.log(`Bỏ qua file ${file} vì không tìm thấy ID ${id} trong mapping`);
-            continue;
+        const publicDir = path.join(__dirname, '../public/images/foods');
+        if (!fs.existsSync(publicDir)) {
+            fs.mkdirSync(publicDir, { recursive: true });
         }
 
-        const sourcePath = path.join(artifactsDir, file);
-        const destPath = path.join(publicFoodsDir, mappedItem.filename);
+        const mappingPath = path.join(__dirname, '../scratch/food_name_mapping.json');
+        const progressPath = path.join(__dirname, '../scratch/generate_progress.json');
 
-        try {
-            await sharp(sourcePath)
-                .resize(400, 400, { fit: 'cover' })
-                .webp({ quality: 80 })
-                .toFile(destPath);
-            
-            console.log(`✅ [${id}] Resize & Convert: ${file} -> ${mappedItem.filename}`);
-            processedCount++;
-        } catch (err) {
-            console.error(`❌ Lỗi xử lý ${file}:`, err.message);
+        const mapping = JSON.parse(fs.readFileSync(mappingPath, 'utf-8'));
+        const progress = JSON.parse(fs.readFileSync(progressPath, 'utf-8'));
+
+        const completedSet = new Set(progress.completed);
+        
+        // Find all generated images in the brain directory
+        const brainDir = path.join(process.env.USERPROFILE, '.gemini', 'antigravity-ide', 'brain');
+        console.log('Searching for generated images in:', brainDir);
+        
+        // A simple recursive directory search for .png files
+        function findPngs(dir, fileList = []) {
+            if (!fs.existsSync(dir)) return fileList;
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+                const filePath = path.join(dir, file);
+                const stat = fs.statSync(filePath);
+                if (stat.isDirectory()) {
+                    findPngs(filePath, fileList);
+                } else if (file.endsWith('.png')) {
+                    fileList.push(filePath);
+                }
+            }
+            return fileList;
         }
+
+        const allPngs = findPngs(brainDir);
+        console.log(`Found ${allPngs.length} total PNGs in brain directory.`);
+
+        let optimizedCount = 0;
+        let skippedCount = 0;
+
+        for (const item of mapping) {
+            if (completedSet.has(item.id)) {
+                const targetFilename = item.filename; // e.g., "banh-pho-tuoi.webp"
+                const targetPath = path.join(publicDir, targetFilename);
+
+                if (fs.existsSync(targetPath)) {
+                    // Already optimized
+                    skippedCount++;
+                    continue;
+                }
+
+                // Need to find the source PNG
+                // The filename might have underscores instead of hyphens, e.g., "banh_pho_tuoi_1234.png"
+                const prefix = targetFilename.replace('.webp', '').replace(/-/g, '_');
+                const sourcePng = allPngs.find(p => path.basename(p).startsWith(prefix + '_') || path.basename(p) === prefix + '.png' || path.basename(p).startsWith(targetFilename.replace('.webp', '') + '_'));
+
+                if (sourcePng) {
+                    console.log(`Optimizing: ${sourcePng} -> ${targetFilename}`);
+                    await sharp(sourcePng)
+                        .resize(400, 400, {
+                            fit: sharp.fit.cover,
+                            position: sharp.strategy.attention
+                        })
+                        .webp({ quality: 80 })
+                        .toFile(targetPath);
+                    optimizedCount++;
+                } else {
+                    console.log(`Warning: Could not find source PNG for ${item.vietnamese} (${targetFilename})`);
+                }
+            }
+        }
+
+        console.log(`\nOptimization Complete!`);
+        console.log(`- Optimized: ${optimizedCount}`);
+        console.log(`- Skipped (already exists): ${skippedCount}`);
+
+    } catch (e) {
+        console.error('Error optimizing images:', e);
     }
-
-    console.log(`\nHoàn thành xử lý ${processedCount} ảnh.`);
 }
 
 main();
