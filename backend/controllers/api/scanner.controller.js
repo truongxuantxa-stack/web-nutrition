@@ -122,12 +122,20 @@ const confirmContribution = async (req, res) => {
             });
         }
 
+        let contributionCount = req.user.contributionCount;
+        if (barcode) {
+            req.user.contributionCount += 1;
+            await req.user.save();
+            contributionCount = req.user.contributionCount;
+        }
+
         return res.json({
             success: true,
             data: {
                 scannedProduct: result.scannedProduct,
                 food: result.food,
                 physicsResult: result.physicsResult,
+                contributionCount,
                 contributionMessage: barcode
                     ? 'Đã chia sẻ cho cộng đồng 🎉'
                     : 'Món ăn đã được lưu vào nhật ký!',
@@ -196,4 +204,55 @@ const decodeBarcodeImage = async (req, res) => {
     }
 };
 
-module.exports = { barcodeLookup, aiVision, confirmContribution, reportProduct: reportProductCtrl, decodeBarcodeImage };
+/**
+ * POST /api/v1/scanner/upload-product-image
+ * Body: { scannedProductId, image }
+ * Response: { imageUrl, contributionCount }
+ */
+const uploadProductImage = async (req, res) => {
+    try {
+        const { scannedProductId, image } = req.body;
+        if (!scannedProductId || !image) {
+            return res.status(400).json({ success: false, message: 'Thiếu scannedProductId hoặc ảnh.' });
+        }
+
+        const product = await ScannedProduct.findByPk(scannedProductId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm.' });
+        }
+
+        const { uploadProductImage: cloudinaryUpload } = require('../../services/cloudinary.service');
+        const uploadResult = await cloudinaryUpload(image, product.name || 'product');
+        
+        product.imageUrl = uploadResult.url;
+        await product.save();
+
+        // Cập nhật cả Food nếu có cùng barcode
+        if (product.barcode) {
+            const { Food } = require('../../models');
+            const food = await Food.findOne({ where: { barcode: product.barcode } });
+            if (food) {
+                food.imageUrl = uploadResult.url;
+                await food.save();
+            }
+        }
+
+        // Gamification
+        req.user.contributionCount += 1;
+        await req.user.save();
+
+        return res.json({
+            success: true,
+            data: {
+                imageUrl: uploadResult.url,
+                contributionCount: req.user.contributionCount
+            }
+        });
+
+    } catch (err) {
+        console.error('[Scanner] uploadProductImage error:', err);
+        return res.status(500).json({ success: false, message: 'Lỗi khi tải ảnh mặt trước.' });
+    }
+};
+
+module.exports = { barcodeLookup, aiVision, confirmContribution, reportProduct: reportProductCtrl, decodeBarcodeImage, uploadProductImage };

@@ -124,7 +124,15 @@ export default function ProfilePage() {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#003139]">Hồ sơ cá nhân</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-[#003139]">Hồ sơ cá nhân</h1>
+          {data?.user?.contributionCount > 0 && (
+            <div className="bg-primary/10 text-primary text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+              <Award className="w-3.5 h-3.5" />
+              Đóng góp cộng đồng: {data.user.contributionCount}
+            </div>
+          )}
+        </div>
         <p className="text-[#96A5A8] text-sm">Quản lý các chỉ số thể chất, phân bổ dinh dưỡng và danh mục dị ứng</p>
       </div>
 

@@ -25,6 +25,7 @@ router.post('/barcode-lookup',          ctrl.barcodeLookup);
 router.post('/ai-vision',               aiVisionLimiter, ctrl.aiVision);
 router.post('/decode-barcode-image',     aiVisionLimiter, ctrl.decodeBarcodeImage);
 router.post('/confirm-contribution',     ctrl.confirmContribution);
+router.post('/upload-product-image',     ctrl.uploadProductImage);
 router.post('/report',                   ctrl.reportProduct);
 
 module.exports = router;

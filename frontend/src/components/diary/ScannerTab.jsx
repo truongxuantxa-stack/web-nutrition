@@ -71,7 +71,11 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
             if (nutritionData.netWeight) {
                 scanner.setAmount(nutritionData.netWeight.toString());
             }
-            setUiState('done');
+            if (result.scannedProduct?.id && !result.scannedProduct?.imageUrl) {
+                setUiState('upload_photo');
+            } else {
+                setUiState('done');
+            }
         }
     };
 
@@ -100,8 +104,12 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
             iron: product.iron,
             unit: product.unit || '100g',
             imageUrl: product.imageUrl,
-        }, product.barcode).then(() => {
-            setUiState('done');
+        }, product.barcode).then((result) => {
+            if (result && result.scannedProduct?.id && !result.scannedProduct?.imageUrl) {
+                setUiState('upload_photo');
+            } else {
+                setUiState('done');
+            }
         });
     };
 
@@ -375,11 +383,44 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
         );
     }
 
+    // ── upload_photo ──────────────────────────────────────────────────────────
+    if (uiState === 'upload_photo') {
+        return (
+            <div className="flex flex-col gap-3 items-center py-4 text-center">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Camera className="w-8 h-8 text-primary" />
+                </div>
+                <h4 className="font-semibold mt-2">📸 Đóng góp ảnh sản phẩm</h4>
+                <p className="text-sm text-base-content/70">
+                    Sản phẩm này chưa có ảnh. Hãy chụp ảnh mặt trước sản phẩm để giúp cộng đồng nhận diện dễ dàng hơn nhé!
+                </p>
+                <div className="w-full mt-4">
+                    {scanner.isUploadingImage ? (
+                        <div className="flex flex-col items-center gap-2 py-4">
+                            <span className="loading loading-spinner text-primary"></span>
+                            <span className="text-sm">Đang tải ảnh lên...</span>
+                        </div>
+                    ) : (
+                        <PhotoCapture onCapture={async (base64) => {
+                            await scanner.uploadProductImage(scanner.scannedProductId, base64);
+                            setUiState('done');
+                        }} />
+                    )}
+                </div>
+                {!scanner.isUploadingImage && (
+                    <button type="button" className="btn btn-ghost btn-sm mt-2" onClick={() => setUiState('done')}>
+                        Bỏ qua
+                    </button>
+                )}
+            </div>
+        );
+    }
+
     // ── done ──────────────────────────────────────────────────────────────────
     if (uiState === 'done') {
         return (
             <div className="flex flex-col items-center gap-4 py-6 text-center">
-                <ConfettiEffect />
+                {scanner.contributionMessage?.includes('cộng đồng') && <ConfettiEffect />}
 
                 <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center">
                     <CheckCircle2 className="w-8 h-8 text-success" />
@@ -389,6 +430,16 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
                     <p className="font-semibold text-lg">
                         {scanner.contributionMessage || 'Đã lưu thành công!'}
                     </p>
+                    {scanner.contributionCount > 0 && scanner.contributionMessage?.includes('cộng đồng') && (
+                        <p className="text-xs font-medium text-primary mt-1">
+                            🎉 Cảm ơn bạn! Bạn đã đóng góp sản phẩm thứ {scanner.contributionCount} cho cộng đồng!
+                        </p>
+                    )}
+                    {scanner.uploadedImageUrl && (
+                        <p className="text-xs font-medium text-success mt-1">
+                            ✅ Đã thêm ảnh sản phẩm!
+                        </p>
+                    )}
                     {scanner.confirmedFood && (
                         <p className="text-sm text-base-content/60 mt-1">
                             {scanner.confirmedFood.name} — {scanner.confirmedFood.calories} kcal/{scanner.confirmedFood.unit || '100g'}

@@ -80,6 +80,15 @@ export default function useScanner({ date, defaultMeal, onClose }) {
         },
     });
 
+    const uploadImageMutation = useMutation({
+        mutationFn: ({ scannedProductId, image }) =>
+            api.post('/scanner/upload-product-image', { scannedProductId, image }).then(r => r.data.data),
+    });
+
+    const uploadProductImage = (scannedProductId, image) => {
+        return uploadImageMutation.mutateAsync({ scannedProductId, image });
+    };
+
     const lookupBarcode = (barcode) => {
         return barcodeMutation.mutateAsync(barcode);
     };
@@ -109,6 +118,7 @@ export default function useScanner({ date, defaultMeal, onClose }) {
         setScanMode(null);
         setScanResult(null);
         setAiResult(null);
+        uploadImageMutation.reset();
     };
 
     return {
@@ -124,10 +134,14 @@ export default function useScanner({ date, defaultMeal, onClose }) {
         isProcessingAI: aiVisionMutation.isPending,
         isConfirming: confirmMutation.isPending,
         isAddingToDiary: addToDiaryMutation.isPending,
+        isUploadingImage: uploadImageMutation.isPending,
 
         // Confirmed food from contribution
         confirmedFood: confirmMutation.data?.food || null,
         contributionMessage: confirmMutation.data?.contributionMessage || null,
+        contributionCount: confirmMutation.data?.contributionCount || 0,
+        uploadedImageUrl: uploadImageMutation.data?.imageUrl || null,
+        scannedProductId: confirmMutation.data?.scannedProduct?.id || null,
 
         // Actions
         lookupBarcode,
@@ -135,6 +149,7 @@ export default function useScanner({ date, defaultMeal, onClose }) {
         confirmAndSave,
         addFoodToDiary,
         reportBadData,
+        uploadProductImage,
         reset,
     };
 }

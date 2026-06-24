@@ -176,6 +176,12 @@ const User = sequelize.define('User', {
         allowNull: true,
         defaultValue: null,
     },
+    contributionCount: {
+        // Số lần đóng góp sản phẩm cho cộng đồng
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
 }, {
     tableName: 'users',
     timestamps: true,

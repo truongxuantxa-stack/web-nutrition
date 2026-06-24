@@ -7,9 +7,9 @@ const { calculateAllMetrics, calculateWaterGoal } = require('../../services/nutr
 exports.getProfile = async (req, res) => {
     try {
         const metrics = calculateAllMetrics(req.user);
-        const { id, fullName, email, gender, birthDate, height, weight, activityLevel, goal, isOnboarded, macroProtein, macroCarbs, macroFat } = req.user;
+        const { id, fullName, email, gender, birthDate, height, weight, activityLevel, goal, isOnboarded, macroProtein, macroCarbs, macroFat, contributionCount } = req.user;
         return res.success({
-            user: { id, name: fullName, email, gender, birthDate, height, weight, activityLevel, goal, isOnboarded, macroProtein, macroCarbs, macroFat },
+            user: { id, name: fullName, email, gender, birthDate, height, weight, activityLevel, goal, isOnboarded, macroProtein, macroCarbs, macroFat, contributionCount },
             metrics
         });
     } catch (err) {
