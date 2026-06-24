@@ -1,8 +1,8 @@
-require('dotenv').config();
+require('dotenv').config({ path: './backend/.env' });
 const fs = require('fs');
 const path = require('path');
-const { MealTemplate } = require('./models');
-const sequelize = require('./config/database');
+const { MealTemplate } = require('./backend/models');
+const sequelize = require('./backend/config/database');
 
 async function main() {
     try {
@@ -26,8 +26,8 @@ async function main() {
             }
         }
         
-        const mappingPath = path.join(__dirname, 'scratch/food_name_mapping.json');
-        const progressPath = path.join(__dirname, 'scratch/generate_progress.json');
+        const mappingPath = path.join(__dirname, 'backend/scratch/food_name_mapping.json');
+        const progressPath = path.join(__dirname, 'backend/scratch/generate_progress.json');
         
         const mapping = JSON.parse(fs.readFileSync(mappingPath, 'utf-8'));
         const progress = JSON.parse(fs.readFileSync(progressPath, 'utf-8'));
@@ -36,11 +36,14 @@ async function main() {
         
         let pending = mapping.filter(item => !completedSet.has(item.id));
         
-        // Sort: template foods first
+        // Sort: template foods first, then fruits
         pending.sort((a, b) => {
             const aInTpl = templateFoodIds.has(a.id) ? 1 : 0;
             const bInTpl = templateFoodIds.has(b.id) ? 1 : 0;
-            return bInTpl - aInTpl;
+            if (bInTpl !== aInTpl) return bInTpl - aInTpl;
+            const aIsFruit = a.category === 'vitamin' ? 1 : 0;
+            const bIsFruit = b.category === 'vitamin' ? 1 : 0;
+            return bIsFruit - aIsFruit;
         });
         
         const nextBatch = pending.slice(0, 20);

@@ -55,7 +55,8 @@ async function run() {
         category: baseFood.category,
         foodType: 'dish',
         isSuggestable: false,
-        isCustom: false
+        isCustom: false,
+        imageUrl: baseFood.imageUrl
       };
 
       const [food, created] = await Food.findOrCreate({

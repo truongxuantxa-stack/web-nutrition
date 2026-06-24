@@ -36,11 +36,14 @@ async function main() {
         
         let pending = mapping.filter(item => !completedSet.has(item.id));
         
-        // Sort: template foods first
+        // Sort: template foods first, then fruits
         pending.sort((a, b) => {
             const aInTpl = templateFoodIds.has(a.id) ? 1 : 0;
             const bInTpl = templateFoodIds.has(b.id) ? 1 : 0;
-            return bInTpl - aInTpl;
+            if (bInTpl !== aInTpl) return bInTpl - aInTpl;
+            const aIsFruit = a.category === 'vitamin' ? 1 : 0;
+            const bIsFruit = b.category === 'vitamin' ? 1 : 0;
+            return bIsFruit - aIsFruit;
         });
         
         const nextBatch = pending.slice(0, 20);
