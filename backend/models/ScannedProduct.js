@@ -56,6 +56,26 @@ const ScannedProduct = sequelize.define('ScannedProduct', {
         allowNull: true,
         defaultValue: null,
     },
+    vitaminA: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
+    vitaminC: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
+    calcium: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
+    iron: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
+    },
     unit: {
         type: DataTypes.STRING(20),
         allowNull: false,

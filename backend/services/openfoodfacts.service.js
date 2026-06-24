@@ -156,7 +156,11 @@ const lookupByBarcode = async (barcode) => {
             fat: n['fat_100g'],
             fiber: n['fiber_100g'] || null,
             sugar: n['sugars_100g'] || null,
-            sodium: n['sodium_100g'] ? (n['sodium_100g'] * 1000) : null, // kg → mg
+            sodium: n['sodium_100g'] ? (n['sodium_100g'] * 1000) : null, // kg/g → mg
+            vitaminA: n['vitamin-a_100g'] ? (n['vitamin-a_100g'] * 1000) : null,
+            vitaminC: n['vitamin-c_100g'] ? (n['vitamin-c_100g'] * 1000) : null,
+            calcium: n['calcium_100g'] ? (n['calcium_100g'] * 1000) : null,
+            iron: n['iron_100g'] ? (n['iron_100g'] * 1000) : null,
             imageUrl: p.image_front_small_url || null,
             // Thể tích/khối lượng thực của sản phẩm (vd: "330ml", "180 ml", "500g")
             // OFF có thể trả null nếu sản phẩm chưa đủ dữ liệu

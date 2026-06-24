@@ -117,7 +117,7 @@ function SearchTab({ date, defaultMeal, onSwitchToCreate }) {
             <div className="form-control">
               <label className="label py-0">
                 <span className="label-text text-xs">
-                  Số lượng ({selected.unit === '100g' ? 'g' : selected.unit === '100ml' ? 'ml' : (selected.unit || 'g')})
+                  {selected.unit === '100g' ? 'Khối lượng (g)' : selected.unit === '100ml' ? 'Thể tích (ml)' : `Số lượng (${selected.unit || 'g'})`}
                 </span>
               </label>
               <input

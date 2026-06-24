@@ -73,7 +73,7 @@ const aiVision = async (req, res) => {
 const confirmContribution = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { barcode, name, calories, protein, carbs, fat, fiber, sugar, sodium, vitaminA, vitaminC, calcium, iron, base64Image, unit } = req.body;
+        const { barcode, name, calories, protein, carbs, fat, fiber, sugar, sodium, vitaminA, vitaminC, calcium, iron, base64Image, unit, imageUrl: reqImageUrl } = req.body;
 
         // Validate input cơ bản
         const numFields = { calories, protein, carbs, fat };
@@ -83,7 +83,7 @@ const confirmContribution = async (req, res) => {
             }
         }
 
-        let imageUrl = null;
+        let imageUrl = reqImageUrl || null;
         if (base64Image) {
             try {
                 // Thêm prefix nếu chưa có

@@ -17,9 +17,10 @@ Bạn là chuyên gia dinh dưỡng. Hãy đọc bảng thành phần dinh dư�
 Yêu cầu:
 1. Trả về JSON thuần (không markdown).
 2. Quy đổi TẤT CẢ chỉ số về chuẩn "per 100g" hoặc "per 100ml" (tìm cột "per 100g/ml" nếu có). KHÔNG lấy cột "per serve".
-3. CHÚ Ý ĐẶC BIỆT: Các vi chất (Vitamins, Canxi, Sắt) thường nằm ở nửa dưới bảng. Hãy quét kỹ từng dòng để không bỏ sót Vitamin A (có thể ghi là µgRE, µg, mcg, IU), Vitamin C, Calcium/Canxi, Iron/Sắt.
-4. Sodium đơn vị là mg.
-5. Nếu không thấy dòng đó trên bảng → null. Tuyệt đối không bịa số liệu.
+3. CHÚ Ý ĐẶC BIỆT: Các vi chất (Vitamins, Canxi, Sắt) thường nằm ở nửa dưới bảng. Hãy quét kỹ từng dòng để không bỏ sót Vitamin A, Vitamin C, Calcium/Canxi, Iron/Sắt.
+4. NẾU Vitamin A tính bằng IU, BẮT BUỘC phải quy đổi sang µg (mcg) bằng cách nhân với 0.3 (VD: 250 IU = 75 µg). NẾU Vitamin D tính bằng IU, quy đổi sang µg bằng cách nhân 0.025. Tuy nhiên form hiện tại chỉ cần Vitamin A.
+5. Sodium đơn vị là mg.
+6. Nếu không thấy dòng đó trên bảng → null. Tuyệt đối không bịa số liệu.
 
 JSON format:
 {
@@ -33,7 +34,7 @@ JSON format:
   "fiber": số_g_per_100_hoặc_null,
   "sugar": số_g_per_100_hoặc_null,
   "sodium": số_mg_per_100_hoặc_null,
-  "vitaminA": số_mcg_hoặc_IU_per_100_hoặc_null,
+  "vitaminA": số_mcg_per_100_hoặc_null (đã quy đổi sang µg),
   "vitaminC": số_mg_per_100_hoặc_null,
   "calcium": số_mg_per_100_hoặc_null,
   "iron": số_mg_per_100_hoặc_null,
@@ -75,8 +76,8 @@ const extractNutritionFromImage = async (base64Image, mimeType = 'image/jpeg') =
             );
             result = await Promise.race([apiCall, timeout]);
         } catch (err) {
-            console.warn(`[GeminiVision] Lỗi với ${GEMINI_MODEL}: ${err.message}. Đang thử dùng model dự phòng (gemini-1.5-flash)...`);
-            const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+            console.warn(`[GeminiVision] Lỗi với ${GEMINI_MODEL}: ${err.message}. Đang thử dùng model dự phòng (gemini-2.5-flash)...`);
+            const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
             const fallbackImagePart = {
                 inlineData: { data: base64Image, mimeType },
             };
@@ -182,8 +183,8 @@ const extractBarcodeFromImage = async (base64Image, mimeType = 'image/jpeg') => 
             );
             result = await Promise.race([apiCall, timeout]);
         } catch (err) {
-            console.warn(`[GeminiVision] Barcode: Lỗi với ${GEMINI_MODEL}: ${err.message}. Đang thử dùng model dự phòng (gemini-1.5-flash)...`);
-            const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+            console.warn(`[GeminiVision] Barcode: Lỗi với ${GEMINI_MODEL}: ${err.message}. Đang thử dùng model dự phòng (gemini-2.5-flash)...`);
+            const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
             const fallbackImagePart = {
                 inlineData: { data: base64Image, mimeType },
             };

@@ -69,8 +69,7 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
         const result = await scanner.confirmAndSave(nutritionData, currentBarcode);
         if (result) {
             if (nutritionData.netWeight) {
-                const multiplier = nutritionData.netWeight / 100;
-                scanner.setAmount(multiplier.toString());
+                scanner.setAmount(nutritionData.netWeight.toString());
             }
             setUiState('done');
         }
@@ -95,7 +94,12 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
             fiber: product.fiber,
             sugar: product.sugar,
             sodium: product.sodium,
+            vitaminA: product.vitaminA,
+            vitaminC: product.vitaminC,
+            calcium: product.calcium,
+            iron: product.iron,
             unit: product.unit || '100g',
+            imageUrl: product.imageUrl,
         }, product.barcode).then(() => {
             setUiState('done');
         });
@@ -219,13 +223,32 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
                             </div>
                         ))}
                     </div>
+                    
+                    {/* Vi chất (nếu có) */}
+                    {(product.fiber != null || product.sugar != null || product.sodium != null || product.vitaminA != null || product.vitaminC != null || product.calcium != null || product.iron != null) && (
+                        <div className="flex flex-wrap gap-2 justify-center mt-2">
+                            {[
+                                { label: 'Xơ', value: product.fiber, unit: 'g' },
+                                { label: 'Đường', value: product.sugar, unit: 'g' },
+                                { label: 'Natri', value: product.sodium, unit: 'mg' },
+                                { label: 'Vit A', value: product.vitaminA, unit: 'µg' },
+                                { label: 'Vit C', value: product.vitaminC, unit: 'mg' },
+                                { label: 'Canxi', value: product.calcium, unit: 'mg' },
+                                { label: 'Sắt', value: product.iron, unit: 'mg' },
+                            ].filter(item => item.value != null).map(({ label, value, unit }) => (
+                                <div key={label} className="badge badge-outline badge-sm text-xs opacity-75">
+                                    {label}: {parseFloat(value).toFixed(1)}{unit}
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
-                    <p className="text-xs text-base-content/50 text-center mb-4">per {product.unit || '100g'}</p>
+                    <p className="text-xs text-base-content/50 text-center mb-4 mt-2">per {product.unit || '100g'}</p>
                     
                     {/* Chọn bữa + số lượng */}
                     <div className="grid grid-cols-2 gap-2">
                         <div className="form-control">
-                            <label className="label py-0"><span className="label-text text-xs">Số lượng</span></label>
+                            <label className="label py-0"><span className="label-text text-xs">{product.unit === '100g' ? 'Khối lượng (g)' : product.unit === '100ml' ? 'Thể tích (ml)' : `Số lượng (${product.unit || 'g'})`}</span></label>
                             <input
                                 type="number"
                                 className="input input-bordered input-sm"
@@ -376,7 +399,7 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
                 {/* Chọn bữa + số lượng */}
                 <div className="grid grid-cols-2 gap-2 w-full max-w-xs">
                     <div className="form-control">
-                        <label className="label py-0"><span className="label-text text-xs">Số lượng (x{scanner.confirmedFood?.unit || '100g'})</span></label>
+                        <label className="label py-0"><span className="label-text text-xs">{scanner.confirmedFood?.unit === '100g' ? 'Khối lượng (g)' : scanner.confirmedFood?.unit === '100ml' ? 'Thể tích (ml)' : `Số lượng (${scanner.confirmedFood?.unit || 'g'})`}</span></label>
                         <input
                             type="number"
                             className="input input-bordered input-sm"
