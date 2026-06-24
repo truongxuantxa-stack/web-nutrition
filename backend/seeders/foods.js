@@ -554,4 +554,8 @@ async function seedFoods() {
     }
 }
 
-seedFoods();
+// Chỉ chạy khi file được gọi TRỰC TIẾP (node seeders/foods.js)
+// Tránh tự động thực thi khi bị require() bởi file khác → Ngăn xóa DB nhầm!
+if (require.main === module) {
+    seedFoods();
+}

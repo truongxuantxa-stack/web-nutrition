@@ -76,4 +76,8 @@ async function seedMealTemplates() {
     }
 }
 
-seedMealTemplates();
+// Chỉ chạy khi file được gọi TRỰC TIẾP (node seeders/mealTemplates.js)
+// Tránh tự động thực thi khi bị require() bởi file khác → Ngăn xóa DB nhầm!
+if (require.main === module) {
+    seedMealTemplates();
+}

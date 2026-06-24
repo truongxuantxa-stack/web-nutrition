@@ -64,4 +64,8 @@ async function seedStreetFoods() {
     }
 }
 
-seedStreetFoods();
+// Chi chay khi file duoc goi TRUC TIEP (node backend\scripts\seed-street-foods.js)
+// Tranh tu dong thuc thi khi bi require() boi file khac -> Ngan xoa DB nham!
+if (require.main === module) {
+    seedStreetFoods();
+}
