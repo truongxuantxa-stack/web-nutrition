@@ -1284,7 +1284,7 @@ const generateReportPDF = async (reportData) => {
                 const cData = [
                     { text: truncateString(item.name, 22), color: COLORS.black },
                     { text: `${item.count}`, color: COLORS.black },
-                    { text: `${item.avgCaloriesPerServing}`, color: COLORS.black },
+                    { text: `${item.avgCaloriesPer100g}`, color: COLORS.black },
                     { text: isSkipped ? '–' : getNutriCellText(item.scoring.sodium), color: isSkipped ? COLORS.gray : getNutriColor(item.scoring.sodium) },
                     { text: isSkipped ? '–' : getNutriCellText(item.scoring.sugar), color: isSkipped ? COLORS.gray : getNutriColor(item.scoring.sugar) },
                     { text: isSkipped ? '–' : getNutriCellText(item.scoring.protein), color: isSkipped ? COLORS.gray : getNutriColor(item.scoring.protein) },
@@ -1314,7 +1314,7 @@ const generateReportPDF = async (reportData) => {
             y += 12;
             doc.font('Regular').fontSize(7).fillColor('#9CA3AF') // Lighter gray for disclaimer
                 .text(
-                    '*Lưu ý: Thuật toán chấm điểm món ăn chỉ mang tính chất tham khảo tương đối dựa trên mật độ dinh dưỡng (Đạm, Xơ, Đường, Natri) trên 100 kcal. Khuyến nghị này không thay thế lời khuyên y khoa từ bác sĩ.',
+                    '*Lưu ý: Thuật toán chấm điểm món ăn chỉ mang tính chất tham khảo tương đối dựa trên mật độ dinh dưỡng (toàn diện các vi chất, ngoại trừ Natri) trên 100 kcal. Khuyến nghị này không thay thế lời khuyên y khoa từ bác sĩ.',
                     PAGE_MARGIN, y,
                     { width: doc.page.width - PAGE_MARGIN * 2, align: 'right' }
                 );

@@ -276,7 +276,7 @@ export default function WeightTrendChart({ data, range, onRangeChange }) {
       </div>
 
       <div className="flex-1 p-5 pt-2 pb-0 min-h-[250px] relative">
-        <Line id="weight-trend-chart" data={{ datasets: chartDatasets }} options={options} />
+        <Line key={JSON.stringify(chartDatasets)} data={{ datasets: chartDatasets }} options={options} />
       </div>
 
       {/* Custom Legend */}

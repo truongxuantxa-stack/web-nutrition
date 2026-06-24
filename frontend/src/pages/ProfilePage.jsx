@@ -213,7 +213,15 @@ export default function ProfilePage() {
                 <span className="text-xs text-[#96A5A8]">Chỉ số BMI</span>
                 <p className="text-xl font-bold flex items-baseline gap-1.5 mt-0.5 text-[#003139]">
                   {metrics.bmi ? metrics.bmi.toFixed(1) : '--'}
-                  <span className="text-xs font-semibold tcl-badge">{metrics.bmiClass?.label || 'Chưa có'}</span>
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
+                    metrics.bmiClass?.color === 'blue' ? 'bg-blue-100 text-blue-700' :
+                    metrics.bmiClass?.color === 'green' ? 'bg-emerald-100 text-emerald-700' :
+                    metrics.bmiClass?.color === 'yellow' ? 'bg-amber-100 text-amber-700' :
+                    metrics.bmiClass?.color === 'red' ? 'bg-red-100 text-red-700' :
+                    'bg-gray-100 text-gray-700'
+                  }`}>
+                    {metrics.bmiClass?.label || 'Chưa có'}
+                  </span>
                 </p>
               </div>
               <div className="border-t border-[#DFE3E4] pt-3">
@@ -221,7 +229,14 @@ export default function ProfilePage() {
                 <p className="text-xl font-bold mt-0.5 text-[#003139]">{metrics.bmr ? `${Math.round(metrics.bmr)} kcal` : '--'}</p>
               </div>
               <div className="border-t border-[#DFE3E4] pt-3">
-                <span className="text-xs text-[#96A5A8]">Tổng tiêu hao hàng ngày (TDEE)</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-[#96A5A8]">Tổng tiêu hao hàng ngày (TDEE)</span>
+                  {metrics.isAdaptiveActive && (
+                    <span className="text-[9px] font-semibold bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                      Thích ứng
+                    </span>
+                  )}
+                </div>
                 <p className="text-xl font-bold mt-0.5 text-[#003139]">{metrics.tdee ? `${Math.round(metrics.tdee)} kcal` : '--'}</p>
               </div>
               <div className="border-t border-[#DFE3E4] pt-3 mt-auto bg-[#003139]/5 rounded-xl p-3 border border-[#003139]/15">

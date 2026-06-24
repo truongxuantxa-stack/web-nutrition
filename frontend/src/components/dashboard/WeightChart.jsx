@@ -76,7 +76,7 @@ export default function WeightChart({ chartData = [] }) {
       <div className="p-5 flex flex-col gap-2">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">⚖️ Cân nặng {chartData.length} ngày</h3>
         <div className="h-44">
-          <Line id="weight-chart" data={data} options={options} />
+          <Line key={JSON.stringify(data)} data={data} options={options} />
         </div>
       </div>
     </div>

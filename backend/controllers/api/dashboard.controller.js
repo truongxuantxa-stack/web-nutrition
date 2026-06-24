@@ -47,6 +47,9 @@ exports.getDashboard = async (req, res) => {
         const calorieProgress = getCalorieProgress(consumed.calories, metrics.targetCalories || 0);
         const macroProgress   = getMacroProgress(consumed, metrics.macros || {});
 
+        const today = toLocalDateString(new Date());
+        const isHistorical = (date !== today);
+
         // Nước uống
         const { total: waterTotal } = await getWaterByDate(user.id, date);
         const waterGoal = user.waterGoal || calculateWaterGoal(user.weight);
@@ -54,10 +57,10 @@ exports.getDashboard = async (req, res) => {
         // Health Insights + Score
         const healthInsights = getHealthInsights(
             consumed, metrics, {},
-            waterTotal, waterGoal, user.gender
+            waterTotal, waterGoal, user.gender, isHistorical
         );
         const healthScore = calculateDailyHealthScore(
-            consumed, metrics, waterTotal, waterGoal, healthInsights, user.gender
+            consumed, metrics, waterTotal, waterGoal, healthInsights, user.gender, {}, null, isHistorical
         );
         const weightLogs = await WeightLog.findAll({
             where: { userId: user.id },

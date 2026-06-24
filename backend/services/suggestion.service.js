@@ -172,13 +172,10 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
     // Ví dụ: server UTC 13:30 nhưng user VN đang là 20:30 → cảnh báo tối sẽ không kích hoạt nếu dùng giờ server.
     const currentHour = (clientHour !== null && Number.isInteger(clientHour)) ? clientHour : new Date().getHours();
 
-    const hasSang = mealGroups?.sang?.length > 0;
-    const hasTrua = mealGroups?.trua?.length > 0;
-    const hasToi  = mealGroups?.toi?.length > 0;
-    const isDayComplete = isHistorical || currentHour >= 20 || (hasSang && hasTrua && hasToi);
+    const isDayComplete = isHistorical || currentHour >= 20;
 
-    // Gate cảnh báo THIẾU: kích hoạt khi đủ bữa, qua 20h, hoặc dữ liệu lịch sử
-    const shouldWarnDeficiency = isDayComplete && consumed.calories > 0;
+    // Gate cảnh báo THIẾU: kích hoạt khi calPct >= 100, qua 20h, hoặc dữ liệu lịch sử
+    const shouldWarnDeficiency = (isHistorical || calPct >= 100 || currentHour >= 20) && consumed.calories > 0;
 
     // ── RDI chuẩn ────────────────────────────────────────────────────────────
     const isMale      = gender !== 'female';
@@ -330,14 +327,26 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
     // ════════════════════════════════════════════════════════════════════════════
     // NHÓM NƯỚC — kích hoạt MỌI LÚC (uống đủ nước luôn cần thiết)
     // ════════════════════════════════════════════════════════════════════════════
-    if (waterGoal > 0 && waterTotal < waterGoal) {
-        const waterPct = Math.round((waterTotal / waterGoal) * 100);
-        waterInsights.push({
-            severity: 'water',
-            icon: '💧',
-            title: `Cơ thể bạn đang thiếu nước mới đạt (${waterPct}% mục tiêu)`,
-            message: 'Thiếu nước làm chậm trao đổi chất và giảm năng lượng. Hãy uống ngay 1-2 ly nước nhé!',
-        });
+    if (waterGoal > 0) {
+        let expectedWaterRatio = 1;
+        if (!isHistorical && currentHour < 20) {
+            if (currentHour <= 8) {
+                expectedWaterRatio = 0.1;
+            } else {
+                expectedWaterRatio = (currentHour - 8) / (20 - 8);
+            }
+        }
+        
+        const expectedWater = waterGoal * expectedWaterRatio;
+        if (waterTotal < expectedWater) {
+            const waterPct = Math.round((waterTotal / waterGoal) * 100);
+            waterInsights.push({
+                severity: 'water',
+                icon: '💧',
+                title: `Cơ thể bạn đang thiếu nước mới đạt (${waterPct}% mục tiêu)`,
+                message: 'Thiếu nước làm chậm trao đổi chất và giảm năng lượng. Hãy uống ngay 1-2 ly nước nhé!',
+            });
+        }
     }
 
     // ── Sắp xếp theo ưu tiên: danger → warning → water → suggestion ──────────
@@ -367,10 +376,7 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
     }
 
     const currentHour = (clientHour !== null && Number.isInteger(clientHour)) ? clientHour : new Date().getHours();
-    const hasSang = mealGroups?.sang?.length > 0;
-    const hasTrua = mealGroups?.trua?.length > 0;
-    const hasToi  = mealGroups?.toi?.length > 0;
-    const isDayComplete = isHistorical || currentHour >= 20 || (hasSang && hasTrua && hasToi);
+    const isDayComplete = isHistorical || currentHour >= 20;
 
     // Nếu chưa hết ngày và chưa đủ 3 bữa thì treo điểm ở trạng thái Pending
     if (!isDayComplete) {
