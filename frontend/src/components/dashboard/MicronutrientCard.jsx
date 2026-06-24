@@ -36,6 +36,10 @@ export default function MicronutrientCard({ consumed, gender }) {
           const displayPercent = Math.min(percent, 100);
           const isWarning      = item.reverse && item.value > item.target;
 
+          const displayValue = ['fiber', 'iron'].includes(item.key) 
+            ? (Number.isInteger(item.value) ? item.value : Number(item.value).toFixed(1)) 
+            : Math.round(item.value);
+
           return (
             <div key={item.key} className="flex items-center gap-3 text-sm group">
               <div className="w-7 h-7 rounded-full bg-[#F0F2F3] flex items-center justify-center text-sm shadow-sm group-hover:scale-110 transition-transform flex-shrink-0">
@@ -45,7 +49,7 @@ export default function MicronutrientCard({ consumed, gender }) {
                 <div className="flex justify-between items-center text-xs font-semibold text-[#244348]">
                   <span>{item.label}</span>
                   <span className={isWarning ? 'text-[#DC2626] font-bold' : ''}>
-                    {item.value}{item.unit} <span className="font-normal text-[#96A5A8]">/ {item.target}{item.unit}</span>
+                    {displayValue}{item.unit} <span className="font-normal text-[#96A5A8]">/ {item.target}{item.unit}</span>
                   </span>
                 </div>
                 <div className="w-full h-1.5 bg-[#F0F2F3] rounded-full overflow-hidden">
