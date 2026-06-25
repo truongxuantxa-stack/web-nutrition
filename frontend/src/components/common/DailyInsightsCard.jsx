@@ -166,9 +166,15 @@ export default function DailyInsightsCard({ insights = [], healthScore = null, m
                   style={{ width: `${score}%` }}
                 />
               </div>
-              <p className="text-[10px] text-[#96A5A8] leading-none">
-                Dựa trên {insights.length} tiêu chí hôm nay
-              </p>
+              {healthScore?.calorieLevel === 'critical' ? (
+                <p className="text-[10px] text-[#DC2626] font-semibold leading-none mt-1">
+                  ⚡ Điểm bị giảm mạnh do lượng ăn quá thấp
+                </p>
+              ) : (
+                <p className="text-[10px] text-[#96A5A8] leading-none">
+                  Dựa trên {insights.length} tiêu chí hôm nay
+                </p>
+              )}
             </>
           ) : (
             <p className="text-[11px] text-[#96A5A8] leading-relaxed">

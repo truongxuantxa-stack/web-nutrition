@@ -140,6 +140,17 @@ const getRDIByGender = (gender) => {
 // Context-Awareness: shouldWarnDeficiency = (calPct >= 100 || currentHour >= 20)
 
 /**
+ * Phân loại mức Calo theo tháp ưu tiên y khoa.
+ * @param {number} calPct - % Calo so với mục tiêu
+ * @returns {'critical' | 'low' | 'adequate'}
+ */
+const getCalorieLevel = (calPct) => {
+    if (calPct < 50) return 'critical';  // Tầng Sinh Tồn — mute micros
+    if (calPct < 70) return 'low';       // Tầng Đa Lượng — chỉ xét macros
+    return 'adequate';                   // Tầng Vi Lượng — xét đầy đủ
+};
+
+/**
  * Đánh giá dinh dưỡng theo bộ quy tắc y khoa 4 cấp độ với Context-Awareness.
  *
  * @param {Object} consumed      - { calories, protein, carbs, fat, fiber, sugar, sodium, vitaminA, vitaminC, calcium, iron }
@@ -255,185 +266,226 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
     // NHÓM THIẾU — chỉ cảnh báo khi shouldWarnDeficiency = true
     // ════════════════════════════════════════════════════════════════════════════
     if (shouldWarnDeficiency) {
-
-        // Protein < 80% mục tiêu
-        if (macros.protein > 0 && (consumed.protein / macros.protein) * 100 < 80) {
+        
+        // ── Tầng 1: Sinh Tồn (Calo) ──
+        if (calPct < 50) {
+            dangerInsights.push({
+                severity: 'danger', icon: '🚨',
+                title: `Lượng ăn quá thấp — chỉ đạt ${Math.round(calPct)}% mục tiêu`,
+                message: 'Nguy cơ suy nhược và mất cơ bắp! Hãy ưu tiên ăn các thực phẩm giàu năng lượng (cơm, khoai, thịt) ngay bây giờ, tạm thời chưa cần lo về rau xanh hay vi chất.',
+            });
+        } else if (calPct < 70) {
             warningInsights.push({
-                severity: 'warning',
-                icon: '🥩',
-                title: isHistorical ? 'Bạn đang nạp hơi ít Protein' : 'Hôm nay bạn đang nạp hơi ít Protein',
-                message: 'Thiếu đạm có thể gây mất cơ bắp, đặc biệt khi đang giảm cân. Ưu tiên thịt nạc, trứng, đậu.',
+                severity: 'warning', icon: '⚠️',
+                title: `Calo vẫn đang thiếu — mới đạt ${Math.round(calPct)}% mục tiêu`,
+                message: 'Cơ thể cần thêm năng lượng. Bổ sung 1 bữa phụ giàu protein và carb lành mạnh.',
             });
         }
 
-        // Fat < 20% tổng calo đã nạp
-        if (consumed.calories > 0) {
-            const fatCalRatio = (consumed.fat * 9 / consumed.calories) * 100;
-            if (fatCalRatio < 20 && consumed.calories > MIN_CALORIES_FOR_FAT_CHECK) {
+        const calorieLevel = getCalorieLevel(calPct);
+
+        // ── Tầng 2: Đa Lượng (Macros) — chỉ xét nếu không critical ──
+        if (calorieLevel !== 'critical') {
+            // Protein < 80% mục tiêu
+            if (macros.protein > 0 && (consumed.protein / macros.protein) * 100 < 80) {
                 warningInsights.push({
                     severity: 'warning',
-                    icon: '🫒',
-                    title: 'Lượng chất béo đang quá thấp',
-                    message: 'Cơ thể cần chất béo để tổng hợp hormone và hấp thụ Vitamin A,D,E,K. Đừng sợ chất béo tốt (dầu olive, bơ, hạt)!',
+                    icon: '🥩',
+                    title: isHistorical ? 'Bạn đang nạp hơi ít Protein' : 'Hôm nay bạn đang nạp hơi ít Protein',
+                    message: 'Thiếu đạm có thể gây mất cơ bắp, đặc biệt khi đang giảm cân. Ưu tiên thịt nạc, trứng, đậu.',
                 });
             }
-        }
 
-        // Chất xơ — phân cấp theo % RDI
-        if (consumed.fiber != null) {
+            // Fat < 20% tổng calo đã nạp
+            if (consumed.calories > 0) {
+                const fatCalRatio = (consumed.fat * 9 / consumed.calories) * 100;
+                if (fatCalRatio < 20 && consumed.calories > MIN_CALORIES_FOR_FAT_CHECK) {
+                    warningInsights.push({
+                        severity: 'warning',
+                        icon: '🫒',
+                        title: 'Lượng chất béo đang quá thấp',
+                        message: 'Cơ thể cần chất béo để tổng hợp hormone và hấp thụ Vitamin A,D,E,K. Đừng sợ chất béo tốt (dầu olive, bơ, hạt)!',
+                    });
+                }
+            }
+        } // end if !== 'critical'
+
+        // ── Tầng 3: Vi Lượng (Micros) — chỉ xét nếu adequate ──
+        if (calorieLevel === 'adequate') {
+            const microDangerInsights = [];
+            const microWarningInsights = [];
+            const microSuggestionInsights = [];
+
+            // Chất xơ — phân cấp theo % RDI
+            if (consumed.fiber != null) {
             const fiberPct = consumed.fiber / fiberRDI;
             const fiberDisplay = `${Math.round(consumed.fiber * 10) / 10}g/${fiberRDI}g`;
             
-            if (fiberPct < 0.30) {
-                dangerInsights.push({
-                    severity: 'danger', icon: '🥦',
-                    title: `Báo động: Chất xơ cực thấp (${fiberDisplay})`,
-                    message: 'Chỉ đạt dưới 30% nhu cầu! Nguy cơ táo bón và mất cân bằng vi khuẩn đường ruột. Bổ sung rau xanh ngay.',
-                });
-            } else if (fiberPct < 0.80) {
-                warningInsights.push({
-                    severity: 'warning', icon: '🥦',
-                    title: `Hệ tiêu hóa đang thiếu chất xơ (${fiberDisplay})`,
-                    message: 'Hãy bổ sung ngay 1 đĩa rau xanh hoặc trái cây! Chất xơ nuôi vi khuẩn có lợi trong ruột.',
-                });
-            } else if (fiberPct < 1.0) {
-                suggestionInsights.push({
-                    severity: 'suggestion', icon: '🥦',
-                    title: `Chất xơ gần đạt mục tiêu (${fiberDisplay})`,
-                    message: 'Chỉ cần thêm 1 phần rau hoặc trái cây nữa là đủ! Cố lên!',
-                });
+                if (fiberPct < 0.30) {
+                    microDangerInsights.push({
+                        severity: 'danger', icon: '🥦',
+                        title: `Báo động: Chất xơ cực thấp (${fiberDisplay})`,
+                        message: 'Chỉ đạt dưới 30% nhu cầu! Nguy cơ táo bón và mất cân bằng vi khuẩn đường ruột. Bổ sung rau xanh ngay.',
+                    });
+                } else if (fiberPct < 0.80) {
+                    microWarningInsights.push({
+                        severity: 'warning', icon: '🥦',
+                        title: `Hệ tiêu hóa đang thiếu chất xơ (${fiberDisplay})`,
+                        message: 'Hãy bổ sung ngay 1 đĩa rau xanh hoặc trái cây! Chất xơ nuôi vi khuẩn có lợi trong ruột.',
+                    });
+                } else if (fiberPct < 1.0) {
+                    microSuggestionInsights.push({
+                        severity: 'suggestion', icon: '🥦',
+                        title: `Chất xơ gần đạt mục tiêu (${fiberDisplay})`,
+                        message: 'Chỉ cần thêm 1 phần rau hoặc trái cây nữa là đủ! Cố lên!',
+                    });
+                }
             }
-        }
 
-        // Canxi — phân cấp theo % RDI
-        if (consumed.calcium != null) {
-            const calciumPct = consumed.calcium / calciumRDI;
-            const calciumDisplay = `${Math.round(consumed.calcium)}mg/${calciumRDI}mg`;
+            // Canxi — phân cấp theo % RDI
+            if (consumed.calcium != null) {
+                const calciumPct = consumed.calcium / calciumRDI;
+                const calciumDisplay = `${Math.round(consumed.calcium)}mg/${calciumRDI}mg`;
 
-            if (calciumPct < 0.30) {
-                dangerInsights.push({
-                    severity: 'danger', icon: '🥛',
-                    title: isHistorical
-                        ? `Thiếu hụt Canxi trầm trọng (${calciumDisplay})`
-                        : `Thiếu hụt Canxi trầm trọng hôm nay (${calciumDisplay})`,
-                    message: 'Mới đạt dưới 30% nhu cầu! Xương và răng đang bị thiếu nguyên liệu. Uống sữa, ăn phô mai hoặc rau cải xanh ngay.',
-                });
-            } else if (calciumPct < 0.70) {
-                warningInsights.push({
-                    severity: 'warning', icon: '🥛',
-                    title: isHistorical
-                        ? `Canxi ở mức thấp (${calciumDisplay})`
-                        : `Canxi hôm nay ở mức thấp (${calciumDisplay})`,
-                    message: 'Cân nhắc uống 1 ly sữa ít béo hoặc ăn thêm rau cải xanh, hạnh nhân.',
-                });
-            } else if (calciumPct < 1.0) {
-                suggestionInsights.push({
-                    severity: 'suggestion', icon: '🥛',
-                    title: isHistorical
-                        ? `Canxi gần đạt mục tiêu (${calciumDisplay})`
-                        : `Canxi hôm nay gần đạt mục tiêu (${calciumDisplay})`,
-                    message: isHistorical
-                        ? 'Chỉ cần thêm 1 ly sữa hoặc 1 phần phô mai nữa.'
-                        : 'Chỉ cần thêm 1 ly sữa hoặc 1 phần phô mai nữa vào ngày mai.',
-                });
+                if (calciumPct < 0.30) {
+                    microDangerInsights.push({
+                        severity: 'danger', icon: '🥛',
+                        title: isHistorical
+                            ? `Thiếu hụt Canxi trầm trọng (${calciumDisplay})`
+                            : `Thiếu hụt Canxi trầm trọng hôm nay (${calciumDisplay})`,
+                        message: 'Mới đạt dưới 30% nhu cầu! Xương và răng đang bị thiếu nguyên liệu. Uống sữa, ăn phô mai hoặc rau cải xanh ngay.',
+                    });
+                } else if (calciumPct < 0.70) {
+                    microWarningInsights.push({
+                        severity: 'warning', icon: '🥛',
+                        title: isHistorical
+                            ? `Canxi ở mức thấp (${calciumDisplay})`
+                            : `Canxi hôm nay ở mức thấp (${calciumDisplay})`,
+                        message: 'Cân nhắc uống 1 ly sữa ít béo hoặc ăn thêm rau cải xanh, hạnh nhân.',
+                    });
+                } else if (calciumPct < 1.0) {
+                    microSuggestionInsights.push({
+                        severity: 'suggestion', icon: '🥛',
+                        title: isHistorical
+                            ? `Canxi gần đạt mục tiêu (${calciumDisplay})`
+                            : `Canxi hôm nay gần đạt mục tiêu (${calciumDisplay})`,
+                        message: isHistorical
+                            ? 'Chỉ cần thêm 1 ly sữa hoặc 1 phần phô mai nữa.'
+                            : 'Chỉ cần thêm 1 ly sữa hoặc 1 phần phô mai nữa vào ngày mai.',
+                    });
+                }
             }
-        }
 
-        // Sắt — phân cấp theo % RDI
-        if (consumed.iron != null) {
-            const ironPct = consumed.iron / ironRDI;
-            const ironDisplay = `${Math.round(consumed.iron * 10) / 10}mg/${ironRDI}mg`;
+            // Sắt — phân cấp theo % RDI
+            if (consumed.iron != null) {
+                const ironPct = consumed.iron / ironRDI;
+                const ironDisplay = `${Math.round(consumed.iron * 10) / 10}mg/${ironRDI}mg`;
 
-            if (ironPct < 0.30) {
-                dangerInsights.push({
-                    severity: 'danger', icon: '🫀',
-                    title: isHistorical
-                        ? `Thiếu hụt Sắt trầm trọng (${ironDisplay})`
-                        : `Thiếu hụt Sắt trầm trọng hôm nay (${ironDisplay})`,
-                    message: 'Nguy cơ thiếu máu, mệt mỏi và suy giảm miễn dịch. Bổ sung thịt đỏ, gan, hoặc rau chân vịt kết hợp Vitamin C.',
-                });
-            } else if (ironPct < 0.70) {
-                warningInsights.push({
-                    severity: 'warning', icon: '🫀',
-                    title: isHistorical
-                        ? `Lượng Sắt ở mức thấp (${ironDisplay})`
-                        : `Lượng Sắt hôm nay ở mức thấp (${ironDisplay})`,
-                    message: 'Sắt cần cho máu và năng lượng. Bổ sung thịt đỏ, gan, hoặc rau chân vịt kết hợp Vitamin C để tăng hấp thụ.',
-                });
-            } else if (ironPct < 1.0) {
-                suggestionInsights.push({
-                    severity: 'suggestion', icon: '🫀',
-                    title: isHistorical
-                        ? `Sắt gần đạt mục tiêu (${ironDisplay})`
-                        : `Sắt hôm nay gần đạt mục tiêu (${ironDisplay})`,
-                    message: 'Chỉ cần thêm 1 phần thịt đỏ hoặc rau lá xanh đậm nữa.',
-                });
+                if (ironPct < 0.30) {
+                    microDangerInsights.push({
+                        severity: 'danger', icon: '🫀',
+                        title: isHistorical
+                            ? `Thiếu hụt Sắt trầm trọng (${ironDisplay})`
+                            : `Thiếu hụt Sắt trầm trọng hôm nay (${ironDisplay})`,
+                        message: 'Nguy cơ thiếu máu, mệt mỏi và suy giảm miễn dịch. Bổ sung thịt đỏ, gan, hoặc rau chân vịt kết hợp Vitamin C.',
+                    });
+                } else if (ironPct < 0.70) {
+                    microWarningInsights.push({
+                        severity: 'warning', icon: '🫀',
+                        title: isHistorical
+                            ? `Lượng Sắt ở mức thấp (${ironDisplay})`
+                            : `Lượng Sắt hôm nay ở mức thấp (${ironDisplay})`,
+                        message: 'Sắt cần cho máu và năng lượng. Bổ sung thịt đỏ, gan, hoặc rau chân vịt kết hợp Vitamin C để tăng hấp thụ.',
+                    });
+                } else if (ironPct < 1.0) {
+                    microSuggestionInsights.push({
+                        severity: 'suggestion', icon: '🫀',
+                        title: isHistorical
+                            ? `Sắt gần đạt mục tiêu (${ironDisplay})`
+                            : `Sắt hôm nay gần đạt mục tiêu (${ironDisplay})`,
+                        message: 'Chỉ cần thêm 1 phần thịt đỏ hoặc rau lá xanh đậm nữa.',
+                    });
+                }
             }
-        }
 
-        // Vitamin C — phân cấp theo % RDI
-        if (consumed.vitaminC != null) {
-            const vitCPct = consumed.vitaminC / vitaminCRDI;
-            const vitCDisplay = `${Math.round(consumed.vitaminC)}mg/${vitaminCRDI}mg`;
+            // Vitamin C — phân cấp theo % RDI
+            if (consumed.vitaminC != null) {
+                const vitCPct = consumed.vitaminC / vitaminCRDI;
+                const vitCDisplay = `${Math.round(consumed.vitaminC)}mg/${vitaminCRDI}mg`;
 
-            if (vitCPct < 0.30) {
-                dangerInsights.push({
-                    severity: 'danger', icon: '🍊',
-                    title: isHistorical
-                        ? `Thiếu hụt Vitamin C trầm trọng (${vitCDisplay})`
-                        : `Thiếu hụt Vitamin C trầm trọng hôm nay (${vitCDisplay})`,
-                    message: 'Hệ miễn dịch đang yếu! Ăn cam, ổi, ớt chuông hoặc kiwi là đủ nhu cầu ngay.',
-                });
-            } else if (vitCPct < 0.70) {
-                warningInsights.push({
-                    severity: 'warning', icon: '🍊',
-                    title: isHistorical
-                        ? `Vitamin C ở mức thấp (${vitCDisplay})`
-                        : `Vitamin C hôm nay ở mức thấp (${vitCDisplay})`,
-                    message: 'Vitamin C tăng đề kháng và giúp hấp thụ Sắt. Ăn cam, ổi, ớt chuông hoặc kiwi.',
-                });
-            } else if (vitCPct < 1.0) {
-                suggestionInsights.push({
-                    severity: 'suggestion', icon: '🍊',
-                    title: isHistorical
-                        ? `Vitamin C gần đạt mục tiêu (${vitCDisplay})`
-                        : `Vitamin C hôm nay gần đạt mục tiêu (${vitCDisplay})`,
-                    message: 'Chỉ cần thêm 1 quả cam hoặc nửa quả ổi nữa thôi!',
-                });
+                if (vitCPct < 0.30) {
+                    microDangerInsights.push({
+                        severity: 'danger', icon: '🍊',
+                        title: isHistorical
+                            ? `Thiếu hụt Vitamin C trầm trọng (${vitCDisplay})`
+                            : `Thiếu hụt Vitamin C trầm trọng hôm nay (${vitCDisplay})`,
+                        message: 'Hệ miễn dịch đang yếu! Ăn cam, ổi, ớt chuông hoặc kiwi là đủ nhu cầu ngay.',
+                    });
+                } else if (vitCPct < 0.70) {
+                    microWarningInsights.push({
+                        severity: 'warning', icon: '🍊',
+                        title: isHistorical
+                            ? `Vitamin C ở mức thấp (${vitCDisplay})`
+                            : `Vitamin C hôm nay ở mức thấp (${vitCDisplay})`,
+                        message: 'Vitamin C tăng đề kháng và giúp hấp thụ Sắt. Ăn cam, ổi, ớt chuông hoặc kiwi.',
+                    });
+                } else if (vitCPct < 1.0) {
+                    microSuggestionInsights.push({
+                        severity: 'suggestion', icon: '🍊',
+                        title: isHistorical
+                            ? `Vitamin C gần đạt mục tiêu (${vitCDisplay})`
+                            : `Vitamin C hôm nay gần đạt mục tiêu (${vitCDisplay})`,
+                        message: 'Chỉ cần thêm 1 quả cam hoặc nửa quả ổi nữa thôi!',
+                    });
+                }
             }
-        }
 
-        // Vitamin A — MỚI: Trước đây hệ thống không kiểm tra Vitamin A
-        if (consumed.vitaminA != null) {
-            const vitAPct = consumed.vitaminA / vitaminARDI;
-            const vitADisplay = `${Math.round(consumed.vitaminA)}µg/${vitaminARDI}µg`;
+            // Vitamin A — MỚI: Trước đây hệ thống không kiểm tra Vitamin A
+            if (consumed.vitaminA != null) {
+                const vitAPct = consumed.vitaminA / vitaminARDI;
+                const vitADisplay = `${Math.round(consumed.vitaminA)}µg/${vitaminARDI}µg`;
 
-            if (vitAPct < 0.30) {
-                dangerInsights.push({
-                    severity: 'danger', icon: '🥕',
-                    title: isHistorical
-                        ? `Thiếu hụt Vitamin A trầm trọng (${vitADisplay})`
-                        : `Thiếu hụt Vitamin A trầm trọng hôm nay (${vitADisplay})`,
-                    message: 'Vitamin A cần cho thị lực, da và hệ miễn dịch. Ăn cà rốt, khoai lang, rau lá xanh đậm hoặc gan.',
-                });
-            } else if (vitAPct < 0.70) {
-                warningInsights.push({
-                    severity: 'warning', icon: '🥕',
-                    title: isHistorical
-                        ? `Vitamin A ở mức thấp (${vitADisplay})`
-                        : `Vitamin A hôm nay ở mức thấp (${vitADisplay})`,
-                    message: 'Bổ sung cà rốt, bí đỏ, rau lá xanh đậm hoặc trứng để tăng Vitamin A.',
-                });
-            } else if (vitAPct < 1.0) {
-                suggestionInsights.push({
-                    severity: 'suggestion', icon: '🥕',
-                    title: isHistorical
-                        ? `Vitamin A gần đạt mục tiêu (${vitADisplay})`
-                        : `Vitamin A hôm nay gần đạt mục tiêu (${vitADisplay})`,
-                    message: 'Chỉ cần thêm 1 phần rau xanh hoặc cà rốt nữa!',
-                });
+                if (vitAPct < 0.30) {
+                    microDangerInsights.push({
+                        severity: 'danger', icon: '🥕',
+                        title: isHistorical
+                            ? `Thiếu hụt Vitamin A trầm trọng (${vitADisplay})`
+                            : `Thiếu hụt Vitamin A trầm trọng hôm nay (${vitADisplay})`,
+                        message: 'Vitamin A cần cho thị lực, da và hệ miễn dịch. Ăn cà rốt, khoai lang, rau lá xanh đậm hoặc gan.',
+                    });
+                } else if (vitAPct < 0.70) {
+                    microWarningInsights.push({
+                        severity: 'warning', icon: '🥕',
+                        title: isHistorical
+                            ? `Vitamin A ở mức thấp (${vitADisplay})`
+                            : `Vitamin A hôm nay ở mức thấp (${vitADisplay})`,
+                        message: 'Bổ sung cà rốt, bí đỏ, rau lá xanh đậm hoặc trứng để tăng Vitamin A.',
+                    });
+                } else if (vitAPct < 1.0) {
+                    microSuggestionInsights.push({
+                        severity: 'suggestion', icon: '🥕',
+                        title: isHistorical
+                            ? `Vitamin A gần đạt mục tiêu (${vitADisplay})`
+                            : `Vitamin A hôm nay gần đạt mục tiêu (${vitADisplay})`,
+                        message: 'Chỉ cần thêm 1 phần rau xanh hoặc cà rốt nữa!',
+                    });
+                }
             }
-        }
+            
+            // Grouped Micro Warnings logic
+            if (microDangerInsights.length >= 3) {
+                const microNames = microDangerInsights.map(i => i.title.match(/Canxi|Sắt|Chất xơ|Vitamin C|Vitamin A/)?.[0]).filter(Boolean);
+                dangerInsights.push({
+                    severity: 'danger', icon: '📉',
+                    title: `Thiếu hụt Đa Vi Chất trầm trọng (${microNames.join(', ')})`,
+                    message: 'Chế độ ăn hôm nay rất nghèo vi chất. Bổ sung ngay rau xanh đa dạng, trái cây và thực phẩm giàu dinh dưỡng.',
+                });
+            } else {
+                dangerInsights.push(...microDangerInsights);
+            }
+            warningInsights.push(...microWarningInsights);
+            suggestionInsights.push(...microSuggestionInsights);
+        } // end if === 'adequate'
     }
 
     // ════════════════════════════════════════════════════════════════════════════
@@ -462,7 +514,16 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
     }
 
     // ── Sắp xếp theo ưu tiên: danger → warning → water → suggestion ──────────
-    return [...dangerInsights, ...warningInsights, ...waterInsights, ...suggestionInsights];
+    const result = [...dangerInsights, ...warningInsights, ...waterInsights, ...suggestionInsights];
+    
+    // Đính kèm calorieLevel như metadata ẩn vào mảng trả về, không phá vỡ logic iterator
+    if (shouldWarnDeficiency) {
+        result._calorieLevel = getCalorieLevel((consumed.calories / targetCal) * 100);
+    } else {
+        result._calorieLevel = 'adequate'; 
+    }
+    
+    return result;
 };
 
 
@@ -505,10 +566,16 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
     const calPct    = targetCal > 0 ? (consumed.calories / targetCal) * 100 : 0;
 
     // ── Trừ điểm theo vi phạm ─────────────────────────────────────────────────
-    const PENALTY = { danger: 15, warning: 8, water: 5, suggestion: 3 };
+    const PENALTY = { danger: 15, warning: 6, water: 4, suggestion: 2 };
+    const GROUPED_MICRO_PENALTY = 25;
     let score = 100;
+    
     for (const insight of insights) {
-        score -= (PENALTY[insight.severity] || 0);
+        if (insight.icon === '📉') {
+            score -= GROUPED_MICRO_PENALTY;
+        } else {
+            score -= (PENALTY[insight.severity] || 0);
+        }
     }
 
     // ── Cộng điểm thưởng (bonus) ──────────────────────────────────────────────
@@ -531,12 +598,30 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
         bonuses.push({ key: 'fiber', label: 'Đạt mục tiêu Chất xơ', points: 2 });
     }
 
-    // ── [MỚI] Hard Cap — Điểm liệt Ngày ──────────────────────────────────────
+    // ── Sliding Calorie Multiplier ──
+    const calorieLevel = insights._calorieLevel || 'adequate';
+    let calorieMultiplier = 1.0;
+
+    if (calPct < 30)       calorieMultiplier = 0.3;   // Nguy hiểm thực sự
+    else if (calPct < 50)  calorieMultiplier = 0.5;   // Ăn quá ít
+    else if (calPct < 70)  calorieMultiplier = 0.7;   // Dưới mức tối ưu
+    else if (calPct > 130) calorieMultiplier = 0.6;   // Ăn quá nhiều
+    else if (calPct > 110) calorieMultiplier = 0.85;  // Vượt nhẹ
+
+    // ── Sugar Toxicity Multiplier ──
+    let sugarMultiplier = 1.0;
+    if (consumed.sugar != null && consumed.sugar > (sugarLimit * 2)) {
+        sugarMultiplier = 0.7;  // Đường > 200% AHA
+    }
+
+    // ── Áp dụng multipliers ──
+    score = Math.round(score * calorieMultiplier * sugarMultiplier);
+
+    // ── [MỚI] Hard Cap — Điểm liệt Ngày (chỉ áp dụng khi adequate) ───────────
     let hardCapApplied = null;
     const scoreBeforeCaps = score;
 
     // Tính avgMicroRatio: Trung bình % đạt RDI của 4 vi chất (chỉ tính vi chất có dữ liệu)
-    // Mỗi ratio được cap ở 1.0 để tránh 1 vi chất quá cao (VD Vitamin C 500%) kéo trung bình lên
     const microEntries = [];
     if (consumed.vitaminA != null) microEntries.push(Math.min(consumed.vitaminA / vitaminARDI, 1.0));
     if (consumed.vitaminC != null) microEntries.push(Math.min(consumed.vitaminC / vitaminCRDI, 1.0));
@@ -545,22 +630,24 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
 
     const avgMicroRatio = microEntries.length > 0
         ? microEntries.reduce((a, b) => a + b, 0) / microEntries.length
-        : null; // null = không có dữ liệu vi chất, bỏ qua Hard Cap
-
-    // Hard Cap 50: Vi chất ngày quá kém
-    if (avgMicroRatio !== null && avgMicroRatio < 0.20) {
-        if (score > 50) {
-            score = 50;
-            hardCapApplied = 'micro_50';
-        }
-    }
-
-    // Hard Cap 60: Thiếu chất xơ nghiêm trọng
+        : null; 
     const fiberRatio = consumed.fiber != null ? consumed.fiber / fiberRDI : null;
-    if (fiberRatio !== null && fiberRatio < 0.30) {
-        if (hardCapApplied !== 'micro_50' && score > 60) {
-            score = 60;
-            hardCapApplied = 'fiber_60';
+
+    if (calorieLevel === 'adequate') {
+        // Hard Cap 50: Vi chất ngày quá kém
+        if (avgMicroRatio !== null && avgMicroRatio < 0.20) {
+            if (score > 50) {
+                score = 50;
+                hardCapApplied = 'micro_50';
+            }
+        }
+
+        // Hard Cap 60: Thiếu chất xơ nghiêm trọng
+        if (fiberRatio !== null && fiberRatio < 0.30) {
+            if (hardCapApplied !== 'micro_50' && score > 60) {
+                score = 60;
+                hardCapApplied = 'fiber_60';
+            }
         }
     }
 
@@ -578,6 +665,9 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
         score, label, emoji, bonuses,
         hardCapApplied,
         scoreBeforeCaps,
+        calorieLevel,
+        calorieMultiplier,
+        sugarMultiplier,
         avgMicroRatio: avgMicroRatio !== null ? parseFloat(avgMicroRatio.toFixed(2)) : null,
         fiberRatio: fiberRatio !== null ? parseFloat(fiberRatio.toFixed(2)) : null,
     };
