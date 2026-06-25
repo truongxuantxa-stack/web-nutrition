@@ -25,26 +25,26 @@ async function main() {
             const localPath = `/images/foods/${item.filename}`;
             const fullPath = path.join(publicDir, localPath);
 
+            // Chuẩn hóa tên để đối chiếu (bỏ các hậu tố như "(Thô)", "(Khô)")
+            let cleanName = item.vietnamese.replace(' (Thô)', '').replace(' (Nấm mèo khô)', '').replace(' (Khô)', '');
+            if (cleanName === 'Bánh phở tươi') cleanName = 'Bánh phở';
+
             // Kiểm tra file tồn tại trước khi update
             if (fs.existsSync(fullPath)) {
                 if (!isDryRun) {
-                    await Food.update({ imageUrl: localPath }, { where: { id: item.id } });
-                }
-                updatedCount++;
-            } else {
-                skippedCount++;
-            }
-            
-            // Cập nhật luôn cho các món dedup dùng chung ảnh
-            if (item.shared_with_ids && item.shared_with_ids.length > 0) {
-                if (fs.existsSync(fullPath)) {
-                    if (!isDryRun) {
+                    // Cập nhật dựa trên Tên (để tránh lỗi khi Database ID bị thay đổi do reset/seed)
+                    const [count] = await Food.update({ imageUrl: localPath }, { where: { name: cleanName } });
+                    if (count > 0) updatedCount++;
+                    
+                    // Fallback cho các món dùng chung ảnh (nếu ID không bị thay đổi)
+                    if (item.shared_with_ids && item.shared_with_ids.length > 0) {
                         await Food.update({ imageUrl: localPath }, { where: { id: item.shared_with_ids } });
                     }
-                    updatedCount += item.shared_with_ids.length;
                 } else {
-                    skippedCount += item.shared_with_ids.length;
+                    updatedCount++;
                 }
+            } else {
+                skippedCount++;
             }
         }
 
