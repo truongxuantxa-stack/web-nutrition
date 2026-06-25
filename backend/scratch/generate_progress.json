@@ -461,9 +461,26 @@
     3805,
     3806,
     3807,
-    3808
+    3808,
+    3742,
+    3743,
+    3749,
+    3750,
+    3751,
+    3752,
+    3810,
+    3812,
+    3813,
+    3814,
+    3815,
+    3817,
+    3818,
+    3819,
+    3820,
+    3823,
+    3824
   ],
-  "last_batch": 13,
+  "last_batch": 14,
   "items": [
     {
       "id": 3609,
@@ -2607,32 +2624,32 @@
     },
     {
       "id": 3742,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3743,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3749,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3750,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3751,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3752,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
@@ -2752,7 +2769,7 @@
     },
     {
       "id": 3810,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
@@ -2762,22 +2779,22 @@
     },
     {
       "id": 3812,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3813,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3814,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3815,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
@@ -2787,22 +2804,22 @@
     },
     {
       "id": 3817,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3818,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3819,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3820,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
@@ -2817,12 +2834,12 @@
     },
     {
       "id": 3823,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
       "id": 3824,
-      "status": "pending",
+      "status": "done",
       "batch": null
     },
     {
