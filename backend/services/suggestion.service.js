@@ -561,7 +561,7 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
     }
 
     // [FIX #4] Dùng getRDIByGender() thay vì tính lại inline — trước đây duplicate logic từ getHealthInsights.
-    const { fiberRDI, calciumRDI, ironRDI, vitaminCRDI, vitaminARDI } = getRDIByGender(gender);
+    const { sugarLimit, fiberRDI, calciumRDI, ironRDI, vitaminCRDI, vitaminARDI } = getRDIByGender(gender);
     const targetCal = metrics.targetCalories || 0;
     const calPct    = targetCal > 0 ? (consumed.calories / targetCal) * 100 : 0;
 
