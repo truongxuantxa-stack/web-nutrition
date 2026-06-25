@@ -21,30 +21,15 @@ export default function PinSlotRow({ slot, pinnedFoodId, onPinChange }) {
   const pinnedFood = foods.find(f => f.id === pinnedFoodId);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 tcl-card transition-all">
-      <div className="flex items-center gap-2.5">
-        <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-semibold ${meta.color}`}>
-          <span className="text-base">{meta.icon}</span>
+    <div className="flex flex-col gap-2 p-3 tcl-card transition-all">
+      {/* Row 1: Label + Pin badge */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-semibold ${meta.color}`}>
+            <span className="text-base">{meta.icon}</span>
+          </div>
+          <span className="font-bold text-sm text-base-content/80 capitalize">{meta.label}</span>
         </div>
-        <span className="font-bold text-sm text-base-content/80 capitalize">{meta.label}</span>
-      </div>
-      
-      <div className="flex gap-2 items-center flex-1 sm:max-w-md justify-end w-full">
-        <select
-          id={`pin-select-${role}`}
-          value={pinnedFoodId || ''}
-          onChange={(e) => onPinChange(role, e.target.value ? Number(e.target.value) : null)}
-          className="select select-bordered select-sm flex-1 text-sm bg-base-50 text-base-content focus:ring-2 focus:ring-primary/30 focus:border-primary transition-shadow max-w-[240px]"
-          disabled={isLoading}
-        >
-          <option value="">-- Ngẫu nhiên --</option>
-          {foods.map(f => (
-            <option key={f.id} value={f.id}>
-              {f.name}
-            </option>
-          ))}
-        </select>
-        
         {pinnedFoodId ? (
           <div className="flex items-center gap-1.5 shrink-0">
             <SafeImage
@@ -65,6 +50,22 @@ export default function PinSlotRow({ slot, pinnedFoodId, onPinChange }) {
           </div>
         ) : null}
       </div>
+
+      {/* Row 2: Select (full width, on its own line) */}
+      <select
+        id={`pin-select-${role}`}
+        value={pinnedFoodId || ''}
+        onChange={(e) => onPinChange(role, e.target.value ? Number(e.target.value) : null)}
+        className="select select-bordered select-sm w-full text-sm bg-base-50 text-base-content focus:ring-2 focus:ring-primary/30 focus:border-primary transition-shadow"
+        disabled={isLoading}
+      >
+        <option value="">-- Ngẫu nhiên --</option>
+        {foods.map(f => (
+          <option key={f.id} value={f.id}>
+            {f.name}
+          </option>
+        ))}
+      </select>
 
       <ImageLightbox
         src={pinnedFood?.imageUrl}
