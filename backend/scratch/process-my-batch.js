@@ -3,28 +3,28 @@ const path = require('path');
 const sharp = require('sharp');
 
 const batchMap = [
-  { id: 3929, file: "mixed_vegetarian_rice", target: "com-chay-thap-cam.webp" },
-  { id: 3922, file: "saigon_claypot_rice", target: "com-nieu-sai-gon.webp" },
-  { id: 3897, file: "steamed_egg_meatloaf", target: "com-cha-trung.webp" },
-  { id: 3896, file: "grilled_chicken_rice", target: "com-dui-ga-nuong.webp" },
-  { id: 3895, file: "white_rice_vegetables", target: "com-trang-rau-xao.webp" },
-  { id: 3894, file: "braised_fish_rice", target: "com-ca-kho-to.webp" },
-  { id: 3893, file: "caramelized_pork_rice", target: "com-thit-kho-tieu.webp" },
-  { id: 3892, file: "sour_fish_soup", target: "com-canh-chua-ca.webp" },
-  { id: 3891, file: "beef_stew_rice", target: "com-bo-kho.webp" },
-  { id: 3890, file: "fish_sauce_chicken", target: "com-ga-chien-nuoc-mam.webp" },
-  { id: 3889, file: "grilled_pork_chop_mustard", target: "com-suon-cai.webp" },
-  { id: 3881, file: "minced_pork_congee", target: "chao-thit-bam.webp" },
-  { id: 3880, file: "mung_bean_congee", target: "chao-dau-xanh.webp" },
-  { id: 3879, file: "corn_sticky_rice", target: "xoi-ngo-mo-hanh.webp" },
-  { id: 3878, file: "peanut_sticky_rice", target: "xoi-lac.webp" },
-  { id: 3877, file: "mung_bean_sticky_rice", target: "xoi-dau-xanh.webp" },
-  { id: 3876, file: "chicken_sticky_rice", target: "xoi-ga.webp" }
+  { id: 3864, file: "stir_fried_chicken_with_cashews", target: "ga-xao-hat-dieu.webp" },
+  { id: 3865, file: "kohlrabi_soup_with_pork_ribs", target: "canh-su-hao-nau-suon.webp" },
+  { id: 3866, file: "la_vong_grilled_fish", target: "cha-ca-la-vong.webp" },
+  { id: 3867, file: "mi_quang_noodle", target: "mi-quang.webp" },
+  { id: 3868, file: "chau_doc_fish_noodle_soup", target: "bun-ca-chau-doc.webp" },
+  { id: 3869, file: "nam_vang_noodle_soup", target: "hu-tieu-nam-vang.webp" },
+  { id: 3871, file: "vegetarian_fresh_spring_rolls", target: "goi-cuon-chay.webp" },
+  { id: 3872, file: "kale_quinoa_salad", target: "salad-kale-hat-quinoa.webp" },
+  { id: 3873, file: "banh_mi_with_cold_cuts", target: "banh-mi-thit-nguoi.webp" },
+  { id: 3874, file: "banh_mi_with_fried_eggs", target: "banh-mi-op-la.webp" },
+  { id: 3875, file: "vietnamese_sizzling_banh_mi_pan", target: "banh-mi-chao-het-thu.webp" },
+  { id: 3882, file: "pyramid_meat_dumpling", target: "banh-gio.webp" },
+  { id: 3883, file: "pork_bun", target: "banh-bao-thit.webp" },
+  { id: 3884, file: "vegetarian_steamed_bun", target: "banh-bao-chay.webp" },
+  { id: 3885, file: "steamed_rice_paper_with_sausage", target: "banh-uot-cha-lua.webp" },
+  { id: 3886, file: "dry_noodle_with_pork", target: "hu-tieu-kho-thit.webp" },
+  { id: 3887, file: "dry_egg_noodles_with_char_siu", target: "mi-kho-xa-xiu.webp" }
 ];
 
 async function main() {
   const publicDir = path.join(__dirname, '../public/images/foods');
-  const brainDir = path.join(process.env.USERPROFILE, '.gemini', 'antigravity-ide', 'brain', '8ff633cd-86d5-4e0e-a794-6ee981c2a0ae');
+  const brainDir = path.join(process.env.USERPROFILE, '.gemini', 'antigravity-ide', 'brain', 'ab87f2f5-e32b-40fb-912f-cafe32f31583');
   
   if (!fs.existsSync(publicDir)) {
       fs.mkdirSync(publicDir, { recursive: true });
@@ -61,11 +61,18 @@ async function main() {
   for (const item of batchMap) {
     if (!progress.completed.includes(item.id)) {
       progress.completed.push(item.id);
-      progress.items.push({
-        id: item.id,
-        status: "done",
-        batch: currentBatch
-      });
+      
+      const pItem = progress.items.find(i => i.id === item.id);
+      if (pItem) {
+        pItem.status = "done";
+        pItem.batch = currentBatch;
+      } else {
+        progress.items.push({
+          id: item.id,
+          status: "done",
+          batch: currentBatch
+        });
+      }
     }
   }
   progress.last_batch = currentBatch;

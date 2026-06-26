@@ -528,9 +528,26 @@
     3859,
     3860,
     3862,
-    3863
+    3863,
+    3864,
+    3865,
+    3866,
+    3867,
+    3868,
+    3869,
+    3871,
+    3872,
+    3873,
+    3874,
+    3875,
+    3882,
+    3883,
+    3884,
+    3885,
+    3886,
+    3887
   ],
-  "last_batch": 17,
+  "last_batch": 18,
   "items": [
     {
       "id": 3609,
@@ -3089,33 +3106,33 @@
     },
     {
       "id": 3864,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3865,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3866,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3867,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3868,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3869,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3870,
@@ -3124,58 +3141,58 @@
     },
     {
       "id": 3871,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3872,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3873,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3874,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3875,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3882,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3883,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3884,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3885,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3886,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3887,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 18
     },
     {
       "id": 3888,

@@ -1,9 +1,108 @@
 
 
-// ==========================================
-// FILE: \frontend\src\App.jsx
-// ==========================================
+======================================================
+FILE: frontend/eslint.config.js
+======================================================
 
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import { defineConfig, globalIgnores } from 'eslint/config'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{js,jsx}'],
+    extends: [
+      js.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+    },
+  },
+])
+
+
+======================================================
+FILE: frontend/package.json
+======================================================
+
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.100.14",
+    "axios": "^1.16.1",
+    "chart.js": "^4.5.1",
+    "chartjs-adapter-dayjs-4": "^1.0.4",
+    "chartjs-plugin-annotation": "^3.1.0",
+    "dayjs": "^1.11.20",
+    "framer-motion": "^12.39.0",
+    "html5-qrcode": "^2.3.8",
+    "lucide-react": "^1.16.0",
+    "react": "^19.2.6",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "^19.2.6",
+    "react-hot-toast": "^2.6.0",
+    "react-router-dom": "^7.15.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "daisyui": "^5.5.20",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "tailwindcss": "^4.3.0",
+    "vite": "^8.0.12"
+  }
+}
+
+
+======================================================
+FILE: frontend/README.md
+======================================================
+
+# React + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+======================================================
+FILE: frontend/src/App.jsx
+======================================================
+
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import queryClient from './lib/queryClient';
@@ -13,18 +112,24 @@ import { Toaster } from 'react-hot-toast';
 import LandingPage    from './pages/LandingPage';
 import LoginPage      from './pages/LoginPage';
 import RegisterPage   from './pages/RegisterPage';
-import DashboardPage  from './pages/DashboardPage';
-import DiaryPage      from './pages/DiaryPage';
-import MealPlannerPage from './pages/MealPlannerPage';
-import WeightPage      from './pages/WeightPage';
-import ExercisePage    from './pages/ExercisePage';
-import OnboardingPage  from './pages/OnboardingPage';
-import ProfilePage     from './pages/ProfilePage';
+const DashboardPage   = React.lazy(() => import('./pages/DashboardPage'));
+const DiaryPage       = React.lazy(() => import('./pages/DiaryPage'));
+const MealPlannerPage = React.lazy(() => import('./pages/MealPlannerPage'));
+const WeightPage      = React.lazy(() => import('./pages/WeightPage'));
+const ExercisePage    = React.lazy(() => import('./pages/ExercisePage'));
+const OnboardingPage  = React.lazy(() => import('./pages/OnboardingPage'));
+const ProfilePage     = React.lazy(() => import('./pages/ProfilePage'));
 import NotFoundPage    from './pages/NotFoundPage';
 
 import AppLayout      from './components/layout/AppLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AuthOnlyRoute  from './components/auth/AuthOnlyRoute';
+
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-[#F0F2F3]">
+    <div className="w-10 h-10 border-4 border-[#DFE3E4] border-t-[#5FE089] rounded-full animate-spin"></div>
+  </div>
+);
 
 function App() {
   return (
@@ -41,32 +146,34 @@ function App() {
               },
             }}
           />
-          <Routes>
-            {/* Public routes */}
-            <Route path="/"         element={<LandingPage />} />
-            <Route path="/login"    element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/"         element={<LandingPage />} />
+              <Route path="/login"    element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
-            {/* Onboarding — chỉ cần đăng nhập, KHÔNG check isOnboarded để tránh redirect loop */}
-            <Route element={<AuthOnlyRoute />}>
-              <Route path="/onboarding" element={<OnboardingPage />} />
-            </Route>
-
-            {/* Protected routes — cần đăng nhập VÀ đã onboard */}
-            <Route element={<ProtectedRoute />}>
-              <Route element={<AppLayout />}>
-                <Route path="/dashboard"    element={<DashboardPage />} />
-                <Route path="/diary"        element={<DiaryPage />} />
-                <Route path="/meal-planner" element={<MealPlannerPage />} />
-                <Route path="/weight"       element={<WeightPage />} />
-                <Route path="/exercise"     element={<ExercisePage />} />
-                <Route path="/profile"      element={<ProfilePage />} />
+              {/* Onboarding — chỉ cần đăng nhập, KHÔNG check isOnboarded để tránh redirect loop */}
+              <Route element={<AuthOnlyRoute />}>
+                <Route path="/onboarding" element={<OnboardingPage />} />
               </Route>
-            </Route>
 
-            {/* Fallback */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+              {/* Protected routes — cần đăng nhập VÀ đã onboard */}
+              <Route element={<ProtectedRoute />}>
+                <Route element={<AppLayout />}>
+                  <Route path="/dashboard"    element={<DashboardPage />} />
+                  <Route path="/diary"        element={<DiaryPage />} />
+                  <Route path="/meal-planner" element={<MealPlannerPage />} />
+                  <Route path="/weight"       element={<WeightPage />} />
+                  <Route path="/exercise"     element={<ExercisePage />} />
+                  <Route path="/profile"      element={<ProfilePage />} />
+                </Route>
+              </Route>
+
+              {/* Fallback */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </AuthProvider>
     </QueryClientProvider>
@@ -76,9 +183,9 @@ function App() {
 export default App;
 
 
-// ==========================================
-// FILE: \frontend\src\components\auth\AuthOnlyRoute.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/auth/AuthOnlyRoute.jsx
+======================================================
 
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -106,9 +213,9 @@ export default function AuthOnlyRoute() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\auth\ProtectedRoute.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/auth/ProtectedRoute.jsx
+======================================================
 
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -137,9 +244,9 @@ export default function ProtectedRoute() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\common\AddWeightModal.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/common/AddWeightModal.jsx
+======================================================
 
 import { useState, useEffect } from 'react';
 import { useAddWeight } from '../../hooks/useWeight';
@@ -326,9 +433,9 @@ export default function AddWeightModal({ isOpen, onClose }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\common\AnimatedSection.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/common/AnimatedSection.jsx
+======================================================
 
 import { motion } from 'framer-motion';
 
@@ -347,9 +454,9 @@ export default function AnimatedSection({ children, delay = 0, className = '' })
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\common\ConfettiEffect.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/common/ConfettiEffect.jsx
+======================================================
 
 import { useEffect, useRef } from 'react';
 
@@ -430,9 +537,9 @@ export default function ConfettiEffect() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\common\DailyInsightsCard.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/common/DailyInsightsCard.jsx
+======================================================
 
 import { useState, useMemo } from 'react';
 import { ChevronDown, ChevronUp, Lock } from 'lucide-react';
@@ -602,13 +709,21 @@ export default function DailyInsightsCard({ insights = [], healthScore = null, m
                   style={{ width: `${score}%` }}
                 />
               </div>
-              <p className="text-[10px] text-[#96A5A8] leading-none">
-                Dựa trên {insights.length} tiêu chí hôm nay
-              </p>
+              {healthScore?.calorieLevel === 'critical' ? (
+                <p className="text-[10px] text-[#DC2626] font-semibold leading-none mt-1">
+                  ⚡ Điểm bị giảm mạnh do lượng ăn quá thấp
+                </p>
+              ) : (
+                <p className="text-[10px] text-[#96A5A8] leading-none">
+                  Dựa trên {insights.length} tiêu chí hôm nay
+                </p>
+              )}
             </>
           ) : (
             <p className="text-[11px] text-[#96A5A8] leading-relaxed">
-              Điểm sức khỏe sẽ được tính sau khi bạn nhập bữa ăn đầu tiên trong ngày!
+              {label === 'Chưa có dữ liệu'
+                ? 'Điểm sức khỏe sẽ được tính sau khi bạn nhập bữa ăn đầu tiên trong ngày!'
+                : 'AI đang thu thập dữ liệu... Điểm số sẽ có mặt sau khi bạn ăn đủ 3 bữa chính hoặc sau 20h!'}
             </p>
           )}
         </div>
@@ -677,9 +792,9 @@ export default function DailyInsightsCard({ insights = [], healthScore = null, m
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\common\DateNavigator.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/common/DateNavigator.jsx
+======================================================
 
 import dayjs from '../../lib/dayjs';
 import { getToday, toDisplayDate } from '../../lib/dayjs';
@@ -729,9 +844,9 @@ export default function DateNavigator({ date, onDateChange }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\common\ErrorBoundary.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/common/ErrorBoundary.jsx
+======================================================
 
 import { Component } from 'react';
 
@@ -778,9 +893,9 @@ export default class ErrorBoundary extends Component {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\common\ImageLightbox.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/common/ImageLightbox.jsx
+======================================================
 
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -849,9 +964,9 @@ export default function ImageLightbox({ src, alt, isOpen, onClose }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\common\SafeImage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/common/SafeImage.jsx
+======================================================
 
 import { useState, useEffect } from 'react';
 
@@ -878,9 +993,9 @@ export default function SafeImage({ src, alt, className, fallback, onClick }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\CalorieRing.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/dashboard/CalorieRing.jsx
+======================================================
 
 /**
  * CalorieRing — Vòng tròn SVG animated hiển thị % calo đã nạp / mục tiêu
@@ -971,19 +1086,12 @@ export default function CalorieRing({ consumed, target, noCard = false }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\MacrosChart.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/dashboard/MacrosChart.jsx
+======================================================
 
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+// ChartJS đã register tập trung ở main.jsx via chartSetup.js
 
 export default function MacrosChart({ consumed, target }) {
   const protein = consumed?.protein || 0;
@@ -1052,9 +1160,9 @@ export default function MacrosChart({ consumed, target }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\MacroSummaryCard.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/dashboard/MacroSummaryCard.jsx
+======================================================
 
 import React from 'react';
 
@@ -1105,9 +1213,9 @@ export default function MacroSummaryCard({ icon, label, value, unit, target, col
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\MicronutrientCard.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/dashboard/MicronutrientCard.jsx
+======================================================
 
 import React from 'react';
 
@@ -1147,6 +1255,10 @@ export default function MicronutrientCard({ consumed, gender }) {
           const displayPercent = Math.min(percent, 100);
           const isWarning      = item.reverse && item.value > item.target;
 
+          const displayValue = ['fiber', 'iron'].includes(item.key) 
+            ? (Number.isInteger(item.value) ? item.value : Number(item.value).toFixed(1)) 
+            : Math.round(item.value);
+
           return (
             <div key={item.key} className="flex items-center gap-3 text-sm group">
               <div className="w-7 h-7 rounded-full bg-[#F0F2F3] flex items-center justify-center text-sm shadow-sm group-hover:scale-110 transition-transform flex-shrink-0">
@@ -1156,7 +1268,7 @@ export default function MicronutrientCard({ consumed, gender }) {
                 <div className="flex justify-between items-center text-xs font-semibold text-[#244348]">
                   <span>{item.label}</span>
                   <span className={isWarning ? 'text-[#DC2626] font-bold' : ''}>
-                    {item.value}{item.unit} <span className="font-normal text-[#96A5A8]">/ {item.target}{item.unit}</span>
+                    {displayValue}{item.unit} <span className="font-normal text-[#96A5A8]">/ {item.target}{item.unit}</span>
                   </span>
                 </div>
                 <div className="w-full h-1.5 bg-[#F0F2F3] rounded-full overflow-hidden">
@@ -1175,9 +1287,9 @@ export default function MicronutrientCard({ consumed, gender }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\QuickActionFAB.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/dashboard/QuickActionFAB.jsx
+======================================================
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -1201,9 +1313,9 @@ export default function QuickActionFAB({ onClick }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\RecentActivity.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/dashboard/RecentActivity.jsx
+======================================================
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -1287,25 +1399,32 @@ export default function RecentActivity({ logs = [], totalBurned = 0 }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\RecentMeals.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/dashboard/RecentMeals.jsx
+======================================================
 
-import React from 'react';
+import { Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Utensils } from 'lucide-react';
 import SafeImage from '../common/SafeImage';
+import { useRecentEntries } from '../../hooks/useRecentEntries';
 
 const MEAL_EMOJI = { sang: '🌅', trua: '☀️', toi: '🌙', phu: '🍪' };
 const MEAL_NAME  = { sang: 'Bữa sáng', trua: 'Bữa trưa', toi: 'Bữa tối', phu: 'Bữa phụ' };
 
-export default function RecentMeals({ entries = [], onAddClick }) {
+// Wrapper với Suspense
+export default function RecentMeals({ date, onAddClick }) {
+  return (
+    <Suspense fallback={<RecentMealsSkeleton />}>
+      <RecentMealsContent date={date} onAddClick={onAddClick} />
+    </Suspense>
+  );
+}
+
+function RecentMealsContent({ date, onAddClick }) {
+  const { data: entries = [] } = useRecentEntries(date);
   const navigate = useNavigate();
   const isEmpty  = entries.length === 0;
-
-  const displayEntries = [...entries]
-    .sort((a, b) => new Date(b.createdAt || b.id) - new Date(a.createdAt || a.id))
-    .slice(0, 5);
 
   return (
     <div className="tcl-card rounded-2xl p-6 flex flex-col justify-between h-full min-h-[300px]">
@@ -1334,7 +1453,7 @@ export default function RecentMeals({ entries = [], onAddClick }) {
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            {displayEntries.map((entry) => (
+            {entries.map((entry) => (
               <div
                 key={entry.id}
                 className="flex items-center justify-between p-3 rounded-xl bg-[#F0F2F3] hover:bg-[#DFE3E4]/60 transition-colors"
@@ -1380,10 +1499,21 @@ export default function RecentMeals({ entries = [], onAddClick }) {
   );
 }
 
+function RecentMealsSkeleton() {
+  return (
+    <div className="tcl-card rounded-2xl p-6 flex flex-col gap-3 min-h-[300px]">
+      <div className="h-5 w-32 bg-[#DFE3E4] rounded animate-pulse" />
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="h-14 rounded-xl bg-gradient-to-r from-[#DFE3E4] via-[#F0F2F3] to-[#DFE3E4] bg-[length:200%_100%] animate-pulse" />
+      ))}
+    </div>
+  );
+}
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\TrendSummaryCard.jsx
-// ==========================================
+
+======================================================
+FILE: frontend/src/components/dashboard/TrendSummaryCard.jsx
+======================================================
 
 export default function TrendSummaryCard({ data }) {
   if (!data) return null;
@@ -1479,9 +1609,9 @@ export default function TrendSummaryCard({ data }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\WaterProgress.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/dashboard/WaterProgress.jsx
+======================================================
 
 import { Droplets, Plus } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
@@ -1494,11 +1624,28 @@ export default function WaterProgress({ total, goal, date }) {
 
   const { mutate: addWater, isPending } = useMutation({
     mutationFn: (amount) => api.post('/water', { amount, date }),
-    onSuccess:  () => {
-      queryClient.invalidateQueries({ queryKey: ['dashboard', date] });
-      queryClient.invalidateQueries({ queryKey: ['diary', date] });
+    onMutate: async (amount) => {
+      // Cancel refetch đang chạy để tránh overwrite optimistic data
+      await queryClient.cancelQueries({ queryKey: ['dashboard', date] });
+      // Optimistic: cộng ngay vào cache
+      queryClient.setQueryData(['dashboard', date], (old) => {
+        if (!old) return old;
+        return { ...old, waterTotal: (old.waterTotal || 0) + amount };
+      });
     },
-    onError: () => toast.error('Không thể ghi nước. Vui lòng thử lại.'),
+    onError: (err, amount) => {
+      // Concurrent-safe: chỉ trừ đúng phần bị lỗi (không rollback toàn bộ snapshot)
+      queryClient.setQueryData(['dashboard', date], (old) => {
+        if (!old) return old;
+        return { ...old, waterTotal: Math.max(0, (old.waterTotal || 0) - amount) };
+      });
+      toast.error('Không thể ghi nước. Vui lòng thử lại.');
+    },
+    onSettled: () => {
+      // Safety net: sync lại với server
+      queryClient.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
+      queryClient.invalidateQueries({ queryKey: ['diary', date], refetchType: 'active' });
+    },
   });
 
   return (
@@ -1558,22 +1705,12 @@ export default function WaterProgress({ total, goal, date }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\WeightChart.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/dashboard/WeightChart.jsx
+======================================================
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Filler,
-} from 'chart.js';
 import { Line } from 'react-chartjs-2';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
+// ChartJS đã register tập trung ở main.jsx via chartSetup.js
 
 export default function WeightChart({ chartData = [] }) {
   if (!chartData.length) {
@@ -1648,34 +1785,15 @@ export default function WeightChart({ chartData = [] }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\dashboard\WeightTrendChart.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/dashboard/WeightTrendChart.jsx
+======================================================
 
-import {
-  Chart as ChartJS,
-  TimeScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Filler,
-  Legend
-} from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import 'chartjs-adapter-dayjs-4';
-
-ChartJS.register(
-  TimeScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
-  Tooltip, 
-  Filler, 
-  Legend, 
-  annotationPlugin
-);
+// ChartJS đã register tập trung ở main.jsx via chartSetup.js
+// (bao gồm cả annotationPlugin trong chartSetup.js)
 
 export default function WeightTrendChart({ data, range, onRangeChange }) {
   if (!data) return null;
@@ -1959,9 +2077,9 @@ export default function WeightTrendChart({ data, range, onRangeChange }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\AddFoodModal.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/AddFoodModal.jsx
+======================================================
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -2068,7 +2186,10 @@ function SearchTab({ date, defaultMeal, onSwitchToCreate }) {
           <div className="flex items-start justify-between">
             <div>
               <p className="font-semibold text-sm">{selected.name}</p>
-              <p className="text-xs text-base-content/50">{selected.calories} kcal/{selected.unit || '100g'}</p>
+              <p className="text-xs text-base-content/50">
+                {selected.calories} kcal/{selected.unit || '100g'}
+                {selected.sugar > 0 && <> · Đường: {selected.sugar}g</>}
+              </p>
             </div>
             <button type="button" onClick={() => setSelected(null)} className="btn btn-ghost btn-xs">
               Đổi
@@ -2079,7 +2200,7 @@ function SearchTab({ date, defaultMeal, onSwitchToCreate }) {
             <div className="form-control">
               <label className="label py-0">
                 <span className="label-text text-xs">
-                  Số lượng ({selected.unit === '100g' ? 'g' : selected.unit === '100ml' ? 'ml' : (selected.unit || 'g')})
+                  {selected.unit === '100g' ? 'Khối lượng (g)' : selected.unit === '100ml' ? 'Thể tích (ml)' : `Số lượng (${selected.unit || 'g'})`}
                 </span>
               </label>
               <input
@@ -2323,14 +2444,15 @@ export default function AddFoodModal({ isOpen, onClose, date, defaultMeal = 'san
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\BarcodeScanner.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/BarcodeScanner.jsx
+======================================================
 
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { Camera, Barcode } from 'lucide-react';
 import toast from 'react-hot-toast';
+import api from '../../lib/axios';
 
 const SUPPORTED_FORMATS = [
     Html5QrcodeSupportedFormats.EAN_13,
@@ -2402,20 +2524,116 @@ export default function BarcodeScanner({ onDetected, isActive }) {
         return () => { stopScanner(); };
     }, [isActive, mode, startScanner, stopScanner]);
 
-    // ── Photo Scanner (Camera gốc) ───────────────────────────────────────────
+    // ── Helper: tạo ImageBitmap từ File ─────────────────────────────────────
+    const fileToImageBitmap = (file) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                URL.revokeObjectURL(url);
+                // Tạo canvas để vẽ ảnh (ImageBitmap không dùng được trực tiếp trên mọi platform)
+                resolve(img);
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                reject(new Error('Không đọc được ảnh'));
+            };
+            img.src = url;
+        });
+    };
+
+    // ── Helper: resize ảnh về kích thước cụ thể ──────────────────────────────
+    const resizeToCanvas = (img, maxDimension) => {
+        const { width, height } = img;
+        const scale = Math.min(maxDimension / Math.max(width, height), 1);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        return canvas;
+    };
+
+    // ── Strategy 1: BarcodeDetector API (native, rất chính xác) ──────────────
+    const tryNativeDetector = async (img) => {
+        if (!('BarcodeDetector' in window)) return null;
+
+        const detector = new window.BarcodeDetector({
+            formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code', 'itf'],
+        });
+
+        // Thử nhiều kích thước: gốc → 1024px → 640px
+        const sizes = [null, 1024, 640];
+        for (const size of sizes) {
+            const source = size ? resizeToCanvas(img, size) : img;
+            const barcodes = await detector.detect(source);
+            if (barcodes.length > 0) {
+                return barcodes[0].rawValue;
+            }
+        }
+        return null;
+    };
+
+    // ── Strategy 2: html5-qrcode scanFile (fallback) ─────────────────────────
+    const tryZxingFallback = async (file, img) => {
+        // Tạo file đã resize để ZXing xử lý tốt hơn
+        const canvas = resizeToCanvas(img, 1024);
+        const resizedFile = await new Promise((resolve) => {
+            canvas.toBlob((blob) => {
+                resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+            }, 'image/jpeg', 0.92);
+        });
+
+        const tempScanner = new Html5Qrcode('barcode-file-decoder');
+        try {
+            const result = await tempScanner.scanFile(resizedFile, true);
+            return result;
+        } finally {
+            tempScanner.clear();
+        }
+    };
+
+    // ── Strategy 3: Gemini Vision (gửi ảnh lên backend AI đọc số) ──────────
+    const tryGeminiVision = async (img) => {
+        // Resize xuống 800px để giảm payload
+        const canvas = resizeToCanvas(img, 800);
+        const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+
+        const { data } = await api.post('/scanner/decode-barcode-image', {
+            image: base64,
+            mimeType: 'image/jpeg',
+        });
+
+        if (data?.data?.found && data.data.barcode) {
+            return data.data.barcode;
+        }
+        return null;
+    };
+
+    // ── Photo Scanner (Camera gốc) — 3 strategies chạy SONG SONG ──────────────
     const handlePhotoDecode = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        e.target.value = ''; // reset để chọn lại được
+        e.target.value = '';
 
         setIsDecoding(true);
         try {
-            // Tạo scanner tạm để decode ảnh
-            const tempScanner = new Html5Qrcode('barcode-file-decoder');
-            const result = await tempScanner.scanFile(file, /* showImage */ false);
-            tempScanner.clear();
-            onDetected(result);
+            const img = await fileToImageBitmap(file);
+
+            // Chạy cả 3 strategy song song — ai thắng trước lấy trước
+            const strategies = [
+                // Strategy 1: Native BarcodeDetector
+                tryNativeDetector(img).then(r => { if (r) return r; throw new Error('no result'); }),
+                // Strategy 2: ZXing
+                tryZxingFallback(file, img).then(r => { if (r) return r; throw new Error('no result'); }),
+                // Strategy 3: Gemini Vision AI
+                tryGeminiVision(img).then(r => { if (r) return r; throw new Error('no result'); }),
+            ];
+
+            const barcode = await Promise.any(strategies);
+            onDetected(barcode);
         } catch (err) {
+            // AggregateError = tất cả strategies đều fail
             toast.error('Không tìm thấy mã vạch trong ảnh. Hãy chụp rõ hơn và căn thẳng mã vạch.');
         } finally {
             setIsDecoding(false);
@@ -2510,16 +2728,16 @@ export default function BarcodeScanner({ onDetected, isActive }) {
                 </div>
             )}
 
-            {/* Hidden container cho file decoder */}
-            <div id="barcode-file-decoder" style={{ display: 'none' }} />
+            {/* Container cho file decoder — cần kích thước thực để ZXing hoạt động */}
+            <div id="barcode-file-decoder" style={{ position: 'absolute', left: '-9999px', width: '600px' }} />
         </div>
     );
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\CameraPermissionFallback.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/CameraPermissionFallback.jsx
+======================================================
 
 import { ImageIcon, FolderOpen } from 'lucide-react';
 
@@ -2586,9 +2804,9 @@ export default function CameraPermissionFallback({ onImageSelected }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\ConfidenceBadge.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/ConfidenceBadge.jsx
+======================================================
 
 import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 
@@ -2633,9 +2851,9 @@ export default function ConfidenceBadge({ status, confidenceScore, dataSource })
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\DaySummaryWidget.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/DaySummaryWidget.jsx
+======================================================
 
 import { Flame } from 'lucide-react';
 
@@ -2797,9 +3015,9 @@ export default function DaySummaryWidget({ consumed = 0, target = 0, consumedMac
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\DiaryEntryRow.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/DiaryEntryRow.jsx
+======================================================
 
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
@@ -2844,6 +3062,19 @@ export default function DiaryEntryRow({ entry, onDelete }) {
 
   const emoji = getFoodEmoji(entry.foodName);
 
+  // Tính toán tổng dinh dưỡng thực tế dựa trên amount
+  const tCal = Math.round(entry.caloriesSnapshot);
+  const tPro = Math.round(entry.proteinSnapshot * 10) / 10;
+  const tCarb = Math.round(entry.carbsSnapshot * 10) / 10;
+  const tFat = Math.round(entry.fatSnapshot * 10) / 10;
+  const tFib = entry.fiberSnapshot != null ? Math.round(entry.fiberSnapshot * 10) / 10 : null;
+  const tSug = entry.sugarSnapshot != null ? Math.round(entry.sugarSnapshot * 10) / 10 : null;
+  const tSod = entry.sodiumSnapshot != null ? Math.round(entry.sodiumSnapshot) : null;
+  const tVitA = entry.vitaminASnapshot != null ? Math.round(entry.vitaminASnapshot) : 0;
+  const tVitC = entry.vitaminCSnapshot != null ? Math.round(entry.vitaminCSnapshot * 10) / 10 : 0;
+  const tCa = entry.calciumSnapshot != null ? Math.round(entry.calciumSnapshot) : 0;
+  const tFe = entry.ironSnapshot != null ? Math.round(entry.ironSnapshot * 10) / 10 : 0;
+
   return (
     <li className="flex flex-col px-4 py-2 hover:bg-[#F0F2F3]/60 transition-colors group">
       <div className="flex items-center justify-between gap-x-3 w-full">
@@ -2870,7 +3101,7 @@ export default function DiaryEntryRow({ entry, onDelete }) {
         {/* Calo & Nút xóa */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <span className="text-xs font-extrabold text-[#003139] min-w-[55px] text-right whitespace-nowrap">
-            {entry.caloriesSnapshot} kcal
+            {tCal} kcal
           </span>
 
           <div className="w-6 h-6 flex items-center justify-center shrink-0">
@@ -2892,37 +3123,49 @@ export default function DiaryEntryRow({ entry, onDelete }) {
         </div>
       </div>
 
-      {/* Macros hidden by default, visible on hover */}
-      <div className="grid grid-rows-[0fr] md:group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-200 ease-in-out pl-[34px]">
-        <div className="overflow-hidden">
+      {/* Macros luôn hiển thị để mobile cũng xem được */}
+      <div className="pl-[34px]">
+        <div>
           {/* Macros chính */}
           <div className="pt-1.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <span className="text-[#003139]/80 font-medium">P: {entry.proteinSnapshot}g</span>
+            <span className="text-[#003139]/80 font-medium">P: {tPro}g</span>
             <span className="text-[#DFE3E4]">·</span>
-            <span className="text-[#C87C46]/80 font-medium">C: {entry.carbsSnapshot}g</span>
+            <span className="text-[#C87C46]/80 font-medium">C: {tCarb}g</span>
             <span className="text-[#DFE3E4]">·</span>
-            <span className="text-[#96A5A8]/80 font-medium">F: {entry.fatSnapshot}g</span>
-            {entry.fiberSnapshot != null && entry.fiberSnapshot > 0 && (
+            <span className="text-[#96A5A8]/80 font-medium">F: {tFat}g</span>
+            {tFib != null && tFib > 0 && (
               <>
                 <span className="text-[#DFE3E4]">·</span>
-                <span className="text-[#2EA850]/80 font-medium">Xơ: {entry.fiberSnapshot}g</span>
+                <span className="text-[#2EA850]/80 font-medium">Xơ: {tFib}g</span>
+              </>
+            )}
+            {tSug != null && tSug > 0 && (
+              <>
+                <span className="text-[#DFE3E4]">·</span>
+                <span className="text-[#DC2626]/80 font-medium">Đường: {tSug}g</span>
+              </>
+            )}
+            {tSod != null && tSod > 0 && (
+              <>
+                <span className="text-[#DFE3E4]">·</span>
+                <span className="text-[#96A5A8]/80 font-medium">Natri: {tSod}mg</span>
               </>
             )}
           </div>
           {/* Vi chất — chỉ hiện nếu có ít nhất 1 giá trị */}
-          {(entry.vitaminASnapshot > 0 || entry.vitaminCSnapshot > 0 || entry.calciumSnapshot > 0 || entry.ironSnapshot > 0) && (
+          {(tVitA > 0 || tVitC > 0 || tCa > 0 || tFe > 0) && (
             <div className="pb-0.5 text-[10px] flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[#96A5A8]">
-              {entry.vitaminASnapshot > 0 && (
-                <span>🥕 Vitamin A: {Math.round(entry.vitaminASnapshot)}µg</span>
+              {tVitA > 0 && (
+                <span>🥕 Vitamin A: {tVitA}µg</span>
               )}
-              {entry.vitaminCSnapshot > 0 && (
-                <span>🍊 Vitamin C: {Math.round(entry.vitaminCSnapshot * 10) / 10}mg</span>
+              {tVitC > 0 && (
+                <span>🍊 Vitamin C: {tVitC}mg</span>
               )}
-              {entry.calciumSnapshot > 0 && (
-                <span>🦴 Canxi: {Math.round(entry.calciumSnapshot)}mg</span>
+              {tCa > 0 && (
+                <span>🦴 Canxi: {tCa}mg</span>
               )}
-              {entry.ironSnapshot > 0 && (
-                <span>🩸 Sắt: {Math.round(entry.ironSnapshot * 10) / 10}mg</span>
+              {tFe > 0 && (
+                <span>🩸 Sắt: {tFe}mg</span>
               )}
             </div>
           )}
@@ -2939,9 +3182,9 @@ export default function DiaryEntryRow({ entry, onDelete }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\FoodSearchResult.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/FoodSearchResult.jsx
+======================================================
 
 /**
  * FoodSearchResult — Card kết quả tìm kiếm món ăn
@@ -2985,6 +3228,7 @@ export default function FoodSearchResult({ food, onSelect }) {
             {food.calories} kcal / {food.unit || '100g'} ·{' '}
             P:{food.protein}g C:{food.carbs}g F:{food.fat}g
             {food.fiber > 0 && <> · Xơ:{food.fiber}g</>}
+            {food.sugar > 0 && <> · Đường:{food.sugar}g</>}
           </p>
           {(food.vitaminA > 0 || food.vitaminC > 0 || food.calcium > 0 || food.iron > 0) && (
             <p className="text-[10px] text-base-content/40 flex flex-wrap gap-x-2 mt-0.5">
@@ -3021,9 +3265,9 @@ export default function FoodSearchResult({ food, onSelect }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\HealthInsights.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/HealthInsights.jsx
+======================================================
 
 import { AlertCircle, AlertTriangle, Info } from 'lucide-react';
 
@@ -3056,9 +3300,9 @@ export default function HealthInsights({ insights = [] }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\MealGroup.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/MealGroup.jsx
+======================================================
 
 import { Plus } from 'lucide-react';
 import DiaryEntryRow from './DiaryEntryRow';
@@ -3121,9 +3365,9 @@ export default function MealGroup({ mealKey, entries = [], totalCalories, onAddF
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\NutritionReviewForm.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/NutritionReviewForm.jsx
+======================================================
 
 import { useState, useEffect } from 'react';
 import { AlertTriangle, XCircle, AlertCircle } from 'lucide-react';
@@ -3149,7 +3393,12 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
         fiber: initialData?.fiber != null ? String(initialData.fiber) : '',
         sugar: initialData?.sugar != null ? String(initialData.sugar) : '',
         sodium: initialData?.sodium != null ? String(initialData.sodium) : '',
+        vitaminA: initialData?.vitaminA != null ? String(initialData.vitaminA) : '',
+        vitaminC: initialData?.vitaminC != null ? String(initialData.vitaminC) : '',
+        calcium: initialData?.calcium != null ? String(initialData.calcium) : '',
+        iron: initialData?.iron != null ? String(initialData.iron) : '',
         unit: initialData?.unit || '100g', // Thêm state unit
+        netWeight: '', // Thể tích / Khối lượng thực của cả hộp/gói
     });
 
     const [physicsErrors, setPhysicsErrors] = useState([]);
@@ -3188,7 +3437,12 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
         if (cal > 0 && estCal > 0) {
             const dev = Math.abs(cal - estCal) / cal;
             if (dev > 0.15) {
-                errs.push(`Atwater: Calo ghi ${cal}, ước tính ${estCal.toFixed(0)} (sai ${(dev * 100).toFixed(0)}%).`);
+                // Nếu sai lệch quá lớn (gấp ~4.2 lần), khả năng rất cao là AI hoặc User nhập nhầm kJ thay vì kcal
+                if (cal / estCal > 3.5 && cal / estCal < 4.8) {
+                    errs.push(`Calo đang là ${cal}, nhưng ước tính chỉ khoảng ${estCal.toFixed(0)} kcal. Có vẻ bạn/AI đã nhập nhầm chỉ số kJ. Vui lòng sửa lại thành ${estCal.toFixed(0)} (kcal).`);
+                } else {
+                    errs.push(`Tổng Calo (${cal}) không khớp với tổng Protein/Carb/Fat (ước tính ${estCal.toFixed(0)} kcal). Vui lòng kiểm tra lại.`);
+                }
             }
         }
         if (fiber != null && fiber > carb) {
@@ -3216,7 +3470,12 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
             fiber: form.fiber ? parseFloat(form.fiber) : null,
             sugar: form.sugar ? parseFloat(form.sugar) : null,
             sodium: form.sodium ? parseFloat(form.sodium) : null,
+            vitaminA: form.vitaminA ? parseFloat(form.vitaminA) : null,
+            vitaminC: form.vitaminC ? parseFloat(form.vitaminC) : null,
+            calcium: form.calcium ? parseFloat(form.calcium) : null,
+            iron: form.iron ? parseFloat(form.iron) : null,
             unit: form.unit,
+            netWeight: form.netWeight ? parseFloat(form.netWeight) : null,
         });
     };
 
@@ -3252,18 +3511,36 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
                 />
             </div>
 
-            {/* Chọn đơn vị */}
-            <div className="form-control">
-                <label className="label py-0"><span className="label-text text-xs">Đơn vị chuẩn</span></label>
-                <div className="flex gap-4 mt-1">
-                    <label className="cursor-pointer flex items-center gap-2">
-                        <input type="radio" name="unit" className="radio radio-sm radio-primary" value="100g" checked={form.unit === '100g'} onChange={e => set('unit', e.target.value)} />
-                        <span className="label-text text-sm">100g (Đồ ăn)</span>
+            {/* Chọn đơn vị (Read-only, do AI tự động trích xuất) */}
+            <div className="grid grid-cols-2 gap-2">
+                <div className="form-control">
+                    <label className="label py-0"><span className="label-text text-xs">Đơn vị chuẩn từ AI</span></label>
+                    <div className="mt-1">
+                        <span className="badge badge-primary font-semibold">
+                            {form.unit === '100ml' ? '100ml (Đồ uống)' : '100g (Đồ ăn)'}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Khối lượng / Thể tích thực (Net Weight) */}
+                <div className="form-control">
+                    <label className="label py-0">
+                        <span className="label-text text-xs text-primary font-medium">K.Lượng thực SP (tùy chọn)</span>
                     </label>
-                    <label className="cursor-pointer flex items-center gap-2">
-                        <input type="radio" name="unit" className="radio radio-sm radio-primary" value="100ml" checked={form.unit === '100ml'} onChange={e => set('unit', e.target.value)} />
-                        <span className="label-text text-sm">100ml (Đồ uống)</span>
-                    </label>
+                    <div className="join w-full">
+                        <input
+                            type="number"
+                            className="input input-bordered input-sm join-item w-full"
+                            value={form.netWeight}
+                            onChange={e => set('netWeight', e.target.value)}
+                            placeholder="VD: 700"
+                            min="0"
+                            step="any"
+                        />
+                        <div className="btn btn-sm btn-disabled join-item px-2">
+                            {form.unit === '100ml' ? 'ml' : 'g'}
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -3292,11 +3569,15 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
             </div>
 
             {/* Vi chất tùy chọn */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {[
-                    { k: 'fiber',  label: 'Xơ (g)' },
-                    { k: 'sugar',  label: 'Đường (g)' },
-                    { k: 'sodium', label: 'Natri (mg)' },
+                    { k: 'fiber',    label: 'Xơ (g)' },
+                    { k: 'sugar',    label: 'Đường (g)' },
+                    { k: 'sodium',   label: 'Natri (mg)' },
+                    { k: 'vitaminA', label: 'Vitamin A (µg)' },
+                    { k: 'vitaminC', label: 'Vitamin C (mg)' },
+                    { k: 'calcium',  label: 'Canxi (mg)' },
+                    { k: 'iron',     label: 'Sắt (mg)' },
                 ].map(({ k, label }) => (
                     <div key={k} className="form-control">
                         <label className="label py-0"><span className="label-text text-[10px]">{label}</span></label>
@@ -3363,9 +3644,9 @@ export default function NutritionReviewForm({ initialData, onSubmit, onRetake, i
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\PhotoCapture.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/PhotoCapture.jsx
+======================================================
 
 import { useState, useRef } from 'react';
 import { Camera, ImageIcon } from 'lucide-react';
@@ -3379,7 +3660,8 @@ const compressImage = (file) => {
         reader.onload = (e) => {
             const img = new Image();
             img.onload = () => {
-                const MAX = 1280;
+                // Giảm xuống 800px + quality 0.7 để tăng tốc đáng kể tốc độ upload và xử lý của AI
+                const MAX = 800;
                 let { width, height } = img;
                 if (width > MAX || height > MAX) {
                     const ratio = Math.min(MAX / width, MAX / height);
@@ -3390,7 +3672,7 @@ const compressImage = (file) => {
                 canvas.width = width;
                 canvas.height = height;
                 canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                 resolve({
                     base64: dataUrl.split(',')[1],
                     mimeType: 'image/jpeg',
@@ -3527,9 +3809,9 @@ export default function PhotoCapture({ onCapture }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\ScannerTab.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/ScannerTab.jsx
+======================================================
 
 import { useState } from 'react';
 import { Camera, Barcode, ArrowLeft, Flag, CheckCircle2 } from 'lucide-react';
@@ -3557,7 +3839,6 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
     // uiState là state machine của UI
     const [uiState, setUiState] = useState('idle');
     const [currentBarcode, setCurrentBarcode] = useState(null);
-    const [barcodeUnit, setBarcodeUnit] = useState('100g');
 
     const scanner = useScanner({ date, defaultMeal, onClose });
 
@@ -3573,7 +3854,6 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
         setUiState('barcode_processing');
         const result = await scanner.lookupBarcode(barcode);
         if (result?.found) {
-            setBarcodeUnit(result.product?.unit || '100g');
             setUiState('barcode_found');
         } else {
             // Không tìm thấy → chuyển sang chụp bảng thành phần
@@ -3603,7 +3883,14 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
     const handleConfirm = async (nutritionData) => {
         const result = await scanner.confirmAndSave(nutritionData, currentBarcode);
         if (result) {
-            setUiState('done');
+            if (nutritionData.netWeight) {
+                scanner.setAmount(nutritionData.netWeight.toString());
+            }
+            if (result.scannedProduct?.id && !result.scannedProduct?.imageUrl) {
+                setUiState('upload_photo');
+            } else {
+                setUiState('done');
+            }
         }
     };
 
@@ -3626,9 +3913,18 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
             fiber: product.fiber,
             sugar: product.sugar,
             sodium: product.sodium,
-            unit: barcodeUnit,
-        }, product.barcode).then(() => {
-            setUiState('done');
+            vitaminA: product.vitaminA,
+            vitaminC: product.vitaminC,
+            calcium: product.calcium,
+            iron: product.iron,
+            unit: product.unit || '100g',
+            imageUrl: product.imageUrl,
+        }, product.barcode).then((result) => {
+            if (result && result.scannedProduct?.id && !result.scannedProduct?.imageUrl) {
+                setUiState('upload_photo');
+            } else {
+                setUiState('done');
+            }
         });
     };
 
@@ -3750,25 +4046,32 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
                             </div>
                         ))}
                     </div>
+                    
+                    {/* Vi chất (nếu có) */}
+                    {(product.fiber != null || product.sugar != null || product.sodium != null || product.vitaminA != null || product.vitaminC != null || product.calcium != null || product.iron != null) && (
+                        <div className="flex flex-wrap gap-2 justify-center mt-2">
+                            {[
+                                { label: 'Xơ', value: product.fiber, unit: 'g' },
+                                { label: 'Đường', value: product.sugar, unit: 'g' },
+                                { label: 'Natri', value: product.sodium, unit: 'mg' },
+                                { label: 'Vit A', value: product.vitaminA, unit: 'µg' },
+                                { label: 'Vit C', value: product.vitaminC, unit: 'mg' },
+                                { label: 'Canxi', value: product.calcium, unit: 'mg' },
+                                { label: 'Sắt', value: product.iron, unit: 'mg' },
+                            ].filter(item => item.value != null).map(({ label, value, unit }) => (
+                                <div key={label} className="badge badge-outline badge-sm text-xs opacity-75">
+                                    {label}: {parseFloat(value).toFixed(1)}{unit}
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
-                    <p className="text-xs text-base-content/50 text-center mb-1">per {barcodeUnit}</p>
-
-                    {/* Chọn đơn vị cho mã vạch */}
-                    <div className="flex justify-center gap-4 mb-2">
-                        <label className="cursor-pointer flex items-center gap-2">
-                            <input type="radio" className="radio radio-xs radio-primary" value="100g" checked={barcodeUnit === '100g'} onChange={e => setBarcodeUnit(e.target.value)} />
-                            <span className="text-xs">100g</span>
-                        </label>
-                        <label className="cursor-pointer flex items-center gap-2">
-                            <input type="radio" className="radio radio-xs radio-primary" value="100ml" checked={barcodeUnit === '100ml'} onChange={e => setBarcodeUnit(e.target.value)} />
-                            <span className="text-xs">100ml</span>
-                        </label>
-                    </div>
-
+                    <p className="text-xs text-base-content/50 text-center mb-4 mt-2">per {product.unit || '100g'}</p>
+                    
                     {/* Chọn bữa + số lượng */}
                     <div className="grid grid-cols-2 gap-2">
                         <div className="form-control">
-                            <label className="label py-0"><span className="label-text text-xs">Số lượng (g)</span></label>
+                            <label className="label py-0"><span className="label-text text-xs">{product.unit === '100g' ? 'Khối lượng (g)' : product.unit === '100ml' ? 'Thể tích (ml)' : `Số lượng (${product.unit || 'g'})`}</span></label>
                             <input
                                 type="number"
                                 className="input input-bordered input-sm"
@@ -3895,11 +4198,44 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
         );
     }
 
+    // ── upload_photo ──────────────────────────────────────────────────────────
+    if (uiState === 'upload_photo') {
+        return (
+            <div className="flex flex-col gap-3 items-center py-4 text-center">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Camera className="w-8 h-8 text-primary" />
+                </div>
+                <h4 className="font-semibold mt-2">📸 Đóng góp ảnh sản phẩm</h4>
+                <p className="text-sm text-base-content/70">
+                    Sản phẩm này chưa có ảnh. Hãy chụp ảnh mặt trước sản phẩm để giúp cộng đồng nhận diện dễ dàng hơn nhé!
+                </p>
+                <div className="w-full mt-4">
+                    {scanner.isUploadingImage ? (
+                        <div className="flex flex-col items-center gap-2 py-4">
+                            <span className="loading loading-spinner text-primary"></span>
+                            <span className="text-sm">Đang tải ảnh lên...</span>
+                        </div>
+                    ) : (
+                        <PhotoCapture onCapture={async (base64) => {
+                            await scanner.uploadProductImage(scanner.scannedProductId, base64);
+                            setUiState('done');
+                        }} />
+                    )}
+                </div>
+                {!scanner.isUploadingImage && (
+                    <button type="button" className="btn btn-ghost btn-sm mt-2" onClick={() => setUiState('done')}>
+                        Bỏ qua
+                    </button>
+                )}
+            </div>
+        );
+    }
+
     // ── done ──────────────────────────────────────────────────────────────────
     if (uiState === 'done') {
         return (
             <div className="flex flex-col items-center gap-4 py-6 text-center">
-                <ConfettiEffect />
+                {scanner.contributionMessage?.includes('cộng đồng') && <ConfettiEffect />}
 
                 <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center">
                     <CheckCircle2 className="w-8 h-8 text-success" />
@@ -3909,6 +4245,16 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
                     <p className="font-semibold text-lg">
                         {scanner.contributionMessage || 'Đã lưu thành công!'}
                     </p>
+                    {scanner.contributionCount > 0 && scanner.contributionMessage?.includes('cộng đồng') && (
+                        <p className="text-xs font-medium text-primary mt-1">
+                            🎉 Cảm ơn bạn! Bạn đã đóng góp sản phẩm thứ {scanner.contributionCount} cho cộng đồng!
+                        </p>
+                    )}
+                    {scanner.uploadedImageUrl && (
+                        <p className="text-xs font-medium text-success mt-1">
+                            ✅ Đã thêm ảnh sản phẩm!
+                        </p>
+                    )}
                     {scanner.confirmedFood && (
                         <p className="text-sm text-base-content/60 mt-1">
                             {scanner.confirmedFood.name} — {scanner.confirmedFood.calories} kcal/{scanner.confirmedFood.unit || '100g'}
@@ -3919,7 +4265,7 @@ export default function ScannerTab({ date, defaultMeal, onClose }) {
                 {/* Chọn bữa + số lượng */}
                 <div className="grid grid-cols-2 gap-2 w-full max-w-xs">
                     <div className="form-control">
-                        <label className="label py-0"><span className="label-text text-xs">Số lượng (g)</span></label>
+                        <label className="label py-0"><span className="label-text text-xs">{scanner.confirmedFood?.unit === '100g' ? 'Khối lượng (g)' : scanner.confirmedFood?.unit === '100ml' ? 'Thể tích (ml)' : `Số lượng (${scanner.confirmedFood?.unit || 'g'})`}</span></label>
                         <input
                             type="number"
                             className="input input-bordered input-sm"
@@ -3979,9 +4325,9 @@ function BackButton({ onBack }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\WaterTracker.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/WaterTracker.jsx
+======================================================
 
 import { useState } from 'react';
 import { Droplets, Plus, Trash2, Settings, ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
@@ -4162,9 +4508,9 @@ export default function WaterTracker({ total, goal, logs = [], date }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\diary\WeeklyCalendarStrip.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/diary/WeeklyCalendarStrip.jsx
+======================================================
 
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import dayjs, { getToday } from '../../lib/dayjs';
@@ -4298,13 +4644,35 @@ export default function WeeklyCalendarStrip({ date, onDateChange }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\landing\AlgorithmShowcase.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/landing/AlgorithmShowcase.jsx
+======================================================
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Calculator, Database, CheckCircle2 } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { motion, useInView, animate } from 'framer-motion';
+import { ArrowRight, Calculator, TrendingUp, Award, Stethoscope } from 'lucide-react';
+
+function Counter({ from, to, suffix = '', duration = 2 }) {
+  const nodeRef = useRef(null);
+  const inView = useInView(nodeRef, { once: true });
+  
+  useEffect(() => {
+    if (inView) {
+      const node = nodeRef.current;
+      const controls = animate(from, to, {
+        duration,
+        onUpdate(value) {
+          if (node) {
+            node.textContent = Math.round(value) + suffix;
+          }
+        },
+      });
+      return () => controls.stop();
+    }
+  }, [from, to, suffix, duration, inView]);
+
+  return <span ref={nodeRef}>{from}{suffix}</span>;
+}
 
 export default function AlgorithmShowcase() {
   const containerVariants = {
@@ -4320,10 +4688,8 @@ export default function AlgorithmShowcase() {
   };
 
   return (
-    <section className="py-24 bg-[#003139] text-white relative overflow-hidden">
-      {/* Background blobs for glassmorphism effect */}
-      <div className="absolute top-20 left-10 w-64 h-64 bg-[#5FE089]/20 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#5FE089]/10 rounded-full blur-3xl"></div>
+    <section className="pt-16 pb-28 bg-[#01272E] text-white relative overflow-hidden">
+
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="text-center mb-16">
           <motion.h2 
@@ -4332,11 +4698,28 @@ export default function AlgorithmShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            Thuật toán Gauss Solver — Trái tim của hệ thống
+            Nền tảng thuật toán — Trái tim của hệ thống
           </motion.h2>
           <p className="text-white/70 max-w-2xl mx-auto">
             Hệ thống sử dụng toán học giải tích để tính toán chính xác khẩu phần ăn, đảm bảo dinh dưỡng cân bằng và tối ưu nhất cho cơ thể bạn.
           </p>
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 max-w-4xl mx-auto">
+          {[
+            { value: 500, suffix: '+', label: 'Nguyên liệu & Món ăn' },
+            { value: 6, suffix: '', label: 'Thuật toán cốt lõi' },
+            { value: 7, suffix: '', label: 'Vi chất theo dõi' },
+            { value: 4, suffix: ' lớp', label: 'Pipeline quét AI' },
+          ].map((stat, i) => (
+            <div key={i} className="text-center">
+              <div className="text-4xl md:text-5xl font-bold font-heading text-white mb-2">
+                <Counter from={0} to={stat.value} suffix={stat.suffix} duration={1.5} />
+              </div>
+              <div className="text-sm font-medium text-white/60 uppercase tracking-wider">{stat.label}</div>
+            </div>
+          ))}
         </div>
 
         {/* React-based Algorithm Visualization */}
@@ -4394,53 +4777,69 @@ export default function AlgorithmShowcase() {
           </motion.div>
         </motion.div>
 
-        {/* 3 Stat Mini-cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        {/* 4 Algorithm Mini-cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           <motion.div 
-            className="landing-glass p-6 flex items-center gap-4"
+            className="landing-glass p-6 flex flex-col items-center text-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#5FE089]">
-              <Database className="w-6 h-6" />
+              <Calculator className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-3xl font-bold">500+</p>
-              <p className="text-sm text-white/70">Nguyên liệu thực tế</p>
+              <p className="text-xl font-bold text-white mb-1">Gauss Solver</p>
+              <p className="text-sm text-white/70">Hệ phương trình tuyến tính 3×3</p>
             </div>
           </motion.div>
 
           <motion.div 
-            className="landing-glass p-6 flex items-center gap-4"
+            className="landing-glass p-6 flex flex-col items-center text-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
           >
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#5FE089]">
-              <Calculator className="w-6 h-6" />
+              <TrendingUp className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-3xl font-bold">4</p>
-              <p className="text-sm text-white/70">Thuật toán phân tích</p>
+              <p className="text-xl font-bold text-white mb-1">Adaptive TDEE</p>
+              <p className="text-sm text-white/70">Bộ lọc EMA + Rolling Average</p>
             </div>
           </motion.div>
 
           <motion.div 
-            className="landing-glass p-6 flex items-center gap-4"
+            className="landing-glass p-6 flex flex-col items-center text-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
           >
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#5FE089]">
-              <CheckCircle2 className="w-6 h-6" />
+              <Award className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-3xl font-bold">99.9%</p>
-              <p className="text-sm text-white/70">Độ chính xác Macro</p>
+              <p className="text-xl font-bold text-white mb-1">Food Scoring</p>
+              <p className="text-sm text-white/70">Mật độ dinh dưỡng per 100 kcal</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            className="landing-glass p-6 flex flex-col items-center text-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+          >
+            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#5FE089]">
+              <Stethoscope className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xl font-bold text-white mb-1">Health Insights</p>
+              <p className="text-sm text-white/70">Bộ quy tắc y khoa 4 cấp độ</p>
             </div>
           </motion.div>
         </div>
@@ -4450,107 +4849,160 @@ export default function AlgorithmShowcase() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\landing\AppShowcase.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/landing/AppShowcase.jsx
+======================================================
 
 import React from 'react';
 import { motion } from 'framer-motion';
 
 import dashboardScreenshot from '../../assets/images/screenshot_dashboard.png';
 import mealPlannerScreenshot from '../../assets/images/screenshot_meal_planner.png';
-import pdfReportScreenshot from '../../assets/images/screenshot_pdf_report.png';
 
 export default function AppShowcase() {
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
+    <section className="py-24 bg-[#F0F2F3] relative overflow-hidden">
+
+
       <div className="container mx-auto px-6 lg:px-12">
-        <div className="text-center mb-20">
-          <motion.h2 
+        <div className="text-center mb-16">
+          <motion.div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#DFE3E4] text-[#244348] font-medium text-sm mb-5 shadow-sm"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            🖥️ Giao diện thực tế
+          </motion.div>
+          <motion.h2
             className="text-4xl md:text-5xl font-bold font-heading text-[#003139]"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
           >
             Trải nghiệm hoàn toàn khác biệt
           </motion.h2>
-        </div>
-
-        <div className="relative max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center h-auto md:h-[520px]" style={{ perspective: '1000px' }}>
-          
-          {/* Screenshot 1: Meal Planner (Left) */}
-          <motion.div 
-            className="w-full md:absolute md:left-0 md:w-[55%] z-10 hidden md:block"
-            initial={{ opacity: 0, x: -50, rotateY: 10 }}
-            whileInView={{ opacity: 1, x: 0, rotateY: 5 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            <div className="bg-white rounded-xl overflow-hidden border border-[#DFE3E4]" style={{ boxShadow: '0 4px 6px rgba(0,49,57,0.07), 0 12px 28px rgba(0,49,57,0.12), 0 20px 60px rgba(0,49,57,0.06)' }}>
-              <div className="bg-[#F0F2F3] px-3 py-2 flex items-center gap-1.5 border-b border-[#DFE3E4]">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-              </div>
-              <img 
-                src={mealPlannerScreenshot} 
-                alt="Meal Planner" 
-                className="w-full aspect-[16/10] object-cover object-top"
-                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1498837167922-41c53bbfedab?q=80&w=800&auto=format&fit=crop'; }}
-              />
-            </div>
-          </motion.div>
-
-          {/* Screenshot 3: PDF Report (Right) */}
-          <motion.div 
-            className="w-full md:absolute md:right-0 md:w-[55%] z-10 hidden md:block"
-            initial={{ opacity: 0, x: 50, rotateY: -10 }}
-            whileInView={{ opacity: 1, x: 0, rotateY: -5 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            <div className="bg-white rounded-xl overflow-hidden border border-[#DFE3E4]" style={{ boxShadow: '0 4px 6px rgba(0,49,57,0.07), 0 12px 28px rgba(0,49,57,0.12), 0 20px 60px rgba(0,49,57,0.06)' }}>
-              <div className="bg-[#F0F2F3] px-3 py-2 flex items-center gap-1.5 border-b border-[#DFE3E4]">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-              </div>
-              <img 
-                src={pdfReportScreenshot} 
-                alt="PDF Report Preview" 
-                className="w-full aspect-[16/10] object-cover object-top"
-                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop'; }}
-              />
-            </div>
-          </motion.div>
-
-          {/* Screenshot 2: Dashboard (Center) */}
-          <motion.div 
-            className="w-full md:absolute md:left-1/2 md:-translate-x-1/2 md:w-3/4 z-20 mt-12 md:mt-0"
-            initial={{ opacity: 0, y: 50 }}
+          <motion.p
+            className="mt-4 text-lg text-[#244348] max-w-xl mx-auto"
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ delay: 0.2 }}
           >
-            <div className="bg-white rounded-xl overflow-hidden border border-[#DFE3E4]" style={{ boxShadow: 'rgba(21,23,29,0.25) 0px 10px 30px' }}>
-              <div className="bg-[#F0F2F3] px-4 py-3 flex items-center gap-2 border-b border-[#DFE3E4]">
+            Giao diện tối giản, dữ liệu trực quan — thiết kế cho người thực sự quan tâm đến sức khỏe.
+          </motion.p>
+        </div>
+
+        {/* 3D Stacked Screenshots */}
+        <div
+          className="relative max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center h-auto md:h-[540px]"
+          style={{ perspective: '1200px' }}
+        >
+          {/* Left: Meal Planner */}
+          <motion.div
+            className="w-full md:absolute md:left-0 md:w-[52%] z-10 hidden md:block"
+            initial={{ opacity: 0, x: -60, rotateY: 15 }}
+            whileInView={{ opacity: 1, x: 0, rotateY: 6 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9 }}
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            <div className="bg-white rounded-xl overflow-hidden border border-[#DFE3E4]"
+              style={{ boxShadow: '0 4px 6px rgba(0,49,57,0.07), 0 12px 28px rgba(0,49,57,0.12), 0 20px 60px rgba(0,49,57,0.06)' }}>
+              {/* Browser bar */}
+              <div className="bg-[#F8F9FA] px-3 py-2 flex items-center gap-1.5 border-b border-[#DFE3E4]">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                <div className="ml-2 flex-1 bg-white text-[9px] text-gray-400 px-3 py-0.5 rounded text-center truncate">
+                  Lập kế hoạch bữa ăn
+                </div>
+              </div>
+              <img
+                loading="lazy"
+                decoding="async"
+                src={mealPlannerScreenshot}
+                alt="Meal Planner — Gauss Solver"
+                className="w-full aspect-[16/10] object-cover object-top"
+              />
+            </div>
+            <p className="text-center text-sm text-[#96A5A8] mt-3 font-medium">Lập kế hoạch bữa ăn</p>
+          </motion.div>
+
+          {/* Right: Weight Trend Chart */}
+          <motion.div
+            className="w-full md:absolute md:right-0 md:w-[52%] z-10 hidden md:block"
+            initial={{ opacity: 0, x: 60, rotateY: -15 }}
+            whileInView={{ opacity: 1, x: 0, rotateY: -6 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9 }}
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            <div className="bg-white rounded-xl overflow-hidden border border-[#DFE3E4]"
+            style={{ boxShadow: '0 4px 6px rgba(0,49,57,0.07), 0 12px 28px rgba(0,49,57,0.12), 0 20px 60px rgba(0,49,57,0.06)' }}>
+              <div className="bg-[#F8F9FA] px-3 py-2 flex items-center gap-1.5 border-b border-[#DFE3E4]">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                <div className="ml-2 flex-1 bg-white text-[9px] text-gray-400 px-3 py-0.5 rounded text-center truncate">
+                  Lập kế hoạch bữa ăn
+                </div>
+              </div>
+              <img
+                loading="lazy"
+                decoding="async"
+                src={mealPlannerScreenshot}
+                alt="Lập kế hoạch bữa ăn — Gauss Solver"
+                className="w-full aspect-[16/10] object-cover object-top"
+              />
+            </div>
+            <p className="text-center text-sm text-[#96A5A8] mt-3 font-medium">Lập kế hoạch bữa ăn</p>
+          </motion.div>
+
+          {/* Center: Dashboard (main, elevated) */}
+          <motion.div
+            className="w-full md:absolute md:left-1/2 md:-translate-x-1/2 md:w-[68%] z-20 mt-12 md:mt-0"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, delay: 0.2 }}
+          >
+            <div className="bg-white rounded-xl overflow-hidden border border-[#DFE3E4]"
+              style={{ boxShadow: 'rgba(21,23,29,0.2) 0px 10px 40px, rgba(21,23,29,0.08) 0px 2px 10px' }}>
+              {/* Browser header with URL */}
+              <div className="bg-[#F8F9FA] px-4 py-3 flex items-center gap-2 border-b border-[#DFE3E4]">
                 <div className="flex gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-red-400"></div>
                   <div className="w-3 h-3 rounded-full bg-amber-400"></div>
                   <div className="w-3 h-3 rounded-full bg-green-400"></div>
                 </div>
+                <div className="mx-auto bg-white text-[10px] text-gray-400 px-20 py-1 rounded-md shadow-sm hidden sm:block">
+                  nutritrack.app/dashboard
+                </div>
               </div>
-              <img 
-                src={dashboardScreenshot} 
-                alt="Dashboard" 
+              <img
+                loading="lazy"
+                decoding="async"
+                src={dashboardScreenshot}
+                alt="NutriTrack Dashboard — Tổng quan dinh dưỡng"
                 className="w-full aspect-[16/10] object-cover object-top"
-                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop'; }}
               />
             </div>
+            <p className="text-center text-sm text-[#96A5A8] mt-3 font-medium">Dashboard tổng quan</p>
           </motion.div>
+        </div>
 
+        {/* Mobile: show only dashboard */}
+        <div className="block md:hidden mt-8">
+          <div className="bg-white rounded-xl overflow-hidden border border-[#DFE3E4] shadow-xl">
+            <div className="bg-[#F8F9FA] px-3 py-2 flex items-center gap-1.5 border-b border-[#DFE3E4]">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+            </div>
+            <img loading="lazy" decoding="async" src={dashboardScreenshot} alt="Dashboard" className="w-full aspect-[4/3] object-cover object-top" />
+          </div>
         </div>
       </div>
     </section>
@@ -4558,9 +5010,9 @@ export default function AppShowcase() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\landing\CTASection.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/landing/CTASection.jsx
+======================================================
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -4569,12 +5021,9 @@ import { Link } from 'react-router-dom';
 
 export default function CTASection() {
   return (
-    <section className="py-24 relative overflow-hidden bg-gradient-to-br from-[#5FE089] to-[#2EA850]">
-      {/* Decorative blobs */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl z-0 translate-x-1/3 -translate-y-1/3"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl z-0 -translate-x-1/3 translate-y-1/3"></div>
-      <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-white/5 rounded-full blur-2xl z-0"></div>
-      <div className="absolute bottom-1/4 right-1/3 w-48 h-48 bg-yellow-300/10 rounded-full blur-3xl z-0"></div>
+    <section className="py-28 relative overflow-hidden bg-gradient-to-br from-[#5FE089] to-[#2EA850]">
+
+
 
       <div className="container mx-auto px-6 lg:px-12 text-center text-white relative z-10">
         <motion.h2 
@@ -4616,180 +5065,305 @@ export default function CTASection() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\landing\FeaturesSection.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/landing/FeaturesSection.jsx
+======================================================
 
 import React from 'react';
 import { motion } from 'framer-motion';
 
 import profileScreenshot from '../../assets/images/screenshot_profile.png';
 import mealPlannerScreenshot from '../../assets/images/screenshot_meal_planner.png';
+import aiScannerScreenshot from '../../assets/images/screenshot_ai_scanner.png';
+import adaptiveTdeeScreenshot from '../../assets/images/screenshot_adaptive_tdee.png';
+import weightChartScreenshot from '../../assets/images/screenshot_weight_chart.png';
+import nutrientScoringScreenshot from '../../assets/images/screenshot_food_scoring.png';
+import smartInsightsScreenshot from '../../assets/images/screenshot_smart_insights.png';
 import pdfReportScreenshot from '../../assets/images/screenshot_pdf_report.png';
+
+// Reusable browser mockup wrapper
+function BrowserMockup({ children, aspectClass = 'aspect-[16/10]', shadowColor }) {
+  return (
+    <div 
+      className="relative bg-white rounded-xl border border-white/10 overflow-hidden transition-shadow duration-500"
+      style={{ boxShadow: shadowColor ? `0 25px 50px -12px ${shadowColor}` : '0 25px 50px -12px rgba(255,255,255,0.1)' }}
+    >
+      <div className="bg-white/5 px-4 py-3 flex items-center gap-2 border-b border-white/10">
+        <div className="flex gap-1.5">
+          <div className="w-3 h-3 rounded-full bg-red-400"></div>
+          <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+          <div className="w-3 h-3 rounded-full bg-green-400"></div>
+        </div>
+        <div className="mx-auto bg-white/10 text-[10px] text-white/40 px-16 py-1 rounded-md shadow-sm hidden sm:block">
+          nutritrack.app
+        </div>
+      </div>
+      <div className={`${aspectClass} bg-gray-50 relative overflow-hidden`}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Reusable phone mockup wrapper
+function PhoneMockup({ children }) {
+  return (
+    <div className="relative mx-auto border-gray-800 bg-gray-800 border-[10px] rounded-[2.5rem] h-[480px] w-[240px] shadow-2xl">
+      <div className="w-[100px] h-[14px] bg-gray-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20"></div>
+      <div className="rounded-[1.8rem] overflow-hidden w-full h-full bg-white relative z-10">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+const featureBlocks = [
+  {
+    tag: { emoji: '🧬', label: 'Cá nhân hóa', color: 'bg-white/10 text-[#5FE089]' },
+    title: 'Cá nhân hóa lộ trình dinh dưỡng đến từng chi tiết nhỏ nhất.',
+    desc: 'Chỉ số BMR, TDEE và Macro được tính dựa trên cơ thể bạn — tăng cơ, giảm mỡ hay duy trì, đều có lộ trình riêng.',
+    side: 'right',
+    mockupType: 'browser',
+    img: profileScreenshot,
+    imgAlt: 'Hồ sơ cá nhân & thiết lập mục tiêu',
+    aspectClass: 'aspect-[16/10]',
+    glowColor: 'bg-[#5FE089]',
+    shadowColor: 'rgba(95, 224, 137, 0.4)',
+  },
+  {
+    tag: { emoji: '⚡', label: 'Hiệu quả', color: 'bg-white/10 text-blue-400' },
+    title: 'Lập kế hoạch bữa ăn nhanh chóng với thuật toán Gauss thông minh.',
+    desc: 'Thuật toán tự động tính chính xác gram cho từng nguyên liệu. Ghim món yêu thích hoặc đổi món linh hoạt theo sở thích.',
+    side: 'left',
+    mockupType: 'browser',
+    img: mealPlannerScreenshot,
+    imgAlt: 'Lập kế hoạch bữa ăn',
+    aspectClass: 'aspect-[16/10]',
+    glowColor: 'bg-[#3B82F6]',
+    shadowColor: 'rgba(59, 130, 246, 0.4)',
+  },
+  {
+    tag: { emoji: '🤖', label: 'AI Vision', color: 'bg-white/10 text-purple-400' },
+    title: 'Hybrid Scanner — Barcode + AI Vision + Physics Validation.',
+    desc: 'Chỉ cần chụp nhãn dinh dưỡng hoặc quét mã vạch — AI tự đọc và ghi nhận. Không cần nhập liệu thủ công.',
+    side: 'right',
+    mockupType: 'modal',
+    img: aiScannerScreenshot,
+    imgAlt: 'AI Nutrition Scanner',
+    glowColor: 'bg-[#8B5CF6]',
+    shadowColor: 'rgba(139, 92, 246, 0.4)',
+  },
+  {
+    tag: { emoji: '📊', label: 'Phân tích', color: 'bg-white/10 text-teal-400' },
+    title: 'Biểu đồ xu hướng "giải nhiễu" cân nặng khoa học.',
+    desc: 'Lọc nhiễu dao động nước hàng ngày, hiển thị đường xu hướng chuẩn xác. Bạn thấy tiến trình thực sự — không bị đánh lừa bởi dao động ngắn hạn.',
+    side: 'left',
+    mockupType: 'browser',
+    img: weightChartScreenshot,
+    imgAlt: 'Weight Trend Chart',
+    aspectClass: 'aspect-[16/7]',
+    glowColor: 'bg-[#14B8A6]',
+    shadowColor: 'rgba(20, 184, 166, 0.4)',
+  },
+  {
+    tag: { emoji: '🏆', label: 'Chấm điểm AI', color: 'bg-white/10 text-rose-400' },
+    title: 'Chấm điểm 0-100 & Phân tích từ Bác sĩ ảo.',
+    desc: 'Tự động chấm điểm bữa ăn dựa trên mật độ vi chất, trừ điểm dư muối, vượt đường. Bác sĩ ảo sẽ đưa ra cảnh báo chuẩn y khoa mỗi ngày.',
+    side: 'right',
+    mockupType: 'browser',
+    img: nutrientScoringScreenshot,
+    imgAlt: 'Bảng điểm dinh dưỡng & Lời khuyên AI',
+    aspectClass: 'aspect-auto',
+    imageClass: 'w-full h-auto object-contain [image-rendering:-webkit-optimize-contrast] contrast-[1.05] saturate-[1.05] bg-white p-2 sm:p-6',
+    glowColor: 'bg-[#F43F5E]',
+    shadowColor: 'rgba(244, 63, 94, 0.4)',
+  },
+];
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="py-32 bg-white overflow-hidden">
+    <section id="features" className="pt-36 pb-24 bg-[#003139] overflow-hidden">
       <div className="container mx-auto px-6 lg:px-12">
-        
-        {/* Block 1: Cá nhân hóa (Text Left, Image Right) */}
-        <div className="flex flex-col lg:flex-row items-center gap-16 mb-40">
-          <motion.div 
-            className="flex-1 lg:pr-10"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#5FE089]/10 text-[#2EA850] font-semibold mb-6 text-sm">
-              🧬 Cá nhân hóa
-            </div>
-            <h3 className="text-3xl lg:text-4xl font-bold font-heading mb-6 leading-tight text-[#003139]">
-              Cá nhân hóa lộ trình dinh dưỡng đến từng chi tiết nhỏ nhất.
-            </h3>
-            <p className="text-lg text-[#244348] leading-relaxed mb-8">
-              BMR và TDEE được tính toán chuẩn xác dựa trên cơ thể bạn. Phân bổ Macro theo đúng mục tiêu tăng cơ, giảm mỡ hay duy trì cân nặng một cách khoa học nhất.
-            </p>
-          </motion.div>
 
-          <motion.div 
-            className="flex-1 relative flex justify-center lg:justify-end"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Phone Mockup CSS */}
-            <div className="relative mx-auto border-gray-800 bg-gray-800 border-[10px] rounded-[2.5rem] h-[550px] w-[270px] shadow-2xl">
-              <div className="w-[120px] h-[16px] bg-gray-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20"></div>
-              <div className="rounded-[1.8rem] overflow-hidden w-full h-full bg-white relative z-10">
-                <img 
-                  src={profileScreenshot} 
-                  alt="Profile Setup" 
-                  className="w-full h-full object-cover"
-                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop'; }}
-                />
-              </div>
-            </div>
-          </motion.div>
-        </div>
+        {/* Section Header */}
+        <motion.div
+          className="text-center mb-24"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-[#5FE089] font-semibold mb-4 text-sm">
+            ✨ Tính năng nổi bật
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold font-heading text-white mb-4">
+            Được xây dựng để thực sự <span className="text-[#5FE089]">hiệu quả</span>
+          </h2>
+          <p className="text-lg text-white/70 max-w-2xl mx-auto">
+            Từng tính năng được thiết kế dựa trên khoa học dinh dưỡng và thuật toán toán học, không phải chỉ là con số calo đơn giản.
+          </p>
+        </motion.div>
 
-        {/* Block 2: Hiệu quả (Image Left, Text Right) */}
-        <div className="flex flex-col-reverse lg:flex-row items-center gap-16 mb-40">
-          <motion.div 
-            className="flex-1 relative w-full"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Browser Mockup */}
-            <div className="relative bg-white rounded-xl shadow-2xl border border-[#DFE3E4] overflow-hidden">
-              <div className="bg-[#F0F2F3] px-4 py-3 flex items-center gap-2 border-b border-[#DFE3E4]">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
+        {/* Feature Blocks */}
+        <div className="flex flex-col gap-48">
+          {featureBlocks.map((block, index) => {
+            const isRight = block.side === 'right';
+            return (
+              <div
+                key={index}
+                className={`flex flex-col ${isRight ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-16`}
+              >
+                {/* Text Side */}
+                <div className={`flex-1 ${isRight ? 'lg:pr-10' : 'lg:pl-10'}`}>
+                  <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${block.tag.color} font-semibold mb-6 text-sm`}>
+                    {block.tag.emoji} {block.tag.label}
+                  </div>
+                  <h3 className="text-3xl lg:text-4xl font-bold font-heading mb-6 leading-tight text-white">
+                    {block.title}
+                  </h3>
+                  <p className="text-lg text-white/70 leading-relaxed">
+                    {block.desc}
+                  </p>
+                </div>
+
+                {/* Image Side */}
+                <motion.div
+                  className="flex-1 relative w-full flex justify-center hidden sm:flex"
+                  initial={{ opacity: 0, scale: 0.93 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, margin: '-100px' }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  style={{ perspective: '1200px' }}
+                >
+
+
+                  {/* 3D Tilt Wrapper */}
+                  <motion.div
+                    className="w-full relative group"
+                    initial={{ rotateY: isRight ? -3 : 3, rotateX: 1 }}
+                    whileHover={{ rotateY: 0, rotateX: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    style={{ transformStyle: "preserve-3d" }}
+                  >
+                    {/* Dots Pattern Decoration */}
+                    <div className={`absolute ${isRight ? '-bottom-10 -left-10' : '-bottom-10 -right-10'} w-32 h-32 opacity-[0.08] pointer-events-none -z-10`} style={{ backgroundImage: 'radial-gradient(white 2px, transparent 2px)', backgroundSize: '16px 16px' }} />
+
+                  {block.mockupType === 'phone' && (
+                    <PhoneMockup>
+                      <img
+                        loading="lazy"
+                        decoding="async"
+                        src={block.img}
+                        alt={block.imgAlt}
+                        className="w-full h-full object-cover object-top"
+                      />
+                    </PhoneMockup>
+                  )}
+
+                  {block.mockupType === 'browser' && (
+                    <div className="w-full">
+                      <BrowserMockup aspectClass={block.aspectClass}>
+                        <img
+                          loading="lazy"
+                          decoding="async"
+                          src={block.img}
+                          alt={block.imgAlt}
+                          className={block.imageClass || "w-full h-full object-cover object-top"}
+                        />
+                      </BrowserMockup>
+                    </div>
+                  )}
+
+                  {block.mockupType === 'modal' && (
+                    /* Hiệu ứng modal nổi trên nền mờ - phù hợp với ảnh AI Scanner */
+                    <div className="relative w-full max-w-md mx-auto">
+                      {/* Nền giả lập app phía sau modal */}
+                      <div className="absolute inset-0 -m-6 rounded-2xl overflow-hidden border border-white/5">
+                        <div className="w-full h-full bg-[#002228] flex items-center justify-center">
+                          <div className="text-white/20 text-sm font-medium">NutriTrack App</div>
+                        </div>
+                      </div>
+                      {/* Overlay mờ */}
+                      <div className="absolute inset-0 -m-6 bg-black/40 rounded-2xl"></div>
+                      {/* Modal card nổi */}
+                      <div
+                        className="relative bg-white rounded-2xl border border-[#DFE3E4] overflow-hidden z-10 animate-float-sm"
+                        style={{ boxShadow: block.shadowColor ? `0 25px 50px -12px ${block.shadowColor}` : '0 25px 50px -12px rgba(0,0,0,0.25)' }}
+                      >
+                        <img
+                          loading="lazy"
+                          decoding="async"
+                          src={block.img}
+                          alt={block.imgAlt}
+                          className="w-full h-auto"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  </motion.div>
+                </motion.div>
+
+                {/* Image Side Mobile (No 3D/Glow for performance) */}
+                <div className="flex-1 relative w-full flex justify-center sm:hidden">
+                  {block.mockupType === 'phone' && (
+                    <PhoneMockup>
+                      <img
+                        loading="lazy"
+                        decoding="async"
+                        src={block.img}
+                        alt={block.imgAlt}
+                        className="w-full h-full object-cover object-top"
+                      />
+                    </PhoneMockup>
+                  )}
+
+                  {block.mockupType === 'browser' && (
+                    <div className="w-full">
+                      <BrowserMockup aspectClass={block.aspectClass} shadowColor={block.shadowColor}>
+                        <img
+                          loading="lazy"
+                          decoding="async"
+                          src={block.img}
+                          alt={block.imgAlt}
+                          className={block.imageClass || "w-full h-full object-cover object-top"}
+                        />
+                      </BrowserMockup>
+                    </div>
+                  )}
+
+                  {block.mockupType === 'modal' && (
+                    <div className="relative w-full max-w-md mx-auto">
+                      <div className="absolute inset-0 -m-6 bg-black/5 rounded-2xl"></div>
+                      <div className="relative bg-white rounded-2xl shadow-xl border border-[#DFE3E4] overflow-hidden z-10">
+                        <img loading="lazy" decoding="async" src={block.img} alt={block.imgAlt} className="w-full h-auto" />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="aspect-[16/10] bg-gray-50 relative overflow-hidden">
-                <img 
-                  src={mealPlannerScreenshot} 
-                  alt="Meal Planner" 
-                  className="w-full h-full object-cover object-top"
-                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1498837167922-41c53bbfedab?q=80&w=1200&auto=format&fit=crop'; }}
-                />
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            className="flex-1 lg:pl-10"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-700 font-semibold mb-6 text-sm">
-              ⚡ Hiệu quả
-            </div>
-            <h3 className="text-3xl lg:text-4xl font-bold font-heading mb-6 leading-tight text-[#003139]">
-              Lập kế hoạch bữa ăn nhanh chóng với thuật toán thông minh.
-            </h3>
-            <p className="text-lg text-[#244348] leading-relaxed mb-8">
-              Thuật toán Gauss độc quyền tự động tính toán khối lượng thực phẩm. Bạn có thể dễ dàng ghim nguyên liệu yêu thích hoặc đổi món một cách linh hoạt.
-            </p>
-          </motion.div>
+            );
+          })}
         </div>
-
-        {/* Block 3: Phân tích (Text Left, Image Right) */}
-        <div className="flex flex-col lg:flex-row items-center gap-16">
-          <motion.div 
-            className="flex-1 lg:pr-10"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-700 font-semibold mb-6 text-sm">
-              📊 Phân tích
-            </div>
-            <h3 className="text-3xl lg:text-4xl font-bold font-heading mb-6 leading-tight text-[#003139]">
-              Phân tích chuyên sâu, báo cáo chuẩn y khoa.
-            </h3>
-            <p className="text-lg text-[#244348] leading-relaxed mb-8">
-              Công nghệ Adaptive TDEE theo dõi sự thay đổi của cơ thể để tự động điều chỉnh. Xuất báo cáo PDF chi tiết giúp bạn và chuyên gia y tế dễ dàng theo dõi hành trình sức khỏe.
-            </p>
-          </motion.div>
-
-          <motion.div 
-            className="flex-1 relative w-full"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Browser Mockup for PDF/Chart */}
-            <div className="relative bg-white rounded-xl shadow-2xl border border-[#DFE3E4] overflow-hidden">
-              <div className="bg-[#F0F2F3] px-4 py-3 flex items-center gap-2 border-b border-[#DFE3E4]">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                </div>
-              </div>
-              <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
-                <img 
-                  src={pdfReportScreenshot} 
-                  alt="PDF Report" 
-                  className="w-full h-full object-cover object-top"
-                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop'; }}
-                />
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
       </div>
     </section>
   );
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\landing\HeroSection.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/landing/HeroSection.jsx
+======================================================
 
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import dashboardScreenshot from '../../assets/images/screenshot_dashboard.png'; // To be added later
+import dashboardScreenshot from '../../assets/images/screenshot_dashboard.png';
 
 export default function HeroSection() {
   return (
-    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white">
-      {/* Background Gradient Blob */}
-      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[800px] h-[800px] bg-[#5FE089]/10 blur-3xl rounded-full -z-10 pointer-events-none"></div>
+    <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-36 overflow-hidden bg-white">
+      {/* Subtle gradient background — no blur */}
+      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[600px] h-[600px] bg-[#5FE089]/[0.06] rounded-full -z-10 pointer-events-none"></div>
 
       <div className="container mx-auto px-6 lg:px-12">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
@@ -4846,11 +5420,14 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
+
+
+            {/* Dots Pattern */}
+            <div className="absolute -bottom-16 -left-16 w-40 h-40 opacity-[0.08] pointer-events-none -z-10 hidden sm:block" style={{ backgroundImage: 'radial-gradient(#003139 2px, transparent 2px)', backgroundSize: '16px 16px' }} />
+
             {/* CSS Browser Mockup */}
             <motion.div 
-              className="relative bg-white rounded-xl shadow-[0_20px_50px_rgba(0,49,57,0.1)] border border-[#DFE3E4] overflow-hidden"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="relative bg-white rounded-xl shadow-[0_25px_50px_-12px_rgba(95,224,137,0.25)] border border-[#DFE3E4] overflow-hidden animate-float"
             >
               {/* Browser Header */}
               <div className="bg-[#F0F2F3] px-4 py-3 flex items-center gap-2 border-b border-[#DFE3E4]">
@@ -4865,6 +5442,7 @@ export default function HeroSection() {
               {/* Browser Content */}
               <div className="aspect-[16/10] bg-gray-50 relative overflow-hidden">
                 <img 
+                  fetchPriority="high"
                   src={dashboardScreenshot} 
                   alt="NutriTrack Dashboard" 
                   className="w-full h-full object-cover object-top"
@@ -4877,9 +5455,8 @@ export default function HeroSection() {
 
             {/* Floating Micro Cards */}
             <motion.div 
-              className="absolute -bottom-6 -left-6 lg:-bottom-8 lg:-left-12 bg-white/80 backdrop-blur-md border border-white/40 p-4 rounded-xl shadow-lg flex items-center gap-4 z-20"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute -bottom-6 -left-6 lg:-bottom-8 lg:-left-12 bg-white border border-[#DFE3E4] p-4 rounded-xl shadow-lg flex items-center gap-4 z-20 animate-float-reverse"
+              style={{ animationDelay: '1s' }}
             >
               <div className="w-12 h-12 rounded-full bg-[#5FE089]/20 flex items-center justify-center text-[#2EA850] text-xl">
                 🔥
@@ -4891,9 +5468,8 @@ export default function HeroSection() {
             </motion.div>
 
             <motion.div 
-              className="absolute -top-6 -right-6 lg:-top-8 lg:-right-8 bg-white/80 backdrop-blur-md border border-white/40 p-4 rounded-xl shadow-lg flex items-center gap-3 z-20 hidden sm:flex"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              className="absolute -top-6 -right-6 lg:-top-8 lg:-right-8 bg-white border border-[#DFE3E4] p-4 rounded-xl shadow-lg flex items-center gap-3 z-20 hidden sm:flex animate-float"
+              style={{ animationDuration: '5.5s', animationDelay: '0.5s' }}
             >
               <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg">
                 🥩
@@ -4912,9 +5488,9 @@ export default function HeroSection() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\landing\HowItWorks.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/landing/HowItWorks.jsx
+======================================================
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -5001,80 +5577,143 @@ export default function HowItWorks() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\landing\IntegrationSection.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/landing/IntegrationSection.jsx
+======================================================
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { LayoutDashboard, BookOpen, LineChart, FileText, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LayoutDashboard, BookOpen, LineChart, Calendar, Dumbbell, User } from 'lucide-react';
+
 import dashboardScreenshot from '../../assets/images/screenshot_dashboard.png';
+import mealPlannerScreenshot from '../../assets/images/screenshot_meal_planner.png';
+import weightChartScreenshot from '../../assets/images/screenshot_weight_chart.png';
+import exerciseScreenshot from '../../assets/images/screenshot_exercise.png';
+import profileScreenshot from '../../assets/images/screenshot_profile.png';
+import diaryScreenshot from '../../assets/images/screenshot_diary.png';
+
+const steps = [
+  { icon: <LayoutDashboard className="w-6 h-6" />, label: 'Tổng quan', img: dashboardScreenshot, desc: 'Dashboard theo dõi tiến độ tổng thể' },
+  { icon: <BookOpen className="w-6 h-6" />, label: 'Nhật ký', img: diaryScreenshot, desc: 'Ghi chép bữa ăn và quét mã vạch AI' },
+  { icon: <Calendar className="w-6 h-6" />, label: 'Lập kế hoạch', img: mealPlannerScreenshot, desc: 'Thuật toán Gauss tạo thực đơn tự động' },
+  { icon: <LineChart className="w-6 h-6" />, label: 'Cân nặng', img: weightChartScreenshot, desc: 'Theo dõi và dự báo cân nặng với EMA' },
+  { icon: <Dumbbell className="w-6 h-6" />, label: 'Luyện tập', img: exerciseScreenshot, desc: 'Ghi nhận hoạt động thể chất & calo' },
+  { icon: <User className="w-6 h-6" />, label: 'Hồ sơ', img: profileScreenshot, desc: 'Thiết lập mục tiêu và chỉ số cơ thể' },
+];
 
 export default function IntegrationSection() {
-  const steps = [
-    { icon: <LayoutDashboard className="w-7 h-7" />, label: "Dashboard" },
-    { icon: <BookOpen className="w-7 h-7" />, label: "Nhật ký" },
-    { icon: <LineChart className="w-7 h-7" />, label: "Cân nặng" },
-    { icon: <FileText className="w-7 h-7" />, label: "Báo cáo" }
-  ];
+  const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <section className="py-24 bg-[#F0F2F3] overflow-hidden">
-      <div className="container mx-auto px-6 lg:px-12 text-center">
-        <motion.h2 
-          className="text-3xl md:text-4xl font-bold font-heading mb-16 text-[#003139]"
+    <section className="py-28 bg-white overflow-hidden">
+      <div className="container mx-auto px-6 lg:px-12">
+        <div className="text-center mb-14">
+          <motion.div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#003139]/6 text-[#003139] font-semibold mb-4 text-sm"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            🔗 Hệ sinh thái hoàn chỉnh
+          </motion.div>
+          <motion.h2
+            className="text-3xl md:text-4xl font-bold font-heading text-[#003139]"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            Tích hợp liền mạch — Một hệ sinh thái hoàn chỉnh
+          </motion.h2>
+          <motion.p
+            className="mt-3 text-[#244348] max-w-xl mx-auto"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            Mỗi module kết nối chặt chẽ với nhau để tạo ra một vòng lặp hoàn hảo từ dữ liệu đến hành động.
+          </motion.p>
+        </div>
+
+        {/* Tab Selector */}
+        <motion.div
+          className="flex flex-wrap items-center justify-center mb-10"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
         >
-          Tích hợp liền mạch — Một hệ sinh thái hoàn chỉnh
-        </motion.h2>
-
-        {/* Flow Diagram */}
-        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 mb-16 max-w-4xl mx-auto">
-          {steps.map((step, index) => (
-            <React.Fragment key={index}>
-              <motion.div 
-                className="bg-white px-8 py-6 rounded-2xl shadow-sm border border-[#DFE3E4] flex flex-col items-center gap-2 min-w-[150px]"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+          <div className="inline-flex flex-wrap items-center justify-center gap-1.5 p-1.5 bg-[#F0F2F3] rounded-2xl">
+            {steps.map((step, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveTab(index)}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ${
+                  activeTab === index
+                    ? 'bg-white text-[#003139] shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                    : 'text-[#96A5A8] hover:text-[#003139] hover:bg-white/50'
+                }`}
               >
-                <div className="text-[#003139] mb-1">{step.icon}</div>
-                <span className="font-medium text-[#244348] text-sm">{step.label}</span>
-              </motion.div>
-              {index < steps.length - 1 && (
-                <motion.div 
-                  className="text-[#003139]/40 hidden md:block"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 + 0.1 }}
-                >
-                  <ArrowRight className="w-7 h-7" />
-                </motion.div>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
+                <span className={activeTab === index ? 'text-[#5FE089]' : 'text-inherit'}>
+                  {step.icon}
+                </span>
+                {step.label}
+              </button>
+            ))}
+          </div>
+        </motion.div>
 
-        {/* Image Showcase */}
-        <motion.div 
-          className="relative max-w-5xl mx-auto bg-white rounded-2xl p-2 shadow-[0_20px_50px_rgba(0,49,57,0.05)] border border-[#DFE3E4]"
+        {/* Screenshot Preview */}
+        <motion.div
+          className="relative max-w-5xl mx-auto"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.7 }}
         >
-          <div className="rounded-xl overflow-hidden bg-gray-50 aspect-[16/9]">
-            <img 
-              src={dashboardScreenshot} 
-              alt="Hệ sinh thái NutriTrack" 
-              className="w-full h-full object-cover object-top"
-              onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1498837167922-41c53bbfedab?q=80&w=1200&auto=format&fit=crop'; }}
-            />
+
+
+          {/* Dots Pattern */}
+          <div className="absolute -bottom-12 -right-12 w-48 h-48 opacity-[0.08] pointer-events-none -z-10 hidden sm:block" style={{ backgroundImage: 'radial-gradient(#003139 2px, transparent 2px)', backgroundSize: '16px 16px' }} />
+          <div className="absolute -top-12 -left-12 w-48 h-48 opacity-[0.08] pointer-events-none -z-10 hidden sm:block" style={{ backgroundImage: 'radial-gradient(#003139 2px, transparent 2px)', backgroundSize: '16px 16px' }} />
+
+          <div className="bg-white rounded-2xl p-2 shadow-[0_25px_50px_-12px_rgba(0,49,57,0.25)] border border-[#DFE3E4]">
+            {/* Browser chrome */}
+            <div className="bg-[#F0F2F3] rounded-xl px-4 py-3 flex items-center gap-2 border-b border-[#DFE3E4] mb-2">
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                <div className="w-3 h-3 rounded-full bg-green-400"></div>
+              </div>
+              <div className="mx-auto bg-white text-[10px] text-gray-400 px-24 py-1 rounded-md shadow-sm hidden sm:block">
+                nutritrack.app — {steps[activeTab].label}
+              </div>
+            </div>
+
+            {/* Animated image swap */}
+            <div className="rounded-xl overflow-hidden bg-gray-50 aspect-[16/9] relative">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  loading="lazy"
+                  decoding="async"
+                  key={activeTab}
+                  src={steps[activeTab].img}
+                  alt={steps[activeTab].label}
+                  className="w-full h-full object-cover object-top"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35 }}
+                />
+              </AnimatePresence>
+            </div>
           </div>
+
+          {/* Caption */}
+          <p className="text-center text-sm text-[#96A5A8] mt-4 font-medium">
+            {steps[activeTab].desc}
+          </p>
         </motion.div>
       </div>
     </section>
@@ -5082,9 +5721,9 @@ export default function IntegrationSection() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\landing\PricingSection.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/landing/PricingSection.jsx
+======================================================
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -5093,7 +5732,7 @@ import { Link } from 'react-router-dom';
 
 export default function PricingSection() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-28 bg-white">
       <div className="container mx-auto px-6 lg:px-12">
         <div className="text-center mb-16">
           <motion.h2 
@@ -5156,15 +5795,9 @@ export default function PricingSection() {
           </div>
 
           {/* Pricing Card */}
-          <motion.div 
-            className="flex-1 w-full max-w-md"
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="flex-1 w-full max-w-md">
             <div className="bg-white rounded-3xl p-8 border border-[#DFE3E4] shadow-[0_20px_50px_rgba(0,49,57,0.08)] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#5FE089]/20 blur-3xl rounded-full"></div>
+
               
               <div className="text-center mb-8 relative z-10">
                 <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 font-medium text-sm mb-4">Gói Cơ Bản</span>
@@ -5175,8 +5808,17 @@ export default function PricingSection() {
                 <p className="text-[#244348]">Sử dụng vĩnh viễn, không cần thẻ tín dụng.</p>
               </div>
 
-              <ul className="space-y-4 mb-8 relative z-10">
-                {['Tính toán BMR, TDEE', 'Gauss Meal Solver (4 món)', 'Adaptive TDEE & Chart', 'Xuất báo cáo PDF không giới hạn'].map((feature, i) => (
+              <ul className="space-y-3 mb-8 relative z-10">
+                {[
+                  'Tính toán BMR & TDEE', 
+                  'Gauss Meal Solver (4 món)', 
+                  'Adaptive TDEE & Biểu đồ', 
+                  'Chấm điểm lành mạnh 0-100',
+                  'Bác sĩ dinh dưỡng AI',
+                  'Hybrid Scanner (AI Vision)',
+                  'Theo dõi Nước & Luyện tập',
+                  'Xuất báo cáo PDF'
+                ].map((feature, i) => (
                   <li key={i} className="flex items-center gap-3 text-[#244348]">
                     <div className="w-5 h-5 rounded-full bg-[#5FE089]/20 text-[#2EA850] flex items-center justify-center shrink-0">
                       <Check className="w-3.5 h-3.5" />
@@ -5190,7 +5832,7 @@ export default function PricingSection() {
                 Bắt đầu miễn phí <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
@@ -5198,9 +5840,9 @@ export default function PricingSection() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\landing\StatsCounter.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/landing/StatsCounter.jsx
+======================================================
 
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, useInView, animate } from 'framer-motion';
@@ -5229,10 +5871,10 @@ function Counter({ from, to, suffix = '', duration = 2 }) {
 
 export default function StatsCounter() {
   const stats = [
-    { value: 500, suffix: '+', label: 'Nguyên liệu CSDL', duration: 2 },
-    { value: 4, suffix: '', label: 'Thuật toán thông minh', duration: 1.5 },
-    { value: 100, suffix: '%', label: 'Cá nhân hóa', duration: 2 },
-    { value: 7, suffix: ' - 30', label: 'Ngày lên thực đơn', duration: 1.5 },
+    { value: 500, suffix: '+', label: 'Nguyên liệu & Món ăn', duration: 2 },
+    { value: 6, suffix: '', label: 'Thuật toán cốt lõi', duration: 1.5 },
+    { value: 7, suffix: '', label: 'Vi chất theo dõi', duration: 1.5 },
+    { value: 4, suffix: ' lớp', label: 'Pipeline quét AI', duration: 1.5 },
   ];
 
   return (
@@ -5266,9 +5908,9 @@ export default function StatsCounter() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\landing\Testimonials.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/landing/Testimonials.jsx
+======================================================
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -5278,29 +5920,50 @@ const personas = [
   {
     name: 'Nguyễn Văn A',
     role: 'Sinh viên năm 4, ĐH Bách Khoa',
-    content: 'Tiết kiệm 2 tiếng mỗi ngày nhờ thực đơn tự động. Không cần suy nghĩ hôm nay ăn gì nữa!',
+    content: 'Tiết kiệm 2 tiếng mỗi ngày nhờ thực đơn tự động. Không cần vắt óc suy nghĩ "hôm nay ăn gì" mà vẫn đảm bảo đủ protein để tập gym!',
     rating: 5,
-    avatar: 'https://i.pravatar.cc/150?u=1'
+    avatar: 'https://i.pravatar.cc/150?img=11'
   },
   {
     name: 'Trần Thị B',
     role: 'Gymer 3 năm kinh nghiệm',
-    content: 'Thuật toán Adaptive TDEE giúp tôi phá vỡ plateau cân nặng sau 3 tháng chững.',
+    content: 'Thuật toán Adaptive TDEE thực sự là cứu cánh. Nó giúp tôi phá vỡ plateau (chững cân) sau 3 tháng dậm chân tại chỗ bằng cách tự động điều chỉnh calo.',
     rating: 5,
-    avatar: 'https://i.pravatar.cc/150?u=2'
+    avatar: 'https://i.pravatar.cc/150?img=5'
   },
   {
     name: 'Lê Hoàng C',
     role: 'Bác sĩ Dinh dưỡng',
-    content: 'Báo cáo PDF chuẩn y khoa rất tiện cho việc theo dõi bệnh nhân tiểu đường.',
+    content: 'Báo cáo PDF chuẩn y khoa của NutriTrack rất tiện cho việc theo dõi bệnh nhân tiểu đường. Các cảnh báo về lượng muối và đường cực kỳ chính xác.',
     rating: 5,
-    avatar: 'https://i.pravatar.cc/150?u=3'
+    avatar: 'https://i.pravatar.cc/150?img=8'
+  },
+  {
+    name: 'Phạm Thu Trang',
+    role: 'Nhân viên văn phòng',
+    content: 'Tính năng quét mã vạch và AI Vision đã thay đổi thói quen ăn vặt của tôi. Cầm gói bánh lên quét là biết ngay lượng calo rỗng, lập tức bỏ xuống luôn!',
+    rating: 5,
+    avatar: 'https://i.pravatar.cc/150?img=9'
+  },
+  {
+    name: 'Hoàng Minh Tuấn',
+    role: 'Người theo chế độ Eat Clean',
+    content: 'Bác sĩ dinh dưỡng ảo cảnh báo lượng muối siêu chuẩn. Nhờ hệ thống chấm điểm 0-100, tôi mới biết món mình hay ăn ngoài hàng thực chất toàn dầu mỡ ẩn.',
+    rating: 5,
+    avatar: 'https://i.pravatar.cc/150?img=12'
+  },
+  {
+    name: 'Ngô Hải Đăng',
+    role: 'Huấn luyện viên (PT)',
+    content: 'Tôi bắt buộc mọi học viên dùng biểu đồ xu hướng của NutriTrack. Nó lọc đi dao động nước hàng ngày, giúp họ không bị hoảng loạn khi cân nặng lên xuống thất thường.',
+    rating: 5,
+    avatar: 'https://i.pravatar.cc/150?img=14'
   }
 ];
 
 export default function Testimonials() {
   return (
-    <section id="testimonials" className="py-24 bg-white overflow-hidden">
+    <section id="testimonials" className="py-28 bg-[#F0F2F3] overflow-hidden">
       <div className="container mx-auto px-6 lg:px-12">
         <div className="text-center mb-16">
           <motion.h2 
@@ -5314,31 +5977,27 @@ export default function Testimonials() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {personas.map((t, i) => (
-            <motion.div 
-              key={i}
-              className="bg-white p-8 rounded-2xl shadow-[0_10px_30px_rgba(0,49,57,0.05)] border-l-4 border-[#003139] hover:-translate-y-2 transition-transform duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
+          {personas.map((t, idx) => (
+            <div 
+              key={idx}
+              className="bg-white rounded-2xl p-8 border border-[#DFE3E4] shadow-[0_2px_5px_rgba(21,23,29,0.08)] flex flex-col h-full hover:shadow-[0_4px_12px_rgba(21,23,29,0.12)] transition-shadow duration-300"
             >
               <div className="flex gap-1 text-amber-400 mb-6">
                 {[...Array(t.rating)].map((_, idx) => (
                   <Star key={idx} className="w-5 h-5 fill-current" />
                 ))}
               </div>
-              <p className="text-[#244348] mb-8 italic leading-relaxed text-lg">
+              <p className="text-[#244348] mb-8 italic leading-relaxed text-xl flex-1">
                 "{t.content}"
               </p>
-              <div className="flex items-center gap-4">
-                <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover ring-2 ring-[#DFE3E4]" />
+              <div className="flex items-center gap-4 mt-auto">
+                <img loading="lazy" decoding="async" src={t.avatar} alt={t.name} className="w-14 h-14 rounded-full object-cover ring-2 ring-[#DFE3E4]" />
                 <div>
                   <h4 className="font-bold text-[#003139]">{t.name}</h4>
                   <span className="text-sm text-[#96A5A8] font-medium">{t.role}</span>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -5347,9 +6006,9 @@ export default function Testimonials() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\layout\AppLayout.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/layout/AppLayout.jsx
+======================================================
 
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -5418,9 +6077,9 @@ export default function AppLayout() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\layout\Footer.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/layout/Footer.jsx
+======================================================
 
 import React from 'react';
 import { Leaf, Code } from 'lucide-react';
@@ -5485,9 +6144,9 @@ export default function Footer() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\layout\Navbar.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/layout/Navbar.jsx
+======================================================
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -5584,9 +6243,9 @@ export default function Navbar() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\layout\Sidebar.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/layout/Sidebar.jsx
+======================================================
 
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -5674,9 +6333,9 @@ export default function Sidebar({ onClose }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\meal-planner\IngredientSwapModal.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/meal-planner/IngredientSwapModal.jsx
+======================================================
 
 import { useState } from 'react';
 import { useFoodsByRole } from '../../hooks/useMealPlanner';
@@ -5797,9 +6456,9 @@ export default function IngredientSwapModal({ isOpen, onClose, swapTarget, allow
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\meal-planner\MealConfigModal.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/meal-planner/MealConfigModal.jsx
+======================================================
 
 import { useState } from 'react';
 import { useMealConfig, useUpdateConfig } from '../../hooks/useMealPlanner';
@@ -5887,9 +6546,9 @@ export default function MealConfigModal({ isOpen, onClose }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\meal-planner\MealResult.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/meal-planner/MealResult.jsx
+======================================================
 
 import { useState } from 'react';
 import { RefreshCw, AlertTriangle, Pin } from 'lucide-react';
@@ -6056,9 +6715,9 @@ export default function MealResult({ result, onSwap, pinnedFoods = {}, onToggleP
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\meal-planner\MealSelector.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/meal-planner/MealSelector.jsx
+======================================================
 
 const MEAL_META = {
   sang: { label: 'Bữa sáng', icon: '🌅', color: 'badge-warning' },
@@ -6095,9 +6754,9 @@ export default function MealSelector({ mealsConfig = [], selectedMeal, onSelect 
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\meal-planner\PinSlotRow.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/meal-planner/PinSlotRow.jsx
+======================================================
 
 import { useState } from 'react';
 import { useFoodsByRole } from '../../hooks/useMealPlanner';
@@ -6122,30 +6781,15 @@ export default function PinSlotRow({ slot, pinnedFoodId, onPinChange }) {
   const pinnedFood = foods.find(f => f.id === pinnedFoodId);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 tcl-card transition-all">
-      <div className="flex items-center gap-2.5">
-        <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-semibold ${meta.color}`}>
-          <span className="text-base">{meta.icon}</span>
+    <div className="flex flex-col gap-2 p-3 tcl-card transition-all">
+      {/* Row 1: Label + Pin badge */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-semibold ${meta.color}`}>
+            <span className="text-base">{meta.icon}</span>
+          </div>
+          <span className="font-bold text-sm text-base-content/80 capitalize">{meta.label}</span>
         </div>
-        <span className="font-bold text-sm text-base-content/80 capitalize">{meta.label}</span>
-      </div>
-      
-      <div className="flex gap-2 items-center flex-1 sm:max-w-md justify-end w-full">
-        <select
-          id={`pin-select-${role}`}
-          value={pinnedFoodId || ''}
-          onChange={(e) => onPinChange(role, e.target.value ? Number(e.target.value) : null)}
-          className="select select-bordered select-sm flex-1 text-sm bg-base-50 text-base-content focus:ring-2 focus:ring-primary/30 focus:border-primary transition-shadow max-w-[240px]"
-          disabled={isLoading}
-        >
-          <option value="">-- Ngẫu nhiên --</option>
-          {foods.map(f => (
-            <option key={f.id} value={f.id}>
-              {f.name}
-            </option>
-          ))}
-        </select>
-        
         {pinnedFoodId ? (
           <div className="flex items-center gap-1.5 shrink-0">
             <SafeImage
@@ -6167,6 +6811,22 @@ export default function PinSlotRow({ slot, pinnedFoodId, onPinChange }) {
         ) : null}
       </div>
 
+      {/* Row 2: Select (full width, on its own line) */}
+      <select
+        id={`pin-select-${role}`}
+        value={pinnedFoodId || ''}
+        onChange={(e) => onPinChange(role, e.target.value ? Number(e.target.value) : null)}
+        className="select select-bordered select-sm w-full text-sm bg-base-50 text-base-content focus:ring-2 focus:ring-primary/30 focus:border-primary transition-shadow"
+        disabled={isLoading}
+      >
+        <option value="">-- Ngẫu nhiên --</option>
+        {foods.map(f => (
+          <option key={f.id} value={f.id}>
+            {f.name}
+          </option>
+        ))}
+      </select>
+
       <ImageLightbox
         src={pinnedFood?.imageUrl}
         alt={pinnedFood?.name}
@@ -6178,9 +6838,9 @@ export default function PinSlotRow({ slot, pinnedFoodId, onPinChange }) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\components\meal-planner\TemplateSelector.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/components/meal-planner/TemplateSelector.jsx
+======================================================
 
 export default function TemplateSelector({ templates = [], selectedId, onSelect }) {
   if (!templates.length) {
@@ -6216,9 +6876,9 @@ export default function TemplateSelector({ templates = [], selectedId, onSelect 
 }
 
 
-// ==========================================
-// FILE: \frontend\src\contexts\AuthContext.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/contexts/AuthContext.jsx
+======================================================
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../lib/axios';
@@ -6310,9 +6970,9 @@ export const useAuth = () => {
 };
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useAdaptiveTDEE.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useAdaptiveTDEE.js
+======================================================
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/axios';
@@ -6339,9 +6999,9 @@ export const useToggleAdaptive = () => {
   return useMutation({
     mutationFn: (useAdaptiveTDEE) => api.put('/adaptive-tdee/toggle', { useAdaptiveTDEE }).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['adaptive-tdee'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
-      qc.invalidateQueries({ queryKey: ['profile'] });
+      qc.invalidateQueries({ queryKey: ['adaptive-tdee'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['profile'], refetchType: 'active' });
     },
   });
 };
@@ -6352,10 +7012,10 @@ export const useCalculateAdaptive = () => {
   return useMutation({
     mutationFn: () => api.post('/adaptive-tdee/calculate').then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['adaptive-tdee'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
-      qc.invalidateQueries({ queryKey: ['profile'] });
-      qc.invalidateQueries({ queryKey: ['weight'] });
+      qc.invalidateQueries({ queryKey: ['adaptive-tdee'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['profile'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['weight'], refetchType: 'active' });
     },
   });
 };
@@ -6366,15 +7026,15 @@ export const useSkipWeekAdaptive = () => {
   return useMutation({
     mutationFn: () => api.put('/adaptive-tdee/skip-week').then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['adaptive-tdee'] });
+      qc.invalidateQueries({ queryKey: ['adaptive-tdee'], refetchType: 'active' });
     },
   });
 };
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useDashboard.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useDashboard.js
+======================================================
 
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/axios';
@@ -6388,9 +7048,9 @@ export const useDashboard = (date) => {
 };
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useDebounce.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useDebounce.js
+======================================================
 
 import { useState, useEffect } from 'react';
 
@@ -6421,9 +7081,9 @@ export function useDebounce(value, delay = 500) {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useDiary.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useDiary.js
+======================================================
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/axios';
@@ -6443,8 +7103,9 @@ export const useAddEntry = (date) => {
   return useMutation({
     mutationFn: (payload) => api.post('/diary/entries', payload),
     onSuccess : () => {
-      qc.invalidateQueries({ queryKey: ['diary', date] });
-      qc.invalidateQueries({ queryKey: ['dashboard', date] });
+      qc.invalidateQueries({ queryKey: ['diary', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['diary', 'recent', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
     },
   });
 };
@@ -6455,20 +7116,36 @@ export const useDeleteEntry = (date) => {
   return useMutation({
     mutationFn: (id) => api.delete(`/diary/entries/${id}`),
     onSuccess : () => {
-      qc.invalidateQueries({ queryKey: ['diary', date] });
-      qc.invalidateQueries({ queryKey: ['dashboard', date] });
+      qc.invalidateQueries({ queryKey: ['diary', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['diary', 'recent', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
     },
   });
 };
 
-// ─── Mutation: thêm nước ─────────────────────────────────────────────────────
+// ─── Mutation: thêm nước (Optimistic Update) ─────────────────────────────────
 export const useAddWater = (date) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ amount, note }) => api.post('/water', { amount, date, note }),
-    onSuccess : () => {
-      qc.invalidateQueries({ queryKey: ['diary', date] });
-      qc.invalidateQueries({ queryKey: ['dashboard', date] });
+    onMutate: async ({ amount }) => {
+      await qc.cancelQueries({ queryKey: ['diary', date] });
+      // Optimistic: cập nhật waterTotal trong diary cache
+      qc.setQueryData(['diary', date], (old) => {
+        if (!old) return old;
+        return { ...old, waterTotal: (old.waterTotal || 0) + amount };
+      });
+    },
+    onError: (err, { amount }) => {
+      // Concurrent-safe rollback
+      qc.setQueryData(['diary', date], (old) => {
+        if (!old) return old;
+        return { ...old, waterTotal: Math.max(0, (old.waterTotal || 0) - amount) };
+      });
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ['diary', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
     },
   });
 };
@@ -6479,16 +7156,16 @@ export const useDeleteWater = (date) => {
   return useMutation({
     mutationFn: (id) => api.delete(`/water/${id}`),
     onSuccess : () => {
-      qc.invalidateQueries({ queryKey: ['diary', date] });
-      qc.invalidateQueries({ queryKey: ['dashboard', date] });
+      qc.invalidateQueries({ queryKey: ['diary', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
     },
   });
 };
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useExercise.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useExercise.js
+======================================================
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/axios';
@@ -6517,8 +7194,8 @@ export const useAddExercise = (date) => {
   return useMutation({
     mutationFn: (payload) => api.post('/exercise', { ...payload, date }).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['exercise', date] });
-      qc.invalidateQueries({ queryKey: ['dashboard', date] });
+      qc.invalidateQueries({ queryKey: ['exercise', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
     },
   });
 };
@@ -6529,16 +7206,16 @@ export const useDeleteExercise = (date) => {
   return useMutation({
     mutationFn: (id) => api.delete(`/exercise/${id}`).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['exercise', date] });
-      qc.invalidateQueries({ queryKey: ['dashboard', date] });
+      qc.invalidateQueries({ queryKey: ['exercise', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
     },
   });
 };
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useMealPlanner.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useMealPlanner.js
+======================================================
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/axios';
@@ -6581,7 +7258,7 @@ export const useUpdateConfig = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (meals) => api.put('/meal-planner/config', { meals }),
-    onSuccess : () => qc.invalidateQueries({ queryKey: ['meal-planner', 'config'] }),
+    onSuccess : () => qc.invalidateQueries({ queryKey: ['meal-planner', 'config'], refetchType: 'active' }),
   });
 };
 
@@ -6592,16 +7269,16 @@ export const usePushToDiary = (date) => {
     mutationFn: (entries) =>
       Promise.all(entries.map(e => api.post('/diary/entries', { ...e, date }))),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['diary', date] });
-      qc.invalidateQueries({ queryKey: ['dashboard', date] });
+      qc.invalidateQueries({ queryKey: ['diary', date], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard', date], refetchType: 'active' });
     },
   });
 };
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useProfile.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useProfile.js
+======================================================
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/axios';
@@ -6620,9 +7297,9 @@ export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: (payload) => api.put('/profile', payload).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['profile'] });
-      qc.invalidateQueries({ queryKey: ['auth', 'me'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      qc.invalidateQueries({ queryKey: ['profile'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['auth', 'me'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
     },
   });
 };
@@ -6633,9 +7310,9 @@ export const useUpdateMacros = () => {
   return useMutation({
     mutationFn: (payload) => api.put('/profile/macros', payload).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['profile'] });
-      qc.invalidateQueries({ queryKey: ['auth', 'me'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      qc.invalidateQueries({ queryKey: ['profile'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['auth', 'me'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
     },
   });
 };
@@ -6654,7 +7331,7 @@ export const useUpdateAllergies = () => {
   return useMutation({
     mutationFn: (foodIds) => api.put('/profile/allergies', { foodIds }).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['profile', 'allergies'] });
+      qc.invalidateQueries({ queryKey: ['profile', 'allergies'], refetchType: 'active' });
     },
   });
 };
@@ -6665,15 +7342,30 @@ export const useOnboard = () => {
   return useMutation({
     mutationFn: (payload) => api.post('/profile/onboarding', payload).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['auth', 'me'] });
+      qc.invalidateQueries({ queryKey: ['auth', 'me'], refetchType: 'active' });
     },
   });
 };
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useReport.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useRecentEntries.js
+======================================================
+
+import { useSuspenseQuery } from '@tanstack/react-query';
+import api from '../lib/axios';
+
+export const useRecentEntries = (date) => {
+  return useSuspenseQuery({
+    queryKey: ['diary', 'recent', date],
+    queryFn: () => api.get(`/diary/recent?date=${date}&limit=5`).then(r => r.data.data.entries),
+  });
+};
+
+
+======================================================
+FILE: frontend/src/hooks/useReport.js
+======================================================
 
 import { useMutation } from '@tanstack/react-query';
 import api from '../lib/axios';
@@ -6710,9 +7402,9 @@ export const useDownloadReport = () => {
 };
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useScanner.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useScanner.js
+======================================================
 
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6796,6 +7488,15 @@ export default function useScanner({ date, defaultMeal, onClose }) {
         },
     });
 
+    const uploadImageMutation = useMutation({
+        mutationFn: ({ scannedProductId, image }) =>
+            api.post('/scanner/upload-product-image', { scannedProductId, image }).then(r => r.data.data),
+    });
+
+    const uploadProductImage = (scannedProductId, image) => {
+        return uploadImageMutation.mutateAsync({ scannedProductId, image });
+    };
+
     const lookupBarcode = (barcode) => {
         return barcodeMutation.mutateAsync(barcode);
     };
@@ -6825,6 +7526,7 @@ export default function useScanner({ date, defaultMeal, onClose }) {
         setScanMode(null);
         setScanResult(null);
         setAiResult(null);
+        uploadImageMutation.reset();
     };
 
     return {
@@ -6840,10 +7542,14 @@ export default function useScanner({ date, defaultMeal, onClose }) {
         isProcessingAI: aiVisionMutation.isPending,
         isConfirming: confirmMutation.isPending,
         isAddingToDiary: addToDiaryMutation.isPending,
+        isUploadingImage: uploadImageMutation.isPending,
 
         // Confirmed food from contribution
         confirmedFood: confirmMutation.data?.food || null,
         contributionMessage: confirmMutation.data?.contributionMessage || null,
+        contributionCount: confirmMutation.data?.contributionCount || 0,
+        uploadedImageUrl: uploadImageMutation.data?.imageUrl || null,
+        scannedProductId: confirmMutation.data?.scannedProduct?.id || null,
 
         // Actions
         lookupBarcode,
@@ -6851,14 +7557,15 @@ export default function useScanner({ date, defaultMeal, onClose }) {
         confirmAndSave,
         addFoodToDiary,
         reportBadData,
+        uploadProductImage,
         reset,
     };
 }
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useTheme.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useTheme.js
+======================================================
 
 import { useEffect, useState } from 'react';
 
@@ -6888,9 +7595,9 @@ export function useTheme() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useWeight.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useWeight.js
+======================================================
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/axios';
@@ -6909,10 +7616,10 @@ export const useAddWeight = () => {
   return useMutation({
     mutationFn: (payload) => api.post('/weight', payload).then((r) => r.data),
     onSuccess: () => {
-      // Invalidate cache để cập nhật UI
-      qc.invalidateQueries({ queryKey: ['weight'] });
-      qc.invalidateQueries({ queryKey: ['weightTrend'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      // Invalidate cache để cập nhật UI — chỉ refetch query đang active
+      qc.invalidateQueries({ queryKey: ['weight'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['weightTrend'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
     },
   });
 };
@@ -6923,17 +7630,17 @@ export const useDeleteWeight = () => {
   return useMutation({
     mutationFn: (id) => api.delete(`/weight/${id}`).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['weight'] });
-      qc.invalidateQueries({ queryKey: ['weightTrend'] });
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      qc.invalidateQueries({ queryKey: ['weight'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['weightTrend'], refetchType: 'active' });
+      qc.invalidateQueries({ queryKey: ['dashboard'], refetchType: 'active' });
     },
   });
 };
 
 
-// ==========================================
-// FILE: \frontend\src\hooks\useWeightTrend.js
-// ==========================================
+======================================================
+FILE: frontend/src/hooks/useWeightTrend.js
+======================================================
 
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/axios';
@@ -6947,9 +7654,9 @@ export const useWeightTrend = (range = 30) => {
 };
 
 
-// ==========================================
-// FILE: \frontend\src\lib\axios.js
-// ==========================================
+======================================================
+FILE: frontend/src/lib/axios.js
+======================================================
 
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -7054,9 +7761,48 @@ api.interceptors.response.use(
 export default api;
 
 
-// ==========================================
-// FILE: \frontend\src\lib\dayjs.js
-// ==========================================
+======================================================
+FILE: frontend/src/lib/chartSetup.js
+======================================================
+
+/**
+ * Centralized Chart.js Registration
+ * Tất cả Chart.js components được register MỘT LẦN DUY NHẤT ở đây.
+ * Không được gọi ChartJS.register() ở bất kỳ file nào khác.
+ */
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  TimeScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Tooltip,
+  Filler,
+  Legend,
+} from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  TimeScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Tooltip,
+  Filler,
+  Legend,
+  annotationPlugin
+);
+
+export { ChartJS };
+
+
+======================================================
+FILE: frontend/src/lib/dayjs.js
+======================================================
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
@@ -7100,18 +7846,18 @@ export const toDisplayDate = (dateStr) => {
 export default dayjs;
 
 
-// ==========================================
-// FILE: \frontend\src\lib\queryClient.js
-// ==========================================
+======================================================
+FILE: frontend/src/lib/queryClient.js
+======================================================
 
 import { QueryClient } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30_000,        // 30s — dữ liệu dinh dưỡng thay đổi thường xuyên
+      staleTime: 5 * 60_000,    // 5 phút — giảm refetch không cần thiết
       retry: 1,                  // retry 1 lần khi thất bại
-      refetchOnWindowFocus: true, // auto-refresh khi user quay lại tab
+      refetchOnWindowFocus: true, // GIỮ NGUYÊN — chỉ fire nếu data đã stale (>5 phút)
     },
   },
 });
@@ -7119,13 +7865,14 @@ const queryClient = new QueryClient({
 export default queryClient;
 
 
-// ==========================================
-// FILE: \frontend\src\main.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/main.jsx
+======================================================
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
+import './lib/chartSetup' // Chart.js — register 1 lần duy nhất toàn app
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
@@ -7135,17 +7882,15 @@ createRoot(document.getElementById('root')).render(
 )
 
 
-// ==========================================
-// FILE: \frontend\src\pages\DashboardPage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/DashboardPage.jsx
+======================================================
 
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDashboard } from '../hooks/useDashboard';
 import { useDownloadReport } from '../hooks/useReport';
 import { useAdaptiveStatus } from '../hooks/useAdaptiveTDEE';
-import { useDiaryData } from '../hooks/useDiary';
-import { useExerciseData } from '../hooks/useExercise';
 import { useAuth } from '../contexts/AuthContext';
 import { getToday } from '../lib/dayjs';
 
@@ -7182,24 +7927,8 @@ export default function DashboardPage() {
   const [activeMeal, setActiveMeal] = useState('sang');
 
   const { data, isLoading, error } = useDashboard(date);
-  const { data: diaryData, isLoading: diaryLoading } = useDiaryData(date);
-  const { data: exerciseData, isLoading: exerciseLoading } = useExerciseData(date);
   const { data: adaptiveStatus, isLoading: adaptiveLoading } = useAdaptiveStatus();
   const downloadReport = useDownloadReport();
-
-  // Gộp tất cả các bữa ăn từ diaryData.mealGroups thành một danh sách phẳng
-  const allDiaryEntries = useMemo(() => {
-    const entries = [];
-    if (diaryData && diaryData.mealGroups) {
-      Object.keys(diaryData.mealGroups).forEach((mealKey) => {
-        const groupEntries = diaryData.mealGroups[mealKey] || [];
-        groupEntries.forEach((entry) => {
-          entries.push({ ...entry, mealType: mealKey });
-        });
-      });
-    }
-    return entries;
-  }, [diaryData]);
 
   // Tính trend cân nặng gần nhất
   const trend = useMemo(() => {
@@ -7217,14 +7946,14 @@ export default function DashboardPage() {
     };
   }, [data?.weightChartData]);
 
-  if (isLoading || diaryLoading || exerciseLoading) return <DashboardSkeleton />;
+  if (isLoading) return <DashboardSkeleton />;
   if (error) return (
     <div className="m-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
       Không thể tải dữ liệu dashboard.
     </div>
   );
 
-  const { metrics, consumed, totalBurned, macroProgress, weightChartData, waterTotal, waterGoal, healthInsights, healthScore } = data;
+  const { metrics, consumed, totalBurned, macroProgress, weightChartData, waterTotal, waterGoal, healthInsights, healthScore, exerciseLogs = [] } = data;
 
   const handleDownloadReport = (range) => {
     downloadReport.mutate(range, {
@@ -7241,7 +7970,6 @@ export default function DashboardPage() {
   const targetCalories  = metrics?.targetCalories ? Math.round(metrics.targetCalories) : 0;
   const caloriePercent  = targetCalories > 0 ? Math.round((consumed.calories / targetCalories) * 100) : 0;
   const userInitial     = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
-  const exerciseLogs    = exerciseData?.logs || [];
 
   return (
     <div className="flex flex-col gap-6 pb-20">
@@ -7401,7 +8129,7 @@ export default function DashboardPage() {
 
           {/* Recent Meals & Activity */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <RecentMeals entries={allDiaryEntries} onAddClick={() => handleOpenAddFood('sang')} />
+            <RecentMeals date={date} onAddClick={() => handleOpenAddFood('sang')} />
             <RecentActivity logs={exerciseLogs} totalBurned={totalBurned} />
           </div>
 
@@ -7459,9 +8187,9 @@ function DashboardSkeleton() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\pages\DiaryPage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/DiaryPage.jsx
+======================================================
 
 import { useState } from 'react';
 import { useDiaryData, useDeleteEntry } from '../hooks/useDiary';
@@ -7566,9 +8294,9 @@ function DiarySkeleton() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\pages\ExercisePage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/ExercisePage.jsx
+======================================================
 
 import { useState } from 'react';
 import { useExerciseData, useExerciseSports, useAddExercise, useDeleteExercise } from '../hooks/useExercise';
@@ -7787,16 +8515,14 @@ function ExerciseSkeleton() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\pages\LandingPage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/LandingPage.jsx
+======================================================
 
 import React from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import HeroSection from '../components/landing/HeroSection';
-import AppShowcase from '../components/landing/AppShowcase';
-import StatsCounter from '../components/landing/StatsCounter';
 import FeaturesSection from '../components/landing/FeaturesSection';
 import AlgorithmShowcase from '../components/landing/AlgorithmShowcase';
 import IntegrationSection from '../components/landing/IntegrationSection';
@@ -7810,14 +8536,24 @@ export default function LandingPage() {
       <Navbar />
       <main>
         <HeroSection />
-        <AppShowcase />
-        <FeaturesSection />
-        <AlgorithmShowcase />
-        <IntegrationSection />
-        <StatsCounter />
-        <PricingSection />
-        <Testimonials />
-        <CTASection />
+        <div className="cv-auto">
+          <FeaturesSection />
+        </div>
+        <div className="cv-auto">
+          <AlgorithmShowcase />
+        </div>
+        <div className="cv-auto">
+          <IntegrationSection />
+        </div>
+        <div className="cv-auto">
+          <Testimonials />
+        </div>
+        <div className="cv-auto">
+          <PricingSection />
+        </div>
+        <div className="cv-auto">
+          <CTASection />
+        </div>
       </main>
       <Footer />
     </div>
@@ -7825,9 +8561,9 @@ export default function LandingPage() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\pages\LoginPage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/LoginPage.jsx
+======================================================
 
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -7947,9 +8683,9 @@ export default function LoginPage() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\pages\MealPlannerPage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/MealPlannerPage.jsx
+======================================================
 
 import { useState } from 'react';
 import {
@@ -8182,9 +8918,9 @@ export default function MealPlannerPage() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\pages\NotFoundPage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/NotFoundPage.jsx
+======================================================
 
 import { useNavigate } from 'react-router-dom';
 import { SearchX, ArrowLeft } from 'lucide-react';
@@ -8219,9 +8955,9 @@ export default function NotFoundPage() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\pages\OnboardingPage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/OnboardingPage.jsx
+======================================================
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8588,9 +9324,9 @@ export default function OnboardingPage() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\pages\ProfilePage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/ProfilePage.jsx
+======================================================
 
 import { useState, useEffect } from 'react';
 import {
@@ -8599,7 +9335,7 @@ import {
 import { useDownloadReport } from '../hooks/useReport';
 import api from '../lib/axios';
 import toast from 'react-hot-toast';
-import { User, Calendar, Ruler, Scale, Dumbbell, Target, ShieldAlert, Award, Save, Plus, X, FileText } from 'lucide-react';
+import { User, Smile, Calendar, Ruler, Scale, Dumbbell, Target, ShieldAlert, Award, Save, Plus, X, FileText } from 'lucide-react';
 
 export default function ProfilePage() {
   const { data, isLoading, error } = useProfileData();
@@ -8718,7 +9454,15 @@ export default function ProfilePage() {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#003139]">Hồ sơ cá nhân</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-[#003139]">Hồ sơ cá nhân</h1>
+          {data?.user?.contributionCount > 0 && (
+            <div className="bg-primary/10 text-primary text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+              <Award className="w-3.5 h-3.5" />
+              Đóng góp cộng đồng: {data.user.contributionCount}
+            </div>
+          )}
+        </div>
         <p className="text-[#96A5A8] text-sm">Quản lý các chỉ số thể chất, phân bổ dinh dưỡng và danh mục dị ứng</p>
       </div>
 
@@ -8741,16 +9485,17 @@ export default function ProfilePage() {
 
       {/* Bio Tab */}
       {activeTab === 'bio' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="tcl-card rounded-2xl p-6 lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          <div className="tcl-card rounded-2xl p-6 lg:col-span-2 flex flex-col h-full">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-[#96A5A8] mb-4">Cập nhật chỉ số cơ thể</h3>
-            <form onSubmit={handleUpdateBio} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleUpdateBio} className="flex flex-col flex-grow">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <label className="tcl-label">Họ và tên</label>
+                <label className="tcl-label flex items-center gap-1.5"><User className="w-4 h-4 text-[#96A5A8]" /> Họ và tên</label>
                 <input type="text" required className="tcl-input" value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div>
-                <label className="tcl-label">Giới tính</label>
+                <label className="tcl-label flex items-center gap-1.5"><Smile className="w-4 h-4 text-[#96A5A8]" /> Giới tính</label>
                 <select className="tcl-select" value={gender} onChange={(e) => setGender(e.target.value)}>
                   <option value="male">Nam</option>
                   <option value="female">Nữ</option>
@@ -8786,7 +9531,8 @@ export default function ProfilePage() {
                   <option value="gain_weight">Tăng cân</option>
                 </select>
               </div>
-              <div className="sm:col-span-2 pt-2">
+              </div>
+              <div className="mt-auto pt-6">
                 <button type="submit" disabled={updateProfile.isPending} className="tcl-btn-primary gap-2 py-2.5">
                   {updateProfile.isPending ? (
                     <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -8798,14 +9544,22 @@ export default function ProfilePage() {
           </div>
 
           {/* Stats sidebar */}
-          <div className="tcl-card rounded-2xl p-6 lg:col-span-1">
+          <div className="tcl-card rounded-2xl p-6 lg:col-span-1 flex flex-col h-full">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-[#96A5A8] mb-3">Thông số tính toán</h3>
-            <div className="space-y-4">
+            <div className="space-y-4 flex flex-col flex-grow">
               <div>
                 <span className="text-xs text-[#96A5A8]">Chỉ số BMI</span>
                 <p className="text-xl font-bold flex items-baseline gap-1.5 mt-0.5 text-[#003139]">
                   {metrics.bmi ? metrics.bmi.toFixed(1) : '--'}
-                  <span className="text-xs font-semibold tcl-badge">{metrics.bmiClass?.label || 'Chưa có'}</span>
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
+                    metrics.bmiClass?.color === 'blue' ? 'bg-blue-100 text-blue-700' :
+                    metrics.bmiClass?.color === 'green' ? 'bg-emerald-100 text-emerald-700' :
+                    metrics.bmiClass?.color === 'yellow' ? 'bg-amber-100 text-amber-700' :
+                    metrics.bmiClass?.color === 'red' ? 'bg-red-100 text-red-700' :
+                    'bg-gray-100 text-gray-700'
+                  }`}>
+                    {metrics.bmiClass?.label || 'Chưa có'}
+                  </span>
                 </p>
               </div>
               <div className="border-t border-[#DFE3E4] pt-3">
@@ -8813,10 +9567,17 @@ export default function ProfilePage() {
                 <p className="text-xl font-bold mt-0.5 text-[#003139]">{metrics.bmr ? `${Math.round(metrics.bmr)} kcal` : '--'}</p>
               </div>
               <div className="border-t border-[#DFE3E4] pt-3">
-                <span className="text-xs text-[#96A5A8]">Tổng tiêu hao hàng ngày (TDEE)</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-[#96A5A8]">Tổng tiêu hao hàng ngày (TDEE)</span>
+                  {metrics.isAdaptiveActive && (
+                    <span className="text-[9px] font-semibold bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                      Thích ứng
+                    </span>
+                  )}
+                </div>
                 <p className="text-xl font-bold mt-0.5 text-[#003139]">{metrics.tdee ? `${Math.round(metrics.tdee)} kcal` : '--'}</p>
               </div>
-              <div className="border-t border-[#DFE3E4] pt-3 bg-[#003139]/5 rounded-xl p-3 border border-[#003139]/15">
+              <div className="border-t border-[#DFE3E4] pt-3 mt-auto bg-[#003139]/5 rounded-xl p-3 border border-[#003139]/15">
                 <span className="text-xs text-[#003139] font-bold">Mục tiêu Calo nạp mỗi ngày</span>
                 <p className="text-2xl font-black text-[#003139] mt-0.5">
                   {metrics.targetCalories ? `${Math.round(metrics.targetCalories)} kcal` : '--'}
@@ -9035,9 +9796,9 @@ function ProfileSkeleton() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\pages\RegisterPage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/RegisterPage.jsx
+======================================================
 
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -9182,9 +9943,9 @@ export default function RegisterPage() {
 }
 
 
-// ==========================================
-// FILE: \frontend\src\pages\WeightPage.jsx
-// ==========================================
+======================================================
+FILE: frontend/src/pages/WeightPage.jsx
+======================================================
 
 import { useState, useEffect } from 'react';
 import { useWeightData, useDeleteWeight } from '../hooks/useWeight';
@@ -9549,6 +10310,7 @@ export default function WeightPage() {
                       </div>
                     ) : adaptiveHistory && adaptiveHistory.length > 0 ? (
                       <Line
+                        key={JSON.stringify(adaptiveHistory)}
                         data={{
                           labels: adaptiveHistory.map(h => {
                             if (!h.weekStartDate) return '';
@@ -9707,3 +10469,35 @@ function WeightSkeleton() {
     </div>
   );
 }
+
+
+======================================================
+FILE: frontend/vite.config.js
+======================================================
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+
+  ],
+  server: {
+    host: true, // Cho phép truy cập qua IP mạng LAN
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/images': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  },
+})
