@@ -613,9 +613,20 @@
     3963,
     3964,
     3965,
-    3966
+    3966,
+    3967,
+    3968,
+    3969,
+    3970,
+    3971,
+    3972,
+    3973,
+    3974,
+    3975,
+    3976,
+    3977
   ],
-  "last_batch": 22,
+  "last_batch": 23,
   "items": [
     {
       "id": 3609,
@@ -3604,58 +3615,58 @@
     },
     {
       "id": 3967,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3968,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3969,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3970,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3971,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3972,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3973,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3974,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3975,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3976,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3977,
-      "status": "pending",
-      "batch": null
+      "status": "done",
+      "batch": 23
     },
     {
       "id": 3792,
