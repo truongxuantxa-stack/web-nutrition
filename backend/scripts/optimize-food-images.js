@@ -62,7 +62,19 @@ async function main() {
                 // The filename might have underscores instead of hyphens, e.g., "banh_pho_tuoi_1234.png"
                 const prefix = targetFilename.replace('.webp', '').replace(/-/g, '_');
                 const idPrefix = `img_${item.id}`;
-                const sourcePng = allPngs.find(p => path.basename(p).startsWith(prefix + '_') || path.basename(p) === prefix + '.png' || path.basename(p).startsWith(targetFilename.replace('.webp', '') + '_') || path.basename(p).startsWith(idPrefix + '_') || path.basename(p) === idPrefix + '.png');
+                const dishPrefix = `dish_${item.id}`;
+                const rawPrefix = `raw_${item.id}`;
+                const sourcePng = allPngs.find(p => 
+                    path.basename(p).startsWith(prefix + '_') || 
+                    path.basename(p) === prefix + '.png' || 
+                    path.basename(p).startsWith(targetFilename.replace('.webp', '') + '_') || 
+                    path.basename(p).startsWith(idPrefix + '_') || 
+                    path.basename(p) === idPrefix + '.png' ||
+                    path.basename(p).startsWith(dishPrefix + '_') || 
+                    path.basename(p) === dishPrefix + '.png' ||
+                    path.basename(p).startsWith(rawPrefix + '_') || 
+                    path.basename(p) === rawPrefix + '.png'
+                );
 
                 if (sourcePng) {
                     console.log(`Optimizing: ${sourcePng} -> ${targetFilename}`);
