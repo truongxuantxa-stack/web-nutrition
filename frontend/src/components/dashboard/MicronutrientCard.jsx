@@ -4,7 +4,7 @@ export default function MicronutrientCard({ consumed, gender }) {
   const isMale = gender === 'male';
 
   const rdi = {
-    fiber:    isMale ? 38 : 25,
+    fiber:    isMale ? 30 : 25,    // AHA (thay IOM 38g)
     vitaminA: isMale ? 900 : 700,
     vitaminC: isMale ? 90 : 75,
     calcium:  1000,

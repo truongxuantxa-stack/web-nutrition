@@ -126,7 +126,7 @@ const getRDIByGender = (gender) => {
         isMale,
         sugarLimit:  isMale ? 36 : 25,    // AHA
         sodiumLimit: 2300,                  // WHO/AHA
-        fiberRDI:    isMale ? 38 : 25,
+        fiberRDI:    isMale ? 30 : 25,    // AHA (25-30g) — thay IOM 38g cho thực tế hơn
         calciumRDI:  1000,
         ironRDI:     isMale ? 8 : 18,
         vitaminCRDI: isMale ? 90 : 75,

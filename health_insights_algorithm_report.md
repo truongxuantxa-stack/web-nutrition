@@ -24,7 +24,7 @@ Hệ thống sử dụng `clientHour` truyền từ frontend để đảm bảo 
 RDI (Reference Daily Intake) được tập trung hóa vào hàm `getRDIByGender(gender)` để tránh trùng lặp code và dễ dàng cập nhật theo chuẩn WHO/AHA.
 - **Đường (AHA):** Giới hạn tối đa 36g/ngày (Nam) và 25g/ngày (Nữ).
 - **Natri (WHO):** Giới hạn tối đa 2300mg/ngày.
-- **Chất xơ:** 38g (Nam) / 25g (Nữ).
+- **Chất xơ (AHA):** 30g (Nam) / 25g (Nữ). *(Áp dụng mức sàn AHA thay vì IOM 38g để tăng tính khả thi — người dùng thực tế chỉ nạp ~10-15g/ngày, mốc 38g gây "learned helplessness".)*
 - **Vi khoáng:** Vitamin C (90mg/75mg), Canxi (1000mg chung), Sắt (8mg Nam / 18mg Nữ), Vitamin A (900µg/700µg).
 
 *Điểm mới: Đã tích hợp đánh giá Vitamin A vào nhóm vi chất.*
