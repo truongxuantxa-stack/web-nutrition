@@ -8,28 +8,36 @@
 
 /**
  * Validate dữ liệu dinh dưỡng theo các quy tắc vật lý.
- * LƯU Ý: Tất cả giá trị đầu vào phải tính theo đơn vị per-100g (nguyên liệu thô).
  * @param {{ calories: number, protein: number, carbs: number, fat: number, fiber?: number, sugar?: number, sodium?: number }} data
+ * @param {'100g'|'100ml'} unit - Đơn vị của dữ liệu đầu vào. Mặc định '100g'.
+ *   - '100g'  → mốc tổng macro là 100g (chất rắn)
+ *   - '100ml' → mốc tổng macro là 150g (nới lỏng cho chất lỏng đặc như mật ong ~1.4 g/ml)
  * @returns {{ valid: boolean, errors: string[], warnings: string[] }}
  */
-const validateNutritionPhysics = (data) => {
+const validateNutritionPhysics = (data, unit = '100g') => {
     const errors = [];   // Block hoàn toàn — dữ liệu phi lý
     const warnings = []; // Cảnh báo — có thể do nhãn kiểu Mỹ (Net Carb) hoặc đặc thù sản phẩm
     const { calories, protein, carbs, fat, fiber, sugar, sodium } = data;
+
+    // Ngưỡng tổng macro tối đa:
+    // - Per 100g: không thể vượt 100g (định nghĩa vật lý)
+    // - Per 100ml: nới lên 150g để bao trùm chất lỏng đặc nhất (mật ong ~140g/100ml)
+    const maxMass = unit === '100ml' ? 150 : 100;
+    const unitLabel = unit === '100ml' ? '100ml' : '100g';
 
     // Rule 1 [BLOCK]: Không cho phép số âm (bao gồm cả sodium)
     if (protein < 0 || carbs < 0 || fat < 0 || calories < 0 || (sodium != null && sodium < 0)) {
         errors.push('Giá trị dinh dưỡng không thể âm.');
     }
 
-    // Rule 2 [BLOCK]: Tổng macro <= 100g (tính per 100g)
-    if (protein + carbs + fat > 100) {
-        errors.push(`Tổng P+C+F = ${(protein + carbs + fat).toFixed(1)}g > 100g/100g — phi lý.`);
+    // Rule 2 [BLOCK]: Tổng macro <= maxMass
+    if (protein + carbs + fat > maxMass) {
+        errors.push(`Tổng P+C+F = ${(protein + carbs + fat).toFixed(1)}g > ${maxMass}g/${unitLabel} — phi lý.`);
     }
 
-    // Rule 3 [BLOCK]: Calo tối đa 900 kcal/100g (thuần mỡ/dầu)
+    // Rule 3 [BLOCK]: Calo tối đa 900 kcal (thuần mỡ/dầu — giới hạn vật lý tuyệt đối, áp dụng cho cả g lẫn ml)
     if (calories > 900) {
-        errors.push(`${calories} kcal/100g vượt giới hạn vật lý (max 900 kcal).`);
+        errors.push(`${calories} kcal/${unitLabel} vượt giới hạn vật lý (max 900 kcal).`);
     }
 
     // Rule 4 [BLOCK]: Atwater check ±15%

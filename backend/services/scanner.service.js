@@ -146,8 +146,8 @@ const processAiVisionResult = async (userId, barcode, nutritionData) => {
         const { productName, calories, protein, carbs, fat, fiber, sugar, sodium, vitaminA, vitaminC, calcium, iron, imageUrl, unit } = nutritionData;
         const resolvedUnit = unit && unit.toLowerCase().includes('ml') ? '100ml' : '100g';
 
-        // Bước 1: Physics Validation
-        const physicsResult = validateNutritionPhysics({ calories, protein, carbs, fat, fiber, sugar, sodium });
+        // Bước 1: Physics Validation (truyền unit để ngưỡng maxMass được tính đúng cho cả g lẫn ml)
+        const physicsResult = validateNutritionPhysics({ calories, protein, carbs, fat, fiber, sugar, sodium }, resolvedUnit);
         if (!physicsResult.valid) {
             return { physicsResult, scannedProduct: null, food: null };
         }

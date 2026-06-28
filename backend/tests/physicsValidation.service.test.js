@@ -116,4 +116,41 @@ describe('physicsValidation.service', () => {
             expect(result.warnings.some(w => w.includes('Đường > Carb'))).toBe(true);
         });
     });
+
+    describe('Unit 100ml — chất lỏng', () => {
+        test('Sữa tươi 100ml — hợp lệ (macro rất nhỏ, tổng ~11g)', () => {
+            // Sữa bò: P=3.5, C=4.8, F=3.2 → tổng 11.5g << 150. Atwater ≈ 3.5*4+4.8*4+3.2*9 = 62 kcal
+            const data = { calories: 61, protein: 3.5, carbs: 4.8, fat: 3.2 };
+            const result = validateNutritionPhysics(data, '100ml');
+            expect(result.valid).toBe(true);
+            expect(result.errors.length).toBe(0);
+        });
+
+        test('Mật ong 100ml — hợp lệ (tổng ~130g carbs, maxMass=150)', () => {
+            // Mật ong: density ~1.4 g/ml → 100ml ≈ 140g. Carbs ~81g/100g → ~113g/100ml
+            // Dùng giá trị thực tế per 100ml: C=113, P=0.3, F=0 → tổng 113.3g < 150 → pass
+            // Atwater: 0.3*4 + 113*4 + 0*9 = 453.2. Calories ~324 kcal/100ml
+            // Lưu ý: trường hợp này Atwater sẽ fail (sai lệch lớn) nên dùng giá trị khớp hơn
+            const data = { calories: 440, protein: 0.3, carbs: 113, fat: 0 };
+            const result = validateNutritionPhysics(data, '100ml');
+            // Rule 2: 113.3 < 150 → pass. Rule 3: 440 < 900 → pass.
+            expect(result.errors.some(e => e.includes('phi lý'))).toBe(false);
+        });
+
+        test('Chất lỏng 100ml — bị chặn khi tổng macro vượt 150g (phi lý)', () => {
+            // Tổng P+C+F = 160g trên 100ml — không thể tồn tại trong tự nhiên
+            const data = { calories: 800, protein: 10, carbs: 130, fat: 20 };
+            const result = validateNutritionPhysics(data, '100ml');
+            expect(result.valid).toBe(false);
+            expect(result.errors.some(e => e.includes('150g/100ml — phi lý'))).toBe(true);
+        });
+
+        test('Chất lỏng 100ml — error message hiển thị đúng đơn vị ml', () => {
+            // Calo = 1000 > 900 → Rule 3 triggered
+            const data = { calories: 1000, protein: 0, carbs: 0, fat: 100 };
+            const result = validateNutritionPhysics(data, '100ml');
+            expect(result.valid).toBe(false);
+            expect(result.errors.some(e => e.includes('kcal/100ml vượt giới hạn vật lý'))).toBe(true);
+        });
+    });
 });
