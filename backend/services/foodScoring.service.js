@@ -8,8 +8,8 @@ const NUTRIENT_THRESHOLDS = {
     sodium:  { warning: 100, danger: 150 },   // mg/100kcal
     sugar:   { warning: 2.5, danger: 5 },     // g/100kcal
     protein: { excellent: 5,    good: 3 },    // g/100kcal
-    fiber:   { excellent: 1.25, good: 0.5 },  // g/100kcal
-    vitaminA: { excellent: 150, good: 75 },   // IU/100kcal
+    fiber:   { excellent: 1.25, good: 0.7 },  // g/100kcal (FDA DV 28g/2000kcal → excellent≈25g, good≈14g)
+    vitaminA: { excellent: 45,  good: 22.5 }, // mcg RAE/100kcal (FDA DV 900mcg RAE/2000kcal)
     vitaminC: { excellent: 10,  good: 5  },   // mg/100kcal
     calcium:  { excellent: 50,  good: 25 },   // mg/100kcal
     iron:     { excellent: 1.5, good: 0.8 },  // mg/100kcal
