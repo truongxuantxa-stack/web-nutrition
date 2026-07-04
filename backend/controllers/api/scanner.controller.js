@@ -9,7 +9,7 @@ const {
 const { extractNutritionFromImage, extractBarcodeFromImage } = require('../../services/geminiVision.service');
 const { validateNutritionPhysics } = require('../../services/physicsValidation.service');
 const { ScannedProduct } = require('../../models');
-const { uploadImage } = require('../../services/cloudinary.service');
+const { uploadProductImage } = require('../../services/cloudinary.service');
 
 /**
  * POST /api/v1/scanner/barcode-lookup
@@ -88,7 +88,7 @@ const confirmContribution = async (req, res) => {
             try {
                 // Thêm prefix nếu chưa có
                 const imageData = base64Image.startsWith('data:image') ? base64Image : `data:image/jpeg;base64,${base64Image}`;
-                imageUrl = await uploadImage(imageData);
+                imageUrl = (await uploadProductImage(imageData, name)).url;
             } catch (err) {
                 console.error('[Scanner] Cloudinary upload failed:', err);
                 // Bỏ qua lỗi upload ảnh, vẫn cho phép lưu dữ liệu
