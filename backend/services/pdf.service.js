@@ -1205,10 +1205,10 @@ const generateReportPDF = async (reportData) => {
                     { label: 'Món ăn', w: 155, align: 'left' },
                     { label: 'Lần', w: 30, align: 'center' },
                     { label: 'Kcal', w: 40, align: 'center' },
-                    { label: 'Natri', w: 55, align: 'center' },
-                    { label: 'Đường', w: 55, align: 'center' },
-                    { label: 'Đạm', w: 55, align: 'center' },
-                    { label: 'Xơ', w: 55, align: 'center' },
+                    { label: 'Natri*', w: 55, align: 'center' },
+                    { label: 'Đường*', w: 55, align: 'center' },
+                    { label: 'Đạm*', w: 55, align: 'center' },
+                    { label: 'Xơ*', w: 55, align: 'center' },
                     { label: 'Điểm', w: 50, align: 'center' },
                 ];
 
@@ -1314,7 +1314,7 @@ const generateReportPDF = async (reportData) => {
             y += 12;
             doc.font('Regular').fontSize(7).fillColor('#9CA3AF') // Lighter gray for disclaimer
                 .text(
-                    '*Lưu ý: Thuật toán chấm điểm món ăn chỉ mang tính chất tham khảo tương đối dựa trên mật độ dinh dưỡng (toàn diện các vi chất, ngoại trừ Natri) trên 100 kcal. Khuyến nghị này không thay thế lời khuyên y khoa từ bác sĩ.',
+                    '*Lưu ý: Các chỉ số (Natri, Đường, Đạm, Xơ) trong bảng là Mật độ dinh dưỡng trên 100 Kcal, KHÔNG phải tổng lượng tuyệt đối của khẩu phần ăn.',
                     PAGE_MARGIN, y,
                     { width: doc.page.width - PAGE_MARGIN * 2, align: 'right' }
                 );
