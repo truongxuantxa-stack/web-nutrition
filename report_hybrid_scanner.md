@@ -8,7 +8,7 @@ Trong quá trình theo dõi và kiểm soát dinh dưỡng hằng ngày (Diet Tr
 ## 2. Giải pháp: Hybrid Nutrition Scanner
 Hệ thống kết hợp sức mạnh của Trí tuệ Nhân tạo (AI) để tạo ra phương thức bổ trợ lẫn nhau:
 1. **Quét Mã Vạch (Barcode):** Giải pháp tra cứu siêu tốc cho các sản phẩm phổ biến.
-2. **AI Vision (Đọc bảng thành phần):** Giải pháp cứu cánh cho các sản phẩm "lạ". Người dùng chụp ảnh Bảng thông tin dinh dưỡng, AI (Gemini Flash) sẽ phân tích và trích xuất số liệu.
+2. **AI Vision (Đọc bảng thành phần):** Giải pháp cứu cánh cho các sản phẩm chưa có trong cơ sở dữ liệu. Đặc biệt, tính năng này được thiết kế để **hỗ trợ tự động hóa việc nhập liệu đối với các sản phẩm đóng gói mua tại siêu thị**. Thay vì phải gõ tay từng dòng nhỏ xíu trên bao bì, người dùng chỉ cần chụp ảnh Bảng thông tin dinh dưỡng (Nutrition Facts), AI (Gemini Flash) sẽ phân tích và trích xuất toàn bộ số liệu ngay lập tức.
 
 ## 3. Kiến trúc 4-Layer Lookup Pipeline
 Hệ thống tra cứu mã vạch trong `scanner.service.js` được tối ưu hóa theo 4 lớp Fallback:
