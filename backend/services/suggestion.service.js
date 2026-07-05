@@ -134,6 +134,33 @@ const getRDIByGender = (gender) => {
     };
 };
 
+/**
+ * Tính penalty có trọng số theo mức độ sai lệch thực tế.
+ * Hỗ trợ cả 2 chiều: thiếu hụt (deficiency) và dư thừa (excess).
+ * @param {number} consumed      - Lượng đã nạp
+ * @param {number} target        - Mục tiêu / giới hạn
+ * @param {number} basePenalty   - Điểm phạt cơ sở (ví dụ: 6 cho warning, 15 cho danger)
+ * @param {boolean} isExcessWarning - true nếu đây là cảnh báo dư thừa (lố mục tiêu)
+ * @returns {number} Penalty đã nhân trọng số
+ */
+const getWeightedPenalty = (consumed, target, basePenalty, isExcessWarning = false) => {
+    if (!target || target <= 0) return basePenalty;
+    const ratio = consumed / target;
+
+    // Đo lường khoảng cách sai lệch tuyệt đối
+    // Thiếu hụt: deviation = 1 - ratio (thiếu càng nhiều → deviation càng cao)
+    // Dư thừa:   deviation = ratio - 1 (dư càng nhiều → deviation càng cao)
+    const deviation = isExcessWarning ? (ratio - 1) : (1 - ratio);
+
+    // Guard: deviation âm nghĩa là vi phạm đã được giải quyết → phạt nhẹ nhất
+    if (deviation <= 0) return Math.round(basePenalty * 0.5);
+
+    if (deviation > 0.60) return Math.round(basePenalty * 2.5); // Sai lệch > 60%
+    if (deviation > 0.40) return Math.round(basePenalty * 1.8); // Sai lệch > 40%
+    if (deviation > 0.20) return Math.round(basePenalty * 1.0); // Sai lệch > 20%
+    return Math.round(basePenalty * 0.5);                        // Sai lệch nhỏ
+};
+
 // ─── Bộ quy tắc y khoa cho Health Insights ──────────────────────────────────────────────────────────────
 // AHA Sugar threshold: 36g (Nam) / 25g (Nữ)
 // Phân loại severity: danger > warning > water > suggestion
@@ -206,6 +233,9 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
             icon: '🔥',
             title: `Vượt ${Math.round(calPct - 100)}% mục tiêu calo!`,
             message: 'Năng lượng dư thừa sẽ được tích trữ thành mỡ. Hãy tăng vận động hoặc giảm bữa phụ.',
+            _consumed: consumed.calories,
+            _target: targetCal,
+            _isExcess: true,
         });
     } else if (calPct > 100) {
         warningInsights.push({
@@ -213,17 +243,56 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
             icon: '⚡',
             title: isHistorical ? 'Đã đạt mục tiêu calo trung bình' : 'Đã đạt mục tiêu calo hôm nay',
             message: 'Bạn nên dừng ăn thêm hoặc chọn rau/nước thay vì thực phẩm giàu năng lượng.',
+            _consumed: consumed.calories,
+            _target: targetCal,
+            _isExcess: true,
         });
     }
 
-    // Natri (Muối) — nguy hiểm tim mạch
-    if (consumed.sodium != null && consumed.sodium > sodiumLimit) {
-        dangerInsights.push({
-            severity: 'danger',
-            icon: '🧂',
-            title: isHistorical ? `Lượng muối rất cao (${Math.round(consumed.sodium)}mg)` : `Lượng muối hôm nay rất cao (${Math.round(consumed.sodium)}mg)`,
-            message: 'Nguy cơ tích nước và tăng huyết áp. Hãy uống thêm nước lọc để hỗ trợ đào thải nhé!',
-        });
+    // Natri (Muối) — Severity Escalation 3 tầng (dựa trên % sodiumLimit, forward-compatible)
+    if (consumed.sodium != null && sodiumLimit > 0) {
+        const sodiumDisplay = `${Math.round(consumed.sodium)}mg`;
+
+        if (consumed.sodium > sodiumLimit * 1.3) {
+            // Tầng CRITICAL: vượt >30% giới hạn (≈3000mg trên chuẩn 2300mg)
+            dangerInsights.push({
+                severity: 'danger',
+                icon: '🧂',
+                title: isHistorical
+                    ? `Báo động: Lượng muối cực cao (${sodiumDisplay})`
+                    : `Báo động: Lượng muối hôm nay cực cao! (${sodiumDisplay})`,
+                message: 'Vượt xa giới hạn an toàn! Nguy cơ phù nề, tăng huyết áp cấp và tổn thương thận. Tuyệt đối không ăn mặn thêm và uống nhiều nước lọc.',
+                _consumed: consumed.sodium,
+                _target: sodiumLimit,
+                _isExcess: true,
+            });
+        } else if (consumed.sodium > sodiumLimit) {
+            // Tầng DANGER: vượt giới hạn (>2300mg trên chuẩn WHO)
+            dangerInsights.push({
+                severity: 'danger',
+                icon: '🧂',
+                title: isHistorical
+                    ? `Lượng muối rất cao (${sodiumDisplay})`
+                    : `Lượng muối hôm nay rất cao (${sodiumDisplay})`,
+                message: 'Nguy cơ tích nước và tăng huyết áp. Hãy uống thêm nước lọc để hỗ trợ đào thải nhé!',
+                _consumed: consumed.sodium,
+                _target: sodiumLimit,
+                _isExcess: true,
+            });
+        } else if (consumed.sodium > sodiumLimit * 0.85) {
+            // Tầng WARNING: gần chạm trần (≈1955mg trên chuẩn 2300mg)
+            warningInsights.push({
+                severity: 'warning',
+                icon: '🧂',
+                title: isHistorical
+                    ? `Lượng muối đang tiệm cận giới hạn (${sodiumDisplay}/${sodiumLimit}mg)`
+                    : `Lượng muối hôm nay gần chạm trần (${sodiumDisplay}/${sodiumLimit}mg)`,
+                message: 'Bạn đã nạp gần đủ giới hạn muối trong ngày. Hãy chọn các món nhạt cho bữa tiếp theo.',
+                _consumed: consumed.sodium,
+                _target: sodiumLimit,
+                _isExcess: true,
+            });
+        }
     }
 
     // Đường (Sugar) — chuẩn AHA
@@ -233,6 +302,9 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
             icon: '🍬',
             title: `Đã vượt lượng đường khuyến nghị (${Math.round(consumed.sugar)}g/${sugarLimit}g)`,
             message: 'Đường dư thừa làm tăng insulin, tích mỡ bụng và gây mệt mỏi. Hạn chế đồ ngọt vào cuối ngày.',
+            _consumed: consumed.sugar,
+            _target: sugarLimit,
+            _isExcess: true,
         });
     }
 
@@ -245,7 +317,24 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                 icon: '🍚',
                 title: `Tinh bột vượt mức ${Math.round(carbPct - 100)}% so với mục tiêu`,
                 message: 'Nguy cơ tăng đường huyết và buồn ngủ sau ăn. Hãy ưu tiên ăn thêm rau xanh vào các bữa tiếp theo để làm chậm hấp thu đường, và tăng cường vận động để tiêu hao năng lượng.',
+                _consumed: consumed.carbs,
+                _target: macros.carbs,
+                _isExcess: true,
             });
+        }
+
+        // Cross-Macro: Carbs đã đủ nhưng Calo vẫn còn dư ≥10% → khuyên ưu tiên Protein+Rau
+        // Điều kiện calPct < 90: đảm bảo còn ngân sách calo thực tế để ăn bữa tiếp
+        // Điều kiện carbPct <= 120: tránh duplicate với danger rule >120% ở trên
+        if (calPct < 90) {
+            if (carbPct > 100 && carbPct <= 120) {
+                suggestionInsights.push({
+                    severity: 'suggestion',
+                    icon: '🍚',
+                    title: 'Đã nạp đủ tinh bột trong ngày',
+                    message: 'Bạn vẫn còn calo cho bữa tiếp theo. Hãy ưu tiên thịt nạc, cá, trứng và rau xanh thay vì cơm/bún/mì nhé!',
+                });
+            }
         }
     }
 
@@ -293,6 +382,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                     icon: '🥩',
                     title: isHistorical ? 'Bạn đang nạp hơi ít Protein' : 'Hôm nay bạn đang nạp hơi ít Protein',
                     message: 'Thiếu đạm có thể gây mất cơ bắp, đặc biệt khi đang giảm cân. Ưu tiên thịt nạc, trứng, đậu.',
+                    _consumed: consumed.protein,
+                    _target: macros.protein,
                 });
             }
 
@@ -318,26 +409,32 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
 
             // Chất xơ — phân cấp theo % RDI
             if (consumed.fiber != null) {
-            const fiberPct = consumed.fiber / fiberRDI;
-            const fiberDisplay = `${Math.round(consumed.fiber * 10) / 10}g/${fiberRDI}g`;
-            
+                const fiberPct = consumed.fiber / fiberRDI;
+                const fiberDisplay = `${Math.round(consumed.fiber * 10) / 10}g/${fiberRDI}g`;
+
                 if (fiberPct < 0.30) {
                     microDangerInsights.push({
                         severity: 'danger', icon: '🥦',
                         title: `Báo động: Chất xơ cực thấp (${fiberDisplay})`,
                         message: 'Chỉ đạt dưới 30% nhu cầu! Nguy cơ táo bón và mất cân bằng vi khuẩn đường ruột. Bổ sung rau xanh ngay.',
+                        _consumed: consumed.fiber,
+                        _target: fiberRDI,
                     });
                 } else if (fiberPct < 0.80) {
                     microWarningInsights.push({
                         severity: 'warning', icon: '🥦',
                         title: `Hệ tiêu hóa đang thiếu chất xơ (${fiberDisplay})`,
                         message: 'Hãy bổ sung ngay 1 đĩa rau xanh hoặc trái cây! Chất xơ nuôi vi khuẩn có lợi trong ruột.',
+                        _consumed: consumed.fiber,
+                        _target: fiberRDI,
                     });
                 } else if (fiberPct < 1.0) {
                     microSuggestionInsights.push({
                         severity: 'suggestion', icon: '🥦',
                         title: `Chất xơ gần đạt mục tiêu (${fiberDisplay})`,
                         message: 'Chỉ cần thêm 1 phần rau hoặc trái cây nữa là đủ! Cố lên!',
+                        _consumed: consumed.fiber,
+                        _target: fiberRDI,
                     });
                 }
             }
@@ -354,6 +451,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Thiếu hụt Canxi trầm trọng (${calciumDisplay})`
                             : `Thiếu hụt Canxi trầm trọng hôm nay (${calciumDisplay})`,
                         message: 'Mới đạt dưới 30% nhu cầu! Xương và răng đang bị thiếu nguyên liệu. Uống sữa, ăn phô mai hoặc rau cải xanh ngay.',
+                        _consumed: consumed.calcium,
+                        _target: calciumRDI,
                     });
                 } else if (calciumPct < 0.70) {
                     microWarningInsights.push({
@@ -362,6 +461,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Canxi ở mức thấp (${calciumDisplay})`
                             : `Canxi hôm nay ở mức thấp (${calciumDisplay})`,
                         message: 'Cân nhắc uống 1 ly sữa ít béo hoặc ăn thêm rau cải xanh, hạnh nhân.',
+                        _consumed: consumed.calcium,
+                        _target: calciumRDI,
                     });
                 } else if (calciumPct < 1.0) {
                     microSuggestionInsights.push({
@@ -372,6 +473,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                         message: isHistorical
                             ? 'Chỉ cần thêm 1 ly sữa hoặc 1 phần phô mai nữa.'
                             : 'Chỉ cần thêm 1 ly sữa hoặc 1 phần phô mai nữa vào ngày mai.',
+                        _consumed: consumed.calcium,
+                        _target: calciumRDI,
                     });
                 }
             }
@@ -388,6 +491,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Thiếu hụt Sắt trầm trọng (${ironDisplay})`
                             : `Thiếu hụt Sắt trầm trọng hôm nay (${ironDisplay})`,
                         message: 'Nguy cơ thiếu máu, mệt mỏi và suy giảm miễn dịch. Bổ sung thịt đỏ, gan, hoặc rau chân vịt kết hợp Vitamin C.',
+                        _consumed: consumed.iron,
+                        _target: ironRDI,
                     });
                 } else if (ironPct < 0.70) {
                     microWarningInsights.push({
@@ -396,6 +501,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Lượng Sắt ở mức thấp (${ironDisplay})`
                             : `Lượng Sắt hôm nay ở mức thấp (${ironDisplay})`,
                         message: 'Sắt cần cho máu và năng lượng. Bổ sung thịt đỏ, gan, hoặc rau chân vịt kết hợp Vitamin C để tăng hấp thụ.',
+                        _consumed: consumed.iron,
+                        _target: ironRDI,
                     });
                 } else if (ironPct < 1.0) {
                     microSuggestionInsights.push({
@@ -404,6 +511,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Sắt gần đạt mục tiêu (${ironDisplay})`
                             : `Sắt hôm nay gần đạt mục tiêu (${ironDisplay})`,
                         message: 'Chỉ cần thêm 1 phần thịt đỏ hoặc rau lá xanh đậm nữa.',
+                        _consumed: consumed.iron,
+                        _target: ironRDI,
                     });
                 }
             }
@@ -420,6 +529,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Thiếu hụt Vitamin C trầm trọng (${vitCDisplay})`
                             : `Thiếu hụt Vitamin C trầm trọng hôm nay (${vitCDisplay})`,
                         message: 'Hệ miễn dịch đang yếu! Ăn cam, ổi, ớt chuông hoặc kiwi là đủ nhu cầu ngay.',
+                        _consumed: consumed.vitaminC,
+                        _target: vitaminCRDI,
                     });
                 } else if (vitCPct < 0.70) {
                     microWarningInsights.push({
@@ -428,6 +539,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Vitamin C ở mức thấp (${vitCDisplay})`
                             : `Vitamin C hôm nay ở mức thấp (${vitCDisplay})`,
                         message: 'Vitamin C tăng đề kháng và giúp hấp thụ Sắt. Ăn cam, ổi, ớt chuông hoặc kiwi.',
+                        _consumed: consumed.vitaminC,
+                        _target: vitaminCRDI,
                     });
                 } else if (vitCPct < 1.0) {
                     microSuggestionInsights.push({
@@ -436,6 +549,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Vitamin C gần đạt mục tiêu (${vitCDisplay})`
                             : `Vitamin C hôm nay gần đạt mục tiêu (${vitCDisplay})`,
                         message: 'Chỉ cần thêm 1 quả cam hoặc nửa quả ổi nữa thôi!',
+                        _consumed: consumed.vitaminC,
+                        _target: vitaminCRDI,
                     });
                 }
             }
@@ -452,6 +567,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Thiếu hụt Vitamin A trầm trọng (${vitADisplay})`
                             : `Thiếu hụt Vitamin A trầm trọng hôm nay (${vitADisplay})`,
                         message: 'Vitamin A cần cho thị lực, da và hệ miễn dịch. Ăn cà rốt, khoai lang, rau lá xanh đậm hoặc gan.',
+                        _consumed: consumed.vitaminA,
+                        _target: vitaminARDI,
                     });
                 } else if (vitAPct < 0.70) {
                     microWarningInsights.push({
@@ -460,6 +577,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Vitamin A ở mức thấp (${vitADisplay})`
                             : `Vitamin A hôm nay ở mức thấp (${vitADisplay})`,
                         message: 'Bổ sung cà rốt, bí đỏ, rau lá xanh đậm hoặc trứng để tăng Vitamin A.',
+                        _consumed: consumed.vitaminA,
+                        _target: vitaminARDI,
                     });
                 } else if (vitAPct < 1.0) {
                     microSuggestionInsights.push({
@@ -468,6 +587,8 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                             ? `Vitamin A gần đạt mục tiêu (${vitADisplay})`
                             : `Vitamin A hôm nay gần đạt mục tiêu (${vitADisplay})`,
                         message: 'Chỉ cần thêm 1 phần rau xanh hoặc cà rốt nữa!',
+                        _consumed: consumed.vitaminA,
+                        _target: vitaminARDI,
                     });
                 }
             }
@@ -573,6 +694,9 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
     for (const insight of insights) {
         if (insight.icon === '📉') {
             score -= GROUPED_MICRO_PENALTY;
+        } else if (insight._consumed != null && insight._target != null) {
+            const isExcess = !!insight._isExcess;
+            score -= getWeightedPenalty(insight._consumed, insight._target, PENALTY[insight.severity] || 0, isExcess);
         } else {
             score -= (PENALTY[insight.severity] || 0);
         }
