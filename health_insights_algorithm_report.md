@@ -49,4 +49,14 @@ Tổng điểm sau đó được nhân với hệ số trừng phạt:
 - **Hard Cap 60:** Nếu lượng chất xơ $< 30\%$ RDI, điểm tối đa chỉ đạt 60.
 
 ## Kết luận
-Bằng việc kết hợp Cơ chế Triage, Nhận thức Ngữ cảnh và Điểm liệt (Hard Caps), thuật toán Health Insights mang lại các cảnh báo thông minh, hợp lý và không gây phiền toái. Người dùng nhận được đúng lời khuyên họ cần vào đúng thời điểm, thúc đẩy thói quen theo dõi dinh dưỡng một cách chủ động và tích cực.
+Bằng việc kết hợp Cơ chế Triage, Nhận thức Ngữ cảnh và Điểm liệt (Hard Caps), thuật toán Health Insights mang lại các cảnh báo thông minh, hợp lý và không gây phiền báo. Người dùng nhận được đúng lời khuyên họ cần vào đúng thời điểm, thúc đẩy thói quen theo dõi dinh dưỡng một cách chủ động và tích cực.
+
+## 6. Chấm điểm Món ăn — Sodium Hard Caps (Double Medical Protection)
+Đối với việc tính điểm **từng món ăn** riêng lẻ (nutrient density score), trước đây tồn tại một "điểm mù": Các món ăn chứa lượng muối cực cao (ví dụ: Rau Cải Luộc Chấm Mắm với 2400mg Natri) vẫn có thể đạt điểm tuyệt đối 100đ, bởi điểm phạt muối (-25đ) bị "bù đắp thừa" bởi các điểm cộng từ đạm, xơ và vi chất trong món ăn đó. 
+
+Để khắc phục, hệ thống áp dụng cơ chế **Bảo vệ y khoa kép (Double Medical Protection)** cho Natri:
+- **Bảo vệ Cấu trúc (Density) - Cap 60:** Nếu mật độ Natri vượt ngưỡng nguy hiểm (>150mg/100kcal), điểm của món ăn không thể vượt quá 60 (Mức trung bình/khá).
+- **Bảo vệ Lâm sàng (Absolute & Extreme Density) - Cap 40:** 
+  - Nếu món ăn *vô cùng mặn* về mặt cấu trúc (mật độ >300mg/100kcal, ví dụ mắm, dưa muối).
+  - HOẶC gây rủi ro *y khoa trực tiếp* (chứa giá trị tuyệt đối > 1000mg/khẩu phần). Một khẩu phần chứa >1000mg là cực kỳ báo động đối với thận.
+  - Khi thoả mãn 1 trong 2 điều kiện này, điểm của món ăn bị chặn ở mức tối đa 40đ (Mức kém). Mọi điểm cộng từ xơ, đạm đều vô nghĩa trước lượng muối độc hại này.

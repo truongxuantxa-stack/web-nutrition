@@ -228,6 +228,24 @@ function scoreFoodItem(food) {
         }
     }
 
+    // 2c: Hard Cap 60 - Natri danger (mật độ > 150mg/100kcal)
+    // -> Trừng phạt vì chất lượng món ăn kém (hơi mặn)
+    if (sodiumRes.available && sodiumRes.level === 'danger') {
+        if (score > 60) {
+            score = 60;
+            hardCapApplied = hardCapApplied || 'sodium_60';
+        }
+    }
+
+    // 2d: Hard Cap 40 - Natri extreme 
+    // -> Trừng phạt vì cực kỳ mặn (mật độ > 300) HOẶC gây rủi ro y khoa trực tiếp (tuyệt đối > 1000mg/khẩu phần)
+    if (sodiumRes.available && (sodiumRes.density > 300 || food.sodium > 1000)) {
+        if (score > 40) {
+            score = 40;
+            hardCapApplied = 'sodium_extreme_40';
+        }
+    }
+
     // Khống chế điểm [0, 100]
     score = Math.max(0, Math.min(100, score));
 
