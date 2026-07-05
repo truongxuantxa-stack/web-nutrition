@@ -687,19 +687,23 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
     const calPct    = targetCal > 0 ? (consumed.calories / targetCal) * 100 : 0;
 
     // ── Trừ điểm theo vi phạm ─────────────────────────────────────────────────
-    const PENALTY = { danger: 15, warning: 6, water: 4, suggestion: 2 };
+    const PENALTY = { danger: 15, warning: 6, water: 4, suggestion: 0 };
     const GROUPED_MICRO_PENALTY = 25;
     let score = 100;
     
     for (const insight of insights) {
+        let penaltyAmount = 0;
         if (insight.icon === '📉') {
-            score -= GROUPED_MICRO_PENALTY;
+            penaltyAmount = GROUPED_MICRO_PENALTY;
         } else if (insight._consumed != null && insight._target != null) {
             const isExcess = !!insight._isExcess;
-            score -= getWeightedPenalty(insight._consumed, insight._target, PENALTY[insight.severity] || 0, isExcess);
+            penaltyAmount = getWeightedPenalty(insight._consumed, insight._target, PENALTY[insight.severity] || 0, isExcess);
         } else {
-            score -= (PENALTY[insight.severity] || 0);
+            penaltyAmount = (PENALTY[insight.severity] || 0);
         }
+        score -= penaltyAmount;
+        // Gắn điểm trừ vào insight để frontend hiển thị
+        insight.penalty = penaltyAmount;
     }
 
     // ── Cộng điểm thưởng (bonus) ──────────────────────────────────────────────
