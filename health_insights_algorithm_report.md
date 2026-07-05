@@ -23,14 +23,19 @@ Hệ thống sử dụng `clientHour` truyền từ frontend để đảm bảo 
 ## 3. Khuyến nghị Y khoa Nền tảng (RDI)
 RDI (Reference Daily Intake) được tập trung hóa vào hàm `getRDIByGender(gender)` để tránh trùng lặp code và dễ dàng cập nhật theo chuẩn WHO/AHA.
 - **Đường (AHA):** Giới hạn tối đa 36g/ngày (Nam) và 25g/ngày (Nữ).
-- **Natri (WHO):** Giới hạn tối đa 2300mg/ngày.
+- **Natri (WHO):** Giới hạn tối đa 2300mg/ngày. Hệ thống áp dụng cơ chế **Cảnh báo 3 tầng (Escalation)**: Cảnh báo sớm (>85%), Vượt ngưỡng (>100%), và Báo động đỏ Critical (>130%) để phản ánh đúng mức độ nguy hiểm thay vì chỉ có một mốc duy nhất.
 - **Chất xơ (AHA):** 30g (Nam) / 25g (Nữ). *(Áp dụng mức sàn AHA thay vì IOM 38g để tăng tính khả thi — người dùng thực tế chỉ nạp ~10-15g/ngày, mốc 38g gây "learned helplessness".)*
 - **Vi khoáng:** Vitamin C (90mg/75mg), Canxi (1000mg chung), Sắt (8mg Nam / 18mg Nữ), Vitamin A (900µg/700µg).
 
 *Điểm mới: Đã tích hợp đánh giá Vitamin A vào nhóm vi chất.*
 
-## 4. Chấm điểm Ngày (Daily Health Score)
-Điểm khởi điểm là 100. Thuật toán `calculateDailyHealthScore` thực hiện trừ điểm (Penalty) dựa trên mức độ nghiêm trọng của từng Insight (Danger: -15, Warning: -6, Suggestion: -2).
+## 4. Liên kết Vĩ lượng (Cross-Macro Guidance)
+Thay vì đánh giá từng chất một cách cô lập, hệ thống có khả năng phân tích chéo (Cross-Macro). Ví dụ điển hình: Nếu người dùng đã nạp đủ Carbs (100%-120% mục tiêu) nhưng tổng Calo trong ngày vẫn đang ở mức thấp (<90%), hệ thống sẽ chủ động đề xuất: *"Bạn đã đủ tinh bột, hãy ưu tiên dùng quỹ calo còn lại cho Protein hoặc Rau xanh"*. Điều này giúp định hướng bữa ăn tiếp theo chính xác hơn là chỉ báo cáo kết quả.
+
+## 5. Chấm điểm Ngày (Daily Health Score)
+Điểm khởi điểm là 100. Thuật toán `calculateDailyHealthScore` thực hiện trừ điểm dựa trên **Độ lệch tuyến tính (Weighted Penalty)** thay vì trừ một con số cố định.
+- Mỗi cảnh báo (Insight) có một mức phạt gốc: Danger = 15đ, Warning = 6đ, Suggestion = 2đ.
+- Hệ thống tính độ lệch (deviation) giữa lượng thực nạp và mục tiêu. Lệch càng xa, mức phạt càng được nhân lên (dao động từ x0.5 cho sai lệch nhỏ, đến tối đa x2.5 nếu sai lệch >60%). Cơ chế này giúp điểm số công bằng hơn: vượt mục tiêu 5% sẽ bị phạt rất nhẹ so với vượt 50%.
 Nếu chế độ ăn thiếu hụt từ 3 vi chất trở lên (Nạn đói vi chất), hệ thống gộp cảnh báo và trừ thẳng một mức phạt lớn (-25 điểm) thay vì trừ lẻ tẻ.
 
 ### Sliding Calorie Multiplier & Sugar Toxicity
