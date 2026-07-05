@@ -25,11 +25,14 @@ Khi dữ liệu AI trả về, hệ thống backend phải đảm bảo nó khô
 - **Hệ thống Atwater:** Kiểm tra chéo mức năng lượng AI báo cáo với công thức Atwater (Protein x 4 + Carbs x 4 + Fat x 9). Nếu độ lệch quá 15%, hệ thống sẽ đánh dấu cảnh báo.
 - Dữ liệu sau khi vượt qua bài test sẽ được lưu vào DB với `confidenceScore = 0.3` (Unverified) và ghi nhận `ProductContribution`.
 
-## 5. Đóng Góp Cộng Đồng & Cập nhật Trust Score
-Hàm `recalculateConfidence` là cơ chế tự làm sạch (Self-Healing) của cơ sở dữ liệu:
+## 5. Chiến lược Crowdsourcing & Tự làm sạch dữ liệu (Self-Healing)
+**Chiến lược cốt lõi (Xây dựng Database khổng lồ với chi phí 0 đồng):** 
+Không một công ty hay dự án nào đủ ngân sách để mua dữ liệu của hàng triệu sản phẩm trên toàn thế giới. Bằng việc cung cấp công cụ AI Vision quét nhãn rất tiện lợi, hệ thống thực chất đang "mượn tay" người dùng để tự nguyện nhập liệu hộ. Khi một người dùng dùng AI để quét nhãn một chai nước chưa có trong hệ thống, dữ liệu đó lập tức được lưu lại kèm mã vạch. Lần sau, hàng nghìn người dùng khác quét đúng chai nước đó, hệ thống sẽ trả ngay kết quả từ DB mà không cần gọi lại AI. Đây chính là cách MyFitnessPal xây dựng database khổng lồ không tốn 1 xu.
+
+Hàm `recalculateConfidence` đóng vai trò là bộ lọc tự làm sạch dữ liệu do cộng đồng đóng góp:
 - Khi có nhiều người dùng sử dụng AI để chụp cùng một sản phẩm mã vạch, hệ thống gom nhóm (aggregate) các `ProductContribution`.
 - Nếu có từ 3 lượt đóng góp trở lên mà sai lệch năng lượng so với trung bình dưới 15%, sản phẩm sẽ được thăng cấp lên `verified` với `confidence = 0.8`.
 - Nếu phát hiện dữ liệu sai, người dùng có thể Báo Cáo (Report), lập tức hạ cấp sản phẩm về `disputed`.
 
 ## Kết luận
-Hybrid Nutrition Scanner tạo ra một Data Flywheel hoàn hảo. Càng nhiều người dùng dùng AI Vision, Local DB càng phong phú, giúp các lượt tra cứu mã vạch sau nhanh hơn và tiết kiệm chi phí gọi API. Cơ chế Physics Validation và Trust Score đảm bảo dữ liệu cộng đồng ngày càng chính xác và đáng tin cậy.
+Quyết định phát triển Hybrid Nutrition Scanner (Barcode + AI Vision) hoàn toàn không phải để thay thế tính năng "nhận diện món ăn", mà là **một quyết định chuẩn mức kiến trúc hệ thống (System Architecture)** nhằm giải quyết bài toán Data Entry và Cold Start. Nó tạo ra một "Data Flywheel" (Bánh đà Dữ liệu) hoàn hảo: Càng nhiều người dùng AI Vision, Local DB càng phong phú, tốc độ tra cứu càng nhanh và chi phí vận hành AI càng giảm. Cơ chế Physics Validation và Trust Score sẽ là chốt chặn cuối cùng, đảm bảo dữ liệu cộng đồng ngày càng chính xác và đáng tin cậy.
