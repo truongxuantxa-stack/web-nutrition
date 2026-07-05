@@ -209,7 +209,7 @@ const decodeBarcodeImage = async (req, res) => {
  * Body: { scannedProductId, image }
  * Response: { imageUrl, contributionCount }
  */
-const uploadProductImage = async (req, res) => {
+const uploadProductImageCtrl = async (req, res) => {
     try {
         const { scannedProductId, image } = req.body;
         if (!scannedProductId || !image) {
@@ -221,8 +221,7 @@ const uploadProductImage = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm.' });
         }
 
-        const { uploadProductImage: cloudinaryUpload } = require('../../services/cloudinary.service');
-        const uploadResult = await cloudinaryUpload(image, product.name || 'product');
+        const uploadResult = await uploadProductImage(image, product.name || 'product');
         
         product.imageUrl = uploadResult.url;
         await product.save();
@@ -255,4 +254,4 @@ const uploadProductImage = async (req, res) => {
     }
 };
 
-module.exports = { barcodeLookup, aiVision, confirmContribution, reportProduct: reportProductCtrl, decodeBarcodeImage, uploadProductImage };
+module.exports = { barcodeLookup, aiVision, confirmContribution, reportProduct: reportProductCtrl, decodeBarcodeImage, uploadProductImage: uploadProductImageCtrl };
