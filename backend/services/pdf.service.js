@@ -1329,7 +1329,7 @@ const generateReportPDF = async (reportData) => {
         y = PAGE_MARGIN;
     }
 
-    y = drawSectionTitle(doc, 'CẢNH BÁO DINH DƯỠNG (HEALTH INSIGHTS)', y);
+    y = drawSectionTitle(doc, 'CẢNH BÁO DINH DƯỠNG TRUNG BÌNH MỘT NGÀY (DAILY HEALTH INSIGHTS)', y);
     y += 12;
 
     if (!healthInsights || healthInsights.length === 0) {
