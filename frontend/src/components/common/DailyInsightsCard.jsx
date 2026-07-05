@@ -30,11 +30,25 @@ const BONUS_ICON = { calo: '🎯', protein: '🥩', water: '💧', fiber: '🥦'
 // ─── Component InsightItem ───────────────────────────────────────────────────
 function InsightItem({ insight }) {
   const style = SEVERITY_STYLE[insight.severity] || SEVERITY_STYLE.suggestion;
+  const hasPenalty = insight.penalty != null && insight.penalty > 0;
+  const penaltyColor = insight.severity === 'danger'
+    ? 'bg-[#DC2626]/10 text-[#DC2626] border border-[#DC2626]/20'
+    : insight.severity === 'warning'
+    ? 'bg-[#F59E0B]/10 text-[#D97706] border border-[#F59E0B]/20'
+    : 'bg-[#96A5A8]/10 text-[#6B7280] border border-[#96A5A8]/20';
+
   return (
     <div className={`flex gap-3 items-start border-l-4 ${style.border} ${style.bg} rounded-r-xl px-3 py-2.5`}>
       <span className="text-lg flex-shrink-0 mt-0.5">{insight.icon}</span>
       <div className="flex flex-col gap-0.5 min-w-0">
-        <p className="text-xs font-bold text-[#003139] leading-snug">{insight.title}</p>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <p className="text-xs font-bold text-[#003139] leading-snug">{insight.title}</p>
+          {hasPenalty && (
+            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full flex-shrink-0 ${penaltyColor}`}>
+              -{insight.penalty}đ
+            </span>
+          )}
+        </div>
         <p className="text-[11px] text-[#96A5A8] leading-relaxed">{insight.message}</p>
       </div>
       <span className={`ml-auto flex-shrink-0 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full ${style.badge} mt-0.5`}>

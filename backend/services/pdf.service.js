@@ -1483,37 +1483,39 @@ const generateReportPDF = async (reportData) => {
         doc.addPage();
         y = PAGE_MARGIN;
     }
-    y = drawSectionTitle(doc, 'GỢI Ý THỰC ĐƠN & LỐI SỐNG (AI RECOMMENDATIONS)', y);
+    y = drawSectionTitle(doc, 'GỢI Ý LỐI SỐNG & CHIẾN LƯỢC TUẦN TỚI', y);
     y += 12;
 
+    // Lưu ý: Các cảnh báo về vi chất/macro (Protein, Fiber, Chất béo...) đã được
+    // trình bày chi tiết ở mục "Cảnh báo dinh dưỡng" phía trên.
+    // Mục này tập trung vào thói quen lối sống (nước, vận động) và định hướng thực đơn theo mục tiêu.
     const recs = [];
-    if (pctP < 70) {
-        recs.push('Tăng cường chất đạm (Protein): Lượng đạm của bạn hơi thấp. Nên bổ sung thêm các thực phẩm giàu protein như: Ức gà, Trứng luộc, Cá hồi, Thịt bò nạc hoặc đậu nành để duy trì cơ bắp.');
-    }
-    if (fiberPct < 70) {
-        recs.push('Tăng cường chất xơ (Fiber): Lượng xơ chưa đạt tiêu chuẩn IOM. Hãy bổ sung thêm các loại rau củ như: Bông cải xanh, Khoai lang, Rau muống hoặc Yến mạch trong các bữa ăn chính.');
-    }
-    if (pctF > 110) {
-        recs.push('Kiểm soát chất béo (Fat): Lượng chất béo trung bình nạp vào cao hơn mục tiêu. Hạn chế các món chiên rán nhiều dầu mỡ, tăng cường các món luộc, hấp hoặc dùng chất béo tốt từ quả bơ, hạt điều.');
-    }
+
+    // Thói quen uống nước
     if (summary.avgWater < 1500) {
-        recs.push('Bổ sung nước uống: Cơ thể bạn đang thiếu nước nghiêm trọng (trung bình dưới 1.5L/ngày). Hãy trang bị một bình nước lớn 2L ngay bàn học/bàn làm việc để tạo thói quen uống nước đều đặn.');
+        recs.push('💧 Bổ sung nước uống (Ưu tiên cao): Trung bình bạn chỉ uống dưới 1.5L/ngày — thấp hơn mức tối thiểu khuyến nghị. Hãy trang bị một bình nước 2L ngay bàn học/làm việc và đặt nhắc nhở mỗi 2 tiếng để tạo thói quen uống nước đều đặn.');
     } else if (waterPct < 90) {
-        recs.push('Tăng lượng nước uống: Bạn chưa uống đủ lượng nước mục tiêu khuyến nghị. Cố gắng uống thêm 1-2 ly nước vào các thời điểm cố định trong ngày.');
-    }
-    if (summary.totalExerciseCalories === 0) {
-        recs.push('Kích hoạt vận động: Bạn có lối sống khá tĩnh tại trong kỳ báo cáo (0 kcal tập luyện). Nên dành ít nhất 15-20 phút đi bộ nhanh hoặc tập thể dục nhẹ mỗi ngày để kích hoạt cơ chế trao đổi chất tốt hơn.');
+        recs.push('💧 Tăng lượng nước uống: Bạn chưa đạt đủ lượng nước mục tiêu cá nhân. Thử uống thêm 1-2 ly vào buổi sáng (trước bữa sáng) và 1 ly trước mỗi bữa ăn để đạt mục tiêu dễ hơn.');
     } else {
-        recs.push('Duy trì thể lực: Bạn vận động rất tốt với tổng cộng ' + summary.totalExerciseCalories + ' kcal tiêu thụ từ tập luyện. Hãy tiếp tục duy trì thói quen tập luyện đều đặn này!');
+        recs.push('💧 Thói quen uống nước tốt: Bạn đang duy trì lượng nước uống ổn định trong kỳ báo cáo. Tiếp tục duy trì và ưu tiên uống nước lọc thay nước ngọt có đường.');
     }
 
-    // Gợi ý thực đơn theo mục tiêu
-    if (user.goal.includes('Giảm cân')) {
-        recs.push('Gợi ý thực đơn giảm cân: Ưu tiên các thực phẩm giàu thể tích nhưng ít calo như dưa chuột, bí ngòi, và các loại rau lá xanh đậm. Sử dụng Meal Planner trên ứng dụng để tối ưu khối lượng bữa ăn.');
-    } else if (user.goal.includes('Tăng cân')) {
-        recs.push('Gợi ý thực đơn tăng cân: Bổ sung thêm các bữa phụ dinh dưỡng bằng hạt sấy khô, sữa tươi nguyên kem, bơ đậu phộng để tăng calo tự nhiên mà không gây đầy bụng.');
+    // Thói quen vận động
+    if (summary.totalExerciseCalories === 0) {
+        recs.push('🏃 Kích hoạt vận động: Bạn chưa ghi nhận bất kỳ hoạt động thể chất nào trong kỳ báo cáo. Chỉ cần 15-20 phút đi bộ nhanh mỗi ngày đã đủ để cải thiện đáng kể sức khỏe tim mạch và tốc độ trao đổi chất.');
+    } else if (summary.totalExerciseCalories < 500) {
+        recs.push('🏃 Tăng cường vận động: Bạn đã có vận động (' + summary.totalExerciseCalories + ' kcal) nhưng vẫn còn hạn chế. Nên nâng dần lên 30 phút/ngày với các bài cardio nhẹ hoặc đi bộ để đạt hiệu quả tốt hơn.');
     } else {
-        recs.push('Gợi ý duy trì sức khỏe: Duy trì tỷ lệ dinh dưỡng cân bằng. Ăn uống đa dạng nguồn thực phẩm, kết hợp nhiều màu sắc rau củ và không bỏ bữa.');
+        recs.push('🏃 Duy trì thể lực: Bạn vận động rất tốt với tổng cộng ' + summary.totalExerciseCalories + ' kcal tiêu thụ từ tập luyện trong kỳ báo cáo. Hãy tiếp tục duy trì thói quen tập luyện đều đặn này!');
+    }
+
+    // Chiến lược thực đơn theo mục tiêu cá nhân
+    if (user.goal.includes('Giảm cân')) {
+        recs.push('🥗 Chiến lược thực đơn giảm cân: Ưu tiên thực phẩm giàu thể tích nhưng ít calo (dưa chuột, bí ngòi, rau lá xanh đậm). Chia nhỏ bữa ăn thành 4-5 lần/ngày để tránh cảm giác đói và ăn bù. Sử dụng Meal Planner trong ứng dụng để tối ưu khẩu phần từng bữa.');
+    } else if (user.goal.includes('Tăng cân')) {
+        recs.push('🥗 Chiến lược thực đơn tăng cân: Bổ sung thêm 1-2 bữa phụ dinh dưỡng mỗi ngày (hạt sấy khô, sữa tươi nguyên kem, bơ đậu phộng, sinh tố protein). Ưu tiên tăng khối lượng bữa ăn từ từ để tránh gây khó chịu tiêu hóa.');
+    } else {
+        recs.push('🥗 Chiến lược duy trì sức khỏe: Giữ đa dạng thực phẩm — ít nhất 5 màu rau củ mỗi ngày. Không bỏ bữa sáng và đảm bảo bữa tối không quá 2 tiếng trước khi ngủ để tối ưu hấp thụ dinh dưỡng.');
     }
 
     // Tính toán chiều cao khối Recommendations
