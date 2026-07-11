@@ -20,9 +20,9 @@ Hệ thống tra cứu mã vạch trong `scanner.service.js` được tối ưu 
 
 ## 4. Xử lý Dữ liệu AI & Physics Validation
 Khi dữ liệu AI trả về, hệ thống backend phải đảm bảo nó không phá vỡ định luật vật lý thông qua `validateNutritionPhysics`:
-- **Định luật bảo toàn khối lượng:** Tổng trọng lượng (Protein + Carbs + Fat) không được vượt quá 100g (hoặc 100ml).
+- **Định luật bảo toàn khối lượng:** Tổng trọng lượng (Protein + Carbs + Fat) không được vượt quá 100g (đối với chất rắn) hoặc 150g (đối với 100ml chất lỏng, để nới lỏng cho các loại chất lỏng đặc như mật ong).
 - **Định luật bảo toàn năng lượng:** 100g thức ăn không thể vượt quá 900 kcal.
-- **Hệ thống Atwater:** Kiểm tra chéo mức năng lượng AI báo cáo với công thức Atwater (Protein x 4 + Carbs x 4 + Fat x 9). Nếu độ lệch quá 15%, hệ thống sẽ đánh dấu cảnh báo.
+- **Hệ thống Atwater:** Kiểm tra chéo mức năng lượng AI báo cáo với công thức Atwater (Protein x 4 + Carbs x 4 + Fat x 9). Nếu độ lệch quá 15%, hệ thống sẽ từ chối dữ liệu (chặn hoàn toàn).
 - Dữ liệu sau khi vượt qua bài test sẽ được lưu vào DB với `confidenceScore = 0.3` (Unverified) và ghi nhận `ProductContribution`.
 
 ## 5. Chiến lược Crowdsourcing & Tự làm sạch dữ liệu (Self-Healing)

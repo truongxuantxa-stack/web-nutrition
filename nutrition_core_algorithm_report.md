@@ -1,4 +1,4 @@
-# Báo cáo Chi tiết: Các Thuật toán Dinh dưỡng Cốt lõi (Core Nutrition Algorithms)
+# Báo cáo Chi tiết: Các Công thức Tính toán Dinh dưỡng Cốt lõi (Core Nutrition Algorithms)
 
 Tệp `nutrition.service.js` đóng vai trò là "bộ não" tính toán sinh học của toàn bộ hệ thống NMS. Nó chứa tất cả các công thức y khoa nền tảng để xác định chỉ số cơ thể, năng lượng tiêu hao và phân bổ đa lượng (Macros) cho từng người dùng cụ thể. 
 
@@ -6,8 +6,8 @@ Báo cáo này phân tích chi tiết các công thức toán học và logic y 
 
 ---
 
-## 1. Đánh giá Chỉ số Cơ thể (BMI)
-Hệ thống sử dụng công thức tính BMI (Body Mass Index) tiêu chuẩn và phân loại theo bảng tham chiếu của Tổ chức Y tế Thế giới (WHO).
+## . Đánh giá Chỉ số Cơ thể (BMI)
+Hệ thống sử dụng công thức tính BMI (Body Mass Index) tiêu chuẩn và phân lo1ại theo bảng tham chiếu của Tổ chức Y tế Thế giới (WHO).
 * **Công thức:** `BMI = Cân nặng(kg) / Chiều cao(m)²`
 * **Phân loại WHO:**
   * `< 18.5`: Thiếu cân (Màu xanh dương)
