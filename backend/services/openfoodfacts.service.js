@@ -109,6 +109,18 @@ const saveToLocalDB = async (products) => {
 };
 
 /**
+ * Phát hiện đơn vị dinh dưỡng (per 100g hay per 100ml) từ chuỗi quantity của OFF.
+ * Ví dụ: "180 ml" → '100ml', "200 g" → '100g', null → '100g' (mặc định)
+ * @param {string|null} quantityStr
+ * @returns {'100g'|'100ml'}
+ */
+const detectUnitFromQuantity = (quantityStr) => {
+    if (!quantityStr) return '100g';
+    // Chứa "ml" hoặc "l" (không phân biệt hoa thường, không phải "cl" là centiliter cũng = lỏng)
+    return /ml|\bl\b|litre|liter|cl|dl/i.test(quantityStr) ? '100ml' : '100g';
+};
+
+/**
  * Tra cứu sản phẩm trên OpenFoodFacts bằng barcode.
  * Trả về null nếu:
  * - Không tìm thấy sản phẩm (404 / product not found)
@@ -147,6 +159,8 @@ const lookupByBarcode = async (barcode) => {
             if (n[field] == null) return null;
         }
 
+        const detectedUnit = detectUnitFromQuantity(p.quantity);
+
         return {
             barcode,
             name: (p.product_name || '').trim() || `Sản phẩm ${barcode}`,
@@ -162,6 +176,8 @@ const lookupByBarcode = async (barcode) => {
             calcium: n['calcium_100g'] ? (n['calcium_100g'] * 1000) : null,
             iron: n['iron_100g'] ? (n['iron_100g'] * 1000) : null,
             imageUrl: p.image_front_small_url || null,
+            // Đơn vị dinh dưỡng: '100g' hoặc '100ml' (detect từ quantity string)
+            unit: detectedUnit,
             // Thể tích/khối lượng thực của sản phẩm (vd: "330ml", "180 ml", "500g")
             // OFF có thể trả null nếu sản phẩm chưa đủ dữ liệu
             quantity: p.quantity || null,

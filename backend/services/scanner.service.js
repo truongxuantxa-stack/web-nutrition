@@ -80,6 +80,7 @@ const lookupByBarcode = async (barcode) => {
                     calcium: offProduct.calcium,
                     iron: offProduct.iron,
                     imageUrl: offProduct.imageUrl,
+                    unit: offProduct.unit || '100g',
                     quantity: offProduct.quantity || null,
                     servingSize: offProduct.servingSize || null,
                     confidenceScore: 1.0, // OFF là trusted source
