@@ -110,14 +110,34 @@ const saveToLocalDB = async (products) => {
 
 /**
  * Phát hiện đơn vị dinh dưỡng (per 100g hay per 100ml) từ chuỗi quantity của OFF.
- * Ví dụ: "180 ml" → '100ml', "200 g" → '100g', null → '100g' (mặc định)
+ * Ưu tiên 1: Đọc quantity string (vd: "180 ml" → '100ml', "200 g" → '100g')
+ * Ưu tiên 2 (fallback): Detect từ tên sản phẩm theo keyword lỏng/rắn
  * @param {string|null} quantityStr
+ * @param {string|null} productName
  * @returns {'100g'|'100ml'}
  */
-const detectUnitFromQuantity = (quantityStr) => {
-    if (!quantityStr) return '100g';
-    // Chứa "ml" hoặc "l" (không phân biệt hoa thường, không phải "cl" là centiliter cũng = lỏng)
-    return /ml|\bl\b|litre|liter|cl|dl/i.test(quantityStr) ? '100ml' : '100g';
+const detectUnitFromQuantity = (quantityStr, productName = '') => {
+    // Ưu tiên 1: parse từ quantity string nếu có
+    if (quantityStr) {
+        return /ml|\bl\b|litre|liter|cl|dl/i.test(quantityStr) ? '100ml' : '100g';
+    }
+
+    // Ưu tiên 2: fallback theo keyword trong tên sản phẩm
+    const LIQUID_KEYWORDS = [
+        // Tiếng Việt
+        'sữa', 'nước', 'trà sữa', 'trà', 'cà phê', 'sinh tố', 'nước ép',
+        'nước uống', 'đồ uống', 'thức uống', 'bia', 'rượu', 'nước ngọt',
+        // Tiếng Anh / thương hiệu quốc tế
+        'milk', 'juice', 'drink', 'beverage', 'tea', 'coffee', 'latte',
+        'cappuccino', 'espresso', 'smoothie', 'water', 'soda', 'beer',
+        'wine', 'yogurt', 'yakult', 'nestle', 'milo', 'ovaltine',
+    ];
+    const nameLower = (productName || '').toLowerCase();
+    if (LIQUID_KEYWORDS.some(kw => nameLower.includes(kw))) {
+        return '100ml';
+    }
+
+    return '100g'; // mặc định
 };
 
 /**
@@ -159,7 +179,7 @@ const lookupByBarcode = async (barcode) => {
             if (n[field] == null) return null;
         }
 
-        const detectedUnit = detectUnitFromQuantity(p.quantity);
+        const detectedUnit = detectUnitFromQuantity(p.quantity, p.product_name);
 
         return {
             barcode,
