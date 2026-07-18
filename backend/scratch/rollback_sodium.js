@@ -1,0 +1,36 @@
+require('dotenv').config();
+const {Sequelize}=require('sequelize');
+const seq=new Sequelize(process.env.DB_NAME,process.env.DB_USER,process.env.DB_PASSWORD,{host:process.env.DB_HOST,dialect:'mysql',logging:false});
+async function main(){
+    await seq.authenticate();
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1000, 4582] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1200, 4636] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [150, 4606] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1000, 4543] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1200, 4593] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1000, 4668] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1200, 4643] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1000, 4575] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1000, 4568] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1000, 4542] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1000, 4634] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1000, 4600] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1200, 4667] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [1000, 4522] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4535] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4536] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4511] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [150, 4539] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [150, 4540] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4569] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4615] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4616] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4596] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4544] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4630] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4588] });
+    await seq.query('UPDATE foods SET sodium=? WHERE id=?', { replacements: [600, 4612] });
+    console.log('✅ Rollback hoàn tất — đã khôi phục sodium về giá trị gốc.');
+    await seq.close(); process.exit(0);
+}
+main().catch(e=>{console.error(e.message);process.exit(1);});
