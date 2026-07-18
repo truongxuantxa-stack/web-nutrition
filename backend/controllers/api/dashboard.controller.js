@@ -96,6 +96,12 @@ exports.getDashboard = async (req, res) => {
 
         // Nước uống — đã tính bên trên, chỉ cần lấy logs nếu cần
 
+        // Calo theo từng bữa
+        const mealCalories = { sang: 0, trua: 0, toi: 0, phu: 0 };
+        Object.keys(mealGroups).forEach(meal => {
+            mealCalories[meal] = Math.round(sumNutritionFromEntries(mealGroups[meal]).calories);
+        });
+
         return res.success({
             user: {
                 id          : user.id,
@@ -132,6 +138,7 @@ exports.getDashboard = async (req, res) => {
             mealCount: entries.length,
             waterTotal,
             waterGoal,
+            mealCalories,
         });
     } catch (err) {
         console.error('[API] getDashboard error:', err);

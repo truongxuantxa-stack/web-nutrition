@@ -65,7 +65,7 @@ export default function DashboardPage() {
     </div>
   );
 
-  const { metrics, consumed, totalBurned, macroProgress, weightChartData, waterTotal, waterGoal, healthInsights, healthScore, exerciseLogs = [] } = data;
+  const { metrics, consumed, totalBurned, macroProgress, weightChartData, waterTotal, waterGoal, healthInsights, healthScore, exerciseLogs = [], mealCalories = {} } = data;
 
   const handleDownloadReport = (range) => {
     downloadReport.mutate(range, {
@@ -133,7 +133,7 @@ export default function DashboardPage() {
         {/* Left Column (2/3) */}
         <div className="lg:col-span-2 flex flex-col gap-6">
 
-          {/* CalorieRing Hero Card */}
+          {/* CalorieRing Hero Card — cạnh ring là phân bổ calo theo bữa */}
           <div className="tcl-card rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-around gap-6">
             <div className="flex-shrink-0">
               <CalorieRing consumed={consumed.calories} target={targetCalories} noCard={true} />
@@ -141,41 +141,40 @@ export default function DashboardPage() {
 
             <div className="hidden md:block w-px h-36 bg-[#DFE3E4]" />
 
+            {/* Phân bổ calo theo bữa — dữ liệu thực từ mealCalories */}
             <div className="flex-grow w-full max-w-xs flex flex-col gap-4">
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8] mb-1">Chỉ số dinh dưỡng nạp vào</h3>
-
-              {/* Protein Progress */}
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="flex items-center gap-1.5 font-medium text-[#244348]">🥩 Protein</span>
-                  <span className="font-semibold text-[#003139]">{consumed.protein}g <span className="text-xs font-normal text-[#96A5A8]">/ {metrics?.macros?.protein || 0}g</span></span>
-                </div>
-                <div className="h-2 bg-[#F0F2F3] rounded-full overflow-hidden">
-                  <div className="h-full rounded-full bg-[#003139] transition-all duration-500" style={{ width: `${Math.min(((consumed.protein || 0) / (metrics?.macros?.protein || 1)) * 100, 100)}%` }} />
-                </div>
-              </div>
-
-              {/* Carbs Progress */}
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="flex items-center gap-1.5 font-medium text-[#244348]">🍚 Carbs</span>
-                  <span className="font-semibold text-[#003139]">{consumed.carbs}g <span className="text-xs font-normal text-[#96A5A8]">/ {metrics?.macros?.carbs || 0}g</span></span>
-                </div>
-                <div className="h-2 bg-[#F0F2F3] rounded-full overflow-hidden">
-                  <div className="h-full rounded-full bg-[#C87C46] transition-all duration-500" style={{ width: `${Math.min(((consumed.carbs || 0) / (metrics?.macros?.carbs || 1)) * 100, 100)}%` }} />
-                </div>
-              </div>
-
-              {/* Fat Progress */}
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="flex items-center gap-1.5 font-medium text-[#244348]">🥑 Chất béo</span>
-                  <span className="font-semibold text-[#003139]">{consumed.fat}g <span className="text-xs font-normal text-[#96A5A8]">/ {metrics?.macros?.fat || 0}g</span></span>
-                </div>
-                <div className="h-2 bg-[#F0F2F3] rounded-full overflow-hidden">
-                  <div className="h-full rounded-full bg-[#96A5A8] transition-all duration-500" style={{ width: `${Math.min(((consumed.fat || 0) / (metrics?.macros?.fat || 1)) * 100, 100)}%` }} />
-                </div>
-              </div>
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8] mb-1">Phân bổ calo theo bữa</h3>
+              {[
+                { key: 'sang', label: 'Bữa sáng', icon: '☀️', color: 'bg-[#F5A623]', ratio: 0.25 },
+                { key: 'trua', label: 'Bữa trưa', icon: '🌞', color: 'bg-[#003139]', ratio: 0.35 },
+                { key: 'toi',  label: 'Bữa tối',  icon: '🌙', color: 'bg-[#C87C46]', ratio: 0.30 },
+                { key: 'phu',  label: 'Bữa phụ',  icon: '✨', color: 'bg-[#96A5A8]', ratio: 0.10 },
+              ].map(({ key, label, icon, color, ratio }) => {
+                const kcal       = mealCalories[key] || 0;
+                const mealTarget = Math.round(targetCalories * ratio);
+                const pct        = mealTarget > 0 ? Math.min(Math.round((kcal / mealTarget) * 100), 100) : 0;
+                const barPct     = mealTarget > 0 ? Math.min((kcal / mealTarget) * 100, 100) : 0;
+                return (
+                  <div key={key} className="flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="flex items-center gap-1.5 font-medium text-[#244348]">{icon} {label}</span>
+                      <span className="text-right">
+                        <span className="font-semibold text-[#003139]">{kcal}</span>
+                        <span className="text-xs text-[#96A5A8]"> / {mealTarget} kcal</span>
+                        <span className={`ml-1.5 text-[11px] font-bold px-1.5 py-0.5 rounded-full ${pct >= 100 ? 'bg-[#5FE089]/20 text-[#2EA850]' : 'bg-[#F0F2F3] text-[#244348]'}`}>
+                          {pct}%
+                        </span>
+                      </span>
+                    </div>
+                    <div className="h-2 bg-[#F0F2F3] rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${color} transition-all duration-500`}
+                        style={{ width: `${barPct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

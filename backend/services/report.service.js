@@ -433,7 +433,7 @@ const getReportData = async (userId, range = 'week') => {
     const reportHealthScore = isEmpty
         ? { score: null, label: 'Chưa có dữ liệu', emoji: '🍽️', bonuses: [] }
         : calculateDailyHealthScore(
-            avgConsumed, metrics, summary.avgWater, waterGoal, reportInsights, user.gender
+            avgConsumed, metrics, summary.avgWater, waterGoal, reportInsights, user.gender, {}, null, true
         );
 
     return {
