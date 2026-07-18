@@ -301,7 +301,7 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
             severity: 'danger',
             icon: '🍬',
             title: `Đã vượt lượng đường khuyến nghị (${Math.round(consumed.sugar)}g/${sugarLimit}g)`,
-            message: 'Đường dư thừa làm tăng insulin, tích mỡ bụng và gây mệt mỏi. Hạn chế đồ ngọt vào cuối ngày.',
+            message: 'Nếu đường chủ yếu từ nước ngọt, bánh kẹo — hãy cắt giảm ngay. Nếu đến từ trái cây nguyên quả thì ít đáng lo hơn nhờ có chất xơ làm chậm hấp thu.',
             _consumed: consumed.sugar,
             _target: sugarLimit,
             _isExcess: true,
@@ -349,6 +349,29 @@ const getHealthInsights = (consumed, metrics, mealGroups = {}, waterTotal = 0, w
                 message: 'Bạn nên chọn các món luộc, hấp thay vì chiên xào cho bữa tiếp theo.',
             });
         }
+    }
+
+    // Protein vượt 200% mục tiêu
+    if (macros.protein > 0) {
+        const proteinPct = (consumed.protein / macros.protein) * 100;
+        if (proteinPct > 200) {
+            warningInsights.push({
+                severity: 'warning', icon: '🥩',
+                title: `Protein vượt mức ${Math.round(proteinPct - 100)}% so với mục tiêu`,
+                message: 'Protein dư thừa nhiều gây tăng gánh thận và acid uric. Hãy uống đủ nước và tăng rau xanh.',
+                _consumed: consumed.protein, _target: macros.protein, _isExcess: true,
+            });
+        }
+    }
+
+    // Vitamin A vượt UL (3000µg — NIH Tolerable Upper Intake)
+    if (consumed.vitaminA != null && consumed.vitaminA > 3000) {
+        warningInsights.push({
+            severity: 'warning', icon: '🥕',
+            title: `Vitamin A vượt ngưỡng an toàn (${Math.round(consumed.vitaminA)}µg/3000µg)`,
+            message: 'Quá nhiều Vitamin A từ gan, phủ tạng có thể gây độc. Phụ nữ mang thai đặc biệt cần chú ý.',
+            _consumed: consumed.vitaminA, _target: 3000, _isExcess: true,
+        });
     }
 
     // ════════════════════════════════════════════════════════════════════════════
@@ -724,6 +747,18 @@ const calculateDailyHealthScore = (consumed, metrics, waterTotal, waterGoal, ins
     if (consumed.fiber != null && consumed.fiber >= fiberRDI) {
         score += 2;
         bonuses.push({ key: 'fiber', label: 'Đạt mục tiêu Chất xơ', points: 2 });
+    }
+
+    const microAchieved = [
+        consumed.vitaminC != null && consumed.vitaminC >= vitaminCRDI,
+        consumed.vitaminA != null && consumed.vitaminA >= vitaminARDI,
+        consumed.calcium  != null && consumed.calcium  >= calciumRDI,
+        consumed.iron     != null && consumed.iron     >= ironRDI,
+    ].filter(Boolean).length;
+
+    if (microAchieved >= 3) {
+        score += 3;
+        bonuses.push({ key: 'micro', label: 'Đủ 3+ vi chất', points: 3 });
     }
 
     // ── Sliding Calorie Multiplier ──

@@ -12,20 +12,22 @@ const SEVERITY_STYLE = {
 // ─── Màu score circle theo điểm ─────────────────────────────────────────────
 const getScoreColor = (score) => {
   if (score === null) return { ring: '#DFE3E4', text: 'text-[#96A5A8]' };
-  if (score >= 70)    return { ring: '#2EA850', text: 'text-[#2EA850]' };
-  if (score >= 40)    return { ring: '#003139', text: 'text-[#003139]' };
-  return               { ring: '#DC2626', text: 'text-[#DC2626]' };
+  if (score >= 75)    return { ring: '#2EA850', text: 'text-[#2EA850]' }; // Tuyệt vời, Rất tốt (Xanh lá)
+  if (score >= 60)    return { ring: '#3B82A0', text: 'text-[#3B82A0]' }; // Khá ổn (Xanh dương)
+  if (score >= 40)    return { ring: '#F59E0B', text: 'text-[#D97706]' }; // Cần cải thiện (Cam)
+  return              { ring: '#DC2626', text: 'text-[#DC2626]' }; // Đáng lo ngại (Đỏ)
 };
 
 // ─── Màu gradient progress bar theo điểm ────────────────────────────────────
 const getScoreBarClass = (score) => {
-  if (score >= 70) return 'from-[#5FE089] to-[#2EA850]';
-  if (score >= 40) return 'from-[#4A767E] to-[#003139]';
+  if (score >= 75) return 'from-[#5FE089] to-[#2EA850]';
+  if (score >= 60) return 'from-[#6CB4CE] to-[#3B82A0]';
+  if (score >= 40) return 'from-[#FCD34D] to-[#F59E0B]';
   return                  'from-[#ef4444] to-[#DC2626]';
 };
 
 // ─── Bonus key → icon mapping ────────────────────────────────────────────────
-const BONUS_ICON = { calo: '🎯', protein: '🥩', water: '💧', fiber: '🥦' };
+const BONUS_ICON = { calo: '🎯', protein: '🥩', water: '💧', fiber: '🥦', micro: '✨' };
 
 // ─── Component InsightItem ───────────────────────────────────────────────────
 function InsightItem({ insight }) {
@@ -89,6 +91,7 @@ const ALL_POSSIBLE_BONUSES = [
   { key: 'protein', label: 'Đạt mục tiêu Protein',        points: 3 },
   { key: 'water',   label: 'Uống đủ nước mục tiêu',       points: 5 },
   { key: 'fiber',   label: 'Đạt mục tiêu Chất xơ',        points: 2 },
+  { key: 'micro',   label: 'Đủ 3+ vi chất',               points: 3 },
 ];
 
 // ─── Component chính ─────────────────────────────────────────────────────────
@@ -174,21 +177,33 @@ export default function DailyInsightsCard({ insights = [], healthScore = null, m
 
           {score !== null ? (
             <>
-              <div className="h-2 rounded-full bg-[#F0F2F3] overflow-hidden">
+              <div className="h-2 rounded-full bg-[#F0F2F3] overflow-hidden mt-1">
                 <div
                   className={`h-full rounded-full bg-gradient-to-r transition-all duration-1000 ease-out ${getScoreBarClass(score)}`}
                   style={{ width: `${score}%` }}
                 />
               </div>
-              {healthScore?.calorieLevel === 'critical' ? (
-                <p className="text-[10px] text-[#DC2626] font-semibold leading-none mt-1">
-                  ⚡ Điểm bị giảm mạnh do lượng ăn quá thấp
-                </p>
-              ) : (
-                <p className="text-[10px] text-[#96A5A8] leading-none">
-                  Dựa trên {insights.length} tiêu chí hôm nay
-                </p>
-              )}
+              <div className="flex flex-col gap-1 mt-1.5">
+                {healthScore?.calorieLevel === 'critical' ? (
+                  <p className="text-[10px] text-[#DC2626] font-semibold leading-none">
+                    ⚡ Điểm bị giảm mạnh do lượng ăn quá thấp
+                  </p>
+                ) : (
+                  <p className="text-[10px] text-[#96A5A8] leading-none">
+                    Dựa trên {insights.length} tiêu chí hôm nay
+                  </p>
+                )}
+                {healthScore?.calorieMultiplier != null && healthScore.calorieMultiplier < 1.0 && healthScore.calorieLevel !== 'critical' && (
+                  <p className="text-[10px] text-[#F59E0B] font-semibold leading-none">
+                    ⚡ Điểm bị giảm do calo chưa đủ mục tiêu (×{healthScore.calorieMultiplier})
+                  </p>
+                )}
+                {healthScore?.calorieLevel === 'low' && (
+                  <p className="text-[10px] text-[#C87C46] font-semibold leading-none">
+                    ⚡ Cảnh báo vi chất tạm ẩn — ưu tiên bổ sung calo trước
+                  </p>
+                )}
+              </div>
             </>
           ) : (
             <p className="text-[11px] text-[#96A5A8] leading-relaxed">
