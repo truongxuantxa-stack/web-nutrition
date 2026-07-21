@@ -234,7 +234,7 @@ export default function WeightPage() {
                   <Zap className="w-5 h-5 text-amber-500 fill-amber-500" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#003139]">🤖 AI Phân tích: TDEE Thích ứng</h3>
+                  <h3 className="text-base font-bold text-[#003139]">⚡ TDEE Thích ứng</h3>
                   <p className="text-xs text-[#96A5A8] mt-0.5">Tự động điều chỉnh TDEE dựa trên biến thiên cân nặng</p>
                 </div>
               </div>

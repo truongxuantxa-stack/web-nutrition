@@ -127,7 +127,7 @@ export default function DailyInsightsCard({ insights = [], healthScore = null, m
       {/* Header */}
       <div className="flex items-center gap-2">
         <span className="text-lg">🧠</span>
-        <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">Phân tích AI</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-[#96A5A8]">Đánh giá dinh dưỡng</h3>
       </div>
 
       {/* Score Section */}
