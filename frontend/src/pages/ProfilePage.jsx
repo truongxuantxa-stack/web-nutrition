@@ -1,18 +1,15 @@
 import { useState, useEffect } from 'react';
 import {
-  useProfileData, useUpdateProfile, useUpdateMacros, useAllergies, useUpdateAllergies,
+  useProfileData, useUpdateProfile, useUpdateMacros,
 } from '../hooks/useProfile';
 import { useDownloadReport } from '../hooks/useReport';
-import api from '../lib/axios';
 import toast from 'react-hot-toast';
-import { User, Smile, Calendar, Ruler, Scale, Dumbbell, Target, ShieldAlert, Award, Save, Plus, X, FileText } from 'lucide-react';
+import { User, Smile, Calendar, Ruler, Scale, Dumbbell, Target, Award, Save, FileText } from 'lucide-react';
 
 export default function ProfilePage() {
   const { data, isLoading, error } = useProfileData();
   const updateProfile  = useUpdateProfile();
   const updateMacros   = useUpdateMacros();
-  const { data: userAllergies = [], isLoading: isLoadingAllergies } = useAllergies();
-  const updateAllergies = useUpdateAllergies();
   const downloadReport  = useDownloadReport();
 
   const [activeTab, setActiveTab] = useState('bio');
@@ -27,8 +24,6 @@ export default function ProfilePage() {
   const [macroProtein, setMacroProtein]   = useState(30);
   const [macroCarbs, setMacroCarbs]       = useState(40);
   const [macroFat, setMacroFat]           = useState(30);
-  const [availableFoods, setAvailableFoods] = useState([]);
-  const [searchTerm, setSearchTerm]       = useState('');
 
   useEffect(() => {
     if (data?.user) {
@@ -47,14 +42,6 @@ export default function ProfilePage() {
       });
     }
   }, [data]);
-
-  useEffect(() => {
-    if (activeTab === 'allergies') {
-      api.get('/meal-planner/foods?excludeAllergies=false')
-        .then(res => setAvailableFoods(res.data?.data || []))
-        .catch(() => toast.error('Không thể tải danh sách thực phẩm.'));
-    }
-  }, [activeTab]);
 
   if (isLoading) return <ProfileSkeleton />;
   if (error) return (
@@ -90,17 +77,6 @@ export default function ProfilePage() {
     );
   };
 
-  const handleAddAllergy = (foodId) => {
-    const currentIds = userAllergies.map(f => f.id);
-    if (currentIds.includes(foodId)) return;
-    updateAllergies.mutate([...currentIds, foodId], { onSuccess: () => toast.success('Đã thêm thực phẩm dị ứng') });
-  };
-
-  const handleRemoveAllergy = (foodId) => {
-    const nextIds = userAllergies.map(f => f.id).filter(id => id !== foodId);
-    updateAllergies.mutate(nextIds, { onSuccess: () => toast.success('Đã gỡ thực phẩm dị ứng') });
-  };
-
   const handleDownloadReport = (range) => {
     downloadReport.mutate(range, {
       onSuccess: () => toast.success('Bắt đầu tải xuống báo cáo PDF...'),
@@ -108,16 +84,11 @@ export default function ProfilePage() {
     });
   };
 
-  const filteredFoods = availableFoods.filter(f =>
-    f.name.toLowerCase().includes(searchTerm.toLowerCase()) && !userAllergies.some(a => a.id === f.id)
-  );
-
   // Tab config
   const tabs = [
-    { key: 'bio',       icon: User,        label: 'Chỉ số sinh học' },
-    { key: 'macros',    icon: Award,       label: 'Tỷ lệ Macro' },
-    { key: 'allergies', icon: ShieldAlert, label: 'Thực phẩm dị ứng' },
-    { key: 'reports',   icon: FileText,    label: 'Báo cáo dinh dưỡng' },
+    { key: 'bio',    icon: User,     label: 'Chỉ số sinh học' },
+    { key: 'macros', icon: Award,    label: 'Tỷ lệ Macro' },
+    { key: 'reports', icon: FileText, label: 'Báo cáo dinh dưỡng' },
   ];
 
   return (
@@ -322,91 +293,6 @@ export default function ProfilePage() {
               Lưu tỷ lệ
             </button>
           </form>
-        </div>
-      )}
-
-      {/* Allergies Tab */}
-      {activeTab === 'allergies' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Selected allergies */}
-          <div className="tcl-card rounded-2xl p-6 lg:col-span-1">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#96A5A8] mb-2">
-              Thực phẩm đã chọn loại trừ ({userAllergies.length})
-            </h3>
-            <p className="text-xs text-[#96A5A8] mb-4">Các món ăn này sẽ hoàn toàn bị loại bỏ khỏi các gợi ý thực đơn tự động của hệ thống.</p>
-
-            {isLoadingAllergies ? (
-              <div className="flex justify-center py-6">
-                <span className="inline-block w-6 h-6 border-2 border-[#DFE3E4] border-t-[#003139] rounded-full animate-spin" />
-              </div>
-            ) : userAllergies.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {userAllergies.map(food => (
-                  <div key={food.id} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border border-red-200 text-red-600 text-sm font-semibold rounded-full">
-                    {food.name}
-                    <button
-                      onClick={() => handleRemoveAllergy(food.id)}
-                      className="hover:bg-red-100 rounded-full p-0.5 transition-colors"
-                      title="Gỡ bỏ"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-[#96A5A8] py-6 text-center">Chưa chọn thực phẩm dị ứng nào.</p>
-            )}
-          </div>
-
-          {/* Food search */}
-          <div className="tcl-card rounded-2xl p-6 lg:col-span-2">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#96A5A8] mb-4">Tìm kiếm & thêm thực phẩm dị ứng</h3>
-            <input
-              type="text"
-              placeholder="Nhập tên nguyên liệu (Ví dụ: Trứng, Cá hồi, Đậu nành...)"
-              className="tcl-input mb-4"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <div className="overflow-y-auto max-h-96 border border-[#DFE3E4] rounded-xl">
-              <table className="tcl-table w-full">
-                <thead>
-                  <tr>
-                    <th>Tên thực phẩm</th>
-                    <th>Nhóm</th>
-                    <th className="w-10"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredFoods.length > 0 ? (
-                    filteredFoods.map(food => (
-                      <tr key={food.id}>
-                        <td className="font-semibold text-sm text-[#003139]">{food.name}</td>
-                        <td><span className="tcl-badge text-[10px] uppercase">{food.category}</span></td>
-                        <td>
-                          <button
-                            onClick={() => handleAddAllergy(food.id)}
-                            disabled={updateAllergies.isPending}
-                            className="p-1.5 rounded-lg text-[#003139] hover:bg-[#003139]/8 transition-colors"
-                            title="Thêm vào danh sách dị ứng"
-                          >
-                            <Plus className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="3" className="text-center py-8 text-[#96A5A8]">
-                        {searchTerm ? 'Không tìm thấy thực phẩm nào khớp.' : 'Nhập từ khóa để bắt đầu tìm kiếm.'}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
       )}
 
