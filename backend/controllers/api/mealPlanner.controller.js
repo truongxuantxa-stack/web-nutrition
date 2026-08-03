@@ -131,8 +131,8 @@ exports.generateMeal = async (req, res) => {
             return res.status(400).json(result);
         }
 
-        // Nếu có lỗi NEGATIVE_WEIGHT do protein chứa quá nhiều fat, đề xuất lean protein
-        if (!result.success && result.errors?.some(e => e.type === 'NEGATIVE_WEIGHT' && e.message.includes('quá nhiều mỡ'))) {
+        // Nếu có lỗi NEGATIVE_WEIGHT (bất kỳ slot nào), đề xuất lean protein
+        if (!result.success && result.errors?.some(e => e.type === 'NEGATIVE_WEIGHT')) {
             result.leanAlternatives = await mealPlannerService.getLeanAlternatives();
         }
 
@@ -187,7 +187,7 @@ exports.swapIngredient = async (req, res) => {
             ? { success: true,  data: weights, warnings: validation.errors }
             : { success: false, data: weights, errors  : validation.errors };
 
-        if (!validation.isValid && validation.errors?.some(e => e.type === 'NEGATIVE_WEIGHT' && e.message.includes('quá nhiều mỡ'))) {
+        if (!validation.isValid && validation.errors?.some(e => e.type === 'NEGATIVE_WEIGHT')) {
             responsePayload.leanAlternatives = await mealPlannerService.getLeanAlternatives();
         }
 

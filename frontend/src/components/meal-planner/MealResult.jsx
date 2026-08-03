@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { RefreshCw, AlertTriangle, Pin } from 'lucide-react';
+import { RefreshCw, AlertTriangle, Pin, Zap } from 'lucide-react';
 import ImageLightbox from '../common/ImageLightbox';
 import SafeImage from '../common/SafeImage';
 
-export default function MealResult({ result, onSwap, pinnedFoods = {}, onTogglePin }) {
+export default function MealResult({ result, onSwap, onLeanSwap, pinnedFoods = {}, onTogglePin }) {
   const [activeLightboxImg, setActiveLightboxImg] = useState(null);
   const [activeLightboxTitle, setActiveLightboxTitle] = useState('');
 
@@ -16,29 +16,89 @@ export default function MealResult({ result, onSwap, pinnedFoods = {}, onToggleP
   return (
     <div className="flex flex-col gap-3">
       {/* Warnings / Errors */}
-      {allIssues.map((issue, i) => (
-        <div
-          key={i}
-          className={`alert ${issue.severity === 'error' || issue.type === 'FATAL' ? 'alert-error' : 'alert-warning'} py-2 flex flex-col items-start gap-1`}
-        >
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0" />
+      {allIssues.map((issue, i) => {
+        const isNegWeight = issue.type === 'NEGATIVE_WEIGHT';
+        const isError     = issue.severity === 'error' || issue.type === 'FATAL';
+
+        // ── NEGATIVE_WEIGHT: card chẩn đoán đặc biệt ────────────────────────
+        if (isNegWeight) {
+          return (
+            <div key={i} className="rounded-2xl border border-red-200 bg-red-50 text-red-900 overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-red-100 border-b border-red-200">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+                <span className="text-sm font-bold">Không thể tạo thực đơn với tổ hợp này</span>
+              </div>
+
+              <div className="px-4 py-3 flex flex-col gap-3">
+                {/* Nguyên nhân */}
+                <div className="flex flex-col gap-1">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-red-500">🔍 Nguyên nhân</p>
+                  <p className="text-sm text-red-800 leading-relaxed">
+                    {issue.diagnosis || issue.message}
+                  </p>
+                  {issue.isDiagnosedFatOverflow && (
+                    <p className="text-xs text-red-600 mt-0.5">
+                      Cụ thể: <strong>{issue.food}</strong> (slot chất béo) bị tính ra giá trị âm vì nguồn protein đã "tiêu thụ" hết ngân sách fat của bữa ăn.
+                    </p>
+                  )}
+                </div>
+
+                {/* Giải pháp */}
+                {result.leanAlternatives?.length > 0 && (
+                  <div className="flex flex-col gap-2 pt-2 border-t border-red-200">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-red-500">✅ Giải pháp gợi ý</p>
+                    <p className="text-xs text-red-700">
+                      Đổi nguồn protein sang loại <strong>nạc hơn</strong> (tỷ lệ mỡ/đạm thấp) để thuật toán cân bằng lại macro:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {result.leanAlternatives.map(alt => (
+                        <div
+                          key={alt.id}
+                          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-red-200 shadow-sm"
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold text-red-900">{alt.name}</span>
+                            <span className="text-[10px] text-red-400 font-mono">mỡ/đạm: {alt.fatPerProtein}</span>
+                          </div>
+                          <button
+                              id={`lean-swap-${alt.id}`}
+                              onClick={() => onLeanSwap(alt)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#003139] text-white text-[11px] font-bold hover:bg-[#244348] active:scale-95 transition-all shadow"
+                              title={`Swap sang ${alt.name} ngay`}
+                            >
+                              <Zap className="w-3 h-3" />
+                              Swap ngay
+                            </button>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-red-400 italic">
+                      Nhấn "Swap ngay" → chọn nguồn protein mới → thuật toán tự tính lại gram.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        // ── Các lỗi/cảnh báo thông thường ────────────────────────────────────
+        return (
+          <div
+            key={i}
+            className={`rounded-2xl border px-4 py-3 flex items-start gap-2 ${
+              isError
+                ? 'bg-red-50 border-red-200 text-red-800'
+                : 'bg-amber-50 border-amber-200 text-amber-800'
+            }`}
+          >
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
             <span className="text-sm">{issue.message}</span>
           </div>
-          {issue.type === 'NEGATIVE_WEIGHT' && result.leanAlternatives?.length > 0 && (
-            <div className="mt-2 text-xs opacity-90 w-full pl-6">
-              <p className="font-semibold mb-1">Đề xuất thay thế sang nguồn đạm nạc (Lean Protein):</p>
-              <ul className="list-disc pl-4 space-y-0.5">
-                {result.leanAlternatives.map(alt => (
-                  <li key={alt.id}>
-                    <strong>{alt.name}</strong> - Tỷ lệ mỡ/đạm: {alt.fatPerProtein}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      ))}
+        );
+      })}
+
 
       {/* Result table */}
       {items.length > 0 && (

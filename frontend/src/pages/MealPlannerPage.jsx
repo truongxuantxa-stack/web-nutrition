@@ -110,6 +110,35 @@ export default function MealPlannerPage() {
     );
   };
 
+  // Swap trực tiếp sang lean protein không qua modal
+  const handleLeanSwap = (alt) => {
+    if (!result || !selectedMeal) return;
+    // Tìm item đang ở slot protein trong kết quả hiện tại
+    const proteinItem = result.data?.find(i => (i.food?.category || i.role) === 'protein');
+    if (!proteinItem) {
+      toast.error('Không tìm thấy slot protein để swap.');
+      return;
+    }
+    swapIngredient.mutate(
+      {
+        mealKey: selectedMeal,
+        currentFoodIds: currentFoods,
+        newFoodId: alt.id,
+        slotRoleToSwap: 'protein',
+      },
+      {
+        onSuccess: (res) => {
+          setResult(res);
+          setCurrentFoods(res.data?.map(i => i.food?.id) || []);
+          setPinnedFoods(prev => ({ ...prev, protein: alt.id }));
+          if (res.success) toast.success(`Đã đổi sang ${alt.name}!`);
+          else toast('Tổ hợp mới có vấn đề — xem cảnh báo', { icon: '⚠️' });
+        },
+        onError: () => toast.error('Không thể swap nguyên liệu.'),
+      }
+    );
+  };
+
   const handlePushToDiary = () => {
     if (!result?.data?.length) { toast.error('Chưa có thực đơn để đẩy.'); return; }
     const entries = result.data
@@ -326,7 +355,7 @@ export default function MealPlannerPage() {
             <span className="w-6 h-6 rounded-full bg-[#003139] text-white text-xs font-bold inline-flex items-center justify-center">3</span>
             Kết quả thực đơn
           </h2>
-          <MealResult result={result} onSwap={handleSwapClick} pinnedFoods={pinnedFoods} onTogglePin={handleTogglePin} />
+          <MealResult result={result} onSwap={handleSwapClick} onLeanSwap={handleLeanSwap} pinnedFoods={pinnedFoods} onTogglePin={handleTogglePin} />
 
           {result.success && (
             <button

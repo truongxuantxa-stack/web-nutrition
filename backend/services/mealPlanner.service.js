@@ -278,14 +278,24 @@ const validateSolution = (results) => {
 
         // Bắt lỗi âm: Phương trình tính ra khối lượng < 0
         if (grams < 0) {
+            // Nếu slot fat bị âm → nguyên nhân thường là protein chứa quá nhiều mỡ
+            const isDiagnosedFatOverflow = role === 'fat';
+
             errors.push({
                 type: 'NEGATIVE_WEIGHT',
                 severity: 'error',
                 food: food.name,
-                message: `"${food.name}" bị tính ra giá trị âm (${grams}g). Tổ hợp nguyên liệu này không thể đáp ứng được mục tiêu (bị vượt macro).`,
-                suggestion: role === 'protein' 
-                    ? 'Có thể loại thịt/cá này chứa quá nhiều mỡ. Hãy đổi sang nguồn đạm nạc hơn (Ức gà, Cá ngừ, Thăn bò).' 
-                    : 'Hãy thử đổi sang một loại nguyên liệu khác tương đương.'
+                role,
+                isDiagnosedFatOverflow,
+                message: isDiagnosedFatOverflow
+                    ? `Không thể tạo thực đơn: "${food.name}" (chất béo) bị tính ra giá trị âm (${grams}g).`
+                    : `Không thể tạo thực đơn: "${food.name}" bị tính ra giá trị âm (${grams}g).`,
+                diagnosis: isDiagnosedFatOverflow
+                    ? 'Thuật toán phát hiện nguồn protein trong tổ hợp đang chứa quá nhiều chất béo, chiếm hết "ngân sách" fat của bữa ăn trước khi slot chất béo được phân bổ.'
+                    : 'Tổ hợp nguyên liệu không thể đáp ứng đồng thời tất cả mục tiêu macro của bữa ăn.',
+                suggestion: isDiagnosedFatOverflow
+                    ? 'Giải pháp: Đổi nguồn protein sang loại nạc hơn (ít chất béo hơn) để thuật toán có thể cân bằng lại macro.'
+                    : 'Hãy thử đổi sang một loại nguyên liệu khác tương đương.',
             });
         } 
         // Bắt lỗi quá nhỏ (nhưng bỏ qua dầu ăn / fat bổ sung)
